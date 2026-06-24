@@ -64,6 +64,27 @@ func (c *Context) AddTarget(target Actor) {
 		c.ActorIDs = append(c.ActorIDs, target.ID)
 	}
 }
+func (c *Context) RemoveTarget(target Actor) {
+	actor_ids := []uuid.UUID{}
+	pos_ids := []uuid.UUID{}
+
+	for _, aid := range c.ActorIDs {
+		if aid != target.ID {
+			actor_ids = append(actor_ids, aid)
+		}
+	}
+	c.ActorIDs = actor_ids
+
+	if target.PositionID != nil {
+		for _, pid := range c.PositionIDs {
+			if pid != *target.PositionID {
+				pos_ids = append(pos_ids, pid)
+			}
+		}
+		c.PositionIDs = pos_ids
+	}
+
+}
 func (c Context) CloneWithTarget(target Actor) Context {
 	clone := c.Clone()
 	clone.ActorIDs = []uuid.UUID{}

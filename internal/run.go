@@ -6,7 +6,6 @@ import (
 	"grimdark/internal/game/effects"
 
 	"github.com/google/uuid"
-	"github.com/k0kubun/pp/v3"
 )
 
 func main() {
@@ -39,7 +38,7 @@ func main() {
 			Validate: game.TriggerTargetMatchesModifierParent,
 			Action: game.Action{
 				Resolve: func(g game.Game, ctx game.Context, this game.ActionContext) []game.Transaction {
-					fmt.Println("hur dur trigger doing things")
+					fmt.Println("ON DAMAGE TRIGGER:")
 					return this.Done()
 				},
 			},
@@ -60,32 +59,24 @@ func main() {
 			CritChance:   5,
 			CritModifier: 1.5,
 		},
-		Resolve: game.BasicAttack,
-		MapContext: func(g game.Game, ctx game.Context, this game.ActionContext) game.Context {
-			c := ctx.CloneWithTargets(g.FindActors(game.ActiveActors, ctx))
-			return c
-		},
+		Resolve: game.BasicAttack(),
 	}
-
 	swords_dance := game.Action{
 		Config: game.ActionConfig{
 			Name:           "Swords Dance",
 			BypassAccuracy: true,
 		},
-		Resolve: func(g game.Game, ctx game.Context, this game.ActionContext) []game.Transaction {
-			this.Push(game.AddModifiers(
-				effects.StatUpSource(game.Melee, 1).Bind(ctx),
-				effects.StatUpSource(game.Speed, 1).Bind(ctx),
-			).Bind(game.NewContext()))
-
-			return this.Done()
-		},
+		Resolve: game.AddSourceEffects(
+			effects.StatUpSource(game.Speed, 1),
+			effects.StatUpSource(game.Speed, 1),
+		),
 	}
 
 	g.PushCommand(swords_dance.Bind(game.MakeContextFrom(katie)))
+
 	g.PushCommand(slash.Bind(game.MakeContextFor(max, katie)))
+	g.PushCommand(slash.Bind(game.MakeContextFor(katie, max)))
 	g.Flush()
 
 	katie, _ = g.GetActor(katie.ID)
-	pp.Print(katie)
 }

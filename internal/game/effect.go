@@ -7,17 +7,19 @@ const EffectPriorityAuxStats = 0
 const EffectPriorityMapBaseStats = 1
 const EffectPriorityStats = 2
 const EffectPriorityStages = 2
-const EffectPriorityMapStages = 3
+const EffectPriorityStagesOverwrite = 3
+const EffectPriorityMapStages = 4
 
 type Effect struct {
 	Mutation
-	ID       uuid.UUID
-	Name     string
-	Delay    *int
-	Duration *int
-	Priority int
-	Triggers []Trigger
-	GetLog   func(Game, Effect, Context) (Log, bool)
+	ID        uuid.UUID
+	Name      string
+	Delay     *int
+	Duration  *int
+	Priority  int
+	Triggers  []Trigger
+	OnSuccess func(Game, Effect, Context) (Log, bool)
+	OnFailure func(Game, Effect, Context) (Log, bool)
 }
 type Modifier struct {
 	Bindable[Effect]

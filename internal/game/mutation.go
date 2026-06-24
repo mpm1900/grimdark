@@ -31,6 +31,9 @@ func NewMutation(filter Filter[Game], delta Mutator) Mutation {
 	}
 }
 
+func (m *Mutation) SetFilter(filter Filter[Game]) {
+	m.filter = filter
+}
 func (m Mutation) Filter(g Game, context Context) bool {
 	if m.filter == nil {
 		return true

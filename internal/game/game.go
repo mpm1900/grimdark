@@ -1,7 +1,9 @@
 package game
 
 import (
+	"cmp"
 	"fmt"
+	"math/rand/v2"
 	"slices"
 	"time"
 
@@ -155,7 +157,7 @@ func (g *Game) GetModifiers() []Modifier {
 	}
 
 	slices.SortStableFunc(modifiers, func(a, b Modifier) int {
-		return int(a.Priority - b.Priority)
+		return a.Priority - b.Priority
 	})
 
 	return modifiers
@@ -196,22 +198,57 @@ func (g *Game) AddActors(actors ...Actor) {
 }
 func (g *Game) AddModifiers(modifiers ...Modifier) {
 	g.mutate(func(s *State) {
-		s.Modifiers = append(s.Modifiers, modifiers...)
-	})
+		for _, mod := range modifiers {
+			if !mod.Payload.Filter(*g, mod.Context) {
+				if mod.Payload.OnFailure != nil {
+					log, ok := mod.Payload.OnFailure(*g, mod.Payload, mod.Context)
+					if ok {
+						g.PushLog(log, mod.Context)
+					}
+				}
+				continue
+			}
 
-	for _, mod := range modifiers {
-		if mod.Payload.GetLog != nil {
-			log, ok := mod.Payload.GetLog(*g, mod.Payload, mod.Context)
-			if ok {
-				g.PushLog(log, mod.Context)
+			s.Modifiers = append(s.Modifiers, mod)
+			if mod.Payload.OnSuccess != nil {
+				log, ok := mod.Payload.OnSuccess(*g, mod.Payload, mod.Context)
+				if ok {
+					g.PushLog(log, mod.Context)
+				}
 			}
 		}
-	}
-
+	})
 }
 func (g *Game) PushCommand(command Command) {
 	g.mutate(func(s *State) {
 		s.Commands = append(s.Commands, command)
+	})
+}
+func (g *Game) SortCommands() {
+	g.mutate(func(s *State) {
+		rand.Shuffle(len(s.Commands), func(i, j int) {
+			s.Commands[i], s.Commands[j] = s.Commands[j], s.Commands[i]
+		})
+
+		slices.SortStableFunc(s.Commands, func(a, b Command) int {
+			if byPriority := cmp.Compare(b.Priority, a.Priority); byPriority != 0 {
+				return byPriority
+			}
+
+			aSource, aOK := g.GetSource(a.Context)
+			bSource, bOK := g.GetSource(b.Context)
+			if !aOK && !bOK {
+				return 0
+			}
+			if !aOK {
+				return 1
+			}
+			if !bOK {
+				return -1
+			}
+
+			return cmp.Compare(bSource.Stats[Speed], aSource.Stats[Speed])
+		})
 	})
 }
 func (g *Game) On(on TriggerOn, context Context) {
@@ -223,8 +260,6 @@ func (g *Game) On(on TriggerOn, context Context) {
 			}
 		}
 	}
-
-	fmt.Println("TRIGGER:", on, len(triggers))
 
 	g.mutate(func(s *State) {
 		s.Triggers = append(s.Triggers, triggers...)
@@ -333,6 +368,7 @@ func (g *Game) NextTrigger() {
 	g.PushTransactions(trig.ResolveTrigger(*g))
 }
 func (g *Game) NextCommand() {
+	g.SortCommands()
 	cmd, err := g.state.Commands.Dequeue()
 	if err != nil {
 		return

@@ -5,7 +5,7 @@ import (
 	"grimdark/internal/game"
 )
 
-func SourceModifierLog(g game.Game, this game.Effect, ctx game.Context) (game.Log, bool) {
+func StatUpSourceOnSuccess(g game.Game, this game.Effect, ctx game.Context) (game.Log, bool) {
 	source, ok := g.GetSource(ctx)
 	if !ok {
 		return game.Log{}, false
@@ -27,7 +27,7 @@ func StatUpSource(stat game.Stat, amount int) game.Effect {
 	})
 
 	effect.Name = fmt.Sprintf("%s up", stat)
-	effect.GetLog = SourceModifierLog
+	effect.OnSuccess = StatUpSourceOnSuccess
 
 	return effect
 }

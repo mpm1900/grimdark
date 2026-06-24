@@ -78,11 +78,11 @@ func (a Affinity) GetBaseModifier(target Actor) int {
 	return result
 }
 
-func (a Affinity) GetAffinityModifier(source, target Actor) float64 {
+func (a Affinity) GetAffinityModifier(source, target Actor) (float64, int, int) {
 	base := a.GetBaseModifier(target)
 	source_damage := source.GetAffinityDamage(a)
 	target_resistance := target.GetAffinityResistance(a)
-	base += source_damage - target_resistance
+	total := base + source_damage - target_resistance
 
-	return mapStage(base, 2, 1)
+	return mapStage(total, 2, 1), total, base
 }
