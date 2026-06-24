@@ -66,7 +66,7 @@ var affinityMatrix = map[Affinity]map[Affinity]int{
 func (a Affinity) GetBaseModifier(target Actor) int {
 	result := 0
 
-	for _, affinity := range target.Affinities {
+	for affinity := range target.Affinities {
 		stage, ok := affinityMatrix[a][affinity]
 		if !ok {
 			stage = 0

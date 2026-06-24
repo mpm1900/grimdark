@@ -27,9 +27,10 @@ type AccuracyResult struct {
 type DamageResult struct {
 	AccuracyResult
 	Damage float64
+	Random float64
 }
 
-func (ac ActionConfig) GetPower(source, target Actor, useBaseStats bool) float64 {
+func (ac ActionConfig) GetDamage(source, target Actor, useBaseStats bool) float64 {
 	adp_ratio := ac.Stat.GetRatio(source, target, useBaseStats) * ac.Power
 	level_mod := float64(source.Level*2)/5 + 2
 	base := (adp_ratio*level_mod)/50 + 2
@@ -65,19 +66,20 @@ func (ac ActionConfig) GetAccuracyResult(source, target Actor) AccuracyResult {
 
 func (ac ActionConfig) GetDamageResult(source, target Actor) DamageResult {
 	accuracy := ac.GetAccuracyResult(source, target)
-	power := ac.GetPower(source, target, accuracy.Critical)
+	damage := ac.GetDamage(source, target, accuracy.Critical)
 
 	if accuracy.Critical {
-		power = power * ac.CritModifier
+		damage = damage * ac.CritModifier
 	}
 
 	if !accuracy.Success {
-		power = 0.0
+		damage = 0.0
 	}
 
 	return DamageResult{
 		AccuracyResult: accuracy,
-		Damage:         power,
+		Damage:         damage,
+		Random:         rand.Float64()*(1.05-0.8) + 0.8,
 	}
 }
 
@@ -172,9 +174,10 @@ func BasicAttack(g Game, context Context, this ActionContext) []Transaction {
 	for _, target := range g.GetTargets(context) {
 		result := this.Action.Config.GetDamageResult(this.Source, target)
 		dmg_ctx := MakeContextFor(this.Source, target)
+		damage := result.Damage * result.Random
 
 		this.Concat(CreatePreDamageEffects(result, context, this))
-		this.Push(DamageTargets(result.Damage, true).Bind(dmg_ctx))
+		this.Push(DamageTargets(damage, true).Bind(dmg_ctx))
 		this.Concat(CreatePostDamageEffects(result, context, this))
 	}
 

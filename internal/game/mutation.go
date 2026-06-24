@@ -1,6 +1,8 @@
 package game
 
-import "github.com/google/uuid"
+import (
+	"github.com/google/uuid"
+)
 
 type Bindable[P any] struct {
 	ID      uuid.UUID

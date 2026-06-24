@@ -2,7 +2,6 @@ package game
 
 import (
 	"maps"
-	"slices"
 
 	"github.com/google/uuid"
 )
@@ -69,7 +68,7 @@ func (s Stat) GetRatio(source, target Actor, useBaseStats bool) float64 {
 type ActorDef struct {
 	ID         uuid.UUID
 	Name       string
-	Affinities []Affinity
+	Affinities map[Affinity]struct{}
 	Stats      map[Stat]float64
 }
 
@@ -104,7 +103,7 @@ func cloneStatus(status *Status) *Status {
 func NewActorDef() ActorDef {
 	return ActorDef{
 		ID:         uuid.New(),
-		Affinities: []Affinity{},
+		Affinities: map[Affinity]struct{}{},
 		Stats: map[Stat]float64{
 			Health:         100,
 			Speed:          100,
@@ -142,7 +141,7 @@ func (a Actor) Clone() Actor {
 		ActorDef: ActorDef{
 			ID:         a.ID,
 			Name:       a.Name,
-			Affinities: slices.Clone(a.Affinities),
+			Affinities: maps.Clone(a.Affinities),
 			Stats:      maps.Clone(a.ActorDef.Stats),
 		},
 
@@ -191,7 +190,7 @@ func (a *Actor) mapBaseStats() {
 
 func (a Actor) GetAffinityDamage(affinity Affinity) int {
 	base := maps.Clone(a.AffinityDamage)
-	for _, affinity := range a.Affinities {
+	for affinity := range a.Affinities {
 		b, ok := base[affinity]
 		if !ok {
 			b = 0

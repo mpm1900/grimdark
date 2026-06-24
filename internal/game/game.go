@@ -195,6 +195,14 @@ func (g *Game) AddModifiers(modifiers ...Modifier) {
 	g.mutate(func(s *State) {
 		s.Modifiers = append(s.Modifiers, modifiers...)
 	})
+
+	for _, mod := range modifiers {
+		if mod.Payload.OnAddLog != nil {
+			log := mod.Payload.OnAddLog(*g, mod.Payload, mod.Context)
+			g.PushLog(log, mod.Context)
+		}
+	}
+
 }
 func (g *Game) PushCommand(command Command) {
 	g.mutate(func(s *State) {
@@ -211,7 +219,7 @@ func (g *Game) On(on TriggerOn, context Context) {
 		}
 	}
 
-	fmt.Println("ON:", on, len(triggers))
+	fmt.Println("TRIGGER:", on, len(triggers))
 
 	g.mutate(func(s *State) {
 		s.Triggers = append(s.Triggers, triggers...)

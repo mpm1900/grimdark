@@ -12,10 +12,12 @@ const EffectPriorityMapStages = 3
 type Effect struct {
 	Mutation
 	ID       uuid.UUID
+	Name     string
 	Delay    *int
 	Duration *int
 	Priority int
 	Triggers []Trigger
+	OnAddLog func(Game, Effect, Context) Log
 }
 type Modifier struct {
 	Bindable[Effect]
