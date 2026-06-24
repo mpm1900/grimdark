@@ -22,6 +22,7 @@ type AccuracyResult struct {
 	AccuracyRoll float64
 	Critical     bool
 	CriticalRoll float64
+	Target       Actor
 }
 
 type DamageResult struct {
@@ -61,10 +62,11 @@ func (ac ActionConfig) GetAccuracyResult(source, target Actor) AccuracyResult {
 		AccuracyRoll: accuracy_roll,
 		Critical:     critical,
 		CriticalRoll: critical_roll,
+		Target:       target,
 	}
 }
 
-func (ac ActionConfig) GetDamageResult(source, target Actor) DamageResult {
+func (ac ActionConfig) GetDamageResult(source, target Actor, targets []Actor) DamageResult {
 	accuracy := ac.GetAccuracyResult(source, target)
 	damage := ac.GetDamage(source, target, accuracy.Critical)
 
@@ -72,7 +74,11 @@ func (ac ActionConfig) GetDamageResult(source, target Actor) DamageResult {
 		damage = damage * ac.CritModifier
 	}
 
-	if !accuracy.Success {
+	if len(targets) > 1 {
+		damage = damage * 0.75
+	}
+
+	if !accuracy.Success || target.IsProtected {
 		damage = 0.0
 	}
 
@@ -88,6 +94,7 @@ type Action struct {
 	Resolve          func(g Game, ctx Context, this ActionContext) []Transaction
 	Validate         Filter[Game]
 	TargetsPredicate Filter[Actor]
+	MapContext       func(g Game, ctx Context, this ActionContext) Context
 }
 
 func (a Action) CanResolve(g Game, context Context) bool {
@@ -114,9 +121,40 @@ type Command struct {
 }
 
 func (c Command) Resolve(g Game) []Transaction {
-	actionName := c.Payload.Config.Name
-	if actionName == "" {
-		actionName = "Action"
+	action_context := ActionContext{
+		Action:       c.Payload,
+		Source:       g.GetSourceAction(c.Context),
+		transactions: []Transaction{},
+	}
+
+	context := c.Context
+	if c.Payload.MapContext != nil {
+		context = c.Payload.MapContext(g, context, action_context)
+	}
+
+	action_context.Push(
+		PushLog(NewLog("$source$ used $action$.", map[string]string{
+			"$source$": action_context.Source.Name,
+			"$action$": c.Payload.Config.Name,
+		})).Bind(context),
+	)
+
+	if c.Payload.Resolve == nil || !c.Payload.CanResolve(g, context) {
+		action_context.Push(
+			PushLog(NewLog("$action$ failed.", map[string]string{
+				"$action$": c.Payload.Config.Name,
+			})).Bind(context),
+		)
+
+		return action_context.transactions
+	}
+
+	return c.Payload.Resolve(g, context, action_context)
+}
+
+func (c Command) ResolveTrigger(g Game) []Transaction {
+	if !c.Payload.CanResolve(g, c.Context) || c.Payload.Resolve == nil {
+		return []Transaction{}
 	}
 
 	action_context := ActionContext{
@@ -125,90 +163,53 @@ func (c Command) Resolve(g Game) []Transaction {
 		transactions: []Transaction{},
 	}
 
-	action_context.Push(
-		PushLog(NewLog("$source$ used $action$.", map[string]string{
-			"$source$": action_context.Source.Name,
-			"$action$": actionName,
-		})).Bind(c.Context),
-	)
-
-	if !c.Payload.CanResolve(g, c.Context) {
-		action_context.Push(
-			PushLog(NewLog("$action$ failed.", map[string]string{
-				"$action$": actionName,
-			})).Bind(c.Context),
-		)
-
-		return action_context.transactions
+	context := c.Context
+	if c.Payload.MapContext != nil {
+		context = c.Payload.MapContext(g, context, action_context)
 	}
-
-	if c.Payload.Resolve == nil {
-		action_context.Push(
-			PushLog(NewLog("$action$ failed.", map[string]string{
-				"$action$": actionName,
-			})).Bind(c.Context),
-		)
-
-		return action_context.transactions
-	}
-
-	return c.Payload.Resolve(g, c.Context, action_context)
-}
-
-func (c Command) ResolveTrigger(g Game) []Transaction {
-	if !c.Payload.CanResolve(g, c.Context) || c.Payload.Resolve == nil {
-		return []Transaction{}
-	}
-
-	actionContext := ActionContext{
-		Action:       c.Payload,
-		Source:       g.GetSourceAction(c.Context),
-		transactions: []Transaction{},
-	}
-
-	return c.Payload.Resolve(g, c.Context, actionContext)
+	return c.Payload.Resolve(g, context, action_context)
 }
 
 // helpers
 func BasicAttack(g Game, context Context, this ActionContext) []Transaction {
-	for _, target := range g.GetTargets(context) {
-		result := this.Action.Config.GetDamageResult(this.Source, target)
+	targets := g.GetTargets(context)
+	for _, target := range targets {
+		result := this.Action.Config.GetDamageResult(this.Source, target, targets)
 		dmg_ctx := MakeContextFor(this.Source, target)
 		damage := result.Damage * result.Random
 
-		this.Concat(CreatePreDamageEffects(result, context, this))
 		this.Push(DamageTargets(damage, true).Bind(dmg_ctx))
-		this.Concat(CreatePostDamageEffects(result, context, this))
+		CreatePostDamageEffects(result, context, &this)
 	}
 
 	return this.Done()
 }
 
-func CreatePreDamageEffects(result DamageResult, context Context, this ActionContext) []Transaction {
-	transactions := []Transaction{}
-
-	if !result.Success {
-		transactions = append(transactions, PushLog(NewLog(
-			"$source$'s $action$ missed.",
-			map[string]string{
-				"$action$": this.Action.Config.Name,
-				"$source$": this.Source.Name,
-			},
-		)).Bind(context))
-	}
-
-	return transactions
-}
-
-func CreatePostDamageEffects(result DamageResult, context Context, this ActionContext) []Transaction {
-	transactions := []Transaction{}
-
+func CreatePostDamageEffects(result DamageResult, context Context, this *ActionContext) {
 	if result.Critical {
-		transactions = append(transactions, PushLog(NewLog(
+		this.Push(PushLog(NewLog(
 			"Critical hit!",
 			map[string]string{},
 		)).Bind(context))
 	}
 
-	return transactions
+	if !result.Success {
+		this.Push(PushLog(NewLog(
+			"$source$'s $action$ missed $target$.",
+			map[string]string{
+				"$action$": this.Action.Config.Name,
+				"$source$": this.Source.Name,
+				"$target$": result.Target.Name,
+			},
+		)).Bind(context))
+	}
+
+	if result.Success && result.Target.IsProtected {
+		this.Push(PushLog(NewLog(
+			"$target$ was protected.",
+			map[string]string{
+				"$target$": result.Target.Name,
+			},
+		)).Bind(context))
+	}
 }

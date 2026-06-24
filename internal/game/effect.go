@@ -17,7 +17,7 @@ type Effect struct {
 	Duration *int
 	Priority int
 	Triggers []Trigger
-	OnAddLog func(Game, Effect, Context) Log
+	GetLog   func(Game, Effect, Context) (Log, bool)
 }
 type Modifier struct {
 	Bindable[Effect]

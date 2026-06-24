@@ -171,6 +171,9 @@ func (g *Game) GetTriggers() []Trigger {
 func (g *Game) GetActor(id uuid.UUID) (Actor, bool) {
 	return g.State().FindActorByID(id)
 }
+func (g *Game) FindActors(where Filter[Actor], context Context) []Actor {
+	return g.State().FindActorsWhere(where, context)
+}
 
 func (g *Game) resolve() {
 	g.gamestate = resolving
@@ -197,9 +200,11 @@ func (g *Game) AddModifiers(modifiers ...Modifier) {
 	})
 
 	for _, mod := range modifiers {
-		if mod.Payload.OnAddLog != nil {
-			log := mod.Payload.OnAddLog(*g, mod.Payload, mod.Context)
-			g.PushLog(log, mod.Context)
+		if mod.Payload.GetLog != nil {
+			log, ok := mod.Payload.GetLog(*g, mod.Payload, mod.Context)
+			if ok {
+				g.PushLog(log, mod.Context)
+			}
 		}
 	}
 

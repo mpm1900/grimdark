@@ -21,8 +21,8 @@ func NewContext() Context {
 	return Context{
 		ActionID: nil,
 		EffectID: nil,
-		PlayerID: nil,
 
+		PlayerID:    nil,
 		ParentID:    nil,
 		SourceID:    nil,
 		ActorIDs:    []uuid.UUID{},
@@ -49,9 +49,11 @@ func MakeContextFrom(actor Actor) Context {
 	ctx.PlayerID = &actor.PlayerID
 	return ctx
 }
-func MakeContextFor(source, target Actor) Context {
+func MakeContextFor(source Actor, targets ...Actor) Context {
 	ctx := MakeContextFrom(source)
-	ctx.AddTarget(target)
+	for _, target := range targets {
+		ctx.AddTarget(target)
+	}
 	return ctx
 }
 
@@ -63,16 +65,23 @@ func (c *Context) AddTarget(target Actor) {
 	}
 }
 func (c Context) CloneWithTarget(target Actor) Context {
-	c = c.Clone()
-	c.ActorIDs = []uuid.UUID{}
-	c.PositionIDs = []uuid.UUID{}
-	if target.PositionID != nil {
-		c.PositionIDs = append(c.PositionIDs, *target.PositionID)
-	} else {
-		c.ActorIDs = append(c.ActorIDs, target.ID)
+	clone := c.Clone()
+	clone.ActorIDs = []uuid.UUID{}
+	clone.PositionIDs = []uuid.UUID{}
+	clone.AddTarget(target)
+
+	return clone
+}
+
+func (c Context) CloneWithTargets(targets []Actor) Context {
+	clone := c.Clone()
+	clone.ActorIDs = []uuid.UUID{}
+	clone.PositionIDs = []uuid.UUID{}
+	for _, target := range targets {
+		clone.AddTarget(target)
 	}
 
-	return c
+	return clone
 }
 
 func (g *Game) GetSource(context Context) (Actor, bool) {

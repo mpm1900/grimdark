@@ -40,7 +40,7 @@ func main() {
 			Action: game.Action{
 				Resolve: func(g game.Game, ctx game.Context, this game.ActionContext) []game.Transaction {
 					fmt.Println("hur dur trigger doing things")
-					return []game.Transaction{}
+					return this.Done()
 				},
 			},
 		},
@@ -61,6 +61,10 @@ func main() {
 			CritModifier: 1.5,
 		},
 		Resolve: game.BasicAttack,
+		MapContext: func(g game.Game, ctx game.Context, this game.ActionContext) game.Context {
+			c := ctx.CloneWithTargets(g.FindActors(game.ActiveActors, ctx))
+			return c
+		},
 	}
 
 	swords_dance := game.Action{

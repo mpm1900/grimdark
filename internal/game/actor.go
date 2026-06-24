@@ -86,9 +86,10 @@ type Actor struct {
 	PlayerID   uuid.UUID
 	PositionID *uuid.UUID
 
-	Damage  float64
-	Status  *Status
-	IsAlive bool
+	Damage      float64
+	Status      *Status
+	IsAlive     bool
+	IsProtected bool
 }
 
 func cloneStatus(status *Status) *Status {
@@ -130,9 +131,10 @@ func NewActor(playerID uuid.UUID, def ActorDef) Actor {
 		Aux:                map[Stat]float64{},
 		Stats:              maps.Clone(def.Stats),
 
-		Damage:  0,
-		Status:  nil,
-		IsAlive: true,
+		Damage:      0,
+		Status:      nil,
+		IsAlive:     true,
+		IsProtected: false,
 	}
 }
 
@@ -157,6 +159,7 @@ func (a Actor) Clone() Actor {
 		Damage:             a.Damage,
 		Status:             cloneStatus(a.Status),
 		IsAlive:            a.IsAlive,
+		IsProtected:        a.IsProtected,
 	}
 }
 
