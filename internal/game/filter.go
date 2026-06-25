@@ -26,7 +26,7 @@ func CombineFilters[T any](
 
 // filters
 // game
-func TrueGameFilter(game Game, context Context) bool {
+func TrueGameFilter(g Game, context Context) bool {
 	return true
 }
 

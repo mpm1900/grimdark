@@ -95,17 +95,17 @@ func (e Effect) Bind(context Context) Modifier {
 	}
 	return mod
 }
-func (m *Modifier) Resolve(game *Game) []uuid.UUID {
+func (m *Modifier) Resolve(g *Game) []uuid.UUID {
 	for tag := range m.Payload.Tags {
-		if _, immune := game.meta.modifier_immunities[tag]; immune {
+		if _, immune := g.meta.modifier_immunities[tag]; immune {
 			return []uuid.UUID{}
 		}
 	}
 
-	actorIDs := resolveMutation(game, m.Context, m.Payload)
+	actorIDs := resolveMutation(g, m.Context, m.Payload)
 	if len(actorIDs) > 0 {
 		for _, actorID := range actorIDs {
-			game.meta.apply(actorID, m.Payload.ID)
+			g.meta.apply(actorID, m.Payload.ID)
 		}
 	}
 

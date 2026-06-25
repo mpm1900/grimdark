@@ -210,7 +210,6 @@ func (a Actor) GetAffinityDamage(affinity Affinity) int {
 
 	return 0
 }
-
 func (a Actor) GetAffinityResistance(affinity Affinity) int {
 	value, ok := a.AffinityResistance[affinity]
 	if ok {
@@ -219,8 +218,10 @@ func (a Actor) GetAffinityResistance(affinity Affinity) int {
 
 	return 0
 }
-
 func (a Actor) GetRemainingHealth() float64 {
 	health := a.Stats[Health]
 	return health - a.Damage
+}
+func (a Actor) GetModifiers() []Modifier {
+	return []Modifier{}
 }

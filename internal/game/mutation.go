@@ -59,15 +59,15 @@ type resolvableMutation interface {
 	Delta(*Game, Context) []uuid.UUID
 }
 
-func resolveMutation(game *Game, context Context, mutation resolvableMutation) []uuid.UUID {
-	if !mutation.Filter(*game, context) {
+func resolveMutation(g *Game, context Context, mutation resolvableMutation) []uuid.UUID {
+	if !mutation.Filter(*g, context) {
 		return []uuid.UUID{}
 	}
 
-	return mutation.Delta(game, context)
+	return mutation.Delta(g, context)
 }
-func (tx *Transaction) Resolve(game *Game) []uuid.UUID {
-	return resolveMutation(game, tx.Context, tx.Payload)
+func (tx *Transaction) Resolve(g *Game) []uuid.UUID {
+	return resolveMutation(g, tx.Context, tx.Payload)
 }
 
 func AddModifiers(modifiers ...Modifier) Mutation {
