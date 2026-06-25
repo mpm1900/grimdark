@@ -3,6 +3,8 @@ package game
 type TriggerOn string
 
 const (
+	OnActorEnter    TriggerOn = "on-actor-enter"
+	OnActorLeave    TriggerOn = "on-actor-enter"
 	OnDamageRecieve TriggerOn = "on-damage-recieve"
 )
 

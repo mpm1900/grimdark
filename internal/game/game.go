@@ -224,14 +224,14 @@ func (g *Game) AddModifiers(modifiers ...Modifier) {
 
 			if success {
 				s.Modifiers = append(s.Modifiers, mod)
-				if mod.Payload.OnSuccess != nil {
-					mod.Payload.OnSuccess(g, mod.Payload, mod.Context)
+				if mod.Payload.CheckSuccess != nil {
+					mod.Payload.CheckSuccess(g, mod.Payload, mod.Context)
 				}
 			}
 
 			if !success {
-				if mod.Payload.OnFailure != nil {
-					mod.Payload.OnFailure(g, mod.Payload, mod.Context)
+				if mod.Payload.CheckFailure != nil {
+					mod.Payload.CheckFailure(g, mod.Payload, mod.Context)
 				}
 				continue
 			}
@@ -342,16 +342,19 @@ func (g *Game) SetPosition(actor_id uuid.UUID, position_id uuid.UUID) {
 			return
 		}
 
+		trigger_context := MakeContextFor(actor)
 		if position_id == uuid.Nil {
 			log := NewLog("$actor$ left the battle.", map[string]string{
 				"$actor$": actor.Name,
 			})
-			g.PushLog(log.Bind(MakeContextFrom(actor)))
+			g.PushLog(log.Bind(trigger_context))
+			g.On(OnActorEnter, trigger_context)
 		} else {
 			log := NewLog("$actor$ joined the battle.", map[string]string{
 				"$actor$": actor.Name,
 			})
-			g.PushLog(log.Bind(MakeContextFrom(actor)))
+			g.PushLog(log.Bind(trigger_context))
+			g.On(OnActorLeave, trigger_context)
 		}
 
 		s.UpdateActor(actor_id, func(a Actor) Actor {

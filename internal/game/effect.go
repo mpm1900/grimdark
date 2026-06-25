@@ -28,9 +28,9 @@ type Effect struct {
 	// check is ran on add
 	Check GameFilter
 	// success logs
-	OnSuccess func(*Game, Effect, Context)
+	CheckSuccess func(*Game, Effect, Context)
 	// failure logs
-	OnFailure func(*Game, Effect, Context)
+	CheckFailure func(*Game, Effect, Context)
 }
 type Modifier struct {
 	Bindable[Effect]

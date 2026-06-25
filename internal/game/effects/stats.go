@@ -42,28 +42,28 @@ func StatChangeActor(stat game.Stat, amount int) game.Updater[game.Actor] {
 func StatUpSource(stat game.Stat, amount int) game.Effect {
 	effect := game.EffectSource(game.EffectPriorityStages, StatChangeActor(stat, amount))
 	effect.Name = fmt.Sprintf("%s up", stat)
-	effect.OnSuccess = StatChangeSourceOnSuccess
+	effect.CheckSuccess = StatChangeSourceOnSuccess
 
 	return effect
 }
 func StatDownSource(stat game.Stat, amount int) game.Effect {
 	effect := game.EffectSource(game.EffectPriorityStages, StatChangeActor(stat, -amount))
 	effect.Name = fmt.Sprintf("%s down", stat)
-	effect.OnSuccess = StatChangeSourceOnSuccess
+	effect.CheckSuccess = StatChangeSourceOnSuccess
 
 	return effect
 }
 func StatUpTargets(stat game.Stat, amount int) game.Effect {
 	effect := game.EffectTargets(game.EffectPriorityStages, StatChangeActor(stat, amount))
 	effect.Name = fmt.Sprintf("%s up", stat)
-	effect.OnSuccess = StatChangeTargetsOnSuccess
+	effect.CheckSuccess = StatChangeTargetsOnSuccess
 
 	return effect
 }
 func StatDownTargets(stat game.Stat, amount int) game.Effect {
 	effect := game.EffectTargets(game.EffectPriorityStages, StatChangeActor(stat, -amount))
 	effect.Name = fmt.Sprintf("%s down", stat)
-	effect.OnSuccess = StatChangeTargetsOnSuccess
+	effect.CheckSuccess = StatChangeTargetsOnSuccess
 
 	return effect
 }
