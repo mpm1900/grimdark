@@ -125,9 +125,9 @@ func (g *Game) modify(updater func(*State)) {
 
 	updater(&g.resolved)
 }
-func (g *Game) PushLog(log Log, context Context) {
-	fmt.Println(log.Resolve())
-	g.Logs = append(g.Logs, log.Bind(context))
+func (g *Game) PushLog(log Bindable[Log]) {
+	fmt.Println(log.Payload.Resolve())
+	g.Logs = append(g.Logs, log)
 }
 func (g *Game) AddModifierImmunityTag(tag uuid.UUID) {
 	g.meta.modifier_immunities[tag] = struct{}{}
@@ -341,12 +341,12 @@ func (g *Game) SetPosition(actor_id uuid.UUID, position_id uuid.UUID) {
 			log := NewLog("$actor$ left the battle.", map[string]string{
 				"$actor$": actor.Name,
 			})
-			g.PushLog(log, MakeContextFrom(actor))
+			g.PushLog(log.Bind(MakeContextFrom(actor)))
 		} else {
 			log := NewLog("$actor$ joined the battle.", map[string]string{
 				"$actor$": actor.Name,
 			})
-			g.PushLog(log, MakeContextFrom(actor))
+			g.PushLog(log.Bind(MakeContextFrom(actor)))
 		}
 
 		s.UpdateActor(actor_id, func(a Actor) Actor {
@@ -362,40 +362,39 @@ func (g *Game) SetPosition(actor_id uuid.UUID, position_id uuid.UUID) {
 func (g *Game) DamageTargets(context Context, damage float64) {
 	for _, target := range g.GetTargets(context) {
 		g.MutateActor(target.ID, func(a Actor) Actor {
-			found, ok := g.GetActor(target.ID)
-			if !ok {
+			resolved, ok := g.GetActor(target.ID)
+			if !ok || !resolved.IsAlive {
 				return a
 			}
 
-			a.Damage = a.Damage + damage
-			if a.Damage < 0 {
-				a.Damage = 0
-			}
-
-			a.IsAlive = found.Stats[Health] > a.Damage
+			a.ApplyDamage(damage, resolved)
+			log_ctx := MakeContextFor(a, a)
 
 			if damage > 0 {
-				g.PushLog(
-					NewLog(
-						fmt.Sprintf("$target$ lost %d HP.", int(damage)),
-						map[string]string{
-							"$target$": a.Name,
-						},
-					),
-					MakeContextFor(a, a),
-				)
+				g.PushLog(NewLog(
+					fmt.Sprintf("$target$ lost %d HP.", int(damage)),
+					map[string]string{
+						"$target$": a.Name,
+					},
+				).Bind(log_ctx))
 			}
 
-			if !a.IsAlive && found.IsAlive {
-				g.PushLog(
-					NewLog(
-						"$target$ died.",
-						map[string]string{
-							"$target$": a.Name,
-						},
-					),
-					MakeContextFor(a, a),
-				)
+			if damage < 0 {
+				g.PushLog(NewLog(
+					fmt.Sprintf("$target$ healed %d HP.", int(-damage)),
+					map[string]string{
+						"$target$": a.Name,
+					},
+				).Bind(log_ctx))
+			}
+
+			if !a.IsAlive && resolved.IsAlive {
+				g.PushLog(NewLog(
+					"$target$ died.",
+					map[string]string{
+						"$target$": a.Name,
+					},
+				).Bind(log_ctx))
 			}
 
 			return a

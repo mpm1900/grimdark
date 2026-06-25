@@ -81,7 +81,7 @@ func AddModifiers(modifiers ...Modifier) Mutation {
 func PushLog(log Log) Mutation {
 	return Mutation{
 		delta: func(g *Game, ctx Context) []uuid.UUID {
-			g.PushLog(log, ctx)
+			g.PushLog(log.Bind(ctx))
 			return []uuid.UUID{}
 		},
 	}

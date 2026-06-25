@@ -17,7 +17,7 @@ func StatChangeSourceOnSuccess(g *game.Game, this game.Effect, ctx game.Context)
 			"$source$": source.Name,
 			"$effect$": this.Name,
 		},
-	), ctx)
+	).Bind(ctx))
 }
 func StatChangeTargetsOnSuccess(g *game.Game, this game.Effect, ctx game.Context) {
 	targets := g.GetTargets(ctx)
@@ -28,7 +28,7 @@ func StatChangeTargetsOnSuccess(g *game.Game, this game.Effect, ctx game.Context
 				"$target$": target.Name,
 				"$effect$": this.Name,
 			},
-		), ctx)
+		).Bind(ctx))
 	}
 }
 

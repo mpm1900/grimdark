@@ -112,10 +112,11 @@ func NewActorDef() ActorDef {
 
 func NewActor(playerID uuid.UUID, def ActorDef) Actor {
 	return Actor{
-		ActorDef:           def,
-		PlayerID:           playerID,
-		PositionID:         uuid.Nil,
-		Level:              100,
+		ActorDef:   def,
+		PlayerID:   playerID,
+		PositionID: uuid.Nil,
+		Level:      100,
+
 		AffinityDamage:     map[Affinity]int{},
 		AffinityResistance: map[Affinity]int{},
 		Stages:             map[Stat]int{},
@@ -137,6 +138,9 @@ func (a Actor) Clone() Actor {
 			Affinities: maps.Clone(a.Affinities),
 			Stats:      maps.Clone(a.ActorDef.Stats),
 		},
+		Level:      a.Level,
+		PlayerID:   a.PlayerID,
+		PositionID: a.PositionID,
 
 		AffinityDamage:     maps.Clone(a.AffinityDamage),
 		AffinityResistance: maps.Clone(a.AffinityResistance),
@@ -144,13 +148,11 @@ func (a Actor) Clone() Actor {
 		Stages:             maps.Clone(a.Stages),
 		Aux:                maps.Clone(a.Aux),
 		Stats:              maps.Clone(a.Stats),
-		Level:              a.Level,
-		PlayerID:           a.PlayerID,
-		PositionID:         a.PositionID,
-		Damage:             a.Damage,
-		Status:             a.Status,
-		IsAlive:            a.IsAlive,
-		IsProtected:        a.IsProtected,
+
+		Damage:      a.Damage,
+		Status:      a.Status,
+		IsAlive:     a.IsAlive,
+		IsProtected: a.IsProtected,
 	}
 }
 
@@ -180,6 +182,14 @@ func (a *Actor) mapBaseStats() {
 		a.Stats[stat] = mapBaseStat(*a, stat, a.Stats, aux)
 		a.Unmodified[stat] = mapBaseStat(*a, stat, a.Unmodified, 0)
 	}
+}
+func (a *Actor) ApplyDamage(damage float64, resolved Actor) {
+	a.Damage = a.Damage + damage
+	if a.Damage < 0 {
+		a.Damage = 0
+	}
+
+	a.IsAlive = resolved.Stats[Health] > a.Damage
 }
 
 func (a Actor) GetAffinityDamage(affinity Affinity) int {
