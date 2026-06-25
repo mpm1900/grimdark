@@ -34,6 +34,11 @@ func BasicAttack(config AttackConfig) ActionResolver {
 					trigger_context := MakeContextFor(this.Source, target)
 					g.On(OnDamageRecieve, trigger_context)
 
+					if this.Action.Config.Recoil > 0 {
+						recoil_ctx := MakeContextFor(this.Source, this.Source)
+						this.Push(DamageTargets(result.Damage * this.Action.Config.Recoil).Bind(recoil_ctx))
+					}
+
 					if config.OnSuccessResult != nil {
 						config.OnSuccessResult(*g, context, &this, result)
 					}

@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"grimdark/internal/game"
 	"grimdark/internal/game/effects"
+
+	"github.com/k0kubun/pp/v3"
 )
 
 func main() {
@@ -61,6 +63,7 @@ func main() {
 			Affinity:     game.Kinetic,
 			Stat:         game.Melee,
 			Power:        70,
+			Recoil:       0.12,
 			Hits:         1,
 			Accuracy:     game.P(0.98),
 			CritChance:   0.05,
@@ -95,4 +98,5 @@ func main() {
 	g.Flush()
 
 	katie, _ = g.GetActor(katie.ID)
+	pp.Print(katie)
 }

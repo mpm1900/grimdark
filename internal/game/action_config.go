@@ -9,12 +9,13 @@ type ActionConfig struct {
 
 	Affinity     Affinity
 	Stat         Stat
+	Priority     int
 	Power        float64
+	Recoil       float64
 	Hits         int
 	Accuracy     *float64
 	CritChance   float64
 	CritModifier float64
-	Priority     int
 }
 
 type AccuracyResult struct {

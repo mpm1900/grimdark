@@ -35,7 +35,8 @@ func (ac *ActionContext) Done() []Transaction {
 }
 
 type gamemeta struct {
-	applied_effects map[uuid.UUID]map[uuid.UUID]int
+	applied_effects     map[uuid.UUID]map[uuid.UUID]int
+	modifier_immunities map[uuid.UUID]struct{}
 }
 
 func (gm *gamemeta) apply(actorID uuid.UUID, modifierID uuid.UUID) {
@@ -128,6 +129,9 @@ func (g *Game) PushLog(log Log, context Context) {
 	fmt.Println(log.Resolve())
 	g.Logs = append(g.Logs, log.Bind(context))
 }
+func (g *Game) AddModifierImmunityTag(tag uuid.UUID) {
+	g.meta.modifier_immunities[tag] = struct{}{}
+}
 
 // getters
 func (g *Game) Base() State {
@@ -184,6 +188,7 @@ func (g *Game) resolve() {
 	g.gamestate = resolving
 	g.resolved = g.state.Clone()
 	g.meta.applied_effects = map[uuid.UUID]map[uuid.UUID]int{}
+	g.meta.modifier_immunities = map[uuid.UUID]struct{}{}
 
 	modifiers := g.GetModifiers()
 	for _, mod := range modifiers {

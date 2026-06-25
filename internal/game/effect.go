@@ -1,6 +1,8 @@
 package game
 
-import "github.com/google/uuid"
+import (
+	"github.com/google/uuid"
+)
 
 const EffectPriorityBaseStats = 0
 const EffectPriorityAuxStats = 0
@@ -10,6 +12,8 @@ const EffectPriorityStages = 2
 const EffectPriorityStagesOverwrite = 3
 const EffectPriorityMapStages = 4
 
+var ET_DEFAULT = uuid.New()
+
 type Effect struct {
 	Mutation
 	ID       uuid.UUID
@@ -17,6 +21,7 @@ type Effect struct {
 	Delay    *int
 	Duration *int
 	Priority int
+	Tags     map[uuid.UUID]struct{}
 	Triggers []Trigger
 	// check is ran on add
 	Check Filter[Game]
@@ -30,8 +35,43 @@ type Modifier struct {
 	Priority int
 }
 
+func NewEffect() Effect {
+	id := uuid.New()
+	return Effect{
+		ID:       id,
+		Name:     "",
+		Delay:    nil,
+		Duration: nil,
+		Priority: 0,
+		Tags: map[uuid.UUID]struct{}{
+			ET_DEFAULT: {},
+			id:         {},
+		},
+	}
+}
+
+func (e *Effect) SetTag(tag uuid.UUID) {
+	e.Tags[tag] = struct{}{}
+}
+
+func (e *Effect) SetID(id uuid.UUID) {
+	old := e.ID
+	delete(e.Tags, old)
+
+	e.ID = id
+	e.SetTag(id)
+}
+
 func (e Effect) Ready() bool {
 	return e.Delay == nil || *e.Delay <= 0
+}
+func (e Effect) HasTag(tag uuid.UUID) bool {
+	if e.Tags == nil {
+		return false
+	}
+
+	_, ok := e.Tags[tag]
+	return ok
 }
 func (e Effect) Filter(g Game, context Context) bool {
 	if e.filter == nil {
@@ -56,6 +96,12 @@ func (e Effect) Bind(context Context) Modifier {
 	return mod
 }
 func (m *Modifier) Resolve(game *Game) []uuid.UUID {
+	for tag := range m.Payload.Tags {
+		if _, immune := game.meta.modifier_immunities[tag]; immune {
+			return []uuid.UUID{}
+		}
+	}
+
 	actorIDs := resolveMutation(game, m.Context, m.Payload)
 	if len(actorIDs) > 0 {
 		for _, actorID := range actorIDs {
@@ -67,76 +113,67 @@ func (m *Modifier) Resolve(game *Game) []uuid.UUID {
 }
 
 func EffectSource(priority int, updater Updater[Actor]) Effect {
-	return Effect{
-		ID:       uuid.New(),
-		Delay:    nil,
-		Duration: nil,
-		Priority: priority,
-		Triggers: []Trigger{},
-		Mutation: Mutation{
-			delta: func(g *Game, context Context) []uuid.UUID {
-				applied := []uuid.UUID{}
-				if context.SourceID == nil {
-					return applied
-				}
-
-				applied = append(applied, *context.SourceID)
-				g.ModifyActor(*context.SourceID, func(a Actor) Actor {
-					return updater(a, context)
-				})
-
+	effect := NewEffect()
+	effect.Priority = priority
+	effect.Mutation = Mutation{
+		delta: func(g *Game, context Context) []uuid.UUID {
+			applied := []uuid.UUID{}
+			if context.SourceID == nil {
 				return applied
-			},
+			}
+
+			applied = append(applied, *context.SourceID)
+			g.ModifyActor(*context.SourceID, func(a Actor) Actor {
+				return updater(a, context)
+			})
+
+			return applied
 		},
 	}
+
+	return effect
 }
 func EffectTargets(priority int, updater func(Game, Actor, Context) Actor) Effect {
-	return Effect{
-		ID:       uuid.New(),
-		Delay:    nil,
-		Duration: nil,
-		Priority: priority,
-		Triggers: []Trigger{},
-		Mutation: Mutation{
-			delta: func(g *Game, context Context) []uuid.UUID {
-				applied := []uuid.UUID{}
+	effect := NewEffect()
+	effect.Priority = priority
+	effect.Mutation = Mutation{
+		delta: func(g *Game, context Context) []uuid.UUID {
+			applied := []uuid.UUID{}
 
-				for _, target := range g.GetTargets(context) {
+			for _, target := range g.GetTargets(context) {
+				applied = append(applied, target.ID)
+				g.ModifyActor(target.ID, func(a Actor) Actor {
+					return updater(*g, a, context)
+				})
+			}
+
+			return applied
+		},
+	}
+
+	return effect
+}
+func EffectActorsWhere(priority int, where Filter[Actor], updater func(Game, Actor, Context) Actor) Effect {
+	effect := NewEffect()
+	effect.Priority = priority
+	effect.Mutation = Mutation{
+		delta: func(g *Game, context Context) []uuid.UUID {
+			applied := []uuid.UUID{}
+
+			for _, target := range g.State().Actors {
+				if where(target, context) {
 					applied = append(applied, target.ID)
 					g.ModifyActor(target.ID, func(a Actor) Actor {
 						return updater(*g, a, context)
 					})
 				}
+			}
 
-				return applied
-			},
+			return applied
 		},
 	}
-}
-func EffectActorsWhere(priority int, where Filter[Actor], updater func(Game, Actor, Context) Actor) Effect {
-	return Effect{
-		ID:       uuid.New(),
-		Delay:    nil,
-		Duration: nil,
-		Priority: priority,
-		Triggers: []Trigger{},
-		Mutation: Mutation{
-			delta: func(g *Game, context Context) []uuid.UUID {
-				applied := []uuid.UUID{}
 
-				for _, target := range g.State().Actors {
-					if where(target, context) {
-						applied = append(applied, target.ID)
-						g.ModifyActor(target.ID, func(a Actor) Actor {
-							return updater(*g, a, context)
-						})
-					}
-				}
-
-				return applied
-			},
-		},
-	}
+	return effect
 }
 func EffectActorsAll(priority int, updater func(Game, Actor, Context) Actor) Effect {
 	return EffectActorsWhere(
@@ -148,28 +185,25 @@ func EffectActorsAll(priority int, updater func(Game, Actor, Context) Actor) Eff
 	)
 }
 func EffectAllies(priority int, updater func(Game, Actor, Context) Actor) Effect {
-	return Effect{
-		ID:       uuid.New(),
-		Delay:    nil,
-		Duration: nil,
-		Priority: priority,
-		Triggers: []Trigger{},
-		Mutation: Mutation{
-			delta: func(g *Game, context Context) []uuid.UUID {
-				applied := []uuid.UUID{}
-				filter := func(a Actor, ctx Context) bool {
-					return a.PlayerID == *context.PlayerID
-				}
+	effect := NewEffect()
+	effect.Priority = priority
+	effect.Mutation = Mutation{
+		delta: func(g *Game, context Context) []uuid.UUID {
+			applied := []uuid.UUID{}
+			filter := func(a Actor, ctx Context) bool {
+				return a.PlayerID == *context.PlayerID
+			}
 
-				for _, target := range g.State().FindActorsWhere(filter, context) {
-					applied = append(applied, target.ID)
-					g.ModifyActor(target.ID, func(a Actor) Actor {
-						return updater(*g, a, context)
-					})
-				}
+			for _, target := range g.State().FindActorsWhere(filter, context) {
+				applied = append(applied, target.ID)
+				g.ModifyActor(target.ID, func(a Actor) Actor {
+					return updater(*g, a, context)
+				})
+			}
 
-				return applied
-			},
+			return applied
 		},
 	}
+
+	return effect
 }
