@@ -161,13 +161,12 @@ func EffectActorsWhere(priority int, where Filter[Actor], updater Updater[Actor]
 		delta: func(g *Game, context Context) []uuid.UUID {
 			applied := []uuid.UUID{}
 
-			for _, target := range g.State().Actors {
-				if where(target, context) {
-					applied = append(applied, target.ID)
-					g.ModifyActor(target.ID, func(a Actor) Actor {
-						return updater(*g, a, context)
-					})
-				}
+			actors := g.State().FindActorsWhere(where, context)
+			for _, target := range actors {
+				applied = append(applied, target.ID)
+				g.ModifyActor(target.ID, func(a Actor) Actor {
+					return updater(*g, a, context)
+				})
 			}
 
 			return applied
@@ -191,25 +190,9 @@ func EffectActorsActive(priority int, updater Updater[Actor]) Effect {
 	)
 }
 func EffectAllies(priority int, updater Updater[Actor]) Effect {
-	effect := NewEffect()
-	effect.Priority = priority
-	effect.Mutation = Mutation{
-		delta: func(g *Game, context Context) []uuid.UUID {
-			applied := []uuid.UUID{}
-			filter := func(a Actor, ctx Context) bool {
-				return a.PlayerID == context.PlayerID
-			}
-
-			for _, target := range g.State().FindActorsWhere(filter, context) {
-				applied = append(applied, target.ID)
-				g.ModifyActor(target.ID, func(a Actor) Actor {
-					return updater(*g, a, context)
-				})
-			}
-
-			return applied
-		},
-	}
-
-	return effect
+	return EffectActorsWhere(
+		priority,
+		CombineFilters(Allies),
+		updater,
+	)
 }

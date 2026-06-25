@@ -7,7 +7,7 @@ import (
 )
 
 func main() {
-	effect := game.EffectSource(game.EffectPriorityStages, func(g game.Game, a game.Actor, ctx game.Context) game.Actor {
+	effect := game.EffectAllies(game.EffectPriorityStages, func(g game.Game, a game.Actor, ctx game.Context) game.Actor {
 		a.Stages[game.Evasion] = a.Stages[game.Evasion] + 1
 		a.AffinityResistance[game.Kinetic] = a.AffinityResistance[game.Kinetic] + 1
 		return a
