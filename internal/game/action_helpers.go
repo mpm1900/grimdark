@@ -56,7 +56,7 @@ func BasicAttack(config AttackConfig) ActionResolver {
 	}
 }
 
-func ChanceAddEffects(chance float64, effects ...Effect) AttackEffectResult {
+func AddResultEffects(chance float64, effects ...Effect) AttackEffectResult {
 	return func(g Game, context Context, this *ActionContext, result DamageResult) {
 		if !Chance(chance) {
 			return

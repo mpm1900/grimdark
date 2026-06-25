@@ -1,15 +1,30 @@
 package game
 
-import "github.com/google/uuid"
+import (
+	"github.com/google/uuid"
+)
 
 type Player struct {
 	ID        uuid.UUID
-	Positions map[uuid.UUID]struct{}
+	Positions map[uuid.UUID]uuid.UUID
 }
 
 func NewPlayer() Player {
 	return Player{
-		ID:        uuid.New(),
-		Positions: map[uuid.UUID]struct{}{},
+		ID: uuid.New(),
+		Positions: map[uuid.UUID]uuid.UUID{
+			uuid.New(): uuid.Nil,
+			uuid.New(): uuid.Nil,
+		},
 	}
+}
+
+func (p Player) GetOpenPosition() uuid.UUID {
+	for pos, actor_id := range p.Positions {
+		if actor_id == uuid.Nil {
+			return pos
+		}
+	}
+
+	return uuid.Nil
 }

@@ -1,6 +1,7 @@
 package game
 
 import (
+	"maps"
 	"slices"
 
 	"github.com/google/uuid"
@@ -18,6 +19,11 @@ type State struct {
 }
 
 func (s *State) Clone() State {
+	players := slices.Clone(s.Players)
+	for i := range players {
+		players[i].Positions = maps.Clone(players[i].Positions)
+	}
+
 	actors := make([]Actor, len(s.Actors))
 	for i, actor := range s.Actors {
 		actors[i] = actor.Clone()
@@ -50,7 +56,7 @@ func (s *State) Clone() State {
 	}
 
 	return State{
-		Players:       slices.Clone(s.Players),
+		Players:       players,
 		Actors:        actors,
 		Transactions:  transactions,
 		Modifiers:     modifiers,
@@ -60,6 +66,15 @@ func (s *State) Clone() State {
 	}
 }
 
+func (s State) FindPlayerByID(id uuid.UUID) (Player, bool) {
+	for _, p := range s.Players {
+		if p.ID == id {
+			return p, true
+		}
+	}
+
+	return Player{}, false
+}
 func (s State) FindActorByID(id uuid.UUID) (Actor, bool) {
 	for _, a := range s.Actors {
 		if a.ID == id {
@@ -80,6 +95,13 @@ func (s State) FindActorsWhere(where Filter[Actor], context Context) []Actor {
 	return actors
 }
 
+func (s *State) UpdatePlayer(id uuid.UUID, updater func(Player) Player) {
+	for i, p := range s.Players {
+		if p.ID == id {
+			s.Players[i] = updater(p)
+		}
+	}
+}
 func (s *State) UpdateActor(id uuid.UUID, updater func(Actor) Actor) {
 	for i, a := range s.Actors {
 		if a.ID == id {

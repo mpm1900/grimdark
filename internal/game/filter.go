@@ -25,9 +25,25 @@ func CombineFilters[T any](
 }
 
 // filters
+// game
+func TrueGameFilter(game Game, context Context) bool {
+	return true
+}
+
+// context
+func ContextTargetLength(length int) Filter[Game] {
+	return func(g Game, ctx Context) bool {
+		targets := g.GetTargets(ctx)
+		return len(targets) == length
+	}
+}
+
 // actor
+func NoneActors(actor Actor, context Context) bool {
+	return false
+}
 func ActiveActors(actor Actor, context Context) bool {
-	return actor.PositionID != nil
+	return actor.PositionID != uuid.Nil
 }
 func AliveActors(actor Actor, context Context) bool {
 	return actor.IsAlive
@@ -55,7 +71,7 @@ func SourceActor(actor Actor, context Context) bool {
 }
 func TargetActors(actor Actor, context Context) bool {
 	is_actor := slices.Contains(context.ActorIDs, actor.ID)
-	is_pos := actor.PositionID != nil && slices.Contains(context.PositionIDs, *actor.PositionID)
+	is_pos := actor.PositionID != uuid.Nil && slices.Contains(context.PositionIDs, actor.PositionID)
 	return is_actor || is_pos
 }
 

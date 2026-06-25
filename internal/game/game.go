@@ -73,7 +73,7 @@ func NewGame() Game {
 	}
 	var system_modifiers = []Modifier{
 		// map stat stages
-		EffectActorsAll(EffectPriorityMapStages, func(a Actor, ctx Context) Actor {
+		EffectActorsAll(EffectPriorityMapStages, func(g Game, a Actor, ctx Context) Actor {
 			builder := NewStageBuilder(a.Stages)
 			stats := builder.ResolveAll(a.Stats)
 
@@ -88,7 +88,7 @@ func NewGame() Game {
 			return a
 		}).Bind(NewContext()),
 		// map base stats
-		EffectActorsAll(EffectPriorityMapBaseStats, func(a Actor, ctx Context) Actor {
+		EffectActorsAll(EffectPriorityMapBaseStats, func(g Game, a Actor, ctx Context) Actor {
 			a.mapBaseStats()
 			return a
 		}).Bind(NewContext()),
@@ -170,6 +170,9 @@ func (g *Game) GetTriggers() []Trigger {
 
 	return triggers
 }
+func (g *Game) GetPlayer(id uuid.UUID) (Player, bool) {
+	return g.State().FindPlayerByID(id)
+}
 func (g *Game) GetActor(id uuid.UUID) (Actor, bool) {
 	return g.State().FindActorByID(id)
 }
@@ -196,9 +199,9 @@ func (g *Game) AddPlayers(players ...Player) {
 		s.Players = append(s.Players, players...)
 	})
 }
-func (g *Game) AddActors(actors ...Actor) {
+func (g *Game) AddActor(actor Actor) {
 	g.mutate(func(s *State) {
-		s.Actors = append(s.Actors, actors...)
+		s.Actors = append(s.Actors, actor)
 	})
 }
 func (g *Game) AddModifiers(modifiers ...Modifier) {
@@ -291,16 +294,72 @@ func (g *Game) MutateActorWhere(where func(Actor) bool, updater func(Actor) Acto
 		s.UpdateActorWhere(where, updater)
 	})
 }
+func (g *Game) SetPosition(actor_id uuid.UUID, position_id uuid.UUID) {
+	actor, ok := g.GetActor(actor_id)
+	if !ok {
+		return
+	}
+
+	var evicted_id uuid.UUID
+	g.mutate(func(s *State) {
+		updated := false
+
+		s.UpdatePlayer(actor.PlayerID, func(player Player) Player {
+			updated = true
+
+			if position_id != uuid.Nil {
+				current_id, ok := player.Positions[position_id]
+				if !ok {
+					updated = false
+					return player
+				}
+
+				if current_id != actor_id {
+					evicted_id = current_id
+				}
+
+				player.Positions[position_id] = actor_id
+			}
+
+			if actor.PositionID != uuid.Nil && player.Positions[actor.PositionID] == actor_id {
+				player.Positions[actor.PositionID] = uuid.Nil
+			}
+
+			return player
+		})
+
+		if !updated {
+			return
+		}
+
+		if position_id == uuid.Nil {
+			log := NewLog("$actor$ left the battle.", map[string]string{
+				"$actor$": actor.Name,
+			})
+			g.PushLog(log, MakeContextFrom(actor))
+		} else {
+			log := NewLog("$actor$ joined the battle.", map[string]string{
+				"$actor$": actor.Name,
+			})
+			g.PushLog(log, MakeContextFrom(actor))
+		}
+
+		s.UpdateActor(actor_id, func(a Actor) Actor {
+			a.PositionID = position_id
+			return a
+		})
+	})
+
+	if evicted_id != uuid.Nil {
+		g.SetPosition(evicted_id, uuid.Nil)
+	}
+}
 func (g *Game) DamageTargets(context Context, damage float64) {
 	for _, target := range g.GetTargets(context) {
 		g.MutateActor(target.ID, func(a Actor) Actor {
 			found, ok := g.GetActor(target.ID)
 			if !ok {
 				return a
-			}
-
-			if damage > found.GetRemainingHealth() {
-				damage = found.GetRemainingHealth()
 			}
 
 			a.Damage = a.Damage + damage

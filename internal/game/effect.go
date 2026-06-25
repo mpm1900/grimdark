@@ -113,7 +113,7 @@ func EffectTargets(priority int, updater func(Game, Actor, Context) Actor) Effec
 		},
 	}
 }
-func EffectActorsWhere(priority int, where Filter[Actor], updater Updater[Actor]) Effect {
+func EffectActorsWhere(priority int, where Filter[Actor], updater func(Game, Actor, Context) Actor) Effect {
 	return Effect{
 		ID:       uuid.New(),
 		Delay:    nil,
@@ -128,7 +128,7 @@ func EffectActorsWhere(priority int, where Filter[Actor], updater Updater[Actor]
 					if where(target, context) {
 						applied = append(applied, target.ID)
 						g.ModifyActor(target.ID, func(a Actor) Actor {
-							return updater(a, context)
+							return updater(*g, a, context)
 						})
 					}
 				}
@@ -138,7 +138,7 @@ func EffectActorsWhere(priority int, where Filter[Actor], updater Updater[Actor]
 		},
 	}
 }
-func EffectActorsAll(priority int, updater Updater[Actor]) Effect {
+func EffectActorsAll(priority int, updater func(Game, Actor, Context) Actor) Effect {
 	return EffectActorsWhere(
 		priority,
 		func(a Actor, ctx Context) bool {
@@ -147,7 +147,7 @@ func EffectActorsAll(priority int, updater Updater[Actor]) Effect {
 		updater,
 	)
 }
-func EffectAllies(priority int, updater Updater[Actor]) Effect {
+func EffectAllies(priority int, updater func(Game, Actor, Context) Actor) Effect {
 	return Effect{
 		ID:       uuid.New(),
 		Delay:    nil,
@@ -164,7 +164,7 @@ func EffectAllies(priority int, updater Updater[Actor]) Effect {
 				for _, target := range g.State().FindActorsWhere(filter, context) {
 					applied = append(applied, target.ID)
 					g.ModifyActor(target.ID, func(a Actor) Actor {
-						return updater(a, context)
+						return updater(*g, a, context)
 					})
 				}
 

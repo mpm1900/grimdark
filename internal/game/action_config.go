@@ -7,15 +7,14 @@ import (
 type ActionConfig struct {
 	Name string
 
-	Affinity       Affinity
-	Stat           Stat
-	Power          float64
-	Hits           int
-	BypassAccuracy bool
-	Accuracy       float64
-	CritChance     float64
-	CritModifier   float64
-	Priority       int
+	Affinity     Affinity
+	Stat         Stat
+	Power        float64
+	Hits         int
+	Accuracy     *float64
+	CritChance   float64
+	CritModifier float64
+	Priority     int
 }
 
 type AccuracyResult struct {
@@ -45,8 +44,12 @@ func (ac ActionConfig) GetBaseDamage(source, target Actor, useBaseStats bool) fl
 }
 
 func (ac ActionConfig) GetAccuracy(source, target Actor, useBaseStats bool) float64 {
+	if ac.Accuracy == nil {
+		return 1.0
+	}
+
 	ratio := Accuracy.GetRatio(source, target, useBaseStats)
-	return ratio * ac.Accuracy
+	return ratio * *ac.Accuracy
 }
 
 func (ac ActionConfig) GetAccuracyResult(source, target Actor) AccuracyResult {
@@ -55,7 +58,7 @@ func (ac ActionConfig) GetAccuracyResult(source, target Actor) AccuracyResult {
 	critical := ac.CritChance > critical_roll
 
 	accuracy := ac.GetAccuracy(source, target, critical)
-	success := ac.BypassAccuracy || accuracy > accuracy_roll
+	success := ac.Accuracy == nil || accuracy > accuracy_roll
 
 	if !success {
 		critical = false
@@ -90,6 +93,10 @@ func (ac ActionConfig) GetDamageResult(source, target Actor, targets []Actor) Da
 	}
 
 	random := rand.Float64()*(1.05-0.8) + 0.8
+	damage := raw * random
+	if damage > target.GetRemainingHealth() {
+		damage = target.GetRemainingHealth()
+	}
 
 	return DamageResult{
 		AccuracyResult:    accuracy,
@@ -98,7 +105,7 @@ func (ac ActionConfig) GetDamageResult(source, target Actor, targets []Actor) Da
 		BaseAffinityStage: base_stage,
 		Raw:               raw,
 		Random:            random,
-		Damage:            raw * random,
+		Damage:            damage,
 	}
 }
 

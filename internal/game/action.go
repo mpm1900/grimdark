@@ -1,12 +1,14 @@
 package game
 
+import "github.com/google/uuid"
+
 type ActionResolver func(g *Game, ctx Context, this ActionContext) []Transaction
 type ActionContextMapper func(g Game, ctx Context, this ActionContext) Context
 
 type Action struct {
 	Config           ActionConfig
 	Resolve          ActionResolver
-	Validate         Filter[Game]
+	ValidateContext  Filter[Game]
 	TargetsPredicate Filter[Actor]
 	MapContext       ActionContextMapper
 }
@@ -17,7 +19,8 @@ func (a Action) CanResolve(g Game, context Context) bool {
 		return false
 	}
 
-	return source.IsAlive && source.PositionID != nil
+	context_valid := a.ValidateContext == nil || a.ValidateContext(g, context)
+	return context_valid && source.IsAlive && source.PositionID != uuid.Nil
 }
 
 func (a Action) Bind(context Context) Command {

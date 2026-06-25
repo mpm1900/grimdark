@@ -23,7 +23,8 @@ const (
 type Status string
 
 const (
-	Burned Status = "burned"
+	StatusNone   Status = "none"
+	StatusBurned Status = "burned"
 )
 
 func (s Stat) GetDefense() Stat {
@@ -74,6 +75,9 @@ type ActorDef struct {
 
 type Actor struct {
 	ActorDef
+	Level      int
+	PlayerID   uuid.UUID
+	PositionID uuid.UUID
 
 	AffinityDamage     map[Affinity]int
 	AffinityResistance map[Affinity]int
@@ -82,23 +86,10 @@ type Actor struct {
 	Aux                map[Stat]float64
 	Stats              map[Stat]float64
 
-	Level      int
-	PlayerID   uuid.UUID
-	PositionID *uuid.UUID
-
 	Damage      float64
-	Status      *Status
+	Status      Status
 	IsAlive     bool
 	IsProtected bool
-}
-
-func cloneStatus(status *Status) *Status {
-	if status == nil {
-		return nil
-	}
-
-	value := *status
-	return &value
 }
 
 func NewActorDef() ActorDef {
@@ -123,7 +114,7 @@ func NewActor(playerID uuid.UUID, def ActorDef) Actor {
 	return Actor{
 		ActorDef:           def,
 		PlayerID:           playerID,
-		PositionID:         P(uuid.New()),
+		PositionID:         uuid.Nil,
 		Level:              100,
 		AffinityDamage:     map[Affinity]int{},
 		AffinityResistance: map[Affinity]int{},
@@ -132,7 +123,7 @@ func NewActor(playerID uuid.UUID, def ActorDef) Actor {
 		Stats:              maps.Clone(def.Stats),
 
 		Damage:      0,
-		Status:      nil,
+		Status:      StatusNone,
 		IsAlive:     true,
 		IsProtected: false,
 	}
@@ -157,7 +148,7 @@ func (a Actor) Clone() Actor {
 		PlayerID:           a.PlayerID,
 		PositionID:         a.PositionID,
 		Damage:             a.Damage,
-		Status:             cloneStatus(a.Status),
+		Status:             a.Status,
 		IsAlive:            a.IsAlive,
 		IsProtected:        a.IsProtected,
 	}
