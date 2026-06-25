@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"math/rand/v2"
 	"slices"
-	"time"
 
 	"github.com/google/uuid"
 )
@@ -185,7 +184,7 @@ func (g *Game) GetActor(id uuid.UUID) (Actor, bool) {
 	return g.State().FindActorByID(id)
 }
 func (g *Game) FindActors(where Filter[Actor], context Context) []Actor {
-	return g.State().FindActorsWhere(where, context)
+	return g.State().FindActorsWhere(*g, where, context)
 }
 
 func (g *Game) resolve() {
@@ -467,6 +466,10 @@ func (g *Game) Next() bool {
 // temp functions
 func (g *Game) Flush() {
 	for g.Next() {
-		time.Sleep(time.Second / 5)
+		//	time.Sleep(time.Second / 5)
 	}
+
+	g.mutate(func(s *State) {
+		s.ActiveContext = nil
+	})
 }

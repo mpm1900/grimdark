@@ -7,9 +7,10 @@ import (
 )
 
 func main() {
-	effect := game.EffectAllies(game.EffectPriorityStages, func(g game.Game, a game.Actor, ctx game.Context) game.Actor {
+	effect := game.EffectSource(game.EffectPriorityStages, func(g game.Game, a game.Actor, ctx game.Context) game.Actor {
 		a.Stages[game.Evasion] = a.Stages[game.Evasion] + 1
-		a.AffinityResistance[game.Kinetic] = a.AffinityResistance[game.Kinetic] + 1
+		// a.AffinityImmunities[game.Kinetic] = 0
+		a.AffinityResistance[game.Kinetic] += 1
 		return a
 	})
 	effect.Triggers = []game.Trigger{
@@ -25,6 +26,19 @@ func main() {
 		},
 	}
 
+	bypass := effects.StatsResetWhere(func(g game.Game, a game.Actor, ctx game.Context) bool {
+		active_context := g.State().ActiveContext
+		if active_context == nil {
+			return false
+		}
+
+		if active_context.SourceID == ctx.ParentID {
+			return active_context.HasTarget(a)
+		}
+
+		return false
+	})
+
 	player := game.NewPlayer()
 	max_def := game.NewActorDef()
 	max_def.Name = "Max"
@@ -32,6 +46,7 @@ func main() {
 		game.Fire: {},
 	}
 	max := game.NewActor(player.ID, max_def)
+	max.Effects = []game.Effect{bypass}
 
 	katie_def := game.NewActorDef()
 	katie_def.Name = "Katie"

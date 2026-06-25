@@ -8,7 +8,7 @@ type ActionContextMapper func(g Game, ctx Context, this ActionContext) Context
 type Action struct {
 	Config           ActionConfig
 	Resolve          ActionResolver
-	ValidateContext  Filter[Game]
+	ValidateContext  GameFilter
 	TargetsPredicate Filter[Actor]
 	MapContext       ActionContextMapper
 }

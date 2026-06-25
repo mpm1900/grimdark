@@ -11,7 +11,7 @@ type Bindable[P any] struct {
 }
 
 type Mutation struct {
-	filter Filter[Game]
+	filter GameFilter
 	delta  Mutator
 }
 type Transaction Bindable[Mutation]
@@ -24,14 +24,14 @@ func bind[P any](payload P, context Context) Bindable[P] {
 	}
 }
 
-func NewMutation(filter Filter[Game], delta Mutator) Mutation {
+func NewMutation(filter GameFilter, delta Mutator) Mutation {
 	return Mutation{
 		filter,
 		delta,
 	}
 }
 
-func (m *Mutation) SetFilter(filter Filter[Game]) {
+func (m *Mutation) SetFilter(filter GameFilter) {
 	m.filter = filter
 }
 func (m Mutation) Filter(g Game, context Context) bool {

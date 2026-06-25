@@ -83,6 +83,7 @@ type Actor struct {
 
 	AffinityDamage     map[Affinity]int
 	AffinityResistance map[Affinity]int
+	AffinityImmunities map[Affinity]float64
 	Unmodified         map[Stat]float64
 	Stages             map[Stat]int
 	Aux                map[Stat]float64
@@ -133,6 +134,7 @@ func NewActor(playerID uuid.UUID, def ActorDef) Actor {
 
 		AffinityDamage:     map[Affinity]int{},
 		AffinityResistance: map[Affinity]int{},
+		AffinityImmunities: map[Affinity]float64{},
 		Stages:             map[Stat]int{},
 		Aux:                map[Stat]float64{},
 		Stats:              maps.Clone(def.Stats),
@@ -153,6 +155,7 @@ func (a Actor) Clone() Actor {
 
 		AffinityDamage:     maps.Clone(a.AffinityDamage),
 		AffinityResistance: maps.Clone(a.AffinityResistance),
+		AffinityImmunities: maps.Clone(a.AffinityImmunities),
 		Unmodified:         maps.Clone(a.Unmodified),
 		Stages:             maps.Clone(a.Stages),
 		Aux:                maps.Clone(a.Aux),

@@ -111,5 +111,5 @@ func (ac ActionConfig) GetDamageResult(source, target Actor, targets []Actor) Da
 }
 
 func (dr DamageResult) Success() bool {
-	return dr.AccuracyResult.Success && !dr.Target.IsProtected
+	return dr.AccuracyResult.Success && !dr.Target.IsProtected && dr.Damage > 0
 }

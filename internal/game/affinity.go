@@ -79,6 +79,11 @@ func (a Affinity) GetBaseModifier(target Actor) int {
 }
 
 func (a Affinity) GetAffinityModifier(source, target Actor) (float64, int, int) {
+	immunity, has_immunity := target.AffinityImmunities[a]
+	if has_immunity {
+		return immunity, 0, 0
+	}
+
 	base := a.GetBaseModifier(target)
 	source_damage := source.GetAffinityDamage(a)
 	target_resistance := target.GetAffinityResistance(a)

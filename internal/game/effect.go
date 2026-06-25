@@ -4,6 +4,7 @@ import (
 	"github.com/google/uuid"
 )
 
+const EffectPriorityAffinities = 0
 const EffectPriorityBaseStats = 0
 const EffectPriorityAuxStats = 0
 const EffectPriorityMapBaseStats = 1
@@ -25,7 +26,7 @@ type Effect struct {
 	Tags     map[uuid.UUID]struct{}
 	Triggers []Trigger
 	// check is ran on add
-	Check Filter[Game]
+	Check GameFilter
 	// success logs
 	OnSuccess func(*Game, Effect, Context)
 	// failure logs
@@ -161,7 +162,7 @@ func EffectActorsWhere(priority int, where Filter[Actor], updater Updater[Actor]
 		delta: func(g *Game, context Context) []uuid.UUID {
 			applied := []uuid.UUID{}
 
-			actors := g.State().FindActorsWhere(where, context)
+			actors := g.FindActors(where, context)
 			for _, target := range actors {
 				applied = append(applied, target.ID)
 				g.ModifyActor(target.ID, func(a Actor) Actor {

@@ -92,10 +92,10 @@ func (s State) FindActorByID(id uuid.UUID) (Actor, bool) {
 
 	return Actor{}, false
 }
-func (s State) FindActorsWhere(where Filter[Actor], context Context) []Actor {
+func (s State) FindActorsWhere(g Game, where Filter[Actor], context Context) []Actor {
 	actors := []Actor{}
 	for _, a := range s.Actors {
-		if where(a, context) {
+		if where(g, a, context) {
 			actors = append(actors, a)
 		}
 	}
