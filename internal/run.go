@@ -19,7 +19,7 @@ func main() {
 			Validate: game.TriggerTargetMatchesModifierParent,
 			Action: game.Action{
 				Resolve: func(g *game.Game, ctx game.Context, this game.ActionContext) []game.Transaction {
-					fmt.Println("ON DAMAGE TRIGGER:")
+					fmt.Println(game.OnDamageRecieve)
 					return this.Done()
 				},
 			},

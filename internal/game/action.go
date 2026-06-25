@@ -1,7 +1,5 @@
 package game
 
-import "github.com/google/uuid"
-
 type ActionResolver func(g *Game, ctx Context, this ActionContext) []Transaction
 type ActionContextMapper func(g Game, ctx Context, this ActionContext) Context
 
@@ -20,7 +18,7 @@ func (a Action) CanResolve(g Game, context Context) bool {
 	}
 
 	context_valid := a.ValidateContext == nil || a.ValidateContext(g, context)
-	return context_valid && source.IsAlive && source.PositionID != uuid.Nil
+	return context_valid && source.IsAlive && source.IsActive()
 }
 
 func (a Action) Bind(context Context) Command {

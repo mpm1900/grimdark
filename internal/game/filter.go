@@ -48,7 +48,7 @@ func AllActors(g Game, actor Actor, context Context) bool {
 	return true
 }
 func ActiveActors(g Game, actor Actor, context Context) bool {
-	return actor.PositionID != uuid.Nil
+	return actor.IsActive()
 }
 func AliveActors(g Game, actor Actor, context Context) bool {
 	return actor.IsAlive
@@ -64,7 +64,7 @@ func SourceActor(g Game, actor Actor, context Context) bool {
 }
 func TargetActors(g Game, actor Actor, context Context) bool {
 	is_actor := slices.Contains(context.ActorIDs, actor.ID)
-	is_pos := actor.PositionID != uuid.Nil && slices.Contains(context.PositionIDs, actor.PositionID)
+	is_pos := actor.IsActive() && slices.Contains(context.PositionIDs, actor.PositionID)
 	return is_actor || is_pos
 }
 

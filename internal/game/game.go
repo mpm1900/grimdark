@@ -329,7 +329,7 @@ func (g *Game) SetPosition(actor_id uuid.UUID, position_id uuid.UUID) {
 				player.Positions[position_id] = actor_id
 			}
 
-			if actor.PositionID != uuid.Nil && player.Positions[actor.PositionID] == actor_id {
+			if actor.IsActive() && player.Positions[actor.PositionID] == actor_id {
 				player.Positions[actor.PositionID] = uuid.Nil
 			}
 

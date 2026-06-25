@@ -12,7 +12,7 @@ const (
 	Psychic   Affinity = "psychic"
 )
 
-var affinityMatrix = map[Affinity]map[Affinity]int{
+var AFFINITY_MATRIX = map[Affinity]map[Affinity]int{
 	Arcane: {
 		Arcane:    2,
 		Fire:      2,
@@ -67,7 +67,7 @@ func (a Affinity) GetBaseModifier(target Actor) int {
 	result := 0
 
 	for affinity := range target.Affinities {
-		stage, ok := affinityMatrix[a][affinity]
+		stage, ok := AFFINITY_MATRIX[a][affinity]
 		if !ok {
 			stage = 0
 		}

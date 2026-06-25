@@ -204,6 +204,9 @@ func (a *Actor) ApplyDamage(damage float64, resolved Actor) {
 	a.IsAlive = resolved.Stats[Health] > a.Damage
 }
 
+func (a Actor) IsActive() bool {
+	return a.PositionID != uuid.Nil
+}
 func (a Actor) GetAffinityDamage(affinity Affinity) int {
 	base := maps.Clone(a.AffinityDamage)
 	for affinity := range a.Affinities {
