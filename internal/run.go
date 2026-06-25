@@ -86,7 +86,7 @@ func main() {
 		Resolve: game.AddSourceEffects(
 			1,
 			effects.StatUpSource(game.Speed, 1),
-			effects.StatUpSource(game.Speed, 1),
+			effects.StatUpSource(game.Melee, 1),
 		),
 		ValidateContext:  game.TrueGameFilter,
 		TargetsPredicate: game.NoneActors,

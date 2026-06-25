@@ -7,10 +7,11 @@ import (
 const EffectPriorityBaseStats = 0
 const EffectPriorityAuxStats = 0
 const EffectPriorityMapBaseStats = 1
-const EffectPriorityStats = 2
+const EffectPriorityPreStageStats = 2
 const EffectPriorityStages = 2
 const EffectPriorityStagesOverwrite = 3
 const EffectPriorityMapStages = 4
+const EffectPriorityPostStagesStats = 5
 
 var ET_DEFAULT = uuid.New()
 
@@ -118,13 +119,13 @@ func EffectSource(priority int, updater Updater[Actor]) Effect {
 	effect.Mutation = Mutation{
 		delta: func(g *Game, context Context) []uuid.UUID {
 			applied := []uuid.UUID{}
-			if context.SourceID == nil {
+			if context.SourceID == uuid.Nil {
 				return applied
 			}
 
-			applied = append(applied, *context.SourceID)
-			g.ModifyActor(*context.SourceID, func(a Actor) Actor {
-				return updater(a, context)
+			applied = append(applied, context.SourceID)
+			g.ModifyActor(context.SourceID, func(a Actor) Actor {
+				return updater(*g, a, context)
 			})
 
 			return applied
@@ -133,7 +134,7 @@ func EffectSource(priority int, updater Updater[Actor]) Effect {
 
 	return effect
 }
-func EffectTargets(priority int, updater func(Game, Actor, Context) Actor) Effect {
+func EffectTargets(priority int, updater Updater[Actor]) Effect {
 	effect := NewEffect()
 	effect.Priority = priority
 	effect.Mutation = Mutation{
@@ -153,7 +154,7 @@ func EffectTargets(priority int, updater func(Game, Actor, Context) Actor) Effec
 
 	return effect
 }
-func EffectActorsWhere(priority int, where Filter[Actor], updater func(Game, Actor, Context) Actor) Effect {
+func EffectActorsWhere(priority int, where Filter[Actor], updater Updater[Actor]) Effect {
 	effect := NewEffect()
 	effect.Priority = priority
 	effect.Mutation = Mutation{
@@ -175,7 +176,7 @@ func EffectActorsWhere(priority int, where Filter[Actor], updater func(Game, Act
 
 	return effect
 }
-func EffectActorsAll(priority int, updater func(Game, Actor, Context) Actor) Effect {
+func EffectActorsAll(priority int, updater Updater[Actor]) Effect {
 	return EffectActorsWhere(
 		priority,
 		func(a Actor, ctx Context) bool {
@@ -184,14 +185,14 @@ func EffectActorsAll(priority int, updater func(Game, Actor, Context) Actor) Eff
 		updater,
 	)
 }
-func EffectAllies(priority int, updater func(Game, Actor, Context) Actor) Effect {
+func EffectAllies(priority int, updater Updater[Actor]) Effect {
 	effect := NewEffect()
 	effect.Priority = priority
 	effect.Mutation = Mutation{
 		delta: func(g *Game, context Context) []uuid.UUID {
 			applied := []uuid.UUID{}
 			filter := func(a Actor, ctx Context) bool {
-				return a.PlayerID == *context.PlayerID
+				return a.PlayerID == context.PlayerID
 			}
 
 			for _, target := range g.State().FindActorsWhere(filter, context) {

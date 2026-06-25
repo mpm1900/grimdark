@@ -90,13 +90,13 @@ func MutateSource(updater Updater[Actor]) Mutation {
 	return Mutation{
 		delta: func(g *Game, context Context) []uuid.UUID {
 			applied := []uuid.UUID{}
-			if context.SourceID == nil {
+			if context.SourceID == uuid.Nil {
 				return applied
 			}
 
-			applied = append(applied, *context.SourceID)
-			g.MutateActor(*context.SourceID, func(a Actor) Actor {
-				return updater(a, context)
+			applied = append(applied, context.SourceID)
+			g.MutateActor(context.SourceID, func(a Actor) Actor {
+				return updater(*g, a, context)
 			})
 
 			return applied
@@ -111,7 +111,7 @@ func MutateTargets(updater Updater[Actor]) Mutation {
 			for _, target := range g.GetTargets(context) {
 				applied = append(applied, target.ID)
 				g.MutateActor(target.ID, func(a Actor) Actor {
-					return updater(a, context)
+					return updater(*g, a, context)
 				})
 			}
 

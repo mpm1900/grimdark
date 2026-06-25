@@ -67,6 +67,10 @@ func (s *State) Clone() State {
 }
 
 func (s State) FindPlayerByID(id uuid.UUID) (Player, bool) {
+	if id == uuid.Nil {
+		return Player{}, false
+	}
+
 	for _, p := range s.Players {
 		if p.ID == id {
 			return p, true
@@ -76,6 +80,10 @@ func (s State) FindPlayerByID(id uuid.UUID) (Player, bool) {
 	return Player{}, false
 }
 func (s State) FindActorByID(id uuid.UUID) (Actor, bool) {
+	if id == uuid.Nil {
+		return Actor{}, false
+	}
+
 	for _, a := range s.Actors {
 		if a.ID == id {
 			return a, true

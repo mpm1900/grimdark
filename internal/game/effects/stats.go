@@ -32,11 +32,15 @@ func StatChangeTargetsOnSuccess(g *game.Game, this game.Effect, ctx game.Context
 	}
 }
 
-func StatUpSource(stat game.Stat, amount int) game.Effect {
-	effect := game.EffectSource(game.EffectPriorityStages, func(a game.Actor, ctx game.Context) game.Actor {
+func StatChangeActor(stat game.Stat, amount int) game.Updater[game.Actor] {
+	return func(g game.Game, a game.Actor, ctx game.Context) game.Actor {
 		a.Stages[stat] += amount
 		return a
-	})
+	}
+}
+
+func StatUpSource(stat game.Stat, amount int) game.Effect {
+	effect := game.EffectSource(game.EffectPriorityStages, StatChangeActor(stat, amount))
 
 	effect.Name = fmt.Sprintf("%s up", stat)
 	effect.OnSuccess = StatChangeSourceOnSuccess
@@ -44,10 +48,7 @@ func StatUpSource(stat game.Stat, amount int) game.Effect {
 	return effect
 }
 func StatDownSource(stat game.Stat, amount int) game.Effect {
-	effect := game.EffectSource(game.EffectPriorityStages, func(a game.Actor, ctx game.Context) game.Actor {
-		a.Stages[stat] -= amount
-		return a
-	})
+	effect := game.EffectSource(game.EffectPriorityStages, StatChangeActor(stat, -amount))
 
 	effect.Name = fmt.Sprintf("%s down", stat)
 	effect.OnSuccess = StatChangeSourceOnSuccess

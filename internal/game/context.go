@@ -7,24 +7,23 @@ import (
 )
 
 type Context struct {
-	ActionID *uuid.UUID
-	EffectID *uuid.UUID
-	PlayerID *uuid.UUID
+	ActionID uuid.UUID
+	EffectID uuid.UUID
+	PlayerID uuid.UUID
 
-	ParentID    *uuid.UUID
-	SourceID    *uuid.UUID
+	ParentID    uuid.UUID
+	SourceID    uuid.UUID
 	ActorIDs    []uuid.UUID
 	PositionIDs []uuid.UUID
 }
 
 func NewContext() Context {
 	return Context{
-		ActionID: nil,
-		EffectID: nil,
-
-		PlayerID:    nil,
-		ParentID:    nil,
-		SourceID:    nil,
+		ActionID:    uuid.Nil,
+		EffectID:    uuid.Nil,
+		PlayerID:    uuid.Nil,
+		ParentID:    uuid.Nil,
+		SourceID:    uuid.Nil,
 		ActorIDs:    []uuid.UUID{},
 		PositionIDs: []uuid.UUID{},
 	}
@@ -44,9 +43,9 @@ func (c Context) Clone() Context {
 
 func MakeContextFrom(actor Actor) Context {
 	ctx := NewContext()
-	ctx.SourceID = &actor.ID
-	ctx.ParentID = &actor.ID
-	ctx.PlayerID = &actor.PlayerID
+	ctx.SourceID = actor.ID
+	ctx.ParentID = actor.ID
+	ctx.PlayerID = actor.PlayerID
 	return ctx
 }
 func MakeContextFor(source Actor, targets ...Actor) Context {
@@ -58,7 +57,7 @@ func MakeContextFor(source Actor, targets ...Actor) Context {
 }
 func MakeModifierContext(source Actor, target Actor) Context {
 	ctx := MakeContextFor(source, target)
-	ctx.ParentID = &target.ID
+	ctx.ParentID = target.ID
 	return ctx
 }
 
@@ -117,22 +116,14 @@ func (c Context) HasTarget(target Actor) bool {
 }
 
 func (g *Game) GetSource(context Context) (Actor, bool) {
-	if context.SourceID == nil {
-		return Actor{}, false
-	}
-
-	return g.GetActor(*context.SourceID)
+	return g.GetActor(context.SourceID)
 }
 func (g *Game) GetSourceAction(context Context) Actor {
 	source, _ := g.GetSource(context)
 	return source
 }
 func (g *Game) GetParent(context Context) (Actor, bool) {
-	if context.ParentID == nil {
-		return Actor{}, false
-	}
-
-	return g.GetActor(*context.ParentID)
+	return g.GetActor(context.ParentID)
 }
 func (g *Game) GetTargets(context Context) []Actor {
 	actors := []Actor{}
