@@ -2,6 +2,7 @@ package game
 
 import (
 	"maps"
+	"slices"
 
 	"github.com/google/uuid"
 )
@@ -71,6 +72,7 @@ type ActorDef struct {
 	Name       string
 	Affinities map[Affinity]struct{}
 	Stats      map[Stat]float64
+	Effects    []Effect
 }
 
 type Actor struct {
@@ -95,6 +97,7 @@ type Actor struct {
 func NewActorDef() ActorDef {
 	return ActorDef{
 		ID:         uuid.New(),
+		Name:       "",
 		Affinities: map[Affinity]struct{}{},
 		Stats: map[Stat]float64{
 			Health:         100,
@@ -107,12 +110,23 @@ func NewActorDef() ActorDef {
 			Accuracy:       1,
 			Evasion:        1,
 		},
+		Effects: []Effect{},
+	}
+}
+
+func (d ActorDef) Clone() ActorDef {
+	return ActorDef{
+		ID:         d.ID,
+		Name:       d.Name,
+		Affinities: maps.Clone(d.Affinities),
+		Stats:      maps.Clone(d.Stats),
+		Effects:    slices.Clone(d.Effects),
 	}
 }
 
 func NewActor(playerID uuid.UUID, def ActorDef) Actor {
 	return Actor{
-		ActorDef:   def,
+		ActorDef:   def.Clone(),
 		PlayerID:   playerID,
 		PositionID: uuid.Nil,
 		Level:      100,
@@ -132,12 +146,7 @@ func NewActor(playerID uuid.UUID, def ActorDef) Actor {
 
 func (a Actor) Clone() Actor {
 	return Actor{
-		ActorDef: ActorDef{
-			ID:         a.ID,
-			Name:       a.Name,
-			Affinities: maps.Clone(a.Affinities),
-			Stats:      maps.Clone(a.ActorDef.Stats),
-		},
+		ActorDef:   a.ActorDef.Clone(),
 		Level:      a.Level,
 		PlayerID:   a.PlayerID,
 		PositionID: a.PositionID,
@@ -223,5 +232,10 @@ func (a Actor) GetRemainingHealth() float64 {
 	return health - a.Damage
 }
 func (a Actor) GetModifiers() []Modifier {
-	return []Modifier{}
+	modifiers := []Modifier{}
+	for _, effect := range a.Effects {
+		modifiers = append(modifiers, effect.Bind(MakeContextFrom(a)))
+	}
+
+	return modifiers
 }

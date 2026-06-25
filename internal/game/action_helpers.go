@@ -1,6 +1,7 @@
 package game
 
 import (
+	"fmt"
 	"math/rand/v2"
 	"strconv"
 )
@@ -89,6 +90,12 @@ func MultiHitEffects(result DamageResult, context Context, this *ActionContext, 
 }
 func PostDamageEffects(result DamageResult, context Context, this *ActionContext) {
 	if result.Success() {
+		this.Push(PushLog(NewLog(
+			"Affinity = $aff$",
+			map[string]string{
+				"$aff$": fmt.Sprintf("%f", result.Affinity),
+			},
+		)).Bind(context))
 		if result.BaseAffinityStage >= 2 {
 			this.Push(PushLog(NewLog(
 				"Super Effective!",

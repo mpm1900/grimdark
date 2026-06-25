@@ -4,11 +4,27 @@ import (
 	"fmt"
 	"grimdark/internal/game"
 	"grimdark/internal/game/effects"
-
-	"github.com/k0kubun/pp/v3"
 )
 
 func main() {
+	effect := game.EffectSource(game.EffectPriorityStages, func(g game.Game, a game.Actor, ctx game.Context) game.Actor {
+		a.Stages[game.Evasion] = a.Stages[game.Evasion] + 1
+		a.AffinityResistance[game.Kinetic] = a.AffinityResistance[game.Kinetic] + 1
+		return a
+	})
+	effect.Triggers = []game.Trigger{
+		{
+			On:       game.OnDamageRecieve,
+			Validate: game.TriggerTargetMatchesModifierParent,
+			Action: game.Action{
+				Resolve: func(g *game.Game, ctx game.Context, this game.ActionContext) []game.Transaction {
+					fmt.Println("ON DAMAGE TRIGGER:")
+					return this.Done()
+				},
+			},
+		},
+	}
+
 	player := game.NewPlayer()
 	max_def := game.NewActorDef()
 	max_def.Name = "Max"
@@ -23,27 +39,10 @@ func main() {
 		game.Cryo:   {},
 		game.Arcane: {},
 	}
+	katie_def.Effects = []game.Effect{effect}
+
 	katie := game.NewActor(player.ID, katie_def)
 	katie.Aux[game.MartialDefense] = 10
-
-	effect := game.EffectTargets(game.EffectPriorityStages, func(g game.Game, a game.Actor, ctx game.Context) game.Actor {
-		a.Stages[game.Evasion] = a.Stages[game.Evasion] + 1
-		a.AffinityResistance[game.Kinetic] = a.AffinityResistance[game.Kinetic] + 1
-		return a
-	})
-
-	effect.Triggers = []game.Trigger{
-		{
-			On:       game.OnDamageRecieve,
-			Validate: game.TriggerTargetMatchesModifierParent,
-			Action: game.Action{
-				Resolve: func(g *game.Game, ctx game.Context, this game.ActionContext) []game.Transaction {
-					fmt.Println("ON DAMAGE TRIGGER:")
-					return this.Done()
-				},
-			},
-		},
-	}
 
 	g := game.NewGame()
 	g.AddPlayers(player)
@@ -54,8 +53,6 @@ func main() {
 	g.SetPosition(max.ID, temp_player.GetOpenPosition())
 	temp_player, _ = g.GetPlayer(player.ID)
 	g.SetPosition(katie.ID, temp_player.GetOpenPosition())
-
-	g.AddModifiers(effect.Bind(game.MakeContextFor(katie, katie)))
 
 	slash := game.Action{
 		Config: game.ActionConfig{
@@ -98,5 +95,8 @@ func main() {
 	g.Flush()
 
 	katie, _ = g.GetActor(katie.ID)
-	pp.Print(katie)
+	max, _ = g.GetActor(max.ID)
+
+	fmt.Println(katie.AffinityResistance)
+	fmt.Println(max.AffinityResistance)
 }

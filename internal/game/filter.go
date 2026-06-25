@@ -42,6 +42,9 @@ func ContextTargetLength(length int) Filter[Game] {
 func NoneActors(actor Actor, context Context) bool {
 	return false
 }
+func AllActors(actor Actor, context Context) bool {
+	return true
+}
 func ActiveActors(actor Actor, context Context) bool {
 	return actor.PositionID != uuid.Nil
 }

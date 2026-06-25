@@ -179,9 +179,14 @@ func EffectActorsWhere(priority int, where Filter[Actor], updater Updater[Actor]
 func EffectActorsAll(priority int, updater Updater[Actor]) Effect {
 	return EffectActorsWhere(
 		priority,
-		func(a Actor, ctx Context) bool {
-			return true
-		},
+		AllActors,
+		updater,
+	)
+}
+func EffectActorsActive(priority int, updater Updater[Actor]) Effect {
+	return EffectActorsWhere(
+		priority,
+		CombineFilters(ActiveActors, AliveActors),
 		updater,
 	)
 }
