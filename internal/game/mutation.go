@@ -119,12 +119,12 @@ func MutateTargets(updater Updater[Actor]) Mutation {
 		},
 	}
 }
-func DamageTargets(damage float64, trigger bool) Mutation {
+func DamageTargets(damage float64) Mutation {
 	return Mutation{
 		delta: func(g *Game, context Context) []uuid.UUID {
 			applied := []uuid.UUID{}
 
-			g.DamageTargets(context, damage, trigger)
+			g.DamageTargets(context, damage)
 			for _, target := range g.GetTargets(context) {
 				applied = append(applied, target.ID)
 			}

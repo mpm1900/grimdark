@@ -24,7 +24,7 @@ func main() {
 	katie.Name = "Katie"
 	katie.Aux[game.MartialDefense] = 10
 
-	effect := game.EffectTargets(game.EffectPriorityStages, func(a game.Actor, ctx game.Context) game.Actor {
+	effect := game.EffectTargets(game.EffectPriorityStages, func(g game.Game, a game.Actor, ctx game.Context) game.Actor {
 		a.Stages[game.Evasion] = a.Stages[game.Evasion] + 1
 		a.AffinityResistance[game.Kinetic] = a.AffinityResistance[game.Kinetic] + 1
 		return a
@@ -35,7 +35,7 @@ func main() {
 			On:       game.OnDamageRecieve,
 			Validate: game.TriggerTargetMatchesModifierParent,
 			Action: game.Action{
-				Resolve: func(g game.Game, ctx game.Context, this game.ActionContext) []game.Transaction {
+				Resolve: func(g *game.Game, ctx game.Context, this game.ActionContext) []game.Transaction {
 					fmt.Println("ON DAMAGE TRIGGER:")
 					return this.Done()
 				},
@@ -55,7 +55,7 @@ func main() {
 			Stat:         game.Melee,
 			Power:        70,
 			Hits:         1,
-			Accuracy:     0.8,
+			Accuracy:     0.98,
 			CritChance:   0.05,
 			CritModifier: 1.5,
 		},

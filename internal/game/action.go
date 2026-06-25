@@ -1,6 +1,6 @@
 package game
 
-type ActionResolver func(g Game, ctx Context, this ActionContext) []Transaction
+type ActionResolver func(g *Game, ctx Context, this ActionContext) []Transaction
 type ActionContextMapper func(g Game, ctx Context, this ActionContext) Context
 
 type Action struct {
@@ -67,11 +67,11 @@ func (c Command) Resolve(g *Game) []Transaction {
 		return action_context.transactions
 	}
 
-	return c.Payload.Resolve(*g, context, action_context)
+	return c.Payload.Resolve(g, context, action_context)
 }
 
-func (c Command) ResolveTrigger(g Game) []Transaction {
-	if !c.Payload.CanResolve(g, c.Context) || c.Payload.Resolve == nil {
+func (c Command) ResolveTrigger(g *Game) []Transaction {
+	if !c.Payload.CanResolve(*g, c.Context) || c.Payload.Resolve == nil {
 		return []Transaction{}
 	}
 
@@ -83,7 +83,7 @@ func (c Command) ResolveTrigger(g Game) []Transaction {
 
 	context := c.Context
 	if c.Payload.MapContext != nil {
-		context = c.Payload.MapContext(g, context, action_context)
+		context = c.Payload.MapContext(*g, context, action_context)
 	}
 	return c.Payload.Resolve(g, context, action_context)
 }

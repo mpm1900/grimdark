@@ -43,13 +43,20 @@ func (s *State) Clone() State {
 		triggers[i].Context = triggers[i].Context.Clone()
 	}
 
+	var activeContext *Context
+	if s.ActiveContext != nil {
+		cloned := s.ActiveContext.Clone()
+		activeContext = &cloned
+	}
+
 	return State{
-		Players:      slices.Clone(s.Players),
-		Actors:       actors,
-		Transactions: transactions,
-		Modifiers:    modifiers,
-		Commands:     commands,
-		Triggers:     triggers,
+		Players:       slices.Clone(s.Players),
+		Actors:        actors,
+		Transactions:  transactions,
+		Modifiers:     modifiers,
+		Commands:      commands,
+		Triggers:      triggers,
+		ActiveContext: activeContext,
 	}
 }
 

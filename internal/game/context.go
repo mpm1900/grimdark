@@ -88,7 +88,6 @@ func (c *Context) RemoveTarget(target Actor) {
 		}
 		c.PositionIDs = pos_ids
 	}
-
 }
 func (c Context) CloneWithTarget(target Actor) Context {
 	clone := c.Clone()
@@ -108,6 +107,15 @@ func (c Context) CloneWithTargets(targets []Actor) Context {
 	}
 
 	return clone
+}
+func (c Context) HasTarget(target Actor) bool {
+	if target.PositionID != nil {
+		if slices.Contains(c.PositionIDs, *target.PositionID) {
+			return true
+		}
+	}
+
+	return slices.Contains(c.ActorIDs, target.ID)
 }
 
 func (g *Game) GetSource(context Context) (Actor, bool) {

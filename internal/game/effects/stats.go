@@ -55,7 +55,7 @@ func StatDownSource(stat game.Stat, amount int) game.Effect {
 	return effect
 }
 func StatUpTargets(stat game.Stat, amount int) game.Effect {
-	effect := game.EffectTargets(game.EffectPriorityStages, func(a game.Actor, ctx game.Context) game.Actor {
+	effect := game.EffectTargets(game.EffectPriorityStages, func(g game.Game, a game.Actor, ctx game.Context) game.Actor {
 		a.Stages[stat] += amount
 		return a
 	})
@@ -66,7 +66,7 @@ func StatUpTargets(stat game.Stat, amount int) game.Effect {
 	return effect
 }
 func StatDownTargets(stat game.Stat, amount int) game.Effect {
-	effect := game.EffectTargets(game.EffectPriorityStages, func(a game.Actor, ctx game.Context) game.Actor {
+	effect := game.EffectTargets(game.EffectPriorityStages, func(g game.Game, a game.Actor, ctx game.Context) game.Actor {
 		a.Stages[stat] -= amount
 		return a
 	})

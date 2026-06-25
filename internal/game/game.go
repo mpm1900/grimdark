@@ -291,7 +291,7 @@ func (g *Game) MutateActorWhere(where func(Actor) bool, updater func(Actor) Acto
 		s.UpdateActorWhere(where, updater)
 	})
 }
-func (g *Game) DamageTargets(context Context, damage float64, trigger bool) {
+func (g *Game) DamageTargets(context Context, damage float64) {
 	for _, target := range g.GetTargets(context) {
 		g.MutateActor(target.ID, func(a Actor) Actor {
 			found, ok := g.GetActor(target.ID)
@@ -320,11 +320,6 @@ func (g *Game) DamageTargets(context Context, damage float64, trigger bool) {
 					),
 					MakeContextFor(a, a),
 				)
-
-				if trigger {
-					trigger_context := context.CloneWithTarget(target)
-					g.On(OnDamageRecieve, trigger_context)
-				}
 			}
 
 			if !a.IsAlive && found.IsAlive {
@@ -371,7 +366,7 @@ func (g *Game) NextTrigger() {
 		return
 	}
 
-	g.PushTransactions(trig.ResolveTrigger(*g))
+	g.PushTransactions(trig.ResolveTrigger(g))
 }
 func (g *Game) NextCommand() {
 	g.SortCommands()

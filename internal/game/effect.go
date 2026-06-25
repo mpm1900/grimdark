@@ -90,7 +90,7 @@ func EffectSource(priority int, updater Updater[Actor]) Effect {
 		},
 	}
 }
-func EffectTargets(priority int, updater Updater[Actor]) Effect {
+func EffectTargets(priority int, updater func(Game, Actor, Context) Actor) Effect {
 	return Effect{
 		ID:       uuid.New(),
 		Delay:    nil,
@@ -104,7 +104,7 @@ func EffectTargets(priority int, updater Updater[Actor]) Effect {
 				for _, target := range g.GetTargets(context) {
 					applied = append(applied, target.ID)
 					g.ModifyActor(target.ID, func(a Actor) Actor {
-						return updater(a, context)
+						return updater(*g, a, context)
 					})
 				}
 

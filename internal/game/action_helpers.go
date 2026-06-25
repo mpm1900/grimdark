@@ -16,7 +16,7 @@ type AttackConfig struct {
 }
 
 func BasicAttack(config AttackConfig) ActionResolver {
-	return func(g Game, context Context, this ActionContext) []Transaction {
+	return func(g *Game, context Context, this ActionContext) []Transaction {
 		targets := g.GetTargets(context)
 		success := false
 		hits := this.Action.Config.Hits
@@ -25,26 +25,31 @@ func BasicAttack(config AttackConfig) ActionResolver {
 				result := this.Action.Config.GetDamageResult(this.Source, target, targets)
 				dmg_ctx := MakeContextFor(this.Source, target)
 
-				this.Push(DamageTargets(result.Damage, true).Bind(dmg_ctx))
+				this.Push(DamageTargets(result.Damage).Bind(dmg_ctx))
 				MultiHitEffects(result, context, &this, hit)
 				PostDamageEffects(result, context, &this)
 
 				success = success || result.Success()
-				if result.Success() && config.OnSuccessResult != nil {
-					config.OnSuccessResult(g, context, &this, result)
+				if result.Success() {
+					trigger_context := MakeContextFor(this.Source, target)
+					g.On(OnDamageRecieve, trigger_context)
+
+					if config.OnSuccessResult != nil {
+						config.OnSuccessResult(*g, context, &this, result)
+					}
 				}
 				if !result.Success() && config.OnFailureResult != nil {
-					config.OnFailureResult(g, context, &this, result)
+					config.OnFailureResult(*g, context, &this, result)
 				}
 			}
 		}
 
 		if success && config.OnSuccess != nil {
-			config.OnSuccess(g, context, &this)
+			config.OnSuccess(*g, context, &this)
 		}
 
 		if !success && config.OnFailure != nil {
-			config.OnFailure(g, context, &this)
+			config.OnFailure(*g, context, &this)
 		}
 
 		return this.Done()
@@ -116,7 +121,7 @@ func PostDamageEffects(result DamageResult, context Context, this *ActionContext
 }
 
 func AddSourceEffects(chance float64, effects ...Effect) ActionResolver {
-	return func(g Game, ctx Context, this ActionContext) []Transaction {
+	return func(g *Game, ctx Context, this ActionContext) []Transaction {
 		roll := rand.Float64()
 		if chance <= roll {
 			return this.Done()
