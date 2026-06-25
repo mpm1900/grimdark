@@ -56,6 +56,11 @@ func MakeContextFor(source Actor, targets ...Actor) Context {
 	}
 	return ctx
 }
+func MakeModifierContext(source Actor, target Actor) Context {
+	ctx := MakeContextFor(source, target)
+	ctx.ParentID = &target.ID
+	return ctx
+}
 
 func (c *Context) AddTarget(target Actor) {
 	if target.PositionID != nil {

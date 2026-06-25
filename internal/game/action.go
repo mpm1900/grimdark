@@ -34,7 +34,11 @@ type Command struct {
 	Priority int
 }
 
-func (c Command) Resolve(g Game) []Transaction {
+func (c Command) Resolve(g *Game) []Transaction {
+	g.mutate(func(s *State) {
+		s.ActiveContext = &c.Context
+	})
+
 	action_context := ActionContext{
 		Action:       c.Payload,
 		Source:       g.GetSourceAction(c.Context),
@@ -43,7 +47,7 @@ func (c Command) Resolve(g Game) []Transaction {
 
 	context := c.Context
 	if c.Payload.MapContext != nil {
-		context = c.Payload.MapContext(g, context, action_context)
+		context = c.Payload.MapContext(*g, context, action_context)
 	}
 
 	action_context.Push(
@@ -53,7 +57,7 @@ func (c Command) Resolve(g Game) []Transaction {
 		})).Bind(context),
 	)
 
-	if c.Payload.Resolve == nil || !c.Payload.CanResolve(g, context) {
+	if c.Payload.Resolve == nil || !c.Payload.CanResolve(*g, context) {
 		action_context.Push(
 			PushLog(NewLog("$action$ failed.", map[string]string{
 				"$action$": c.Payload.Config.Name,
@@ -63,7 +67,7 @@ func (c Command) Resolve(g Game) []Transaction {
 		return action_context.transactions
 	}
 
-	return c.Payload.Resolve(g, context, action_context)
+	return c.Payload.Resolve(*g, context, action_context)
 }
 
 func (c Command) ResolveTrigger(g Game) []Transaction {

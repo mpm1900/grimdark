@@ -4,17 +4,15 @@ import (
 	"fmt"
 	"grimdark/internal/game"
 	"grimdark/internal/game/effects"
-
-	"github.com/google/uuid"
 )
 
 func main() {
-	playerID := uuid.New()
+	player := game.NewPlayer()
 	max_def := game.NewActorDef()
 	max_def.Affinities = map[game.Affinity]struct{}{
 		game.Fire: {},
 	}
-	max := game.NewActor(playerID, max_def)
+	max := game.NewActor(player.ID, max_def)
 	max.Name = "Max"
 
 	katie_def := game.NewActorDef()
@@ -22,7 +20,7 @@ func main() {
 		game.Cryo:   {},
 		game.Arcane: {},
 	}
-	katie := game.NewActor(playerID, katie_def)
+	katie := game.NewActor(player.ID, katie_def)
 	katie.Name = "Katie"
 	katie.Aux[game.MartialDefense] = 10
 
@@ -46,6 +44,7 @@ func main() {
 	}
 
 	g := game.NewGame()
+	g.AddPlayers(player)
 	g.AddActors(max, katie)
 	g.AddModifiers(effect.Bind(game.MakeContextFor(katie, katie)))
 
@@ -55,11 +54,14 @@ func main() {
 			Affinity:     game.Kinetic,
 			Stat:         game.Melee,
 			Power:        70,
-			Accuracy:     80,
-			CritChance:   5,
+			Hits:         1,
+			Accuracy:     0.8,
+			CritChance:   0.05,
 			CritModifier: 1.5,
 		},
-		Resolve: game.BasicAttack(),
+		Resolve: game.BasicAttack(game.AttackConfig{
+			OnSuccessResult: game.ChanceAddEffects(0.5, effects.StatDownTargets(game.Speed, 1)),
+		}),
 	}
 	swords_dance := game.Action{
 		Config: game.ActionConfig{
@@ -67,13 +69,13 @@ func main() {
 			BypassAccuracy: true,
 		},
 		Resolve: game.AddSourceEffects(
+			1,
 			effects.StatUpSource(game.Speed, 1),
 			effects.StatUpSource(game.Speed, 1),
 		),
 	}
 
 	g.PushCommand(swords_dance.Bind(game.MakeContextFrom(katie)))
-
 	g.PushCommand(slash.Bind(game.MakeContextFor(max, katie)))
 	g.PushCommand(slash.Bind(game.MakeContextFor(katie, max)))
 	g.Flush()

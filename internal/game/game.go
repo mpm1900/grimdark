@@ -35,20 +35,20 @@ func (ac *ActionContext) Done() []Transaction {
 }
 
 type gamemeta struct {
-	appliedEffects map[uuid.UUID]map[uuid.UUID]int
+	applied_effects map[uuid.UUID]map[uuid.UUID]int
 }
 
-func (gm *gamemeta) Apply(actorID uuid.UUID, modifierID uuid.UUID) {
-	_, ok := gm.appliedEffects[actorID]
+func (gm *gamemeta) apply(actorID uuid.UUID, modifierID uuid.UUID) {
+	_, ok := gm.applied_effects[actorID]
 	if !ok {
-		gm.appliedEffects[actorID] = map[uuid.UUID]int{}
+		gm.applied_effects[actorID] = map[uuid.UUID]int{}
 	}
 
-	old, ok := gm.appliedEffects[actorID][modifierID]
+	old, ok := gm.applied_effects[actorID][modifierID]
 	if ok {
-		gm.appliedEffects[actorID][modifierID] = old + 1
+		gm.applied_effects[actorID][modifierID] = old + 1
 	} else {
-		gm.appliedEffects[actorID][modifierID] = 1
+		gm.applied_effects[actorID][modifierID] = 1
 	}
 }
 
@@ -101,7 +101,7 @@ func NewGame() Game {
 		resolved:  state,
 		gamestate: unresolved,
 		meta: gamemeta{
-			appliedEffects: map[uuid.UUID]map[uuid.UUID]int{},
+			applied_effects: map[uuid.UUID]map[uuid.UUID]int{},
 		},
 	}
 }
@@ -141,7 +141,7 @@ func (g *Game) State() State {
 	return g.resolved
 }
 func (g *Game) AppliedEffects(actor_id uuid.UUID) map[uuid.UUID]int {
-	effect_ids, ok := g.meta.appliedEffects[actor_id]
+	effect_ids, ok := g.meta.applied_effects[actor_id]
 	if !ok {
 		return map[uuid.UUID]int{}
 	}
@@ -180,7 +180,7 @@ func (g *Game) FindActors(where Filter[Actor], context Context) []Actor {
 func (g *Game) resolve() {
 	g.gamestate = resolving
 	g.resolved = g.state.Clone()
-	g.meta.appliedEffects = map[uuid.UUID]map[uuid.UUID]int{}
+	g.meta.applied_effects = map[uuid.UUID]map[uuid.UUID]int{}
 
 	modifiers := g.GetModifiers()
 	for _, mod := range modifiers {
@@ -191,6 +191,11 @@ func (g *Game) resolve() {
 }
 
 // mutations
+func (g *Game) AddPlayers(players ...Player) {
+	g.mutate(func(s *State) {
+		s.Players = append(s.Players, players...)
+	})
+}
 func (g *Game) AddActors(actors ...Actor) {
 	g.mutate(func(s *State) {
 		s.Actors = append(s.Actors, actors...)
@@ -199,22 +204,23 @@ func (g *Game) AddActors(actors ...Actor) {
 func (g *Game) AddModifiers(modifiers ...Modifier) {
 	g.mutate(func(s *State) {
 		for _, mod := range modifiers {
-			if !mod.Payload.Filter(*g, mod.Context) {
-				if mod.Payload.OnFailure != nil {
-					log, ok := mod.Payload.OnFailure(*g, mod.Payload, mod.Context)
-					if ok {
-						g.PushLog(log, mod.Context)
-					}
-				}
-				continue
+			success := true
+			if mod.Payload.Check != nil {
+				success = mod.Payload.Check(*g, mod.Context)
 			}
 
-			s.Modifiers = append(s.Modifiers, mod)
-			if mod.Payload.OnSuccess != nil {
-				log, ok := mod.Payload.OnSuccess(*g, mod.Payload, mod.Context)
-				if ok {
-					g.PushLog(log, mod.Context)
+			if success {
+				s.Modifiers = append(s.Modifiers, mod)
+				if mod.Payload.OnSuccess != nil {
+					mod.Payload.OnSuccess(g, mod.Payload, mod.Context)
 				}
+			}
+
+			if !success {
+				if mod.Payload.OnFailure != nil {
+					mod.Payload.OnFailure(g, mod.Payload, mod.Context)
+				}
+				continue
 			}
 		}
 	})
@@ -374,7 +380,7 @@ func (g *Game) NextCommand() {
 		return
 	}
 
-	g.PushTransactions(cmd.Resolve(*g))
+	g.PushTransactions(cmd.Resolve(g))
 }
 
 func (g *Game) Next() bool {

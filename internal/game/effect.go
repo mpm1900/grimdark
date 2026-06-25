@@ -12,14 +12,18 @@ const EffectPriorityMapStages = 4
 
 type Effect struct {
 	Mutation
-	ID        uuid.UUID
-	Name      string
-	Delay     *int
-	Duration  *int
-	Priority  int
-	Triggers  []Trigger
-	OnSuccess func(Game, Effect, Context) (Log, bool)
-	OnFailure func(Game, Effect, Context) (Log, bool)
+	ID       uuid.UUID
+	Name     string
+	Delay    *int
+	Duration *int
+	Priority int
+	Triggers []Trigger
+	// check is ran on add
+	Check Filter[Game]
+	// success logs
+	OnSuccess func(*Game, Effect, Context)
+	// failure logs
+	OnFailure func(*Game, Effect, Context)
 }
 type Modifier struct {
 	Bindable[Effect]
@@ -29,7 +33,6 @@ type Modifier struct {
 func (e Effect) Ready() bool {
 	return e.Delay == nil || *e.Delay <= 0
 }
-
 func (e Effect) Filter(g Game, context Context) bool {
 	if e.filter == nil {
 		return true
@@ -56,7 +59,7 @@ func (m *Modifier) Resolve(game *Game) []uuid.UUID {
 	actorIDs := resolveMutation(game, m.Context, m.Payload)
 	if len(actorIDs) > 0 {
 		for _, actorID := range actorIDs {
-			game.meta.Apply(actorID, m.Payload.ID)
+			game.meta.apply(actorID, m.Payload.ID)
 		}
 	}
 

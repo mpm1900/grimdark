@@ -8,12 +8,13 @@ import (
 
 type State struct {
 	// turn ...
-	Players      []Player
-	Actors       []Actor
-	Transactions Queue[Transaction]
-	Modifiers    []Modifier
-	Commands     Queue[Command]
-	Triggers     Queue[Command]
+	Players       []Player
+	Actors        []Actor
+	Transactions  Queue[Transaction]
+	Modifiers     []Modifier
+	Commands      Queue[Command]
+	Triggers      Queue[Command]
+	ActiveContext *Context
 }
 
 func (s *State) Clone() State {
