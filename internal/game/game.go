@@ -160,7 +160,9 @@ func (g *Game) GetModifiers() []Modifier {
 	}
 
 	for _, a := range g.state.Actors {
-		modifiers = append(modifiers, a.GetModifiers()...)
+		if a.IsActive() && a.IsAlive {
+			modifiers = append(modifiers, a.GetModifiers()...)
+		}
 	}
 
 	slices.SortStableFunc(modifiers, func(a, b Modifier) int {

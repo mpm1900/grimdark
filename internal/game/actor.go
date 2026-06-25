@@ -240,7 +240,10 @@ func (a Actor) GetRemainingHealth() float64 {
 func (a Actor) GetModifiers() []Modifier {
 	modifiers := []Modifier{}
 	for _, effect := range a.Effects {
-		modifiers = append(modifiers, effect.Bind(MakeContextFrom(a)))
+		if effect.Ready() {
+			modifier := effect.Bind(MakeContextFrom(a))
+			modifiers = append(modifiers, modifier)
+		}
 	}
 
 	return modifiers
