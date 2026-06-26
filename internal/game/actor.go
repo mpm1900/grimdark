@@ -7,20 +7,6 @@ import (
 	"github.com/google/uuid"
 )
 
-type Stat string
-
-const (
-	Health         Stat = "health"
-	Speed          Stat = "speed"
-	Melee          Stat = "melee"
-	Ranged         Stat = "ranged"
-	Special        Stat = "special"
-	MartialDefense Stat = "martial-defense"
-	SpecialDefense Stat = "special-defense"
-	Accuracy       Stat = "accuracy"
-	Evasion        Stat = "evasion"
-)
-
 type Status string
 
 const (
@@ -28,51 +14,17 @@ const (
 	StatusBurned Status = "burned"
 )
 
-func (s Stat) GetDefense() Stat {
-	switch s {
-	case Health:
-		return Health
-	case Speed:
-		return Speed
-	case Melee:
-		return MartialDefense
-	case Ranged:
-		return MartialDefense
-	case MartialDefense:
-		return MartialDefense
-	case Special:
-		return SpecialDefense
-	case SpecialDefense:
-		return SpecialDefense
-	case Accuracy:
-		return Evasion
-	case Evasion:
-		return Accuracy
-	default:
-		return Health
-	}
-}
-
-func (s Stat) GetRatio(source, target Actor, useBaseStats bool) float64 {
-	source_value := source.Stats[s]
-	target_value := target.Stats[s.GetDefense()]
-
-	if useBaseStats {
-		base_target_value := target.Unmodified[s.GetDefense()]
-		if target_value > base_target_value {
-			target_value = base_target_value
-		}
-	}
-
-	return source_value / target_value
-}
-
 type ActorDef struct {
 	ID         uuid.UUID
 	Name       string
 	Affinities map[Affinity]struct{}
 	Stats      map[Stat]float64
 	Effects    []Effect
+}
+
+type actormeta struct {
+	active_turns   int
+	inactive_turns int
 }
 
 type Actor struct {
@@ -84,7 +36,7 @@ type Actor struct {
 	AffinityDamage     map[Affinity]int
 	AffinityResistance map[Affinity]int
 	AffinityImmunities map[Affinity]float64
-	Unmodified         map[Stat]float64
+	UnmodifiedStats    map[Stat]float64
 	Stages             map[Stat]int
 	Aux                map[Stat]float64
 	Stats              map[Stat]float64
@@ -93,6 +45,8 @@ type Actor struct {
 	Status      Status
 	IsAlive     bool
 	IsProtected bool
+
+	meta actormeta
 }
 
 func NewActorDef() ActorDef {
@@ -143,6 +97,11 @@ func NewActor(playerID uuid.UUID, def ActorDef) Actor {
 		Status:      StatusNone,
 		IsAlive:     true,
 		IsProtected: false,
+
+		meta: actormeta{
+			active_turns:   0,
+			inactive_turns: 0,
+		},
 	}
 }
 
@@ -156,7 +115,7 @@ func (a Actor) Clone() Actor {
 		AffinityDamage:     maps.Clone(a.AffinityDamage),
 		AffinityResistance: maps.Clone(a.AffinityResistance),
 		AffinityImmunities: maps.Clone(a.AffinityImmunities),
-		Unmodified:         maps.Clone(a.Unmodified),
+		UnmodifiedStats:    maps.Clone(a.UnmodifiedStats),
 		Stages:             maps.Clone(a.Stages),
 		Aux:                maps.Clone(a.Aux),
 		Stats:              maps.Clone(a.Stats),
@@ -165,6 +124,8 @@ func (a Actor) Clone() Actor {
 		Status:      a.Status,
 		IsAlive:     a.IsAlive,
 		IsProtected: a.IsProtected,
+
+		meta: a.meta,
 	}
 }
 
@@ -179,7 +140,7 @@ func mapBaseStat(actor Actor, stat Stat, stats map[Stat]float64, aux float64) fl
 }
 
 func (a *Actor) mapBaseStats() {
-	a.Unmodified = maps.Clone(a.Stats)
+	a.UnmodifiedStats = maps.Clone(a.Stats)
 
 	for stat, _ := range a.Stats {
 		if stat == Accuracy || stat == Evasion {
@@ -192,7 +153,7 @@ func (a *Actor) mapBaseStats() {
 		}
 
 		a.Stats[stat] = mapBaseStat(*a, stat, a.Stats, aux)
-		a.Unmodified[stat] = mapBaseStat(*a, stat, a.Unmodified, 0)
+		a.UnmodifiedStats[stat] = mapBaseStat(*a, stat, a.UnmodifiedStats, 0)
 	}
 }
 func (a *Actor) ApplyDamage(damage float64, resolved Actor) {
@@ -202,6 +163,13 @@ func (a *Actor) ApplyDamage(damage float64, resolved Actor) {
 	}
 
 	a.IsAlive = resolved.Stats[Health] > a.Damage
+}
+func (a *Actor) IncrementTurns() {
+	if a.IsActive() {
+		a.meta.active_turns++
+	} else {
+		a.meta.inactive_turns++
+	}
 }
 
 func (a Actor) IsActive() bool {
@@ -247,4 +215,52 @@ func (a Actor) GetModifiers() []Modifier {
 	}
 
 	return modifiers
+}
+func (a Actor) GetActionByID(action_id uuid.UUID) (Action, bool) {
+	return Action{}, false
+}
+
+type actorJSON struct {
+	ID                 uuid.UUID         `json:"ID"`
+	PlayerID           uuid.UUID         `json:"player_ID"`
+	PositionID         uuid.UUID         `json:"position_ID"`
+	Affinities         []Affinity        `json:"affinities"`
+	AffinityDamage     map[Affinity]int  `json:"affinity_damage"`
+	AffinityResistance map[Affinity]int  `json:"affinity_resistance"`
+	Stats              map[Stat]int      `json:"stats"`
+	UnmodifiedStats    map[Stat]int      `json:"unmodified_stats"`
+	AppliedEffects     map[uuid.UUID]int `json:"applied_effects"`
+	Damage             int               `json:"damage"`
+	Status             Status            `json:"status"`
+	IsAlive            bool              `json:"is_alive"`
+	IsProtected        bool              `json:"is_protected"`
+}
+
+func (a Actor) ToJSON(g Game) actorJSON {
+	stats := make(map[Stat]int, len(a.Stats))
+	unmodified_stats := make(map[Stat]int, len(a.UnmodifiedStats))
+	applied_effects := g.AppliedEffects(a.ID)
+
+	for k, v := range a.Stats {
+		stats[k] = int(v)
+	}
+	for k, v := range a.UnmodifiedStats {
+		unmodified_stats[k] = int(v)
+	}
+
+	return actorJSON{
+		ID:                 a.ID,
+		PlayerID:           a.PlayerID,
+		PositionID:         a.PositionID,
+		Affinities:         slices.Collect(maps.Keys(a.Affinities)),
+		AffinityDamage:     maps.Clone(a.AffinityDamage),
+		AffinityResistance: maps.Clone(a.AffinityResistance),
+		Stats:              stats,
+		UnmodifiedStats:    unmodified_stats,
+		AppliedEffects:     applied_effects,
+		Damage:             int(a.Damage),
+		Status:             a.Status,
+		IsAlive:            a.IsAlive,
+		IsProtected:        a.IsProtected,
+	}
 }

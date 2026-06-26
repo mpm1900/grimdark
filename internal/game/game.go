@@ -2,6 +2,7 @@ package game
 
 import (
 	"cmp"
+	"encoding/json"
 	"fmt"
 	"math/rand/v2"
 	"slices"
@@ -38,19 +39,36 @@ type gamemeta struct {
 	modifier_immunities map[uuid.UUID]struct{}
 }
 
-func (gm *gamemeta) apply(actorID uuid.UUID, modifierID uuid.UUID) {
-	_, ok := gm.applied_effects[actorID]
+func (gm *gamemeta) apply(modifierID uuid.UUID, actorID uuid.UUID) {
+	_, ok := gm.applied_effects[modifierID]
 	if !ok {
-		gm.applied_effects[actorID] = map[uuid.UUID]int{}
+		gm.applied_effects[modifierID] = map[uuid.UUID]int{}
 	}
 
-	old, ok := gm.applied_effects[actorID][modifierID]
+	old, ok := gm.applied_effects[modifierID][actorID]
 	if ok {
-		gm.applied_effects[actorID][modifierID] = old + 1
+		gm.applied_effects[modifierID][actorID] = old + 1
 	} else {
-		gm.applied_effects[actorID][modifierID] = 1
+		gm.applied_effects[modifierID][actorID] = 1
 	}
 }
+
+type GameStatus string
+type GamePhase string
+
+const (
+	GameStatusRunning GameStatus = "running"
+	GameStatusIdle    GameStatus = "idle"
+	GameStatusWaiting GameStatus = "waiting"
+)
+
+const (
+	TurnInit    GamePhase = "init"
+	TurnStart   GamePhase = "start"
+	TurnMain    GamePhase = "main"
+	TurnEnd     GamePhase = "end"
+	TurnCleanup GamePhase = "cleanup"
+)
 
 type Game struct {
 	state    State
@@ -59,7 +77,10 @@ type Game struct {
 	gamestate gamestate
 	meta      gamemeta
 
-	Logs []Bindable[Log]
+	Phase     GamePhase
+	Status    GameStatus
+	TurnCount int
+	Logs      []Bindable[Log]
 }
 
 func NewGame() Game {
@@ -70,6 +91,7 @@ func NewGame() Game {
 		Modifiers:    []Modifier{},
 		Commands:     []Command{},
 		Triggers:     []Command{},
+		Prompts:      []Command{},
 	}
 	var system_modifiers = []Modifier{
 		// map stat stages
@@ -144,9 +166,12 @@ func (g *Game) State() State {
 	return g.resolved
 }
 func (g *Game) AppliedEffects(actor_id uuid.UUID) map[uuid.UUID]int {
-	effect_ids, ok := g.meta.applied_effects[actor_id]
-	if !ok {
-		return map[uuid.UUID]int{}
+	effect_ids := map[uuid.UUID]int{}
+	for modifier_id, actors := range g.meta.applied_effects {
+		count, ok := actors[actor_id]
+		if ok {
+			effect_ids[modifier_id] = count
+		}
 	}
 
 	return effect_ids
@@ -187,6 +212,15 @@ func (g *Game) GetActor(id uuid.UUID) (Actor, bool) {
 }
 func (g *Game) FindActors(where Filter[Actor], context Context) []Actor {
 	return g.State().FindActorsWhere(*g, where, context)
+}
+func (g *Game) GetActionableActors() []Actor {
+	return g.FindActors(CombineFilters(
+		ActiveActors,
+		AliveActors,
+	), NewContext())
+}
+func (g *Game) IsReadyToRun() bool {
+	return len(g.State().Commands) == len(g.GetActionableActors())
 }
 
 func (g *Game) resolve() {
@@ -241,6 +275,11 @@ func (g *Game) AddModifiers(modifiers ...Modifier) {
 func (g *Game) PushCommand(command Command) {
 	g.mutate(func(s *State) {
 		s.Commands = append(s.Commands, command)
+	})
+}
+func (g *Game) DeleteCommandWhere(where func(Command) bool) {
+	g.mutate(func(s *State) {
+		s.Commands = slices.DeleteFunc(s.Commands, where)
 	})
 }
 func (g *Game) SortCommands() {
@@ -409,6 +448,14 @@ func (g *Game) DamageTargets(context Context, damage float64) {
 		})
 	}
 }
+func (g *Game) IncrementActorTurns() {
+	for _, actor := range g.State().Actors {
+		g.MutateActor(actor.ID, func(a Actor) Actor {
+			a.IncrementTurns()
+			return a
+		})
+	}
+}
 
 // modifiers
 func (g *Game) ModifyActor(id uuid.UUID, updater func(Actor) Actor) {
@@ -423,6 +470,34 @@ func (g *Game) ModifyActorWhere(where func(Actor) bool, updater func(Actor) Acto
 }
 
 // control
+func (g *Game) NextPhase() {
+	g.mutate(func(s *State) {
+		s.ActiveContext = nil
+	})
+
+	switch g.Phase {
+	case TurnStart:
+		g.Phase = TurnMain
+	case TurnInit, TurnMain:
+		g.Phase = TurnEnd
+	case TurnEnd:
+		g.Phase = TurnCleanup
+	case TurnCleanup:
+		// Keep cleanup stable so callers can run end-of-turn bookkeeping once
+		// without immediately wrapping back to main in the same loop tick.
+	}
+}
+func (g *Game) NextTurn() {
+	g.TurnCount++
+	g.Phase = TurnMain
+}
+func (g *Game) EndTurn() {
+	if g.TurnCount > 0 {
+		g.On(OnTurnEnd, NewContext())
+	}
+
+	g.IncrementActorTurns()
+}
 func (g *Game) NextTransaction() {
 	tx, err := g.state.Transactions.Dequeue()
 	if err != nil {
@@ -468,6 +543,32 @@ func (g *Game) Next() bool {
 	return false
 }
 
+type stateJSON struct {
+	Players []Player    `json:"players"`
+	Actors  []actorJSON `json:"actors"`
+}
+type GameJSON struct {
+	ActiveContext *Context        `json:"active_context"`
+	State         stateJSON       `json:"state"`
+	Logs          []Bindable[Log] `json:"logs"`
+}
+
+func (g Game) ToJSON() GameJSON {
+	state := g.State()
+	actors := make([]actorJSON, len(state.Actors))
+	for i, actor := range g.state.Actors {
+		actors[i] = actor.ToJSON(g)
+	}
+	return GameJSON{
+		ActiveContext: state.ActiveContext,
+		State: stateJSON{
+			Players: state.Players,
+			Actors:  actors,
+		},
+		// Logs: g.Logs,
+	}
+}
+
 // temp functions
 func (g *Game) Flush() {
 	for g.Next() {
@@ -477,4 +578,8 @@ func (g *Game) Flush() {
 	g.mutate(func(s *State) {
 		s.ActiveContext = nil
 	})
+}
+
+func (g Game) MarshalJSON() ([]byte, error) {
+	return json.Marshal(g.ToJSON())
 }

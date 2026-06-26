@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"grimdark/internal/game"
 	"grimdark/internal/game/effects"
+
+	"github.com/k0kubun/pp/v3"
 )
 
 func main() {
@@ -112,6 +114,5 @@ func main() {
 	katie, _ = g.GetActor(katie.ID)
 	max, _ = g.GetActor(max.ID)
 
-	fmt.Println(katie.AffinityResistance)
-	fmt.Println(max.AffinityResistance)
+	pp.Print(g.ToJSON())
 }

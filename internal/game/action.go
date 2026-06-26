@@ -1,9 +1,12 @@
 package game
 
+import "github.com/google/uuid"
+
 type ActionResolver func(g *Game, ctx Context, this ActionContext) []Transaction
 type ActionContextMapper func(g Game, ctx Context, this ActionContext) Context
 
 type Action struct {
+	ID               uuid.UUID
 	Config           ActionConfig
 	Resolve          ActionResolver
 	ValidateContext  GameFilter

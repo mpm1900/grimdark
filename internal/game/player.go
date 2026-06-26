@@ -5,8 +5,9 @@ import (
 )
 
 type Player struct {
-	ID        uuid.UUID
-	Positions map[uuid.UUID]uuid.UUID
+	ID        uuid.UUID               `json:"ID"`
+	User      User                    `json:"user"`
+	Positions map[uuid.UUID]uuid.UUID `json:"positions"`
 }
 
 func NewPlayer() Player {

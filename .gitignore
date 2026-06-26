@@ -1,0 +1,8 @@
+.DS_Store
+.env
+bin/
+tmp/
+node_modules/
+dist/
+.kamal/
+.secret/

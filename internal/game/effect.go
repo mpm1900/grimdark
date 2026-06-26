@@ -107,8 +107,10 @@ func (m *Modifier) Resolve(g *Game) []uuid.UUID {
 	actorIDs := resolveMutation(g, m.Context, m.Payload)
 	if len(actorIDs) > 0 {
 		for _, actorID := range actorIDs {
-			g.meta.apply(actorID, m.Payload.ID)
+			g.meta.apply(m.Payload.ID, actorID)
 		}
+	} else {
+		g.meta.apply(m.Payload.ID, uuid.Nil)
 	}
 
 	return actorIDs
