@@ -111,7 +111,7 @@ function Home() {
           </div>
           <ul className="p-4">
             {game.logs.map((log) => (
-              <li>{RenderLog(log)}</li>
+              <li key={log.ID}>{RenderLog(log)}</li>
             ))}
           </ul>
         </div>

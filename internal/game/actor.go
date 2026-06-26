@@ -1,7 +1,6 @@
 package game
 
 import (
-	"fmt"
 	"maps"
 	"slices"
 
@@ -213,7 +212,6 @@ func (a Actor) GetModifiers() []Modifier {
 	modifiers := []Modifier{}
 	for _, effect := range a.Effects {
 		if effect.Ready() {
-			fmt.Println(effect.Name)
 			modifier := effect.Bind(MakeContextFrom(a))
 			modifiers = append(modifiers, modifier)
 		}
