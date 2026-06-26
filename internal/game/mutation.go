@@ -5,9 +5,9 @@ import (
 )
 
 type Bindable[P any] struct {
-	ID      uuid.UUID
-	Context Context
-	Payload P
+	ID      uuid.UUID `json:"ID"`
+	Context Context   `json:"context"`
+	Payload P         `json:"payload"`
 }
 
 type Mutation struct {

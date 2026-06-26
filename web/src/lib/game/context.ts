@@ -1,29 +1,31 @@
 import z from 'zod'
 
 const ContextSchema = z.object({
-  action_ID: z.string(),
-  source_player_ID: z.string(),
+  action_ID: z.string().nullable(),
+  effect_ID: z.string().nullable().optional(),
+  player_ID: z.string().nullable(),
 
-  parent_actor_ID: z.string(),
-  source_actor_ID: z.string(),
+  parent_ID: z.string().nullable(),
+  source_ID: z.string().nullable(),
 
-  target_actor_IDs: z.array(z.string()),
-  target_position_IDs: z.array(z.string()),
+  actor_IDs: z.array(z.string().nullable()),
+  position_IDs: z.array(z.string().nullable()),
 })
 
 type Context = z.output<typeof ContextSchema>
 
 function contextToString(c: Context): string {
-  return `${c.action_ID}.${c.parent_actor_ID}.${c.source_actor_ID}.${c.source_player_ID}.${c.target_actor_IDs?.join('+')}.${c.target_position_IDs?.join('+')}`
+  return `${c.action_ID ?? ''}.${c.parent_ID ?? ''}.${c.source_ID ?? ''}.${c.player_ID ?? ''}.${c.actor_IDs?.filter(Boolean).join('+')}.${c.position_IDs?.filter(Boolean).join('+')}`
 }
 
 const NULL_CONTEXT: Context = {
-  action_ID: '',
-  parent_actor_ID: '',
-  source_actor_ID: '',
-  source_player_ID: '',
-  target_actor_IDs: [],
-  target_position_IDs: [],
+  action_ID: null,
+  effect_ID: null,
+  parent_ID: null,
+  source_ID: null,
+  player_ID: null,
+  actor_IDs: [],
+  position_IDs: [],
 }
 
 export { ContextSchema, contextToString, NULL_CONTEXT }

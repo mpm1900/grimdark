@@ -1,4 +1,4 @@
-package server
+package instance
 
 import (
 	"fmt"
@@ -6,7 +6,7 @@ import (
 	"grimdark/internal/game/effects"
 )
 
-func TestGame(g *game.Game) {
+func SetupGame(g *game.Game) {
 	effect := game.EffectSource(game.EffectPriorityStages, func(g game.Game, a game.Actor, ctx game.Context) game.Actor {
 		a.Stages[game.Evasion] = a.Stages[game.Evasion] + 1
 		// a.AffinityImmunities[game.Kinetic] = 0
@@ -25,6 +25,7 @@ func TestGame(g *game.Game) {
 			},
 		},
 	}
+	effect.Name = "test effect"
 
 	bypass := effects.StatsResetWhere(func(g game.Game, a game.Actor, ctx game.Context) bool {
 		active_context := g.State().ActiveContext
@@ -38,6 +39,7 @@ func TestGame(g *game.Game) {
 
 		return false
 	})
+	bypass.Name = "bypass effect"
 
 	player := game.NewPlayer()
 	if len(g.State().Players) > 0 {
@@ -71,47 +73,4 @@ func TestGame(g *game.Game) {
 	g.SetPosition(max.ID, temp_player.GetOpenPosition())
 	temp_player, _ = g.GetPlayer(player.ID)
 	g.SetPosition(katie.ID, temp_player.GetOpenPosition())
-
-	slash := game.Action{
-		Config: game.ActionConfig{
-			Name:         "Slash",
-			Affinity:     game.Kinetic,
-			Stat:         game.Melee,
-			Accuracy:     game.P(0.98),
-			Power:        70,
-			Recoil:       0.12,
-			Hits:         1,
-			CritChance:   0.05,
-			CritModifier: 1.5,
-		},
-		Resolve: game.BasicAttack(game.AttackConfig{
-			OnSuccessResult: game.AddResultEffects(
-				0.5,
-				effects.StatDownTargets(game.Speed, 1),
-			),
-		}),
-		ValidateContext:  game.ContextTargetLength(1),
-		TargetsPredicate: game.CombineFilters(game.ActiveActors, game.Enemies),
-	}
-	swords_dance := game.Action{
-		Config: game.ActionConfig{
-			Name:     "Swords Dance",
-			Affinity: game.Kinetic,
-		},
-		Resolve: game.AddSourceEffects(
-			1,
-			effects.StatUpSource(game.Speed, 1),
-			effects.StatUpSource(game.Melee, 1),
-		),
-		ValidateContext:  game.TrueGameFilter,
-		TargetsPredicate: game.NoneActors,
-	}
-
-	g.PushCommand(swords_dance.Bind(game.MakeContextFrom(katie)))
-	g.PushCommand(slash.Bind(game.MakeContextFor(max, katie)))
-	g.PushCommand(slash.Bind(game.MakeContextFor(katie, max)))
-	g.Flush()
-
-	katie, _ = g.GetActor(katie.ID)
-	max, _ = g.GetActor(max.ID)
 }

@@ -1,6 +1,7 @@
 package game
 
 import (
+	"fmt"
 	"maps"
 	"slices"
 
@@ -201,6 +202,9 @@ func (a Actor) GetAffinityResistance(affinity Affinity) int {
 
 	return 0
 }
+func (a Actor) GetEffectiveAffinityResistance(affinity Affinity) int {
+	return a.GetAffinityResistance(affinity) - affinity.GetBaseModifier(a)
+}
 func (a Actor) GetRemainingHealth() float64 {
 	health := a.Stats[Health]
 	return health - a.Damage
@@ -209,6 +213,7 @@ func (a Actor) GetModifiers() []Modifier {
 	modifiers := []Modifier{}
 	for _, effect := range a.Effects {
 		if effect.Ready() {
+			fmt.Println(effect.Name)
 			modifier := effect.Bind(MakeContextFrom(a))
 			modifiers = append(modifiers, modifier)
 		}
@@ -222,14 +227,17 @@ func (a Actor) GetActionByID(action_id uuid.UUID) (Action, bool) {
 
 type actorJSON struct {
 	ID                 uuid.UUID         `json:"ID"`
+	Name               string            `json:"name"`
+	Level              int               `json:"level"`
 	PlayerID           uuid.UUID         `json:"player_ID"`
 	PositionID         *uuid.UUID        `json:"position_ID"`
 	Affinities         []Affinity        `json:"affinities"`
 	AffinityDamage     map[Affinity]int  `json:"affinity_damage"`
 	AffinityResistance map[Affinity]int  `json:"affinity_resistance"`
 	Stats              map[Stat]int      `json:"stats"`
+	Stages             map[Stat]int      `json:"stages"`
 	UnmodifiedStats    map[Stat]int      `json:"unmodified_stats"`
-	AppliedEffects     map[uuid.UUID]int `json:"applied_effects"`
+	AppliedModifiers   map[uuid.UUID]int `json:"applied_modifiers"`
 	Damage             int               `json:"damage"`
 	Status             Status            `json:"status"`
 	IsAlive            bool              `json:"is_alive"`
@@ -239,7 +247,7 @@ type actorJSON struct {
 func (a Actor) ToJSON(g Game) actorJSON {
 	stats := make(map[Stat]int, len(a.Stats))
 	unmodified_stats := make(map[Stat]int, len(a.UnmodifiedStats))
-	applied_effects := g.AppliedEffects(a.ID)
+	applied_modifiers := g.AppliedModifiers(a.ID)
 
 	for k, v := range a.Stats {
 		stats[k] = int(v)
@@ -253,16 +261,30 @@ func (a Actor) ToJSON(g Game) actorJSON {
 		position_id = nil
 	}
 
+	affinity_resistance := maps.Clone(a.AffinityResistance)
+	for affinity := range AFFINITY_MATRIX {
+		resistance := a.GetEffectiveAffinityResistance(affinity)
+		_, has_explicit_resistance := a.AffinityResistance[affinity]
+		if resistance != 0 || has_explicit_resistance {
+			affinity_resistance[affinity] = resistance
+		} else {
+			delete(affinity_resistance, affinity)
+		}
+	}
+
 	return actorJSON{
 		ID:                 a.ID,
+		Name:               a.Name,
+		Level:              a.Level,
 		PlayerID:           a.PlayerID,
 		PositionID:         position_id,
 		Affinities:         slices.Collect(maps.Keys(a.Affinities)),
 		AffinityDamage:     maps.Clone(a.AffinityDamage),
-		AffinityResistance: maps.Clone(a.AffinityResistance),
+		AffinityResistance: affinity_resistance,
 		Stats:              stats,
+		Stages:             maps.Clone(a.Stages),
 		UnmodifiedStats:    unmodified_stats,
-		AppliedEffects:     applied_effects,
+		AppliedModifiers:   applied_modifiers,
 		Damage:             int(a.Damage),
 		Status:             a.Status,
 		IsAlive:            a.IsAlive,

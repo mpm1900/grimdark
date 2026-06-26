@@ -97,7 +97,8 @@ func (c *Client) Close() {
 func (c *Client) WriteResponse(response *Response) error {
 	json, err := json.Marshal(response)
 	if err != nil {
-		return err
+		log.Printf("error marshaling %q response for client %s: %v", response.Type, c.ID, err)
+		return nil
 	}
 	if err = c.conn.WriteMessage(websocket.TextMessage, json); err != nil {
 		return err
@@ -157,6 +158,7 @@ func (c *Client) listenOut() {
 		case response := <-c.inbox:
 			c.conn.SetWriteDeadline(time.Now().Add(WriteWait))
 			if err := c.WriteResponse(&response); err != nil {
+				log.Printf("error writing %q response for client %s: %v", response.Type, c.ID, err)
 				return
 			}
 		case <-clock.C:

@@ -49,20 +49,18 @@ function AppHeader() {
 
         {client && (
           <div className="flex gap-2">
-            {game_phase !== 'init' && (
-              <Button
-                disabled={game_status === 'running'}
-                onClick={() => {
-                  sendContextMessage({
-                    type: 'run-game-actions',
-                    client_ID: client.ID,
-                    context: NULL_CONTEXT,
-                  })
-                }}
-              >
-                Run
-              </Button>
-            )}
+            <Button
+              disabled={game_status === 'running'}
+              onClick={() => {
+                sendContextMessage({
+                  type: 'run-game-actions',
+                  client_ID: client.ID,
+                  context: NULL_CONTEXT,
+                })
+              }}
+            >
+              Run
+            </Button>
           </div>
         )}
         <div className="flex items-center">

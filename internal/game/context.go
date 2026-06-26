@@ -1,6 +1,7 @@
 package game
 
 import (
+	"encoding/json"
 	"slices"
 
 	"github.com/google/uuid"
@@ -15,6 +16,35 @@ type Context struct {
 	SourceID    uuid.UUID
 	ActorIDs    []uuid.UUID
 	PositionIDs []uuid.UUID
+}
+
+type contextJSON struct {
+	ActionID    *uuid.UUID  `json:"action_ID"`
+	EffectID    *uuid.UUID  `json:"effect_ID"`
+	PlayerID    *uuid.UUID  `json:"player_ID"`
+	ParentID    *uuid.UUID  `json:"parent_ID"`
+	SourceID    *uuid.UUID  `json:"source_ID"`
+	ActorIDs    []uuid.UUID `json:"actor_IDs"`
+	PositionIDs []uuid.UUID `json:"position_IDs"`
+}
+
+func uuidOrNil(id uuid.UUID) *uuid.UUID {
+	if id == uuid.Nil {
+		return nil
+	}
+	return &id
+}
+
+func (c Context) MarshalJSON() ([]byte, error) {
+	return json.Marshal(contextJSON{
+		ActionID:    uuidOrNil(c.ActionID),
+		EffectID:    uuidOrNil(c.EffectID),
+		PlayerID:    uuidOrNil(c.PlayerID),
+		ParentID:    uuidOrNil(c.ParentID),
+		SourceID:    uuidOrNil(c.SourceID),
+		ActorIDs:    (c.ActorIDs),
+		PositionIDs: (c.PositionIDs),
+	})
 }
 
 func NewContext() Context {

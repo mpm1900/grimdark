@@ -44,9 +44,9 @@ func (ih *InstancesHandler) NewInstance(instanceID uuid.UUID, ctx context.Contex
 }
 
 func (ih *InstancesHandler) createInstance(instanceID uuid.UUID, ctx context.Context) *instance.Instance {
-	instance := instance.NewInstance(ctx, instanceID, ih.RemoveInstance)
-	TestGame(&instance.Game)
-	return instance
+	i := instance.NewInstance(ctx, instanceID, ih.RemoveInstance)
+	instance.SetupGame(&i.Game)
+	return i
 }
 
 func (ih *InstancesHandler) GetOrCreateInstance(instanceID uuid.UUID, ctx context.Context) *instance.Instance {

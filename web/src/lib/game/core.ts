@@ -1,3 +1,5 @@
+import type { Context } from "./context"
+
 export type ID = string
 
 export type Affinity =
@@ -13,7 +15,7 @@ export type Stat =
   | 'health'
   | 'speed'
   | 'melee'
-  | 'range'
+  | 'ranged'
   | 'special'
   | 'martial-defense'
   | 'special-defense'
@@ -23,3 +25,9 @@ export type Stat =
 export type Phase = 'init' | 'start' | 'main' | 'end' | 'cleanup'
 
 export type Status = 'idle' | 'running' | 'waiting'
+
+export type Bindable<T> = {
+  ID: ID,
+  context: Context,
+  payload: T
+}

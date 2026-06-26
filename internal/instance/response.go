@@ -26,12 +26,10 @@ type Response struct {
 	Context *game.Context  `json:"context"`
 }
 
-func NewGameMessage(client *Client, g *game.Game) Response {
-	json := g.ToJSON()
-
+func NewGameMessage(client *Client, g *game.GameJSON) Response {
 	return Response{
 		Type:    ResponseTypeGame,
-		Game:    &json,
+		Game:    g,
 		Clients: nil,
 	}
 }
@@ -44,12 +42,10 @@ func NewClientsMessage(clients []*Client) Response {
 	}
 }
 
-func PostRegisterMessage(client *Client, g *game.Game) Response {
-	json := g.ToJSON()
-
+func PostRegisterMessage(client *Client, g *game.GameJSON) Response {
 	return Response{
 		Type:    ResponseTypeJoinSuccess,
-		Game:    &json,
+		Game:    g,
 		Clients: []*Client{client},
 	}
 }

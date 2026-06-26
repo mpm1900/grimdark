@@ -35,21 +35,22 @@ func (ac *ActionContext) Done() []Transaction {
 }
 
 type gamemeta struct {
-	applied_effects     map[uuid.UUID]map[uuid.UUID]int
+	applied_modifiers   map[uuid.UUID]map[uuid.UUID]int
 	modifier_immunities map[uuid.UUID]struct{}
+	modifiers           []Modifier
 }
 
 func (gm *gamemeta) apply(modifierID uuid.UUID, actorID uuid.UUID) {
-	_, ok := gm.applied_effects[modifierID]
+	_, ok := gm.applied_modifiers[modifierID]
 	if !ok {
-		gm.applied_effects[modifierID] = map[uuid.UUID]int{}
+		gm.applied_modifiers[modifierID] = map[uuid.UUID]int{}
 	}
 
-	old, ok := gm.applied_effects[modifierID][actorID]
+	old, ok := gm.applied_modifiers[modifierID][actorID]
 	if ok {
-		gm.applied_effects[modifierID][actorID] = old + 1
+		gm.applied_modifiers[modifierID][actorID] = old + 1
 	} else {
-		gm.applied_effects[modifierID][actorID] = 1
+		gm.applied_modifiers[modifierID][actorID] = 1
 	}
 }
 
@@ -123,8 +124,12 @@ func NewGame() Game {
 		resolved:  state,
 		gamestate: unresolved,
 		meta: gamemeta{
-			applied_effects: map[uuid.UUID]map[uuid.UUID]int{},
+			applied_modifiers: map[uuid.UUID]map[uuid.UUID]int{},
 		},
+		Logs:   []Bindable[Log]{},
+		Phase:  PhaseInit,
+		Status: GameStatusIdle,
+		Turn:   0,
 	}
 }
 
@@ -165,9 +170,9 @@ func (g *Game) State() State {
 
 	return g.resolved
 }
-func (g *Game) AppliedEffects(actor_id uuid.UUID) map[uuid.UUID]int {
+func (g *Game) AppliedModifiers(actor_id uuid.UUID) map[uuid.UUID]int {
 	effect_ids := map[uuid.UUID]int{}
-	for modifier_id, actors := range g.meta.applied_effects {
+	for modifier_id, actors := range g.meta.applied_modifiers {
 		count, ok := actors[actor_id]
 		if ok {
 			effect_ids[modifier_id] = count
@@ -226,10 +231,11 @@ func (g *Game) IsReadyToRun() bool {
 func (g *Game) resolve() {
 	g.gamestate = resolving
 	g.resolved = g.state.Clone()
-	g.meta.applied_effects = map[uuid.UUID]map[uuid.UUID]int{}
+	g.meta.applied_modifiers = map[uuid.UUID]map[uuid.UUID]int{}
 	g.meta.modifier_immunities = map[uuid.UUID]struct{}{}
 
 	modifiers := g.GetModifiers()
+	g.meta.modifiers = modifiers
 	for _, mod := range modifiers {
 		mod.Resolve(g)
 	}
@@ -546,6 +552,7 @@ type GameJSON struct {
 	ActiveContext *Context        `json:"active_context"`
 	Actors        []actorJSON     `json:"actors"`
 	Logs          []Bindable[Log] `json:"logs"`
+	Modifiers     []Modifier      `json:"modifiers"`
 	Phase         GamePhase       `json:"phase"`
 	Players       []Player        `json:"players"`
 	Status        GameStatus      `json:"status"`
@@ -558,10 +565,12 @@ func (g Game) ToJSON() GameJSON {
 	for i, actor := range state.Actors {
 		actors[i] = actor.ToJSON(g)
 	}
+
 	return GameJSON{
 		ActiveContext: state.ActiveContext,
 		Actors:        actors,
 		Logs:          g.Logs,
+		Modifiers:     g.meta.modifiers,
 		Phase:         g.Phase,
 		Players:       state.Players,
 		Status:        g.Status,

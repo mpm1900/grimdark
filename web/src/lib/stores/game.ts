@@ -5,6 +5,7 @@ const INITIAL_GAME: Game = {
   active_context: null,
   actors: [],
   logs: [],
+  modifiers: [],
   phase: 'init',
   players: [],
   status: 'idle',

@@ -39,6 +39,7 @@ func NewInstance(ctx context.Context, id uuid.UUID, onEmpty func(uuid.UUID)) *In
 		ReadRequest: make(chan Request),
 
 		Game: game.NewGame(),
+		Tick: time.Second / 2,
 	}
 }
 
@@ -67,8 +68,9 @@ func (i *Instance) UnregisterClient(client *Client) bool {
 }
 
 func (i *Instance) BroadcastGame() {
+	json := i.Game.ToJSON()
 	for _, client := range i.Clients {
-		if !client.TryWriteResponse(NewGameMessage(client, &i.Game)) {
+		if !client.TryWriteResponse(NewGameMessage(client, &json)) {
 			// If we can't send, it's usually better to just log it for now
 			// rather than immediately unregistering, unless the client is truly dead.
 			// i.UnregisterClient(client)
@@ -77,7 +79,8 @@ func (i *Instance) BroadcastGame() {
 }
 
 func (i *Instance) PostRegister(client *Client) {
-	client.TryWriteResponse(PostRegisterMessage(client, &i.Game))
+	json := i.Game.ToJSON()
+	client.TryWriteResponse(PostRegisterMessage(client, &json))
 }
 
 func (i *Instance) TargetIDsResponse(clientID uuid.UUID, context game.Context, targetIDs []uuid.UUID) {

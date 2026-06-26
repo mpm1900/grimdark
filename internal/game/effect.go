@@ -18,27 +18,28 @@ var ET_DEFAULT = uuid.New()
 
 type Effect struct {
 	Mutation
-	ID       uuid.UUID
-	Name     string
-	Delay    *int
-	Duration *int
-	Priority int
-	Tags     map[uuid.UUID]struct{}
-	Triggers []Trigger
+	ID       uuid.UUID              `json:"ID"`
+	Name     string                 `json:"name"`
+	Delay    *int                   `json:"delay"`
+	Duration *int                   `json:"duration"`
+	Priority int                    `json:"priority"`
+	Tags     map[uuid.UUID]struct{} `json:"-"`
+	Triggers []Trigger              `json:"-"`
 	// check is ran on add
-	Check GameFilter
+	Check GameFilter `json:"-"`
 	// success logs
-	CheckSuccess func(*Game, Effect, Context)
+	CheckSuccess func(*Game, Effect, Context) `json:"-"`
 	// failure logs
-	CheckFailure func(*Game, Effect, Context)
+	CheckFailure func(*Game, Effect, Context) `json:"-"`
 }
 type Modifier struct {
 	Bindable[Effect]
-	Priority int
+	Priority int `json:"priority"`
 }
 
 func NewEffect() Effect {
 	id := uuid.New()
+
 	return Effect{
 		ID:       id,
 		Name:     "",
@@ -107,10 +108,10 @@ func (m *Modifier) Resolve(g *Game) []uuid.UUID {
 	actorIDs := resolveMutation(g, m.Context, m.Payload)
 	if len(actorIDs) > 0 {
 		for _, actorID := range actorIDs {
-			g.meta.apply(m.Payload.ID, actorID)
+			g.meta.apply(m.ID, actorID)
 		}
 	} else {
-		g.meta.apply(m.Payload.ID, uuid.Nil)
+		g.meta.apply(m.ID, uuid.Nil)
 	}
 
 	return actorIDs

@@ -6,8 +6,8 @@ import (
 )
 
 type Log struct {
-	Template string
-	Terms    map[string]string
+	Template string            `json:"template"`
+	Terms    map[string]string `json:"terms"`
 }
 
 func NewLog(template string, terms map[string]string) Log {

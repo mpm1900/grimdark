@@ -85,6 +85,7 @@ func cancelAction(instance *Instance, request Request) int {
 	return state
 }
 func runGameActions(instance *Instance) int {
+	TestGame(&instance.Game)
 	if instance.Game.Status == game.GameStatusRunning {
 		return none
 	}
