@@ -27,7 +27,7 @@ func SetupGame(g *game.Game) {
 	}
 	effect.Name = "test effect"
 
-	bypass := effects.StatsResetWhere(func(g game.Game, a game.Actor, ctx game.Context) bool {
+	bypass := effects.StagesResetWhere(func(g game.Game, a game.Actor, ctx game.Context) bool {
 		active_context := g.State().ActiveContext
 		if active_context == nil {
 			return false
@@ -40,6 +40,18 @@ func SetupGame(g *game.Game) {
 		return false
 	})
 	bypass.Name = "bypass effect"
+	bypass_aux := effects.AuxResetWhere(func(g game.Game, a game.Actor, ctx game.Context) bool {
+		active_context := g.State().ActiveContext
+		if active_context == nil {
+			return false
+		}
+
+		if active_context.SourceID == ctx.ParentID {
+			return active_context.HasTarget(a)
+		}
+
+		return false
+	})
 
 	player := game.NewPlayer()
 	if len(g.State().Players) > 0 {
@@ -51,7 +63,7 @@ func SetupGame(g *game.Game) {
 		game.Fire: {},
 	}
 	max := game.NewActor(player.ID, max_def)
-	max.Effects = []game.Effect{bypass}
+	max.Effects = []game.Effect{bypass, bypass_aux}
 
 	katie_def := game.NewActorDef()
 	katie_def.Name = "Katie"

@@ -28,7 +28,7 @@ func main() {
 		},
 	}
 
-	bypass := effects.StatsResetWhere(func(g game.Game, a game.Actor, ctx game.Context) bool {
+	bypass := effects.StagesResetWhere(func(g game.Game, a game.Actor, ctx game.Context) bool {
 		active_context := g.State().ActiveContext
 		if active_context == nil {
 			return false
@@ -40,6 +40,7 @@ func main() {
 
 		return false
 	})
+
 
 	player := game.NewPlayer()
 	max_def := game.NewActorDef()

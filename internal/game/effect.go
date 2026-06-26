@@ -7,12 +7,13 @@ import (
 const EffectPriorityAffinities = 0
 const EffectPriorityBaseStats = 0
 const EffectPriorityAuxStats = 0
-const EffectPriorityMapBaseStats = 1
-const EffectPriorityPreStageStats = 2
-const EffectPriorityStages = 2
-const EffectPriorityStagesOverwrite = 3
-const EffectPriorityMapStages = 4
-const EffectPriorityPostStagesStats = 5
+const EffectPriorityAuxOverwrite = 1
+const EffectPriorityMapBaseStats = 2
+const EffectPriorityPreStageStats = 3
+const EffectPriorityStages = 3
+const EffectPriorityStagesOverwrite = 4
+const EffectPriorityMapStages = 5
+const EffectPriorityPostStagesStats = 6
 
 var ET_DEFAULT = uuid.New()
 

@@ -68,15 +68,30 @@ func StatDownTargets(stat game.Stat, amount int) game.Effect {
 	return effect
 }
 
-func StatsResetWhere(where game.Filter[game.Actor]) game.Effect {
+func StagesResetWhere(where game.Filter[game.Actor]) game.Effect {
 	effect := game.EffectActorsWhere(game.EffectPriorityStagesOverwrite, where, func(g game.Game, a game.Actor, ctx game.Context) game.Actor {
 		for stat, _ := range a.Stages {
 			a.Stages[stat] = 0
 		}
-
 		for aff, _ := range a.AffinityResistance {
 			a.AffinityResistance[aff] = 0
 		}
+		for aff, _ := range a.AffinityDamage {
+			a.AffinityDamage[aff] = 0
+		}
+
+		return a
+	})
+
+	return effect
+}
+
+func AuxResetWhere(where game.Filter[game.Actor]) game.Effect {
+	effect := game.EffectActorsWhere(game.EffectPriorityAuxOverwrite, where, func(g game.Game, a game.Actor, ctx game.Context) game.Actor {
+		for stat, _ := range a.Aux {
+			a.Aux[stat] = 0
+		}
+
 		return a
 	})
 
