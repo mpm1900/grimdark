@@ -20,7 +20,7 @@ const (
 
 type Response struct {
 	Type    ResponseType   `json:"type"`
-	Game    *game.GameJSON `json:"state"`
+	Game    *game.GameJSON `json:"game"`
 	Clients []*Client      `json:"clients"`
 	Valid   *bool          `json:"valid"`
 	Context *game.Context  `json:"context"`

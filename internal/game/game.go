@@ -63,11 +63,11 @@ const (
 )
 
 const (
-	TurnInit    GamePhase = "init"
-	TurnStart   GamePhase = "start"
-	TurnMain    GamePhase = "main"
-	TurnEnd     GamePhase = "end"
-	TurnCleanup GamePhase = "cleanup"
+	PhaseInit    GamePhase = "init"
+	PhaseStart   GamePhase = "start"
+	PhaseMain    GamePhase = "main"
+	PhaseEnd     GamePhase = "end"
+	PhaseCleanup GamePhase = "cleanup"
 )
 
 type Game struct {
@@ -77,10 +77,10 @@ type Game struct {
 	gamestate gamestate
 	meta      gamemeta
 
-	Phase     GamePhase
-	Status    GameStatus
-	TurnCount int
-	Logs      []Bindable[Log]
+	Phase  GamePhase
+	Status GameStatus
+	Turn   int
+	Logs   []Bindable[Log]
 }
 
 func NewGame() Game {
@@ -476,27 +476,26 @@ func (g *Game) NextPhase() {
 	})
 
 	switch g.Phase {
-	case TurnStart:
-		g.Phase = TurnMain
-	case TurnInit, TurnMain:
-		g.Phase = TurnEnd
-	case TurnEnd:
-		g.Phase = TurnCleanup
-	case TurnCleanup:
+	case PhaseStart:
+		g.Phase = PhaseMain
+	case PhaseInit, PhaseMain:
+		g.Phase = PhaseEnd
+	case PhaseEnd:
+		g.Phase = PhaseCleanup
+	case PhaseCleanup:
 		// Keep cleanup stable so callers can run end-of-turn bookkeeping once
 		// without immediately wrapping back to main in the same loop tick.
 	}
 }
 func (g *Game) NextTurn() {
-	g.TurnCount++
-	g.Phase = TurnMain
+	g.Turn++
+	g.IncrementActorTurns()
+	g.Phase = PhaseMain
 }
-func (g *Game) EndTurn() {
-	if g.TurnCount > 0 {
+func (g *Game) EndPhase() {
+	if g.Turn > 0 {
 		g.On(OnTurnEnd, NewContext())
 	}
-
-	g.IncrementActorTurns()
 }
 func (g *Game) NextTransaction() {
 	tx, err := g.state.Transactions.Dequeue()
@@ -543,29 +542,30 @@ func (g *Game) Next() bool {
 	return false
 }
 
-type stateJSON struct {
-	Players []Player    `json:"players"`
-	Actors  []actorJSON `json:"actors"`
-}
 type GameJSON struct {
 	ActiveContext *Context        `json:"active_context"`
-	State         stateJSON       `json:"state"`
+	Actors        []actorJSON     `json:"actors"`
 	Logs          []Bindable[Log] `json:"logs"`
+	Phase         GamePhase       `json:"phase"`
+	Players       []Player        `json:"players"`
+	Status        GameStatus      `json:"status"`
+	Turn          int             `json:"turn"`
 }
 
 func (g Game) ToJSON() GameJSON {
 	state := g.State()
 	actors := make([]actorJSON, len(state.Actors))
-	for i, actor := range g.state.Actors {
+	for i, actor := range state.Actors {
 		actors[i] = actor.ToJSON(g)
 	}
 	return GameJSON{
 		ActiveContext: state.ActiveContext,
-		State: stateJSON{
-			Players: state.Players,
-			Actors:  actors,
-		},
-		// Logs: g.Logs,
+		Actors:        actors,
+		Logs:          g.Logs,
+		Phase:         g.Phase,
+		Players:       state.Players,
+		Status:        g.Status,
+		Turn:          g.Turn,
 	}
 }
 

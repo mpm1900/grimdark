@@ -34,12 +34,18 @@ func (ih *InstancesHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 }
 
 func (ih *InstancesHandler) NewInstance(instanceID uuid.UUID, ctx context.Context) *instance.Instance {
-	instance := instance.NewInstance(ctx, instanceID, ih.RemoveInstance)
+	instance := ih.createInstance(instanceID, ctx)
 	ih.instancesMu.Lock()
 	ih.instances[instance.ID] = instance
 	ih.instancesMu.Unlock()
 	go instance.Run()
 
+	return instance
+}
+
+func (ih *InstancesHandler) createInstance(instanceID uuid.UUID, ctx context.Context) *instance.Instance {
+	instance := instance.NewInstance(ctx, instanceID, ih.RemoveInstance)
+	TestGame(&instance.Game)
 	return instance
 }
 
@@ -51,7 +57,7 @@ func (ih *InstancesHandler) GetOrCreateInstance(instanceID uuid.UUID, ctx contex
 		return existing
 	}
 
-	created := instance.NewInstance(ctx, instanceID, ih.RemoveInstance)
+	created := ih.createInstance(instanceID, ctx)
 	ih.instances[created.ID] = created
 	go created.Run()
 	return created

@@ -187,13 +187,13 @@ resolveStep:
 		}
 
 		switch i.Game.Phase {
-		case game.TurnMain:
+		case game.PhaseMain:
 			i.Game.NextPhase()
 			i.BroadcastGame()
 			continue
 
-		case game.TurnEnd:
-			i.Game.EndTurn()
+		case game.PhaseEnd:
+			i.Game.EndPhase()
 
 			if i.FlushGame() {
 				break resolveStep
@@ -203,7 +203,7 @@ resolveStep:
 			i.BroadcastGame()
 			continue
 
-		case game.TurnCleanup:
+		case game.PhaseCleanup:
 			time.Sleep(i.Tick)
 			i.Game.NextTurn()
 			if i.Game.IsReadyToRun() {

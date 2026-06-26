@@ -223,7 +223,7 @@ func (a Actor) GetActionByID(action_id uuid.UUID) (Action, bool) {
 type actorJSON struct {
 	ID                 uuid.UUID         `json:"ID"`
 	PlayerID           uuid.UUID         `json:"player_ID"`
-	PositionID         uuid.UUID         `json:"position_ID"`
+	PositionID         *uuid.UUID        `json:"position_ID"`
 	Affinities         []Affinity        `json:"affinities"`
 	AffinityDamage     map[Affinity]int  `json:"affinity_damage"`
 	AffinityResistance map[Affinity]int  `json:"affinity_resistance"`
@@ -248,10 +248,15 @@ func (a Actor) ToJSON(g Game) actorJSON {
 		unmodified_stats[k] = int(v)
 	}
 
+	position_id := &a.PositionID
+	if a.PositionID == uuid.Nil {
+		position_id = nil
+	}
+
 	return actorJSON{
 		ID:                 a.ID,
 		PlayerID:           a.PlayerID,
-		PositionID:         a.PositionID,
+		PositionID:         position_id,
 		Affinities:         slices.Collect(maps.Keys(a.Affinities)),
 		AffinityDamage:     maps.Clone(a.AffinityDamage),
 		AffinityResistance: maps.Clone(a.AffinityResistance),
