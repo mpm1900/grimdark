@@ -22,7 +22,7 @@ function AppHeader() {
   const game_status = useSelector(gameStore, (g) => g.status)
   const game_phase = useSelector(gameStore, (g) => g.phase)
   return (
-    <header className="fixed flex justify-between p-1 z-20 bg-stone-950 border-b border-stone-800 ring ring-black w-full">
+    <header className="fixed flex justify-between p-1 z-20 w-full">
       <div className="flex items-center gap-2">
         <Link to="/" className="pl-2">
           <GiWingedSword />

@@ -180,7 +180,7 @@ func (a Actor) GetAffinityDamage(affinity Affinity) int {
 	for affinity := range a.Affinities {
 		b, ok := base[affinity]
 		if !ok {
-			b = 0
+			continue
 		}
 
 		base[affinity] = b + 1
@@ -247,11 +247,17 @@ func (a Actor) ToJSON(g Game) actorJSON {
 	unmodified_stats := make(map[Stat]int, len(a.UnmodifiedStats))
 	applied_modifiers := g.AppliedModifiers(a.ID)
 
-	for k, v := range a.Stats {
-		stats[k] = int(v)
+	for stat, v := range a.Stats {
+		if stat == Accuracy || stat == Evasion {
+			v = v * 100
+		}
+		stats[stat] = int(v)
 	}
-	for k, v := range a.UnmodifiedStats {
-		unmodified_stats[k] = int(v)
+	for stat, v := range a.UnmodifiedStats {
+		if stat == Accuracy || stat == Evasion {
+			v = v * 100
+		}
+		unmodified_stats[stat] = int(v)
 	}
 
 	position_id := &a.PositionID
@@ -270,6 +276,16 @@ func (a Actor) ToJSON(g Game) actorJSON {
 		}
 	}
 
+	affinity_damage := maps.Clone(a.AffinityDamage)
+	for affinity := range a.Affinities {
+		base, ok := affinity_damage[affinity]
+		if !ok {
+			affinity_damage[affinity] = 1
+		} else {
+			affinity_damage[affinity] = base + 1
+		}
+	}
+
 	return actorJSON{
 		ID:                 a.ID,
 		Name:               a.Name,
@@ -277,7 +293,7 @@ func (a Actor) ToJSON(g Game) actorJSON {
 		PlayerID:           a.PlayerID,
 		PositionID:         position_id,
 		Affinities:         slices.Collect(maps.Keys(a.Affinities)),
-		AffinityDamage:     maps.Clone(a.AffinityDamage),
+		AffinityDamage:     affinity_damage,
 		AffinityResistance: affinity_resistance,
 		Stats:              stats,
 		Stages:             maps.Clone(a.Stages),

@@ -1,3 +1,7 @@
+import {
+  AffinityDamageValue,
+  AffinityResistanceValue,
+} from '#/components/affinity-value'
 import { AppHeader } from '#/components/app-header'
 import { StatValue } from '#/components/stat-value'
 import { Field, FieldContent, FieldLabel } from '#/components/ui/field'
@@ -5,11 +9,10 @@ import { Item, ItemContent, ItemTitle } from '#/components/ui/item'
 import { Separator } from '#/components/ui/separator'
 import { Table, TableBody, TableCell, TableRow } from '#/components/ui/table'
 import type { Actor } from '#/lib/game/actor'
-import type { Stat } from '#/lib/game/core'
+import { AFFINITIES, STATS, type Stat } from '#/lib/game/core'
 import { getAppliedModifiers, type Game } from '#/lib/game/game'
 import { RenderLog } from '#/lib/game/log'
 import { gameStore } from '#/lib/stores/game'
-import { keys } from '#/utils/maps'
 import { ClientOnly, createFileRoute } from '@tanstack/react-router'
 import { useSelector } from '@tanstack/react-store'
 
@@ -38,8 +41,10 @@ function ActorTest({ game, actor }: { game: Game; actor: Actor }) {
             {actor.name}, lv{actor.level}
           </ItemTitle>
           <div className="flex gap-1">
-            {actor.affinities.map((a) => (
-              <span key={a}>{a}</span>
+            {AFFINITIES.filter((a) => actor.affinities.includes(a)).map((a) => (
+              <span key={a} className="capitalize">
+                {a}
+              </span>
             ))}
           </div>
         </div>
@@ -56,39 +61,68 @@ function ActorTest({ game, actor }: { game: Game; actor: Actor }) {
                       {actor.stats.health - actor.damage}/{actor.stats.health}
                     </TableCell>
                   </TableRow>
-                  <StatRow actor={actor} stat="melee" />
-                  <StatRow actor={actor} stat="ranged" />
-                  <StatRow actor={actor} stat="special" />
-                  <StatRow actor={actor} stat="martial-defense" />
-                  <StatRow actor={actor} stat="special-defense" />
-                  <StatRow actor={actor} stat="speed" />
+                  {STATS.filter((s) => s !== 'health').map((stat) => (
+                    <StatRow key={stat} actor={actor} stat={stat} />
+                  ))}
                 </TableBody>
               </Table>
             </FieldContent>
           </Field>
-          <div>
+          <div className="flex flex-col gap-4">
+            <div className="grid grid-cols-2">
+              <Field>
+                <FieldLabel>Affinity Res</FieldLabel>
+                <FieldContent>
+                  <Table>
+                    <TableBody>
+                      {AFFINITIES.map((affinity) => (
+                        <TableRow key={affinity}>
+                          <TableCell className="capitalize">
+                            {affinity}
+                          </TableCell>
+                          <TableCell>
+                            <AffinityResistanceValue
+                              actor={actor}
+                              affinity={affinity}
+                            />
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </FieldContent>
+              </Field>
+              <Field>
+                <FieldLabel>Affinity Dmg</FieldLabel>
+                <FieldContent>
+                  <Table>
+                    <TableBody>
+                      {AFFINITIES.map((affinity) => (
+                        <TableRow key={affinity}>
+                          <TableCell className="capitalize">
+                            {affinity}
+                          </TableCell>
+                          <TableCell>
+                            <AffinityDamageValue
+                              actor={actor}
+                              affinity={affinity}
+                            />
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </FieldContent>
+              </Field>
+            </div>
             <Field>
-              <FieldLabel>Affinity Resistance</FieldLabel>
-              <FieldContent>
-                <Table>
-                  <TableBody>
-                    {keys(actor.affinity_resistance).map((affinity) => (
-                      <TableRow key={affinity}>
-                        <TableCell className="capitalize">{affinity}</TableCell>
-                        <TableCell>
-                          {actor.affinity_resistance[affinity]}
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
+              <FieldLabel>Applied Modifiers</FieldLabel>
+              <FieldContent className="flex flex-row flex-wrap gap-1">
+                {getAppliedModifiers(game, actor).map((mod) => (
+                  <span key={mod.ID}>{mod.payload.name},</span>
+                ))}
               </FieldContent>
             </Field>
-            <div className="flex gap-1">
-              {getAppliedModifiers(game, actor).map((mod) => (
-                <span key={mod.ID}>{mod.payload.name},</span>
-              ))}
-            </div>
           </div>
         </div>
       </ItemContent>

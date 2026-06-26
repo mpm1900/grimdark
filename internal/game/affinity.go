@@ -69,7 +69,7 @@ func (a Affinity) GetBaseModifier(target Actor) int {
 	for affinity := range target.Affinities {
 		stage, ok := AFFINITY_MATRIX[a][affinity]
 		if !ok {
-			stage = 0
+			continue
 		}
 
 		result += stage
