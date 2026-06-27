@@ -16,8 +16,9 @@ export type Actor = {
   name: string
   player_ID: ID
   position_ID: ID | null
-  stats: Record<Stat, number>
   stages: Record<Stat, number>
+  state: string
+  stats: Record<Stat, number>
   status: string
   unmodified_stats: Record<Stat, number>
   wounds: number

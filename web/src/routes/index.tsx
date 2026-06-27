@@ -1,3 +1,4 @@
+import { ActorFlag } from '#/components/actor-flag'
 import { AffinityName } from '#/components/affinity-name'
 import {
   AffinityDamageValue,
@@ -69,10 +70,16 @@ function ActorTest({ game, actor }: { game: Game; actor: Actor }) {
                 </Table>
               </FieldContent>
             </Field>
-            <Field>
-              <FieldLabel>Status</FieldLabel>
-              <FieldContent>{actor.status}</FieldContent>
-            </Field>
+            <div className='grid grid-cols-2'>
+              <Field>
+                <FieldLabel>State</FieldLabel>
+                <FieldContent>{actor.state}</FieldContent>
+              </Field>
+              <Field>
+                <FieldLabel>Status</FieldLabel>
+                <FieldContent>{actor.status}</FieldContent>
+              </Field>
+            </div>
           </div>
           <div className="flex flex-col gap-4">
             <div className="grid grid-cols-2">
@@ -133,11 +140,22 @@ function ActorTest({ game, actor }: { game: Game; actor: Actor }) {
             </div>
             <Field>
               <FieldLabel>Flags</FieldLabel>
-              <FieldContent className="flex flex-row gap-x-2 flex-wrap">
-                {actor.is_active && <span>IsActive</span>}
-                {actor.is_alive && <span>IsAlive</span>}
-                {actor.is_protected && <span>IsProtected</span>}
-                {actor.is_staggered && <span>IsStaggered</span>}
+              <FieldContent className="flex flex-row gap-x-2 flex-wrap max-w-60">
+                <ActorFlag actor={actor} flag='is_active'>
+                  Active
+                </ActorFlag>
+                <ActorFlag actor={actor} flag='is_alive'>
+                  Alive
+                </ActorFlag>
+                <ActorFlag actor={actor} flag='is_protected'>
+                  Protected
+                </ActorFlag>
+                <ActorFlag actor={actor} flag='is_staggered'>
+                  Staggered
+                </ActorFlag>
+                <ActorFlag actor={actor} flag='is_stunned'>
+                  Stunned
+                </ActorFlag>
               </FieldContent>
             </Field>
             <Field>

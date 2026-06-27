@@ -89,5 +89,5 @@ func (a Affinity) GetAffinityModifier(source, target Actor) (float64, int, int) 
 	target_resistance := target.GetAffinityResistance(a)
 	total := base + source_damage - target_resistance
 
-	return mapStage(total, 2, 1), total, base
+	return MapStage(total, 2, 1), total, base
 }

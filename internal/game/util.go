@@ -22,3 +22,19 @@ func NilifyUUID(uid uuid.UUID) *uuid.UUID {
 
 	return &uid
 }
+
+func MapStage(stage int, mod, input float64) float64 {
+	if stage > 6 {
+		stage = 6
+	}
+	if stage < -6 {
+		stage = -6
+	}
+	if stage > 0 {
+		return input * (float64(stage) + mod) / mod
+	}
+	if stage < 0 {
+		return input * mod / (float64(-stage) + mod)
+	}
+	return input
+}

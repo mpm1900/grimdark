@@ -7,11 +7,16 @@ import (
 	"github.com/google/uuid"
 )
 
-type Status string
+type ActorState string
+type ActorStatus string
 
 const (
-	StatusNone   Status = "none"
-	StatusBurned Status = "burned"
+	StateDefault ActorState = "default"
+)
+
+const (
+	StatusNone   ActorStatus = "none"
+	StatusBurned ActorStatus = "burned"
 )
 
 type ActorDef struct {
@@ -44,7 +49,8 @@ type Actor struct {
 	Stats              map[Stat]float64
 
 	Wounds float64
-	Status Status
+	State  ActorState
+	Status ActorStatus
 
 	IsAlive     bool
 	IsProtected bool
@@ -69,7 +75,8 @@ type actorJSON struct {
 	UnmodifiedStats    map[Stat]int     `json:"unmodified_stats"`
 	AppliedModifiers   []uuid.UUID      `json:"applied_modifiers"`
 	Wounds             int              `json:"wounds"`
-	Status             Status           `json:"status"`
+	State              ActorState       `json:"state"`
+	Status             ActorStatus      `json:"status"`
 	IsActive           bool             `json:"is_active"`
 	IsAlive            bool             `json:"is_alive"`
 	IsProtected        bool             `json:"is_protected"`
@@ -124,6 +131,7 @@ func NewActor(playerID uuid.UUID, def ActorDef) Actor {
 		Stats:              maps.Clone(def.Stats),
 
 		Wounds: 0,
+		State:  StateDefault,
 		Status: StatusNone,
 
 		IsAlive:     true,
@@ -156,6 +164,7 @@ func (a Actor) Clone() Actor {
 		Stats:              maps.Clone(a.Stats),
 
 		Wounds: a.Wounds,
+		State:  a.State,
 		Status: a.Status,
 
 		IsAlive:     a.IsAlive,
@@ -333,6 +342,7 @@ func (a Actor) ToJSON(g Game) actorJSON {
 		UnmodifiedStats:    unmodified_stats,
 		AppliedModifiers:   applied_modifiers,
 		Wounds:             int(a.Wounds),
+		State:              a.State,
 		Status:             a.Status,
 		IsActive:           a.IsActive(),
 		IsAlive:            a.IsAlive,
