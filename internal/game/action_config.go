@@ -19,7 +19,7 @@ type ActionConfig struct {
 }
 
 type AccuracyResult struct {
-	Success      bool
+	Pass         bool
 	Accuracy     float64
 	AccuracyRoll float64
 	Critical     bool
@@ -66,13 +66,17 @@ func (ac ActionConfig) GetAccuracyResult(source, target Actor) AccuracyResult {
 	}
 
 	return AccuracyResult{
-		Success:      success,
+		Pass:         success,
 		Accuracy:     accuracy,
 		AccuracyRoll: accuracy_roll,
 		Critical:     critical,
 		CriticalRoll: critical_roll,
 		Target:       target,
 	}
+}
+
+func (ar AccuracyResult) Success() bool {
+	return ar.Pass && !ar.Target.IsProtected
 }
 
 func (ac ActionConfig) GetDamageResult(source, target Actor, targets []Actor) DamageResult {
@@ -89,7 +93,7 @@ func (ac ActionConfig) GetDamageResult(source, target Actor, targets []Actor) Da
 		raw = raw * 0.75
 	}
 
-	if !accuracy.Success || target.IsProtected {
+	if !accuracy.Success() {
 		raw = 0.0
 	}
 
@@ -111,5 +115,5 @@ func (ac ActionConfig) GetDamageResult(source, target Actor, targets []Actor) Da
 }
 
 func (dr DamageResult) Success() bool {
-	return dr.AccuracyResult.Success && !dr.Target.IsProtected && dr.Damage > 0
+	return dr.AccuracyResult.Success() && dr.Damage > 0
 }

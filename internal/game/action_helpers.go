@@ -8,12 +8,20 @@ import (
 
 type AttackEffect func(g Game, context Context, this *ActionContext)
 type AttackEffectResult func(g Game, context Context, this *ActionContext, result DamageResult)
+type StatusEffectResult func(g Game, context Context, this *ActionContext, result AccuracyResult)
 
 type AttackConfig struct {
 	OnSuccess       AttackEffect
 	OnFailure       AttackEffect
 	OnSuccessResult AttackEffectResult
 	OnFailureResult AttackEffectResult
+}
+
+type StatusConfig struct {
+	OnSuccess       AttackEffect
+	OnFailure       AttackEffect
+	OnSuccessResult StatusEffectResult
+	OnFailureResult StatusEffectResult
 }
 
 func BasicAttack(config AttackConfig) ActionResolver {
@@ -120,7 +128,7 @@ func PostDamageEffects(result DamageResult, context Context, this *ActionContext
 				},
 			)).Bind(context))
 		}
-		if !result.AccuracyResult.Success {
+		if !result.AccuracyResult.Pass {
 			this.Push(PushLog(NewLog(
 				"$action$ missed $target$.",
 				map[string]string{
@@ -145,6 +153,41 @@ func AddSourceEffects(chance float64, effects ...Effect) ActionResolver {
 			modifiers[i] = effect.Bind(ctx)
 		}
 		this.Push(AddModifiers(modifiers...).Bind(NewContext()))
+		return this.Done()
+	}
+}
+
+func AddTargetsEffects(config StatusConfig, effects ...Effect) ActionResolver {
+	return func(g *Game, ctx Context, this ActionContext) []Transaction {
+		targets := g.GetTargets(ctx)
+		success := false
+		for _, target := range targets {
+			result := this.Action.Config.GetAccuracyResult(this.Source, target)
+
+			success = success || result.Success()
+			if result.Success() {
+				modifiers := make([]Modifier, len(effects))
+				for i, effect := range effects {
+					modifiers[i] = effect.Bind(ctx)
+				}
+				this.Push(AddModifiers(modifiers...).Bind(NewContext()))
+				if config.OnSuccessResult != nil {
+					config.OnSuccessResult(*g, ctx, &this, result)
+				}
+			}
+			if !result.Success() && config.OnFailureResult != nil {
+				config.OnFailureResult(*g, ctx, &this, result)
+			}
+		}
+
+		if success && config.OnSuccess != nil {
+			config.OnSuccess(*g, ctx, &this)
+		}
+
+		if !success && config.OnFailure != nil {
+			config.OnFailure(*g, ctx, &this)
+		}
+
 		return this.Done()
 	}
 }
