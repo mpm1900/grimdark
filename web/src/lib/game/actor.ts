@@ -6,7 +6,6 @@ export type Actor = {
   affinity_damage: Record<Affinity, number>
   affinity_resistance: Record<Affinity, number>
   applied_modifiers: Array<ID>
-  damage: number
   is_active: boolean
   is_alive: boolean
   is_protected: boolean
@@ -20,4 +19,5 @@ export type Actor = {
   stages: Record<Stat, number>
   status: string
   unmodified_stats: Record<Stat, number>
+  wounds: number
 }

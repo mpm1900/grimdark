@@ -1,7 +1,6 @@
 package game
 
 import (
-	"fmt"
 	"math/rand/v2"
 	"strconv"
 
@@ -37,8 +36,8 @@ func BasicAttack(config AttackConfig) ActionResolver {
 				dmg_ctx := MakeContextFor(this.Source, target)
 
 				this.Push(DamageTargets(result.Damage).Bind(dmg_ctx))
-				MultiHitEffects(result, context, &this, hit)
-				PostDamageEffects(result, context, &this)
+				MultiHitLogs(result, context, &this, hit)
+				PostDamageLogs(result, context, &this)
 
 				success = success || result.Success()
 				if result.Success() {
@@ -94,7 +93,7 @@ func AddResultEffects(chance float64, effects ...Effect) AttackEffectResult {
 	}
 }
 
-func MultiHitEffects(result DamageResult, context Context, this *ActionContext, hit int) {
+func MultiHitLogs(result DamageResult, context Context, this *ActionContext, hit int) {
 	if this.Action.Config.Hits > 1 {
 		this.Push(PushLog(NewLog(
 			"Hits $hit$ time(s)!",
@@ -104,14 +103,7 @@ func MultiHitEffects(result DamageResult, context Context, this *ActionContext, 
 		)).Bind(context))
 	}
 }
-func PostDamageEffects(result DamageResult, context Context, this *ActionContext) {
-	this.Push(PushLog(NewLog(
-		"x$aff$",
-		map[string]string{
-			"$aff$": fmt.Sprintf("%f", result.Affinity),
-		},
-	)).Bind(context))
-
+func PostDamageLogs(result DamageResult, context Context, this *ActionContext) {
 	if result.Success() {
 		if result.BaseAffinityStage >= 2 {
 			this.Push(PushLog(NewLog(

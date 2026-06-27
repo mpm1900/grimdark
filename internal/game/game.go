@@ -433,8 +433,8 @@ func (g *Game) DamageTargets(context Context, damage float64) {
 			if damage > resolved.GetRemainingHealth() {
 				damage = resolved.GetRemainingHealth()
 			}
-			if damage < -a.Damage {
-				damage = -a.Damage
+			if damage < -a.Wounds {
+				damage = -a.Wounds
 			}
 
 			a.ApplyDamage(damage, resolved)

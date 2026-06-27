@@ -41,7 +41,7 @@ type Actor struct {
 	Aux                map[Stat]float64
 	Stats              map[Stat]float64
 
-	Damage float64
+	Wounds float64
 	Status Status
 
 	IsAlive     bool
@@ -96,7 +96,7 @@ func NewActor(playerID uuid.UUID, def ActorDef) Actor {
 		Aux:                map[Stat]float64{},
 		Stats:              maps.Clone(def.Stats),
 
-		Damage: 0,
+		Wounds: 0,
 		Status: StatusNone,
 
 		IsAlive:     true,
@@ -126,7 +126,7 @@ func (a Actor) Clone() Actor {
 		Aux:                maps.Clone(a.Aux),
 		Stats:              maps.Clone(a.Stats),
 
-		Damage:      a.Damage,
+		Wounds:      a.Wounds,
 		Status:      a.Status,
 		IsAlive:     a.IsAlive,
 		IsProtected: a.IsProtected,
@@ -165,12 +165,12 @@ func (a *Actor) mapBaseStats() {
 }
 
 func (a *Actor) ApplyDamage(damage float64, resolved Actor) {
-	a.Damage = a.Damage + damage
-	if a.Damage < 0 {
-		a.Damage = 0
+	a.Wounds = a.Wounds + damage
+	if a.Wounds < 0 {
+		a.Wounds = 0
 	}
 
-	a.IsAlive = resolved.Stats[Health] > a.Damage
+	a.IsAlive = resolved.Stats[Health] > a.Wounds
 }
 func (a *Actor) IncrementTurns() {
 	if a.IsActive() {
@@ -214,7 +214,7 @@ func (a Actor) GetEffectiveAffinityResistance(affinity Affinity) int {
 }
 func (a Actor) GetRemainingHealth() float64 {
 	health := a.Stats[Health]
-	return health - a.Damage
+	return health - a.Wounds
 }
 func (a Actor) GetModifiers() []Modifier {
 	modifiers := []Modifier{}
@@ -247,7 +247,7 @@ type actorJSON struct {
 	Stages             map[Stat]int     `json:"stages"`
 	UnmodifiedStats    map[Stat]int     `json:"unmodified_stats"`
 	AppliedModifiers   []uuid.UUID      `json:"applied_modifiers"`
-	Damage             int              `json:"damage"`
+	Wounds             int              `json:"wounds"`
 	Status             Status           `json:"status"`
 	IsActive           bool             `json:"is_active"`
 	IsAlive            bool             `json:"is_alive"`
@@ -313,7 +313,7 @@ func (a Actor) ToJSON(g Game) actorJSON {
 		Stages:             maps.Clone(a.Stages),
 		UnmodifiedStats:    unmodified_stats,
 		AppliedModifiers:   applied_modifiers,
-		Damage:             int(a.Damage),
+		Wounds:             int(a.Wounds),
 		Status:             a.Status,
 		IsActive:           a.IsActive(),
 		IsAlive:            a.IsAlive,

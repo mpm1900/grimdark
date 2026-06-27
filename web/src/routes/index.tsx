@@ -11,7 +11,7 @@ import { Item, ItemContent, ItemTitle } from '#/components/ui/item'
 import { Separator } from '#/components/ui/separator'
 import { Table, TableBody, TableCell, TableRow } from '#/components/ui/table'
 import type { Actor } from '#/lib/game/actor'
-import { AFFINITIES, mapStage, STATS, type Stat } from '#/lib/game/core'
+import { AFFINITIES, STATS, type Stat } from '#/lib/game/core'
 import { getAppliedEffects, type Game } from '#/lib/game/game'
 import { RenderLog } from '#/lib/game/log'
 import { gameStore } from '#/lib/stores/game'
@@ -59,7 +59,7 @@ function ActorTest({ game, actor }: { game: Game; actor: Actor }) {
                     <TableRow>
                       <TableCell>Health</TableCell>
                       <TableCell>
-                        {actor.stats.health - actor.damage}/{actor.stats.health}
+                        {actor.stats.health - actor.wounds}/{actor.stats.health}
                       </TableCell>
                     </TableRow>
                     {STATS.filter((s) => s !== 'health').map((stat) => (
