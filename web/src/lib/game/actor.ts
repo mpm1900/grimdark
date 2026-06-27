@@ -2,8 +2,6 @@ import type { Affinity, ID, Stat } from './core'
 
 export type Actor = {
   ID: ID
-  name: string
-  level: number
   affinities: Array<Affinity>
   affinity_damage: Record<Affinity, number>
   affinity_resistance: Record<Affinity, number>
@@ -14,6 +12,8 @@ export type Actor = {
   is_protected: boolean
   is_staggered: boolean
   is_stunned: boolean
+  level: number
+  name: string
   player_ID: ID
   position_ID: ID | null
   stats: Record<Stat, number>

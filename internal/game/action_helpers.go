@@ -43,6 +43,7 @@ func BasicAttack(config AttackConfig) ActionResolver {
 				success = success || result.Success()
 				if result.Success() {
 					trigger_context := MakeContextFor(this.Source, target)
+					g.On(OnDamageSend, trigger_context)
 					g.On(OnDamageRecieve, trigger_context)
 
 					if this.Action.Config.Recoil > 0 {

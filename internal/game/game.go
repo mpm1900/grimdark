@@ -397,10 +397,17 @@ func (g *Game) SetPosition(actor_id uuid.UUID, position_id uuid.UUID) {
 				return mod.Context.ParentID == actor.ID
 			})
 
-			log := NewLog("$actor$ left the battle.", map[string]string{
-				"$actor$": actor.Name,
-			})
-			g.PushLog(log.Bind(trigger_context))
+			if actor.IsAlive {
+				log := NewLog("$actor$ left the battle.", map[string]string{
+					"$actor$": actor.Name,
+				})
+				g.PushLog(log.Bind(trigger_context))
+			} else {
+				log := NewLog("$actor$ died.", map[string]string{
+					"$actor$": actor.Name,
+				})
+				g.PushLog(log.Bind(trigger_context))
+			}
 			g.On(OnActorEnter, trigger_context)
 		} else {
 			log := NewLog("$actor$ joined the battle.", map[string]string{
@@ -445,15 +452,6 @@ func (g *Game) DamageTargets(context Context, damage float64) {
 			if damage < 0 {
 				g.PushLog(NewLog(
 					fmt.Sprintf("$target$ healed %d HP.", int(-damage)),
-					map[string]string{
-						"$target$": a.Name,
-					},
-				).Bind(log_ctx))
-			}
-
-			if !a.IsAlive && resolved.IsAlive {
-				g.PushLog(NewLog(
-					"$target$ died.",
 					map[string]string{
 						"$target$": a.Name,
 					},
