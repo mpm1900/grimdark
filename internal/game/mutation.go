@@ -133,3 +133,12 @@ func DamageTargets(damage float64) Mutation {
 		},
 	}
 }
+func SetPositionSource(position_id uuid.UUID) Mutation {
+	return Mutation{
+		delta: func(g *Game, ctx Context) []uuid.UUID {
+			g.SetPosition(ctx.SourceID, position_id)
+
+			return []uuid.UUID{ctx.SourceID}
+		},
+	}
+}

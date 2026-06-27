@@ -53,6 +53,12 @@ func ActiveActors(g Game, actor Actor, context Context) bool {
 func AliveActors(g Game, actor Actor, context Context) bool {
 	return actor.IsAlive
 }
+func NonStunnedActors(g Game, actor Actor, context Context) bool {
+	return !actor.IsStunned
+}
+func InactiveActors(g Game, actor Actor, context Context) bool {
+	return !actor.IsAlive
+}
 func Allies(g Game, actor Actor, context Context) bool {
 	return actor.PlayerID == context.PlayerID
 }

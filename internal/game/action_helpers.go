@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"math/rand/v2"
 	"strconv"
+
+	"github.com/google/uuid"
 )
 
 type AttackEffect func(g Game, context Context, this *ActionContext)
@@ -209,5 +211,52 @@ func CtxToAllOtherActiveTargets() ActionContextMapper {
 		c := ctx.CloneWithTargets(g.FindActors(ActiveActors, ctx))
 		c.RemoveTarget(this.Source)
 		return c
+	}
+}
+
+// switches
+func SwitchWithSource() Action {
+	return Action{
+		Config: ActionConfig{
+			Name: "Switch",
+		},
+		Resolve: func(g *Game, ctx Context, this ActionContext) []Transaction {
+			if len(ctx.ActorIDs) != 1 {
+				return this.Done()
+			}
+
+			this.Push(SetPositionSource(uuid.Nil).Bind(ctx))
+
+			target_ctx := NewContext()
+			target_ctx.SourceID = ctx.ActorIDs[0]
+			this.Push(SetPositionSource(this.Source.PositionID).Bind(target_ctx))
+
+			return this.Done()
+		},
+		TargetsPredicate: CombineFilters(Allies, InactiveActors, AliveActors),
+		ValidateContext:  ContextTargetLength(1),
+	}
+}
+func SwitchIn(n int) Action {
+	return Action{
+		Config: ActionConfig{
+			Name: "Switch",
+		},
+		Resolve: func(g *Game, ctx Context, this ActionContext) []Transaction {
+			if len(ctx.ActorIDs) != len(ctx.PositionIDs) {
+				return this.Done()
+			}
+
+			for i, position_id := range ctx.PositionIDs {
+				actor_id := ctx.ActorIDs[i]
+				switch_ctx := NewContext()
+				switch_ctx.SourceID = actor_id
+				this.Push(SetPositionSource(position_id).Bind(switch_ctx))
+			}
+
+			return this.Done()
+		},
+		TargetsPredicate: CombineFilters(Allies, InactiveActors, AliveActors),
+		ValidateContext:  ContextTargetLength(n),
 	}
 }

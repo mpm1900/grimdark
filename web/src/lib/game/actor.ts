@@ -13,6 +13,7 @@ export type Actor = {
   is_alive: boolean
   is_protected: boolean
   is_staggered: boolean
+  is_stunned: boolean
   player_ID: ID
   position_ID: ID | null
   stats: Record<Stat, number>

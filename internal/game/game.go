@@ -217,6 +217,7 @@ func (g *Game) GetActionableActors() []Actor {
 	return g.FindActors(CombineFilters(
 		ActiveActors,
 		AliveActors,
+		NonStunnedActors,
 	), NewContext())
 }
 func (g *Game) IsReadyToRun() bool {

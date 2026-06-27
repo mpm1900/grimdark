@@ -46,7 +46,8 @@ type Actor struct {
 
 	IsAlive     bool
 	IsProtected bool
-	IsStaggered bool
+	IsStaggered bool // cannot act
+	IsStunned   bool // cannot act, and cannot queue commands
 
 	meta actormeta
 }
@@ -101,6 +102,7 @@ func NewActor(playerID uuid.UUID, def ActorDef) Actor {
 		IsAlive:     true,
 		IsProtected: false,
 		IsStaggered: false,
+		IsStunned:   false,
 
 		meta: actormeta{
 			active_turns:   0,
@@ -128,6 +130,8 @@ func (a Actor) Clone() Actor {
 		Status:      a.Status,
 		IsAlive:     a.IsAlive,
 		IsProtected: a.IsProtected,
+		IsStaggered: a.IsStaggered,
+		IsStunned:   a.IsStunned,
 
 		meta: a.meta,
 	}
@@ -249,6 +253,7 @@ type actorJSON struct {
 	IsAlive            bool             `json:"is_alive"`
 	IsProtected        bool             `json:"is_protected"`
 	IsStaggered        bool             `json:"is_staggered"`
+	IsStunned          bool             `json:"is_stunned"`
 }
 
 func (a Actor) ToJSON(g Game) actorJSON {
@@ -314,5 +319,6 @@ func (a Actor) ToJSON(g Game) actorJSON {
 		IsAlive:            a.IsAlive,
 		IsProtected:        a.IsProtected,
 		IsStaggered:        a.IsStaggered,
+		IsStunned:          a.IsStunned,
 	}
 }

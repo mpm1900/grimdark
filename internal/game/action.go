@@ -23,6 +23,13 @@ func (a Action) CanResolve(g Game, context Context, this *ActionContext) bool {
 	}
 
 	if this != nil {
+		if source.IsStunned {
+			this.Push(
+				PushLog(NewLog("$source$ was stunned.", map[string]string{
+					"$source$": this.Source.Name,
+				})).Bind(context),
+			)
+		}
 		if source.IsStaggered {
 			this.Push(
 				PushLog(NewLog("$source$ was staggered.", map[string]string{
@@ -32,9 +39,11 @@ func (a Action) CanResolve(g Game, context Context, this *ActionContext) bool {
 		}
 	}
 
+	can_act := !source.IsStaggered && !source.IsStunned
 	context_valid := a.ValidateContext == nil || a.ValidateContext(g, context)
-	source_valid := source.IsActive() && source.IsAlive && !source.IsStaggered
-	return !a.Disabled && context_valid && source_valid
+	source_valid := source.IsActive() && source.IsAlive && can_act
+	action_valid := !a.Disabled
+	return action_valid && context_valid && source_valid
 }
 
 func (a Action) Bind(context Context) Command {
