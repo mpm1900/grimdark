@@ -133,4 +133,14 @@ function getBaseAffinityDamage(
   return actor.affinities.includes(target_affinity) ? 1 : 0
 }
 
-export { getBaseAffinityResistance, getBaseAffinityDamage }
+function mapStage(stage: number, mod: number, input: number) {
+  if (stage > 0) {
+    return (input * (stage + mod)) / mod
+  }
+  if (stage < 0) {
+    return (input * mod) / (mod - stage)
+  }
+  return input
+}
+
+export { getBaseAffinityResistance, getBaseAffinityDamage, mapStage }

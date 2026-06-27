@@ -147,7 +147,7 @@ func (g *Game) modify(updater func(*State)) {
 	updater(&g.resolved)
 }
 func (g *Game) PushLog(log Bindable[Log]) {
-	fmt.Println(log.Payload.Resolve())
+	// fmt.Println(log.Payload.Resolve())
 	g.Logs = append(g.Logs, log)
 }
 func (g *Game) AddModifierImmunityTag(tag uuid.UUID) {
@@ -420,6 +420,13 @@ func (g *Game) DamageTargets(context Context, damage float64) {
 			resolved, ok := g.GetActor(target.ID)
 			if !ok || !resolved.IsAlive {
 				return a
+			}
+
+			if damage > resolved.GetRemainingHealth() {
+				damage = resolved.GetRemainingHealth()
+			}
+			if damage < -a.Damage {
+				damage = -a.Damage
 			}
 
 			a.ApplyDamage(damage, resolved)

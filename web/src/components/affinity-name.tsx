@@ -1,3 +1,4 @@
+import { AFFINITY_ICONS } from '#/icons/affinity'
 import type { Affinity } from '#/lib/game/core'
 import { cn } from '#/lib/utils'
 import { cva } from 'class-variance-authority'
@@ -26,9 +27,10 @@ function AffinityName({
 }: React.ComponentProps<'span'> & {
   affinity: Affinity
 }) {
+  const Icon = AFFINITY_ICONS[affinity]
   return (
     <span {...props} className={cn(affinityVariants({ affinity }), className)}>
-      {affinity}
+      <Icon className="size-5" />
     </span>
   )
 }

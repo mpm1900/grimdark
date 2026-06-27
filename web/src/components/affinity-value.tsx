@@ -2,6 +2,7 @@ import type { Actor } from '#/lib/game/actor'
 import {
   getBaseAffinityDamage,
   getBaseAffinityResistance,
+  mapStage,
   type Affinity,
 } from '#/lib/game/core'
 import { cn } from '#/lib/utils'
@@ -51,4 +52,17 @@ function AffinityDamageValue({
   )
 }
 
-export { AffinityResistanceValue, AffinityDamageValue }
+function AffinityMultiplier({
+  value,
+  className,
+  ...props
+}: React.ComponentProps<'span'> & { value: number }) {
+  const mult = mapStage(value, 2, 1)
+  return (
+    <span {...props} className={cn(mult === 1 && 'opacity-45', className)}>
+      x{mult.toFixed(2)}
+    </span>
+  )
+}
+
+export { AffinityResistanceValue, AffinityDamageValue, AffinityMultiplier }

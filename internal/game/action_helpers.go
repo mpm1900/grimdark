@@ -48,6 +48,11 @@ func BasicAttack(config AttackConfig) ActionResolver {
 						this.Push(DamageTargets(result.Damage * this.Action.Config.Recoil).Bind(recoil_ctx))
 					}
 
+					if this.Action.Config.Lifesteal > 0 {
+						lifesteal_ctx := MakeContextFor(this.Source, this.Source)
+						this.Push(DamageTargets(result.Damage * this.Action.Config.Lifesteal * -1.0).Bind(lifesteal_ctx))
+					}
+
 					if config.OnSuccessResult != nil {
 						config.OnSuccessResult(*g, context, &this, result)
 					}

@@ -1,6 +1,7 @@
 import { AffinityName } from '#/components/affinity-name'
 import {
   AffinityDamageValue,
+  AffinityMultiplier,
   AffinityResistanceValue,
 } from '#/components/affinity-value'
 import { AppHeader } from '#/components/app-header'
@@ -10,7 +11,7 @@ import { Item, ItemContent, ItemTitle } from '#/components/ui/item'
 import { Separator } from '#/components/ui/separator'
 import { Table, TableBody, TableCell, TableRow } from '#/components/ui/table'
 import type { Actor } from '#/lib/game/actor'
-import { AFFINITIES, STATS, type Stat } from '#/lib/game/core'
+import { AFFINITIES, mapStage, STATS, type Stat } from '#/lib/game/core'
 import { getAppliedEffects, type Game } from '#/lib/game/game'
 import { RenderLog } from '#/lib/game/log'
 import { gameStore } from '#/lib/stores/game'
@@ -68,7 +69,10 @@ function ActorTest({ game, actor }: { game: Game; actor: Actor }) {
                 </Table>
               </FieldContent>
             </Field>
-
+            <Field>
+              <FieldLabel>Status</FieldLabel>
+              <FieldContent>{actor.status}</FieldContent>
+            </Field>
           </div>
           <div className="flex flex-col gap-4">
             <div className="grid grid-cols-2">
@@ -86,6 +90,11 @@ function ActorTest({ game, actor }: { game: Game; actor: Actor }) {
                             <AffinityResistanceValue
                               actor={actor}
                               affinity={affinity}
+                            />
+                          </TableCell>
+                          <TableCell>
+                            <AffinityMultiplier
+                              value={actor.affinity_resistance[affinity]}
                             />
                           </TableCell>
                         </TableRow>
@@ -110,6 +119,11 @@ function ActorTest({ game, actor }: { game: Game; actor: Actor }) {
                               affinity={affinity}
                             />
                           </TableCell>
+                          <TableCell>
+                            <AffinityMultiplier
+                              value={actor.affinity_damage[affinity]}
+                            />
+                          </TableCell>
                         </TableRow>
                       ))}
                     </TableBody>
@@ -119,7 +133,7 @@ function ActorTest({ game, actor }: { game: Game; actor: Actor }) {
             </div>
             <Field>
               <FieldLabel>Flags</FieldLabel>
-              <FieldContent className='flex flex-row gap-x-2 flex-wrap'>
+              <FieldContent className="flex flex-row gap-x-2 flex-wrap">
                 {actor.is_active && <span>IsActive</span>}
                 {actor.is_alive && <span>IsAlive</span>}
                 {actor.is_protected && <span>IsProtected</span>}
@@ -131,7 +145,8 @@ function ActorTest({ game, actor }: { game: Game; actor: Actor }) {
               <FieldContent className="flex flex-row flex-wrap gap-x-2 w-60!">
                 {getAppliedEffects(game, actor).map((effect) => (
                   <span key={effect.ID} className="capitalize">
-                    {effect.name}{effect.count > 1 && `(${effect.count})`}
+                    {effect.name}
+                    {effect.count > 1 && `(${effect.count})`}
                   </span>
                 ))}
               </FieldContent>

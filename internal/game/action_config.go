@@ -12,6 +12,7 @@ type ActionConfig struct {
 	Priority     int
 	Power        float64
 	Recoil       float64
+	Lifesteal    float64
 	Hits         int
 	Accuracy     *float64
 	CritChance   float64

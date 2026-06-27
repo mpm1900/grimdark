@@ -20,7 +20,7 @@ func TestGame(g *game.Game) {
 			Stat:         game.Melee,
 			Accuracy:     game.P(0.98),
 			Power:        70,
-			Recoil:       0.12,
+			Lifesteal:    0.12,
 			Hits:         1,
 			CritChance:   0.05,
 			CritModifier: 1.5,
@@ -31,10 +31,12 @@ func TestGame(g *game.Game) {
 					0.5,
 					effects.StatDownTargets(game.Speed, 1),
 				)(g, context, this, result)
-				game.AddResultEffects(
-					0.5,
-					effects.StaggerTargets(),
-				)(g, context, this, result)
+				/*
+					game.AddResultEffects(
+						0.5,
+						effects.StaggerTargets(),
+					)(g, context, this, result)
+				*/
 			},
 		}),
 		ValidateContext:  game.ContextTargetLength(1),

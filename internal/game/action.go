@@ -6,8 +6,10 @@ type ActionResolver func(g *Game, ctx Context, this ActionContext) []Transaction
 type ActionContextMapper func(g Game, ctx Context, this ActionContext) Context
 
 type Action struct {
-	ID               uuid.UUID
-	Config           ActionConfig
+	ID       uuid.UUID
+	Config   ActionConfig
+	Disabled bool
+
 	Resolve          ActionResolver
 	ValidateContext  GameFilter
 	TargetsPredicate Filter[Actor]
@@ -32,7 +34,7 @@ func (a Action) CanResolve(g Game, context Context, this *ActionContext) bool {
 
 	context_valid := a.ValidateContext == nil || a.ValidateContext(g, context)
 	source_valid := source.IsActive() && source.IsAlive && !source.IsStaggered
-	return context_valid && source_valid
+	return !a.Disabled && context_valid && source_valid
 }
 
 func (a Action) Bind(context Context) Command {

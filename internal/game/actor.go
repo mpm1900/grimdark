@@ -41,8 +41,9 @@ type Actor struct {
 	Aux                map[Stat]float64
 	Stats              map[Stat]float64
 
-	Damage      float64
-	Status      Status
+	Damage float64
+	Status Status
+
 	IsAlive     bool
 	IsProtected bool
 	IsStaggered bool
@@ -94,10 +95,12 @@ func NewActor(playerID uuid.UUID, def ActorDef) Actor {
 		Aux:                map[Stat]float64{},
 		Stats:              maps.Clone(def.Stats),
 
-		Damage:      0,
-		Status:      StatusNone,
+		Damage: 0,
+		Status: StatusNone,
+
 		IsAlive:     true,
 		IsProtected: false,
+		IsStaggered: false,
 
 		meta: actormeta{
 			active_turns:   0,
