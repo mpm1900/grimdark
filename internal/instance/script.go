@@ -26,10 +26,16 @@ func TestGame(g *game.Game) {
 			CritModifier: 1.5,
 		},
 		Resolve: game.BasicAttack(game.AttackConfig{
-			OnSuccessResult: game.AddResultEffects(
-				0.5,
-				effects.StatDownTargets(game.Speed, 1),
-			),
+			OnSuccessResult: func(g game.Game, context game.Context, this *game.ActionContext, result game.DamageResult) {
+				game.AddResultEffects(
+					0.5,
+					effects.StatDownTargets(game.Speed, 1),
+				)(g, context, this, result)
+				game.AddResultEffects(
+					0.5,
+					effects.StaggerTargets(),
+				)(g, context, this, result)
+			},
 		}),
 		ValidateContext:  game.ContextTargetLength(1),
 		TargetsPredicate: game.CombineFilters(game.ActiveActors, game.Enemies),

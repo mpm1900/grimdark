@@ -35,7 +35,7 @@ func (ac *ActionContext) Done() []Transaction {
 }
 
 type gamemeta struct {
-	applied_modifiers   map[uuid.UUID]map[uuid.UUID]int
+	applied_modifiers   map[uuid.UUID]map[uuid.UUID]struct{}
 	modifier_immunities map[uuid.UUID]struct{}
 	modifiers           []Modifier
 }
@@ -43,15 +43,10 @@ type gamemeta struct {
 func (gm *gamemeta) apply(modifierID uuid.UUID, actorID uuid.UUID) {
 	_, ok := gm.applied_modifiers[modifierID]
 	if !ok {
-		gm.applied_modifiers[modifierID] = map[uuid.UUID]int{}
+		gm.applied_modifiers[modifierID] = map[uuid.UUID]struct{}{}
 	}
 
-	old, ok := gm.applied_modifiers[modifierID][actorID]
-	if ok {
-		gm.applied_modifiers[modifierID][actorID] = old + 1
-	} else {
-		gm.applied_modifiers[modifierID][actorID] = 1
-	}
+	gm.applied_modifiers[modifierID][actorID] = struct{}{}
 }
 
 type GameStatus string
@@ -124,7 +119,7 @@ func NewGame() Game {
 		resolved:  state,
 		gamestate: unresolved,
 		meta: gamemeta{
-			applied_modifiers: map[uuid.UUID]map[uuid.UUID]int{},
+			applied_modifiers: map[uuid.UUID]map[uuid.UUID]struct{}{},
 		},
 		Logs:   []Bindable[Log]{},
 		Phase:  PhaseInit,
@@ -170,12 +165,12 @@ func (g *Game) State() State {
 
 	return g.resolved
 }
-func (g *Game) AppliedModifiers(actor_id uuid.UUID) map[uuid.UUID]int {
-	effect_ids := map[uuid.UUID]int{}
+func (g *Game) AppliedModifiers(actor_id uuid.UUID) map[uuid.UUID]struct{} {
+	effect_ids := map[uuid.UUID]struct{}{}
 	for modifier_id, actors := range g.meta.applied_modifiers {
-		count, ok := actors[actor_id]
+		_, ok := actors[actor_id]
 		if ok {
-			effect_ids[modifier_id] = count
+			effect_ids[modifier_id] = struct{}{}
 		}
 	}
 
@@ -231,7 +226,7 @@ func (g *Game) IsReadyToRun() bool {
 func (g *Game) resolve() {
 	g.gamestate = resolving
 	g.resolved = g.state.Clone()
-	g.meta.applied_modifiers = map[uuid.UUID]map[uuid.UUID]int{}
+	g.meta.applied_modifiers = map[uuid.UUID]map[uuid.UUID]struct{}{}
 	g.meta.modifier_immunities = map[uuid.UUID]struct{}{}
 
 	modifiers := g.GetModifiers()
@@ -387,8 +382,20 @@ func (g *Game) SetPosition(actor_id uuid.UUID, position_id uuid.UUID) {
 			return
 		}
 
+		s.UpdateActor(actor_id, func(a Actor) Actor {
+			a.PositionID = position_id
+			return a
+		})
+
 		trigger_context := MakeContextFor(actor)
 		if position_id == uuid.Nil {
+			s.Commands = slices.DeleteFunc(s.Commands, func(cmd Command) bool {
+				return cmd.Context.ParentID == actor.ID
+			})
+			s.Modifiers = slices.DeleteFunc(s.Modifiers, func(mod Modifier) bool {
+				return mod.Context.ParentID == actor.ID
+			})
+
 			log := NewLog("$actor$ left the battle.", map[string]string{
 				"$actor$": actor.Name,
 			})
@@ -401,11 +408,6 @@ func (g *Game) SetPosition(actor_id uuid.UUID, position_id uuid.UUID) {
 			g.PushLog(log.Bind(trigger_context))
 			g.On(OnActorLeave, trigger_context)
 		}
-
-		s.UpdateActor(actor_id, func(a Actor) Actor {
-			a.PositionID = position_id
-			return a
-		})
 	})
 
 	if evicted_id != uuid.Nil {
@@ -462,6 +464,22 @@ func (g *Game) IncrementActorTurns() {
 		})
 	}
 }
+func (g *Game) DecrementModifiers() {
+	g.mutate(func(s *State) {
+		for i, modifier := range s.Modifiers {
+			if modifier.Payload.Delay != nil {
+				*s.Modifiers[i].Payload.Delay--
+			}
+			if modifier.Payload.Duration != nil {
+				*s.Modifiers[i].Payload.Duration--
+			}
+		}
+
+		s.Modifiers = slices.DeleteFunc(s.Modifiers, func(modifier Modifier) bool {
+			return modifier.Payload.Duration != nil && *modifier.Payload.Duration <= 0
+		})
+	})
+}
 
 // modifiers
 func (g *Game) ModifyActor(id uuid.UUID, updater func(Actor) Actor) {
@@ -473,6 +491,20 @@ func (g *Game) ModifyActorWhere(where func(Actor) bool, updater func(Actor) Acto
 	g.modify(func(s *State) {
 		s.UpdateActorWhere(where, updater)
 	})
+}
+
+// validate
+func (g *Game) Validate() bool {
+	valid := true
+	actors := g.State().Actors
+	for _, actor := range actors {
+		if actor.IsActive() && !actor.IsAlive {
+			g.SetPosition(actor.ID, uuid.Nil)
+			valid = false
+		}
+	}
+
+	return valid
 }
 
 // control
@@ -499,6 +531,7 @@ func (g *Game) NextTurn() {
 	g.Phase = PhaseMain
 }
 func (g *Game) EndPhase() {
+	g.DecrementModifiers()
 	if g.Turn > 0 {
 		g.On(OnTurnEnd, NewContext())
 	}
@@ -538,6 +571,10 @@ func (g *Game) Next() bool {
 	if len(g.state.Triggers) > 0 {
 		g.NextTrigger()
 		return true
+	}
+
+	if !g.Validate() {
+		return false
 	}
 
 	if len(g.state.Commands) > 0 {

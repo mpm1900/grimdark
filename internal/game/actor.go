@@ -45,6 +45,7 @@ type Actor struct {
 	Status      Status
 	IsAlive     bool
 	IsProtected bool
+	IsStaggered bool
 
 	meta actormeta
 }
@@ -138,7 +139,6 @@ func mapBaseStat(actor Actor, stat Stat, stats map[Stat]float64, aux float64) fl
 	}
 	return result
 }
-
 func (a *Actor) mapBaseStats() {
 	a.UnmodifiedStats = maps.Clone(a.Stats)
 
@@ -156,6 +156,7 @@ func (a *Actor) mapBaseStats() {
 		a.UnmodifiedStats[stat] = mapBaseStat(*a, stat, a.UnmodifiedStats, 0)
 	}
 }
+
 func (a *Actor) ApplyDamage(damage float64, resolved Actor) {
 	a.Damage = a.Damage + damage
 	if a.Damage < 0 {
@@ -219,33 +220,38 @@ func (a Actor) GetModifiers() []Modifier {
 
 	return modifiers
 }
+func (a Actor) GetActions() []Action {
+	return []Action{}
+}
 func (a Actor) GetActionByID(action_id uuid.UUID) (Action, bool) {
 	return Action{}, false
 }
 
 type actorJSON struct {
-	ID                 uuid.UUID         `json:"ID"`
-	Name               string            `json:"name"`
-	Level              int               `json:"level"`
-	PlayerID           uuid.UUID         `json:"player_ID"`
-	PositionID         *uuid.UUID        `json:"position_ID"`
-	Affinities         []Affinity        `json:"affinities"`
-	AffinityDamage     map[Affinity]int  `json:"affinity_damage"`
-	AffinityResistance map[Affinity]int  `json:"affinity_resistance"`
-	Stats              map[Stat]int      `json:"stats"`
-	Stages             map[Stat]int      `json:"stages"`
-	UnmodifiedStats    map[Stat]int      `json:"unmodified_stats"`
-	AppliedModifiers   map[uuid.UUID]int `json:"applied_modifiers"`
-	Damage             int               `json:"damage"`
-	Status             Status            `json:"status"`
-	IsAlive            bool              `json:"is_alive"`
-	IsProtected        bool              `json:"is_protected"`
+	ID                 uuid.UUID        `json:"ID"`
+	Name               string           `json:"name"`
+	Level              int              `json:"level"`
+	PlayerID           uuid.UUID        `json:"player_ID"`
+	PositionID         *uuid.UUID       `json:"position_ID"`
+	Affinities         []Affinity       `json:"affinities"`
+	AffinityDamage     map[Affinity]int `json:"affinity_damage"`
+	AffinityResistance map[Affinity]int `json:"affinity_resistance"`
+	Stats              map[Stat]int     `json:"stats"`
+	Stages             map[Stat]int     `json:"stages"`
+	UnmodifiedStats    map[Stat]int     `json:"unmodified_stats"`
+	AppliedModifiers   []uuid.UUID      `json:"applied_modifiers"`
+	Damage             int              `json:"damage"`
+	Status             Status           `json:"status"`
+	IsActive           bool             `json:"is_active"`
+	IsAlive            bool             `json:"is_alive"`
+	IsProtected        bool             `json:"is_protected"`
+	IsStaggered        bool             `json:"is_staggered"`
 }
 
 func (a Actor) ToJSON(g Game) actorJSON {
 	stats := make(map[Stat]int, len(a.Stats))
 	unmodified_stats := make(map[Stat]int, len(a.UnmodifiedStats))
-	applied_modifiers := g.AppliedModifiers(a.ID)
+	applied_modifiers := slices.Collect(maps.Keys(g.AppliedModifiers(a.ID)))
 
 	for stat, v := range a.Stats {
 		if stat == Accuracy || stat == Evasion {
@@ -301,7 +307,9 @@ func (a Actor) ToJSON(g Game) actorJSON {
 		AppliedModifiers:   applied_modifiers,
 		Damage:             int(a.Damage),
 		Status:             a.Status,
+		IsActive:           a.IsActive(),
 		IsAlive:            a.IsAlive,
 		IsProtected:        a.IsProtected,
+		IsStaggered:        a.IsStaggered,
 	}
 }

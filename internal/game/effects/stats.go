@@ -3,6 +3,8 @@ package effects
 import (
 	"fmt"
 	"grimdark/internal/game"
+
+	"github.com/google/uuid"
 )
 
 func StatChangeSourceOnSuccess(g *game.Game, this game.Effect, ctx game.Context) {
@@ -39,10 +41,32 @@ func StatChangeActor(stat game.Stat, amount int) game.Updater[game.Actor] {
 	}
 }
 
+var StatUpIDs = map[game.Stat]uuid.UUID{
+	game.Melee:          uuid.New(),
+	game.Ranged:         uuid.New(),
+	game.Special:        uuid.New(),
+	game.MartialDefense: uuid.New(),
+	game.SpecialDefense: uuid.New(),
+	game.Speed:          uuid.New(),
+	game.Accuracy:       uuid.New(),
+	game.Evasion:        uuid.New(),
+}
+var StatDownIDs = map[game.Stat]uuid.UUID{
+	game.Melee:          uuid.New(),
+	game.Ranged:         uuid.New(),
+	game.Special:        uuid.New(),
+	game.MartialDefense: uuid.New(),
+	game.SpecialDefense: uuid.New(),
+	game.Speed:          uuid.New(),
+	game.Accuracy:       uuid.New(),
+	game.Evasion:        uuid.New(),
+}
+
 func StatUpSource(stat game.Stat, amount int) game.Effect {
 	effect := game.EffectSource(game.EffectPriorityStages, StatChangeActor(stat, amount))
 	effect.Name = fmt.Sprintf("%s up", stat)
 	effect.CheckSuccess = StatChangeSourceOnSuccess
+	effect.ID = StatUpIDs[stat]
 
 	return effect
 }
@@ -50,6 +74,7 @@ func StatDownSource(stat game.Stat, amount int) game.Effect {
 	effect := game.EffectSource(game.EffectPriorityStages, StatChangeActor(stat, -amount))
 	effect.Name = fmt.Sprintf("%s down", stat)
 	effect.CheckSuccess = StatChangeSourceOnSuccess
+	effect.ID = StatDownIDs[stat]
 
 	return effect
 }
@@ -57,6 +82,7 @@ func StatUpTargets(stat game.Stat, amount int) game.Effect {
 	effect := game.EffectTargets(game.EffectPriorityStages, StatChangeActor(stat, amount))
 	effect.Name = fmt.Sprintf("%s up", stat)
 	effect.CheckSuccess = StatChangeTargetsOnSuccess
+	effect.ID = StatUpIDs[stat]
 
 	return effect
 }
@@ -64,6 +90,7 @@ func StatDownTargets(stat game.Stat, amount int) game.Effect {
 	effect := game.EffectTargets(game.EffectPriorityStages, StatChangeActor(stat, -amount))
 	effect.Name = fmt.Sprintf("%s down", stat)
 	effect.CheckSuccess = StatChangeTargetsOnSuccess
+	effect.ID = StatDownIDs[stat]
 
 	return effect
 }

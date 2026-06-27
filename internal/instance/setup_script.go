@@ -74,7 +74,7 @@ func SetupGame(g *game.Game) {
 	katie_def.Effects = []game.Effect{effect}
 
 	katie := game.NewActor(player.ID, katie_def)
-	katie.Aux[game.MartialDefense] = 10
+	katie.Aux[game.Speed] = 10
 	if len(g.State().Players) == 0 {
 		g.AddPlayers(player)
 	}

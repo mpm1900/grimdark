@@ -14,14 +14,25 @@ type Action struct {
 	MapContext       ActionContextMapper
 }
 
-func (a Action) CanResolve(g Game, context Context) bool {
+func (a Action) CanResolve(g Game, context Context, this *ActionContext) bool {
 	source, ok := g.GetSource(context)
 	if !ok {
 		return false
 	}
 
+	if this != nil {
+		if source.IsStaggered {
+			this.Push(
+				PushLog(NewLog("$source$ was staggered.", map[string]string{
+					"$source$": this.Source.Name,
+				})).Bind(context),
+			)
+		}
+	}
+
 	context_valid := a.ValidateContext == nil || a.ValidateContext(g, context)
-	return context_valid && source.IsAlive && source.IsActive()
+	source_valid := source.IsActive() && source.IsAlive && !source.IsStaggered
+	return context_valid && source_valid
 }
 
 func (a Action) Bind(context Context) Command {
@@ -61,7 +72,7 @@ func (c Command) Resolve(g *Game) []Transaction {
 		})).Bind(context),
 	)
 
-	if c.Payload.Resolve == nil || !c.Payload.CanResolve(*g, context) {
+	if c.Payload.Resolve == nil || !c.Payload.CanResolve(*g, context, &action_context) {
 		action_context.Push(
 			PushLog(NewLog("$action$ failed.", map[string]string{
 				"$action$": c.Payload.Config.Name,
@@ -75,7 +86,7 @@ func (c Command) Resolve(g *Game) []Transaction {
 }
 
 func (c Command) ResolveTrigger(g *Game) []Transaction {
-	if !c.Payload.CanResolve(*g, c.Context) || c.Payload.Resolve == nil {
+	if !c.Payload.CanResolve(*g, c.Context, nil) || c.Payload.Resolve == nil {
 		return []Transaction{}
 	}
 

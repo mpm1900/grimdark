@@ -1,13 +1,14 @@
 package game
 
-import "math/rand/v2"
+import (
+	"math/rand/v2"
+)
 
 func P[T any](v T) *T {
 	return &v
 }
 
-func Chance(check float64) bool {
-	chance := 1.0
+func Chance(chance float64) bool {
 	roll := rand.Float64()
 	return chance >= roll
 }

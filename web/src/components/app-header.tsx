@@ -20,7 +20,7 @@ function AppHeader() {
   const status = useSelector(socketStore, (s) => s.status)
   const client = useSelector(clientsStore, (c) => c.me)
   const game_status = useSelector(gameStore, (g) => g.status)
-  const game_phase = useSelector(gameStore, (g) => g.phase)
+  const turn = useSelector(gameStore, (g) => g.turn)
   return (
     <header className="fixed flex justify-between p-1 z-20 w-full">
       <div className="flex items-center gap-2">
@@ -46,6 +46,8 @@ function AppHeader() {
             onValueChange={(instanceID) => connect(instanceID)}
           />
         )}
+
+        <span>Turn {turn}</span>
 
         {client && (
           <div className="flex gap-2">
