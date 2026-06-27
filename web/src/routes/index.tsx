@@ -94,7 +94,7 @@ function ActorTest({ game, actor }: { game: Game; actor: Actor }) {
                           </TableCell>
                           <TableCell>
                             <AffinityMultiplier
-                              value={actor.affinity_resistance[affinity]}
+                              value={actor.affinity_resistance[affinity] * -1}
                             />
                           </TableCell>
                         </TableRow>

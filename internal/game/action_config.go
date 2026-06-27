@@ -5,37 +5,38 @@ import (
 )
 
 type ActionConfig struct {
-	Name string
-
-	Affinity     Affinity
-	Stat         Stat
-	Priority     int
-	Power        float64
-	Recoil       float64
-	Lifesteal    float64
-	Hits         int
-	Accuracy     *float64
-	CritChance   float64
-	CritModifier float64
+	Accuracy     *float64 `json:"accuracy"`
+	Affinity     Affinity `json:"affinity"`
+	CritChance   float64  `json:"crit_chance"`
+	CritModifier float64  `json:"crit_modifier"`
+	Hits         int      `json:"hits"`
+	Lifesteal    float64  `json:"lifesteal"`
+	Name         string   `json:"name"`
+	Power        float64  `json:"power"`
+	Priority     int      `json:"priority"`
+	Recoil       float64  `json:"recoil"`
+	Stat         Stat     `json:"stat"`
+	// TOOD
+	// - cost
 }
 
 type AccuracyResult struct {
-	Pass         bool
 	Accuracy     float64
 	AccuracyRoll float64
 	Critical     bool
 	CriticalRoll float64
+	Pass         bool
 	Target       Actor
 }
 
 type DamageResult struct {
 	AccuracyResult
-	Raw               float64
-	Damage            float64
-	Random            float64
 	Affinity          float64
 	AffinityStage     int
 	BaseAffinityStage int
+	Damage            float64
+	Random            float64
+	Raw               float64
 }
 
 func (ac ActionConfig) GetBaseDamage(source, target Actor, useBaseStats bool) float64 {

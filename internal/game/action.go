@@ -3,17 +3,32 @@ package game
 import "github.com/google/uuid"
 
 type ActionResolver func(g *Game, ctx Context, this ActionContext) []Transaction
-type ActionContextMapper func(g Game, ctx Context, this ActionContext) Context
 
 type Action struct {
-	ID       uuid.UUID
-	Config   ActionConfig
-	Disabled bool
+	ID     uuid.UUID
+	Config ActionConfig
 
 	Resolve          ActionResolver
 	ValidateContext  GameFilter
 	TargetsPredicate Filter[Actor]
-	MapContext       ActionContextMapper
+	MapContext       func(g Game, ctx Context, this ActionContext) Context
+
+	IsDisabled    bool
+	DisabledCheck func(g Game, source Actor) bool // TODO
+}
+
+type actionJSON struct {
+	ID         uuid.UUID    `json:"ID"`
+	Config     ActionConfig `json:"config"`
+	IsDisabled bool         `json:"is_disabled"`
+}
+
+func (a Action) Disabled(g Game, source Actor) bool {
+	if !a.IsDisabled && a.DisabledCheck != nil {
+		return a.DisabledCheck(g, source)
+	}
+
+	return a.IsDisabled
 }
 
 func (a Action) CanResolve(g Game, context Context, this *ActionContext) bool {
@@ -39,10 +54,9 @@ func (a Action) CanResolve(g Game, context Context, this *ActionContext) bool {
 		}
 	}
 
-	can_act := !source.IsStaggered && !source.IsStunned
 	context_valid := a.ValidateContext == nil || a.ValidateContext(g, context)
-	source_valid := source.IsActive() && source.IsAlive && can_act
-	action_valid := !a.Disabled
+	source_valid := source.IsAlive && source.IsActive() && source.CanAct()
+	action_valid := !a.Disabled(g, source)
 	return action_valid && context_valid && source_valid
 }
 
@@ -112,4 +126,12 @@ func (c Command) ResolveTrigger(g *Game) []Transaction {
 		context = c.Payload.MapContext(*g, context, action_context)
 	}
 	return c.Payload.Resolve(g, context, action_context)
+}
+
+func (a Action) ToJSON(g Game, source Actor) actionJSON {
+	return actionJSON{
+		ID:         a.ID,
+		Config:     a.Config,
+		IsDisabled: a.Disabled(g, source),
+	}
 }

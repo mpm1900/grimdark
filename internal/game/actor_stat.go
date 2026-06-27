@@ -14,29 +14,21 @@ const (
 	Evasion        Stat = "evasion"
 )
 
+var statDefenses map[Stat]Stat = map[Stat]Stat{
+	Melee:    MartialDefense,
+	Ranged:   MartialDefense,
+	Special:  SpecialDefense,
+	Evasion:  Accuracy,
+	Accuracy: Evasion,
+}
+
 func (s Stat) GetDefense() Stat {
-	switch s {
-	case Health:
-		return Health
-	case Speed:
-		return Speed
-	case Melee:
-		return MartialDefense
-	case Ranged:
-		return MartialDefense
-	case MartialDefense:
-		return MartialDefense
-	case Special:
-		return SpecialDefense
-	case SpecialDefense:
-		return SpecialDefense
-	case Accuracy:
-		return Evasion
-	case Evasion:
-		return Accuracy
-	default:
-		return Health
+	defense, ok := statDefenses[s]
+	if !ok {
+		return s
 	}
+
+	return defense
 }
 
 func (s Stat) GetRatio(source, target Actor, useBaseStats bool) float64 {
@@ -44,9 +36,9 @@ func (s Stat) GetRatio(source, target Actor, useBaseStats bool) float64 {
 	target_value := target.Stats[s.GetDefense()]
 
 	if useBaseStats {
-		base_target_value := target.UnmodifiedStats[s.GetDefense()]
-		if target_value > base_target_value {
-			target_value = base_target_value
+		base := target.UnmodifiedStats[s.GetDefense()]
+		if target_value > base {
+			target_value = base
 		}
 	}
 

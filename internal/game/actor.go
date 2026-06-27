@@ -33,6 +33,8 @@ type Actor struct {
 	PlayerID   uuid.UUID
 	PositionID uuid.UUID
 
+	Actions []Action
+
 	AffinityDamage     map[Affinity]int
 	AffinityResistance map[Affinity]int
 	AffinityImmunities map[Affinity]float64
@@ -50,6 +52,29 @@ type Actor struct {
 	IsStunned   bool // cannot act, and cannot queue commands
 
 	meta actormeta
+}
+
+type actorJSON struct {
+	ID                 uuid.UUID        `json:"ID"`
+	Name               string           `json:"name"`
+	Level              int              `json:"level"`
+	PlayerID           uuid.UUID        `json:"player_ID"`
+	PositionID         *uuid.UUID       `json:"position_ID"`
+	Actions            []actionJSON     `json:"actions"`
+	Affinities         []Affinity       `json:"affinities"`
+	AffinityDamage     map[Affinity]int `json:"affinity_damage"`
+	AffinityResistance map[Affinity]int `json:"affinity_resistance"`
+	Stats              map[Stat]int     `json:"stats"`
+	Stages             map[Stat]int     `json:"stages"`
+	UnmodifiedStats    map[Stat]int     `json:"unmodified_stats"`
+	AppliedModifiers   []uuid.UUID      `json:"applied_modifiers"`
+	Wounds             int              `json:"wounds"`
+	Status             Status           `json:"status"`
+	IsActive           bool             `json:"is_active"`
+	IsAlive            bool             `json:"is_alive"`
+	IsProtected        bool             `json:"is_protected"`
+	IsStaggered        bool             `json:"is_staggered"`
+	IsStunned          bool             `json:"is_stunned"`
 }
 
 func NewActorDef() ActorDef {
@@ -89,6 +114,8 @@ func NewActor(playerID uuid.UUID, def ActorDef) Actor {
 		PositionID: uuid.Nil,
 		Level:      100,
 
+		Actions: []Action{},
+
 		AffinityDamage:     map[Affinity]int{},
 		AffinityResistance: map[Affinity]int{},
 		AffinityImmunities: map[Affinity]float64{},
@@ -118,6 +145,8 @@ func (a Actor) Clone() Actor {
 		PlayerID:   a.PlayerID,
 		PositionID: a.PositionID,
 
+		Actions: slices.Clone(a.Actions),
+
 		AffinityDamage:     maps.Clone(a.AffinityDamage),
 		AffinityResistance: maps.Clone(a.AffinityResistance),
 		AffinityImmunities: maps.Clone(a.AffinityImmunities),
@@ -126,8 +155,9 @@ func (a Actor) Clone() Actor {
 		Aux:                maps.Clone(a.Aux),
 		Stats:              maps.Clone(a.Stats),
 
-		Wounds:      a.Wounds,
-		Status:      a.Status,
+		Wounds: a.Wounds,
+		Status: a.Status,
+
 		IsAlive:     a.IsAlive,
 		IsProtected: a.IsProtected,
 		IsStaggered: a.IsStaggered,
@@ -183,6 +213,9 @@ func (a *Actor) IncrementTurns() {
 func (a Actor) IsActive() bool {
 	return a.PositionID != uuid.Nil
 }
+func (a Actor) CanAct() bool {
+	return !a.IsStaggered && !a.IsStunned
+}
 func (a Actor) GetAffinityDamage(affinity Affinity) int {
 	base := maps.Clone(a.AffinityDamage)
 	for affinity := range a.Affinities {
@@ -228,32 +261,16 @@ func (a Actor) GetModifiers() []Modifier {
 	return modifiers
 }
 func (a Actor) GetActions() []Action {
-	return []Action{}
+	return a.Actions
 }
 func (a Actor) GetActionByID(action_id uuid.UUID) (Action, bool) {
-	return Action{}, false
-}
+	for _, action := range a.GetActions() {
+		if action.ID == action_id {
+			return action, true
+		}
+	}
 
-type actorJSON struct {
-	ID                 uuid.UUID        `json:"ID"`
-	Name               string           `json:"name"`
-	Level              int              `json:"level"`
-	PlayerID           uuid.UUID        `json:"player_ID"`
-	PositionID         *uuid.UUID       `json:"position_ID"`
-	Affinities         []Affinity       `json:"affinities"`
-	AffinityDamage     map[Affinity]int `json:"affinity_damage"`
-	AffinityResistance map[Affinity]int `json:"affinity_resistance"`
-	Stats              map[Stat]int     `json:"stats"`
-	Stages             map[Stat]int     `json:"stages"`
-	UnmodifiedStats    map[Stat]int     `json:"unmodified_stats"`
-	AppliedModifiers   []uuid.UUID      `json:"applied_modifiers"`
-	Wounds             int              `json:"wounds"`
-	Status             Status           `json:"status"`
-	IsActive           bool             `json:"is_active"`
-	IsAlive            bool             `json:"is_alive"`
-	IsProtected        bool             `json:"is_protected"`
-	IsStaggered        bool             `json:"is_staggered"`
-	IsStunned          bool             `json:"is_stunned"`
+	return Action{}, false
 }
 
 func (a Actor) ToJSON(g Game) actorJSON {
@@ -272,11 +289,6 @@ func (a Actor) ToJSON(g Game) actorJSON {
 			v = v * 100
 		}
 		unmodified_stats[stat] = int(v)
-	}
-
-	position_id := &a.PositionID
-	if a.PositionID == uuid.Nil {
-		position_id = nil
 	}
 
 	affinity_resistance := maps.Clone(a.AffinityResistance)
@@ -300,12 +312,19 @@ func (a Actor) ToJSON(g Game) actorJSON {
 		}
 	}
 
+	actor_actions := a.GetActions()
+	actions := make([]actionJSON, len(actor_actions))
+	for i, action := range actor_actions {
+		actions[i] = action.ToJSON(g, a)
+	}
+
 	return actorJSON{
 		ID:                 a.ID,
 		Name:               a.Name,
 		Level:              a.Level,
 		PlayerID:           a.PlayerID,
-		PositionID:         position_id,
+		PositionID:         NilifyUUID(a.PositionID),
+		Actions:            actions,
 		Affinities:         slices.Collect(maps.Keys(a.Affinities)),
 		AffinityDamage:     affinity_damage,
 		AffinityResistance: affinity_resistance,

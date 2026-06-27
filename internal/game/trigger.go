@@ -7,6 +7,7 @@ const (
 	OnActorLeave    TriggerOn = "on-actor-leave"
 	OnDamageSend    TriggerOn = "on-damage-recieve"
 	OnDamageRecieve TriggerOn = "on-damage-recieve"
+	OnModifierAdd   TriggerOn = "on-modifier-add"
 	OnTurnEnd       TriggerOn = "on-turn-end"
 )
 

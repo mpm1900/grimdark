@@ -2,6 +2,7 @@ import type { Affinity, ID, Stat } from './core'
 
 export type Actor = {
   ID: ID
+  actions: Array<any>,
   affinities: Array<Affinity>
   affinity_damage: Record<Affinity, number>
   affinity_resistance: Record<Affinity, number>

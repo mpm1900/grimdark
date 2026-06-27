@@ -28,20 +28,13 @@ type contextJSON struct {
 	PositionIDs []uuid.UUID `json:"position_IDs"`
 }
 
-func uuidOrNil(id uuid.UUID) *uuid.UUID {
-	if id == uuid.Nil {
-		return nil
-	}
-	return &id
-}
-
 func (c Context) MarshalJSON() ([]byte, error) {
 	return json.Marshal(contextJSON{
-		ActionID:    uuidOrNil(c.ActionID),
-		EffectID:    uuidOrNil(c.EffectID),
-		PlayerID:    uuidOrNil(c.PlayerID),
-		ParentID:    uuidOrNil(c.ParentID),
-		SourceID:    uuidOrNil(c.SourceID),
+		ActionID:    NilifyUUID(c.ActionID),
+		EffectID:    NilifyUUID(c.EffectID),
+		PlayerID:    NilifyUUID(c.PlayerID),
+		ParentID:    NilifyUUID(c.ParentID),
+		SourceID:    NilifyUUID(c.SourceID),
 		ActorIDs:    (c.ActorIDs),
 		PositionIDs: (c.PositionIDs),
 	})

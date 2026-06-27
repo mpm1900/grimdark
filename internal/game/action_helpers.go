@@ -7,20 +7,20 @@ import (
 	"github.com/google/uuid"
 )
 
-type AttackEffect func(g Game, context Context, this *ActionContext)
+type ActionEffect func(g Game, context Context, this *ActionContext)
 type AttackEffectResult func(g Game, context Context, this *ActionContext, result DamageResult)
 type StatusEffectResult func(g Game, context Context, this *ActionContext, result AccuracyResult)
 
 type AttackConfig struct {
-	OnSuccess       AttackEffect
-	OnFailure       AttackEffect
+	OnSuccess       ActionEffect
+	OnFailure       ActionEffect
 	OnSuccessResult AttackEffectResult
 	OnFailureResult AttackEffectResult
 }
 
 type StatusConfig struct {
-	OnSuccess       AttackEffect
-	OnFailure       AttackEffect
+	OnSuccess       ActionEffect
+	OnFailure       ActionEffect
 	OnSuccessResult StatusEffectResult
 	OnFailureResult StatusEffectResult
 }
@@ -28,9 +28,14 @@ type StatusConfig struct {
 func BasicAttack(config AttackConfig) ActionResolver {
 	return func(g *Game, context Context, this ActionContext) []Transaction {
 		targets := g.GetTargets(context)
-		success := false
+		success := true
 		hits := this.Action.Config.Hits
 		for hit := range hits {
+			// on multi-hit attack, break after the first miss
+			if !success {
+				break
+			}
+
 			for _, target := range targets {
 				result := this.Action.Config.GetDamageResult(this.Source, target, targets)
 				dmg_ctx := MakeContextFor(this.Source, target)
@@ -39,29 +44,8 @@ func BasicAttack(config AttackConfig) ActionResolver {
 				MultiHitLogs(result, context, &this, hit)
 				PostDamageLogs(result, context, &this)
 
-				success = success || result.Success()
-				if result.Success() {
-					trigger_context := MakeContextFor(this.Source, target)
-					g.On(OnDamageSend, trigger_context)
-					g.On(OnDamageRecieve, trigger_context)
-
-					if this.Action.Config.Recoil > 0 {
-						recoil_ctx := MakeContextFor(this.Source, this.Source)
-						this.Push(DamageTargets(result.Damage * this.Action.Config.Recoil).Bind(recoil_ctx))
-					}
-
-					if this.Action.Config.Lifesteal > 0 {
-						lifesteal_ctx := MakeContextFor(this.Source, this.Source)
-						this.Push(DamageTargets(result.Damage * this.Action.Config.Lifesteal * -1.0).Bind(lifesteal_ctx))
-					}
-
-					if config.OnSuccessResult != nil {
-						config.OnSuccessResult(*g, context, &this, result)
-					}
-				}
-				if !result.Success() && config.OnFailureResult != nil {
-					config.OnFailureResult(*g, context, &this, result)
-				}
+				success = success && result.Success()
+				DamageSideEffects(g, context, result, &this, config)
 			}
 		}
 
@@ -140,7 +124,32 @@ func PostDamageLogs(result DamageResult, context Context, this *ActionContext) {
 		}
 	}
 }
+func DamageSideEffects(g *Game, context Context, result DamageResult, this *ActionContext, config AttackConfig) {
+	if result.Success() {
+		trigger_context := MakeContextFor(this.Source, result.Target)
+		g.On(OnDamageSend, trigger_context)
+		g.On(OnDamageRecieve, trigger_context)
 
+		if this.Action.Config.Recoil > 0 {
+			recoil_ctx := MakeContextFor(this.Source, this.Source)
+			this.Push(DamageTargets(result.Damage * this.Action.Config.Recoil).Bind(recoil_ctx))
+		}
+
+		if this.Action.Config.Lifesteal > 0 {
+			lifesteal_ctx := MakeContextFor(this.Source, this.Source)
+			this.Push(DamageTargets(result.Damage * this.Action.Config.Lifesteal * -1.0).Bind(lifesteal_ctx))
+		}
+
+		if config.OnSuccessResult != nil {
+			config.OnSuccessResult(*g, context, this, result)
+		}
+	}
+	if !result.Success() && config.OnFailureResult != nil {
+		config.OnFailureResult(*g, context, this, result)
+	}
+}
+
+// resolvers
 func AddSourceEffects(chance float64, effects ...Effect) ActionResolver {
 	return func(g *Game, ctx Context, this ActionContext) []Transaction {
 		roll := rand.Float64()
@@ -193,13 +202,13 @@ func AddTargetsEffects(config StatusConfig, effects ...Effect) ActionResolver {
 }
 
 // context mappers
-func CtxToAllActiveTargets() ActionContextMapper {
+func CtxToAllActiveTargets() func(g Game, ctx Context, this ActionContext) Context {
 	return func(g Game, ctx Context, this ActionContext) Context {
 		c := ctx.CloneWithTargets(g.FindActors(ActiveActors, ctx))
 		return c
 	}
 }
-func CtxToAllOtherActiveTargets() ActionContextMapper {
+func CtxToAllOtherActiveTargets() func(g Game, ctx Context, this ActionContext) Context {
 	return func(g Game, ctx Context, this ActionContext) Context {
 		c := ctx.CloneWithTargets(g.FindActors(ActiveActors, ctx))
 		c.RemoveTarget(this.Source)

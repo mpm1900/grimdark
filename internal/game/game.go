@@ -260,6 +260,7 @@ func (g *Game) AddModifiers(modifiers ...Modifier) {
 
 			if success {
 				s.Modifiers = append(s.Modifiers, mod)
+				g.On(OnModifierAdd, mod.Context)
 				if mod.Payload.CheckSuccess != nil {
 					mod.Payload.CheckSuccess(g, mod.Payload, mod.Context)
 				}

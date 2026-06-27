@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"grimdark/internal/game"
 	"grimdark/internal/game/effects"
+
+	"github.com/google/uuid"
 )
 
 func SetupGame(g *game.Game) {
@@ -53,6 +55,49 @@ func SetupGame(g *game.Game) {
 		return false
 	})
 
+	slash := game.Action{
+		ID: uuid.New(),
+		Config: game.ActionConfig{
+			Name:         "Slash",
+			Affinity:     game.Kinetic,
+			Stat:         game.Melee,
+			Accuracy:     game.P(0.98),
+			Power:        70,
+			Lifesteal:    0.12,
+			Hits:         1,
+			CritChance:   0.05,
+			CritModifier: 1.5,
+		},
+		Resolve: game.BasicAttack(game.AttackConfig{
+			OnSuccessResult: func(g game.Game, context game.Context, this *game.ActionContext, result game.DamageResult) {
+				game.AddResultEffects(
+					0.5,
+					effects.StatDownTargets(game.Speed, 1),
+				)(g, context, this, result)
+				game.AddResultEffects(
+					0.5,
+					effects.StaggerTargets(),
+				)(g, context, this, result)
+			},
+		}),
+		ValidateContext:  game.ContextTargetLength(1),
+		TargetsPredicate: game.CombineFilters(game.ActiveActors, game.Enemies),
+	}
+	swords_dance := game.Action{
+		ID: uuid.New(),
+		Config: game.ActionConfig{
+			Name:     "Swords Dance",
+			Affinity: game.Kinetic,
+		},
+		Resolve: game.AddSourceEffects(
+			1,
+			effects.StatUpSource(game.Speed, 1),
+			effects.StatUpSource(game.Melee, 1),
+		),
+		ValidateContext:  game.TrueGameFilter,
+		TargetsPredicate: game.NoneActors,
+	}
+
 	player := game.NewPlayer()
 	if len(g.State().Players) > 0 {
 		player = g.Base().Players[0]
@@ -64,6 +109,7 @@ func SetupGame(g *game.Game) {
 	}
 	max := game.NewActor(player.ID, max_def)
 	max.Effects = []game.Effect{bypass, bypass_aux}
+	max.Actions = []game.Action{slash}
 
 	katie_def := game.NewActorDef()
 	katie_def.Name = "Katie"
@@ -78,6 +124,7 @@ func SetupGame(g *game.Game) {
 	if len(g.State().Players) == 0 {
 		g.AddPlayers(player)
 	}
+	katie.Actions = []game.Action{slash, swords_dance}
 
 	g.AddActor(max)
 	g.AddActor(katie)
