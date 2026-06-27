@@ -2,7 +2,7 @@ package instance
 
 import (
 	"grimdark/internal/game"
-	"grimdark/internal/game/effects"
+	"grimdark/internal/game/actions"
 )
 
 func TestGame(g *game.Game) {
@@ -13,50 +13,20 @@ func TestGame(g *game.Game) {
 		return a.Name == "Katie"
 	}, game.NewContext())[0]
 
-	slash := game.Action{
-		Config: game.ActionConfig{
-			Name:         "Slash",
-			Affinity:     game.Kinetic,
-			Stat:         game.Melee,
-			Accuracy:     game.P(0.98),
-			Power:        70,
-			Lifesteal:    0.12,
-			Hits:         1,
-			CritChance:   0.05,
-			CritModifier: 1.5,
-		},
-		Resolve: game.BasicAttack(game.AttackConfig{
-			OnSuccessResult: func(g game.Game, context game.Context, this *game.ActionContext, result game.DamageResult) {
-				game.AddResultEffects(
-					0.5,
-					effects.StatDownTargets(game.Speed, 1),
-				)(g, context, this, result)
-				game.AddResultEffects(
-					0.5,
-					effects.StaggerTargets(),
-				)(g, context, this, result)
-			},
-		}),
-		ValidateContext:  game.ContextTargetLength(1),
-		TargetsPredicate: game.CombineFilters(game.ActiveActors, game.Enemies),
-	}
-	swords_dance := game.Action{
-		Config: game.ActionConfig{
-			Name:     "Swords Dance",
-			Affinity: game.Kinetic,
-		},
-		Resolve: game.AddSourceEffects(
-			1,
-			effects.StatUpSource(game.Speed, 1),
-			effects.StatUpSource(game.Melee, 1),
-		),
-		ValidateContext:  game.TrueGameFilter,
-		TargetsPredicate: game.NoneActors,
-	}
+	ctx0 := game.MakeContextFor(katie, max)
+	ctx0.ActionID = actions.SwordsDance.ID
+	ctx1 := game.MakeContextFor(katie, max)
+	ctx1.ActionID = actions.Slash.ID
+	ctx2 := game.MakeContextFor(max, katie)
+	ctx2.ActionID = actions.Slash.ID
 
-	g.PushCommand(swords_dance.Bind(game.MakeContextFrom(katie)))
-	g.PushCommand(slash.Bind(game.MakeContextFor(max, katie)))
-	g.PushCommand(slash.Bind(game.MakeContextFor(katie, max)))
-
-	// g.PushCommand(game.SwitchWithSource().Bind(game.MakeContextFor(max, katie)))
+	if cmd0, ok := g.HydrateToCommand(ctx0); ok {
+		g.PushCommand(cmd0)
+	}
+	if cmd1, ok := g.HydrateToCommand(ctx1); ok {
+		g.PushCommand(cmd1)
+	}
+	if cmd2, ok := g.HydrateToCommand(ctx2); ok {
+		g.PushCommand(cmd2)
+	}
 }

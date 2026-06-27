@@ -161,3 +161,16 @@ func (g *Game) GetTargets(context Context) []Actor {
 
 	return actors
 }
+func (g *Game) HydrateToCommand(context Context) (Command, bool) {
+	source, ok := g.GetSource(context)
+	if !ok {
+		return Command{}, false
+	}
+
+	action, ok := source.GetActionByID(context.ActionID)
+	if !ok {
+		return Command{}, false
+	}
+
+	return action.Bind(context), true
+}
