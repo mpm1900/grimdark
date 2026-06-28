@@ -95,9 +95,4 @@ func SetupGame(g *game.Game, player_ID uuid.UUID) {
 
 	g.AddActor(max)
 	g.AddActor(katie)
-
-	temp_player, _ := g.GetPlayer(player.ID)
-	g.SetPosition(max.ID, temp_player.GetOpenPositions()[0])
-	temp_player, _ = g.GetPlayer(player.ID)
-	// g.SetPosition(katie.ID, temp_player.GetOpenPosition())
 }

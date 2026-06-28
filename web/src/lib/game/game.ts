@@ -7,7 +7,6 @@ import type { Log } from './log'
 import type { Player } from './player'
 
 export type Game = {
-  slice_ID: ID
   active_context: Context | null
   actors: Actor[]
   logs: Bindable<Log>[]

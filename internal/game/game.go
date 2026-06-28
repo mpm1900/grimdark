@@ -673,7 +673,6 @@ func (g Game) ToJSON() GameJSON {
 		Phase:         g.Phase,
 		Players:       state.Players,
 		Prompts:       prompts,
-		SliceID:       uuid.New(),
 		Status:        g.Status,
 		Turn:          g.Turn,
 	}
