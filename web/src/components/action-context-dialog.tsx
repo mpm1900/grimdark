@@ -2,6 +2,7 @@ import type { Actor } from '#/lib/game/actor'
 import type { PropsWithChildren } from 'react'
 import {
   Dialog,
+  DialogClose,
   DialogContent,
   DialogDescription,
   DialogFooter,
@@ -20,6 +21,7 @@ import { useSelector } from '@tanstack/react-store'
 import { gameStore } from '#/lib/stores/game'
 import { useContext } from '#/hooks/use-context'
 import { Toggle } from './ui/toggle'
+import { validateContextQuery } from '#/lib/queries/validate-context'
 
 function ActionContextDialog({
   actor,
@@ -31,13 +33,16 @@ function ActionContextDialog({
   action: Action
   enabled?: boolean
 }>) {
-  const options = getTargetsQuery(actor, action.ID)
-  options.enabled = !!enabled
-  const targets_query = useQuery(options)
+  const targets_options = getTargetsQuery(actor, action.ID)
+  targets_options.enabled = !!enabled
+  const targets_query = useQuery(targets_options)
   const targets_context = targets_query.data ?? NULL_CONTEXT
   const actors = useSelector(gameStore, (g) => g.actors)
   const targets = getTargetsFromContext(actors, targets_context)
   const context = useContext(targets_context)
+  const validate_options = validateContextQuery(context.value)
+  validate_options.enabled = !!enabled
+  const validate_query = useQuery(validate_options)
 
   return (
     <Dialog>
@@ -77,30 +82,47 @@ function ActionContextDialog({
         </div>
         <div>
           <Field>
-            <FieldLabel>Targets</FieldLabel>
-            <FieldContent className="gap-4 grid grid-cols-2">
-              {targets.map((target) => (
-                <Toggle
-                  key={target.ID}
-                  variant="outline"
-                  pressed={context.hasTarget(target)}
-                  onPressedChange={(pressed) =>
-                    pressed
-                      ? context.addTarget(target)
-                      : context.removeTarget(target)
-                  }
-                  disabled={!enabled}
-                >
-                  {target.name}
-                </Toggle>
-              ))}
+            <FieldContent>
+              <div className="gap-4 grid grid-cols-2">
+                {targets.map((target) => (
+                  <Toggle
+                    key={target.ID}
+                    variant="outline"
+                    pressed={context.hasTarget(target)}
+                    onPressedChange={(pressed) =>
+                      pressed
+                        ? context.addTarget(target)
+                        : context.removeTarget(target)
+                    }
+                    disabled={!enabled}
+                  >
+                    {target.name}
+                  </Toggle>
+                ))}
+              </div>
+              {targets.length === 0 && (
+                <Marker variant="separator">
+                  <MarkerContent>
+                    {validate_query.data
+                      ? "This action doesn't have targets."
+                      : 'No targets available.'}
+                  </MarkerContent>
+                </Marker>
+              )}
             </FieldContent>
           </Field>
         </div>
         <DialogFooter>
-          <Button>
-            Choose <ChevronRight />
-          </Button>
+          <DialogClose asChild>
+            <Button
+              disabled={!validate_query.data || validate_query.isFetching}
+              onClick={() => {
+                context.reset()
+              }}
+            >
+              Choose <ChevronRight />
+            </Button>
+          </DialogClose>
         </DialogFooter>
       </DialogContent>
     </Dialog>

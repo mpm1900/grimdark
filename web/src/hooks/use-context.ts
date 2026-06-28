@@ -7,18 +7,24 @@ function useContext(targets_context: Context) {
     targets_context.actor_IDs.length > 0 ? 'actor_IDs' : 'position_IDs'
   const [value, set] = useState({
     ...NULL_CONTEXT,
+    action_ID: targets_context.action_ID,
     source_ID: targets_context.source_ID,
     parent_ID: targets_context.parent_ID,
     player_ID: targets_context.player_ID,
   })
 
-  useEffect(() => {
+  function reset() {
     set({
       ...NULL_CONTEXT,
+      action_ID: targets_context.action_ID,
       source_ID: targets_context.source_ID,
       parent_ID: targets_context.parent_ID,
       player_ID: targets_context.player_ID,
     })
+  }
+
+  useEffect(() => {
+    reset()
   }, [targets_context.source_ID])
 
   return {
@@ -57,6 +63,7 @@ function useContext(targets_context: Context) {
         ),
       }))
     },
+    reset,
   }
 }
 

@@ -1,5 +1,5 @@
 import { queryOptions } from '@tanstack/react-query'
-import { contextToString, NULL_CONTEXT, type Context } from '../game/context'
+import { NULL_CONTEXT, type Context } from '../game/context'
 import { subscribe } from '../socket/connect'
 import { clientsStore } from '../stores/clients'
 import { sendContextMessage } from '../stores/socket'
@@ -21,11 +21,11 @@ async function getTargets(context: Context): Promise<Context> {
     })
 
     const unsub = subscribe((_event, message) => {
-      if (message) {
+      if (message && message.context) {
         if (
           message.type === 'target-IDs' &&
-          message.context?.source_ID === context.source_ID &&
-          message.context?.action_ID === context.action_ID
+          message.context.source_ID === context.source_ID &&
+          message.context.action_ID === context.action_ID
         ) {
           resolve(message.context as Context)
           unsub()
