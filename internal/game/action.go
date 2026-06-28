@@ -1,6 +1,8 @@
 package game
 
-import "github.com/google/uuid"
+import (
+	"github.com/google/uuid"
+)
 
 type ActionResolver func(g *Game, ctx Context, this ActionContext) []Transaction
 
@@ -107,24 +109,6 @@ func (c Command) Resolve(g *Game) []Transaction {
 		return action_context.transactions
 	}
 
-	return c.Payload.Resolve(g, context, action_context)
-}
-
-func (c Command) ResolveTrigger(g *Game) []Transaction {
-	if !c.Payload.CanResolve(*g, c.Context, nil) || c.Payload.Resolve == nil {
-		return []Transaction{}
-	}
-
-	action_context := ActionContext{
-		Action:       c.Payload,
-		Source:       g.GetSourceAction(c.Context),
-		transactions: []Transaction{},
-	}
-
-	context := c.Context
-	if c.Payload.MapContext != nil {
-		context = c.Payload.MapContext(*g, context, action_context)
-	}
 	return c.Payload.Resolve(g, context, action_context)
 }
 

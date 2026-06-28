@@ -71,6 +71,9 @@ func Enemies(g Game, actor Actor, context Context) bool {
 func SourceActor(g Game, actor Actor, context Context) bool {
 	return actor.ID == context.SourceID
 }
+func NotSourceActor(g Game, actor Actor, context Context) bool {
+	return actor.ID != context.SourceID
+}
 func TargetActors(g Game, actor Actor, context Context) bool {
 	is_actor := slices.Contains(context.ActorIDs, actor.ID)
 	is_pos := actor.IsActive() && slices.Contains(context.PositionIDs, actor.PositionID)
@@ -86,4 +89,7 @@ func TriggerTargetMatchesModifierParent(g Game, trigger Context, modifier Contex
 	}
 
 	return false
+}
+func TriggerSourceMatchesModifierParent(g Game, trigger Context, modifier Context) bool {
+	return trigger.SourceID == modifier.ParentID
 }

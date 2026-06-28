@@ -86,7 +86,7 @@ func NewGame() Game {
 		Transactions: Queue[Transaction]{},
 		Modifiers:    []Modifier{},
 		Commands:     []Command{},
-		Triggers:     []Command{},
+		Triggers:     []TriggerCommand{},
 		Prompts:      []Command{},
 	}
 	var system_modifiers = []Modifier{
@@ -313,12 +313,17 @@ func (g *Game) SortCommands() {
 	})
 }
 func (g *Game) On(on TriggerOn, context Context) {
-	triggers := []Command{}
+	triggers := []TriggerCommand{}
 	for _, modifier := range g.GetModifiers() {
 		for _, trigger := range modifier.Payload.Triggers {
-			if trigger.Validate(*g, context, modifier.Context) {
-				triggers = append(triggers, trigger.Bind(context))
+			if trigger.On != on {
+				continue
 			}
+			if trigger.Validate != nil && !trigger.Validate(*g, context, modifier.Context) {
+				continue
+			}
+
+			triggers = append(triggers, trigger.Bind(context))
 		}
 	}
 
@@ -385,12 +390,7 @@ func (g *Game) SetPosition(actor_id uuid.UUID, position_id uuid.UUID) {
 		}
 
 		s.UpdateActor(actor_id, func(a Actor) Actor {
-			a.PositionID = position_id
-			if position_id == uuid.Nil {
-				a.meta.Inactive_turns = 0
-			} else {
-				a.meta.Active_turns = 0
-			}
+			a.SetPosition(position_id)
 			return a
 		})
 
@@ -414,13 +414,13 @@ func (g *Game) SetPosition(actor_id uuid.UUID, position_id uuid.UUID) {
 				})
 				g.PushLog(log.Bind(trigger_context))
 			}
-			g.On(OnActorEnter, trigger_context)
+			g.On(OnActorLeave, trigger_context)
 		} else {
 			log := NewLog("$actor$ joined the battle.", map[string]string{
 				"$actor$": actor.Name,
 			})
 			g.PushLog(log.Bind(trigger_context))
-			g.On(OnActorLeave, trigger_context)
+			g.On(OnActorEnter, trigger_context)
 		}
 	})
 
@@ -562,7 +562,8 @@ func (g *Game) NextTrigger() {
 		return
 	}
 
-	g.PushTransactions(trig.ResolveTrigger(g))
+	g.PushLog(NewLog(fmt.Sprintf("%s", trig.Payload.On), map[string]string{}).Bind(NewContext()))
+	g.PushTransactions(trig.Resolve(g))
 }
 func (g *Game) NextCommand() {
 	g.SortCommands()

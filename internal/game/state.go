@@ -14,7 +14,7 @@ type State struct {
 	Transactions  Queue[Transaction]
 	Modifiers     []Modifier
 	Commands      Queue[Command]
-	Triggers      Queue[Command]
+	Triggers      Queue[TriggerCommand]
 	Prompts       []Command
 	ActiveContext *Context
 }

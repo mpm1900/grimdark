@@ -24,7 +24,7 @@ import { Marker, MarkerContent } from '#/components/ui/marker'
 import { Table, TableBody, TableCell, TableRow } from '#/components/ui/table'
 import { WeaponDetails } from '#/components/weapon'
 import type { Actor } from '#/lib/game/actor'
-import { AFFINITIES, STATS, type Stat } from '#/lib/game/core'
+import { AFFINITIES, mapStage, STATS, type Stat } from '#/lib/game/core'
 import { getAppliedEffects, type Game } from '#/lib/game/game'
 import { RenderLog } from '#/lib/game/log'
 import { gameStore } from '#/lib/stores/game'
@@ -35,6 +35,9 @@ import { useSelector } from '@tanstack/react-store'
 export const Route = createFileRoute('/')({ component: Home })
 
 function StatRow({ actor, stat }: { actor: Actor; stat: Stat }) {
+  const stage = actor.stages[stat]
+  const mod = stat === 'accuracy' || stat === 'evasion' ? 3 : 2
+  const mult = mapStage(stage, mod, 1)
   return (
     <TableRow>
       <TableCell className="capitalize">{stat}</TableCell>
@@ -42,7 +45,14 @@ function StatRow({ actor, stat }: { actor: Actor; stat: Stat }) {
         <StatValue actor={actor} stat={stat} />
       </TableCell>
       <TableCell className="text-end">
-        {actor.stages[stat] != 0 && <span>{actor.stages[stat]}</span>}
+        {stage != 0 && <span>{stage}</span>}
+      </TableCell>
+      <TableCell>
+        {stage != 0 && (
+          <span className={cn(mult === 1 && 'opacity-45')}>
+            x{mult.toFixed(2)}
+          </span>
+        )}
       </TableCell>
     </TableRow>
   )
@@ -213,10 +223,10 @@ function ActorTest({ game, actor }: { game: Game; actor: Actor }) {
             <Field>
               <FieldLabel>
                 <Marker variant="separator">
-                  <MarkerContent>Applied Effects</MarkerContent>
+                  <MarkerContent>Active Effects</MarkerContent>
                 </Marker>
               </FieldLabel>
-              <FieldContent className="flex flex-row flex-wrap gap-x-2 w-60!">
+              <FieldContent className="flex flex-row flex-wrap gap-x-2 max-w-full">
                 {applied_effects.map((effect) => (
                   <Badge
                     variant="outline"
@@ -242,6 +252,26 @@ function ActorTest({ game, actor }: { game: Game; actor: Actor }) {
               </FieldLabel>
               <FieldContent>
                 {actor.weapon && <WeaponDetails weapon={actor.weapon} />}
+              </FieldContent>
+            </Field>
+            <Field>
+              <FieldLabel>
+                <Marker variant="separator">
+                  <MarkerContent>Source Effects</MarkerContent>
+                </Marker>
+              </FieldLabel>
+              <FieldContent className="flex flex-row flex-wrap gap-x-2 max-w-full">
+                {actor.effects
+                  .filter((e) => !!e.name)
+                  .map((effect) => (
+                    <Badge
+                      variant="outline"
+                      key={effect.ID}
+                      className="capitalize"
+                    >
+                      {effect.name}
+                    </Badge>
+                  ))}
               </FieldContent>
             </Field>
             <Field>

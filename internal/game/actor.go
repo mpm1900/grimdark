@@ -70,13 +70,14 @@ type actorJSON struct {
 	PositionID         *uuid.UUID       `json:"position_ID"`
 	Actions            []actionJSON     `json:"actions"`
 	Weapon             *weaponJSON      `json:"weapon"`
+	Effects            []Effect         `json:"effects"`
 	Affinities         []Affinity       `json:"affinities"`
 	AffinityDamage     map[Affinity]int `json:"affinity_damage"`
 	AffinityResistance map[Affinity]int `json:"affinity_resistance"`
 	Stats              map[Stat]int     `json:"stats"`
 	Stages             map[Stat]int     `json:"stages"`
 	UnmodifiedStats    map[Stat]int     `json:"unmodified_stats"`
-	AppliedModifiers   []uuid.UUID      `json:"applied_modifiers"`
+	ActiveModifiers    []uuid.UUID      `json:"active_modifiers"`
 	Wounds             int              `json:"wounds"`
 	Augment            Augment          `json:"augment"`
 	State              ActorState       `json:"state"`
@@ -240,6 +241,14 @@ func (a *Actor) IncrementTurns() {
 		a.meta.Inactive_turns++
 	}
 }
+func (a *Actor) SetPosition(position_id uuid.UUID) {
+	a.PositionID = position_id
+	if position_id == uuid.Nil {
+		a.meta.Inactive_turns = 0
+	} else {
+		a.meta.Active_turns = 0
+	}
+}
 
 func (a Actor) IsActive() bool {
 	return a.PositionID != uuid.Nil
@@ -321,7 +330,7 @@ func (a Actor) GetMeta() ActorMeta {
 func (a Actor) ToJSON(g Game) actorJSON {
 	stats := make(map[Stat]int, len(a.Stats))
 	unmodified_stats := make(map[Stat]int, len(a.UnmodifiedStats))
-	applied_modifiers := slices.Collect(maps.Keys(g.AppliedModifiers(a.ID)))
+	active_modifiers := slices.Collect(maps.Keys(g.AppliedModifiers(a.ID)))
 
 	for stat, v := range a.Stats {
 		if stat == Accuracy || stat == Evasion {
@@ -377,13 +386,14 @@ func (a Actor) ToJSON(g Game) actorJSON {
 		PositionID:         NilifyUUID(a.PositionID),
 		Actions:            actions,
 		Weapon:             weapon,
+		Effects:            a.GetEffects(),
 		Affinities:         slices.Collect(maps.Keys(a.Affinities)),
 		AffinityDamage:     affinity_damage,
 		AffinityResistance: affinity_resistance,
 		Stats:              stats,
 		Stages:             maps.Clone(a.Stages),
 		UnmodifiedStats:    unmodified_stats,
-		AppliedModifiers:   applied_modifiers,
+		ActiveModifiers:    active_modifiers,
 		Wounds:             int(a.Wounds),
 		Augment:            a.Augment,
 		State:              a.State,

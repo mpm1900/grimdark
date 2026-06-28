@@ -64,7 +64,7 @@ func SetupGame(g *game.Game) {
 		game.Fire: {},
 	}
 	max := game.NewActor(player.ID, max_def)
-	max.Effects = []game.Effect{bypass, bypass_aux}
+	max.Effects = []game.Effect{bypass, bypass_aux, effects.Intimidate()}
 	max.Weapon = &weapons.SlashSword
 
 	katie_def := game.NewActorDef()

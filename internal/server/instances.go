@@ -46,6 +46,7 @@ func (ih *InstancesHandler) NewInstance(instanceID uuid.UUID, ctx context.Contex
 func (ih *InstancesHandler) createInstance(instanceID uuid.UUID, ctx context.Context) *instance.Instance {
 	i := instance.NewInstance(ctx, instanceID, ih.RemoveInstance)
 	instance.SetupGame(&i.Game)
+	i.RunGameActions()
 	return i
 }
 

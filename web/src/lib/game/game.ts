@@ -16,12 +16,15 @@ export type Game = {
   turn: number
 }
 
-export function getAppliedEffects(game: Game, actor: Actor): (Effect & { count: number })[] {
+export function getAppliedEffects(
+  game: Game,
+  actor: Actor
+): (Effect & { count: number })[] {
   let effect_ids: Record<ID, number> = {}
   let effects: Effect[] = []
 
-  actor.applied_modifiers.map(modifier_id => {
-    const modifier = game.modifiers.find(m => m.ID === modifier_id)
+  actor.active_modifiers.map((modifier_id) => {
+    const modifier = game.modifiers.find((m) => m.ID === modifier_id)
     if (modifier && modifier.payload.name) {
       const count = effect_ids[modifier.payload.ID]
       if (!count) {
@@ -33,8 +36,10 @@ export function getAppliedEffects(game: Game, actor: Actor): (Effect & { count: 
     }
   })
 
-  return effects.map(e => ({
-    ...e,
-    count: effect_ids[e.ID] ?? 0
-  })).sort((a, b) => a.name.localeCompare(b.name))
+  return effects
+    .map((e) => ({
+      ...e,
+      count: effect_ids[e.ID] ?? 0,
+    }))
+    .sort((a, b) => a.name.localeCompare(b.name))
 }

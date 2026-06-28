@@ -16,3 +16,35 @@ type Trigger struct {
 	On       TriggerOn
 	Validate func(g Game, t_context Context, m_context Context) bool
 }
+
+type TriggerCommand struct {
+	Bindable[Trigger]
+	Priority int
+}
+
+func (a Trigger) Bind(context Context) TriggerCommand {
+	bindable := bind(a, context)
+	command := TriggerCommand{
+		Bindable: bindable,
+		Priority: a.Config.Priority,
+	}
+	return command
+}
+
+func (c TriggerCommand) Resolve(g *Game) []Transaction {
+	if c.Payload.Resolve == nil {
+		return []Transaction{}
+	}
+
+	action_context := ActionContext{
+		Action:       c.Payload.Action,
+		Source:       g.GetSourceAction(c.Context),
+		transactions: []Transaction{},
+	}
+
+	context := c.Context
+	if c.Payload.MapContext != nil {
+		context = c.Payload.MapContext(*g, context, action_context)
+	}
+	return c.Payload.Resolve(g, context, action_context)
+}

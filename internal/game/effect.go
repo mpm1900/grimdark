@@ -8,6 +8,7 @@ const EffectPriorityAffinities = 0
 const EffectPriorityBaseStats = 0
 const EffectPriorityAuxStats = 0
 const EffectPriorityFlags = 0
+const EffectPriorityTriggers = 0
 const EffectPriorityAuxOverwrite = 1
 const EffectPriorityMapBaseStats = 2
 const EffectPriorityPreStageStats = 3
