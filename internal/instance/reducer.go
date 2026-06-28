@@ -2,8 +2,6 @@ package instance
 
 import (
 	"grimdark/internal/game"
-
-	"github.com/google/uuid"
 )
 
 func findAction(g *game.Game, request Request) (game.Action, bool) {
@@ -23,19 +21,20 @@ func findAction(g *game.Game, request Request) (game.Action, bool) {
 func getTargets(instance *Instance, request Request) int {
 	action, ok := findAction(&instance.Game, request)
 	if !ok {
-		instance.TargetIDsResponse(request.ClientID, request.Context, nil)
+		instance.TargetIDsResponse(request.ClientID, request.Context)
 		return none
 	}
 
+	context := request.Context.Clone()
+	context.ClearTargets()
 	actors := instance.Game.State().Actors
-	targetIDs := make([]uuid.UUID, 0, len(actors))
-	for i := range actors {
-		if action.TargetsPredicate(instance.Game, actors[i], request.Context) {
-			targetIDs = append(targetIDs, actors[i].ID)
+	for _, actor := range actors {
+		if action.TargetsPredicate(instance.Game, actor, request.Context) {
+			context.AddTarget(actor)
 		}
 	}
 
-	instance.TargetIDsResponse(request.ClientID, request.Context, targetIDs)
+	instance.TargetIDsResponse(request.ClientID, context)
 	return none
 }
 

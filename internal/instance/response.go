@@ -2,8 +2,6 @@ package instance
 
 import (
 	"grimdark/internal/game"
-
-	"github.com/google/uuid"
 )
 
 type ResponseType string
@@ -50,8 +48,7 @@ func PostRegisterMessage(client *Client, g *game.GameJSON) Response {
 	}
 }
 
-func TargetIDsResponse(client *Client, context game.Context, targetIDs []uuid.UUID) Response {
-	context.ActorIDs = targetIDs
+func TargetIDsResponse(client *Client, context game.Context) Response {
 	return Response{
 		Type:    ResponseTypeTargetIDs,
 		Context: &context,

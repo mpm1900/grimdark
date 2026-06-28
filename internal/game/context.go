@@ -143,6 +143,10 @@ func (c *Context) RemoveTarget(target Actor) {
 		c.PositionIDs = pos_ids
 	}
 }
+func (c *Context) ClearTargets() {
+	c.ActorIDs = []uuid.UUID{}
+	c.PositionIDs = []uuid.UUID{}
+}
 func (c Context) CloneWithTarget(target Actor) Context {
 	clone := c.Clone()
 	clone.ActorIDs = []uuid.UUID{}

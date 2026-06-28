@@ -83,13 +83,13 @@ func (i *Instance) PostRegister(client *Client) {
 	client.TryWriteResponse(PostRegisterMessage(client, &json))
 }
 
-func (i *Instance) TargetIDsResponse(clientID uuid.UUID, context game.Context, targetIDs []uuid.UUID) {
+func (i *Instance) TargetIDsResponse(clientID uuid.UUID, context game.Context) {
 	client, ok := i.Clients[clientID]
 	if !ok {
 		return
 	}
 
-	client.TryWriteResponse(TargetIDsResponse(client, context, targetIDs))
+	client.TryWriteResponse(TargetIDsResponse(client, context))
 }
 func (i *Instance) ValidateContextResponse(clientID uuid.UUID, context game.Context, valid bool) {
 	client, ok := i.Clients[clientID]
