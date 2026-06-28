@@ -1,6 +1,7 @@
 package instance
 
 import (
+	"fmt"
 	"grimdark/internal/game"
 
 	"github.com/google/uuid"
@@ -9,11 +10,13 @@ import (
 func findAction(g *game.Game, request Request) (game.Action, bool) {
 	actor, ok := g.GetSource(request.Context)
 	if !ok {
+		fmt.Println("no source")
 		return game.Action{}, false
 	}
 
 	action, ok := actor.GetActionByID(request.Context.ActionID)
 	if !ok {
+		fmt.Println("no action")
 		return game.Action{}, false
 	}
 
@@ -21,6 +24,7 @@ func findAction(g *game.Game, request Request) (game.Action, bool) {
 }
 
 func getTargets(instance *Instance, request Request) int {
+	fmt.Println("GETTING TARGETS", request.Context)
 	action, ok := findAction(&instance.Game, request)
 	if !ok {
 		instance.TargetIDsResponse(request.ClientID, request.Context, nil)

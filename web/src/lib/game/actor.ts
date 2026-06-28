@@ -1,12 +1,15 @@
+import type { Action } from './action'
 import type { Affinity, ID, Stat } from './core'
+import type { Weapon } from './weapon'
 
 export type Actor = {
   ID: ID
-  actions: Array<any>,
+  actions: Array<Action>
   affinities: Array<Affinity>
   affinity_damage: Record<Affinity, number>
   affinity_resistance: Record<Affinity, number>
   applied_modifiers: Array<ID>
+  augment: string
   is_active: boolean
   is_alive: boolean
   is_protected: boolean
@@ -21,5 +24,6 @@ export type Actor = {
   stats: Record<Stat, number>
   status: string
   unmodified_stats: Record<Stat, number>
+  weapon: Weapon | null
   wounds: number
 }

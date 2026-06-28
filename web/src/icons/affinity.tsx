@@ -3,7 +3,7 @@ import { BsFire } from 'react-icons/bs'
 import { FaHandSparkles } from 'react-icons/fa6'
 import {
   GiBrain,
-  GiCannonShot,
+  GiAllForOne,
   GiPowerLightning,
   GiSkullWithSyringe,
   GiSnowflake1,
@@ -14,7 +14,7 @@ export const AFFINITY_ICONS: Record<Affinity, IconType> = {
   arcane: FaHandSparkles,
   cryo: GiSnowflake1,
   fire: BsFire,
-  kinetic: GiCannonShot,
+  kinetic: GiAllForOne,
   lightning: GiPowerLightning,
   poison: GiSkullWithSyringe,
   psychic: GiBrain,

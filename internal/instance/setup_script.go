@@ -5,6 +5,7 @@ import (
 	"grimdark/internal/game"
 	"grimdark/internal/game/actions"
 	"grimdark/internal/game/effects"
+	"grimdark/internal/game/weapons"
 )
 
 func SetupGame(g *game.Game) {
@@ -64,7 +65,7 @@ func SetupGame(g *game.Game) {
 	}
 	max := game.NewActor(player.ID, max_def)
 	max.Effects = []game.Effect{bypass, bypass_aux}
-	max.Actions = []game.Action{actions.Slash}
+	max.Weapon = &weapons.SlashSword
 
 	katie_def := game.NewActorDef()
 	katie_def.Name = "Katie"
@@ -75,14 +76,14 @@ func SetupGame(g *game.Game) {
 	katie_def.Effects = []game.Effect{effect}
 
 	katie := game.NewActor(player.ID, katie_def)
-	katie.Aux[game.Speed] = 10
+	katie.AuxStats[game.Speed] = 10
 	if len(g.State().Players) == 0 {
 		g.AddPlayers(player)
 	}
 	katie.Actions = []game.Action{
-		actions.Slash,
 		actions.SwordsDance,
 	}
+	katie.Weapon = &weapons.SlashSword
 
 	g.AddActor(max)
 	g.AddActor(katie)

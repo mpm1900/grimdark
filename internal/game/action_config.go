@@ -9,6 +9,7 @@ type ActionConfig struct {
 	Affinity     Affinity `json:"affinity"`
 	CritChance   float64  `json:"crit_chance"`
 	CritModifier float64  `json:"crit_modifier"`
+	Description  string   `json:"description"`
 	Hits         int      `json:"hits"`
 	Lifesteal    float64  `json:"lifesteal"`
 	Name         string   `json:"name"`

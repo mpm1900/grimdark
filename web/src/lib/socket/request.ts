@@ -14,7 +14,6 @@ type SocketRequestType =
   | 'resolve-prompt'
   | 'validate-context'
   | 'get-targets'
-  | 'send-chat'
 
 type SocketRequest = {
   type: SocketRequestType

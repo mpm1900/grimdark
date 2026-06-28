@@ -40,6 +40,38 @@ func (c Context) MarshalJSON() ([]byte, error) {
 	})
 }
 
+func (c *Context) UnmarshalJSON(data []byte) error {
+	var payload contextJSON
+	if err := json.Unmarshal(data, &payload); err != nil {
+		return err
+	}
+
+	*c = NewContext()
+	if payload.ActionID != nil {
+		c.ActionID = *payload.ActionID
+	}
+	if payload.EffectID != nil {
+		c.EffectID = *payload.EffectID
+	}
+	if payload.PlayerID != nil {
+		c.PlayerID = *payload.PlayerID
+	}
+	if payload.ParentID != nil {
+		c.ParentID = *payload.ParentID
+	}
+	if payload.SourceID != nil {
+		c.SourceID = *payload.SourceID
+	}
+	if payload.ActorIDs != nil {
+		c.ActorIDs = payload.ActorIDs
+	}
+	if payload.PositionIDs != nil {
+		c.PositionIDs = payload.PositionIDs
+	}
+
+	return nil
+}
+
 func NewContext() Context {
 	return Context{
 		ActionID:    uuid.Nil,

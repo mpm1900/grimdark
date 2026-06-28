@@ -27,9 +27,9 @@ type ActorDef struct {
 	Effects    []Effect
 }
 
-type actormeta struct {
-	active_turns   int
-	inactive_turns int
+type ActorMeta struct {
+	Active_turns   int
+	Inactive_turns int
 }
 
 type Actor struct {
@@ -39,25 +39,27 @@ type Actor struct {
 	PositionID uuid.UUID
 
 	Actions []Action
+	Weapon  *Weapon
 
 	AffinityDamage     map[Affinity]int
 	AffinityResistance map[Affinity]int
 	AffinityImmunities map[Affinity]float64
 	UnmodifiedStats    map[Stat]float64
 	Stages             map[Stat]int
-	Aux                map[Stat]float64
+	AuxStats           map[Stat]float64
 	Stats              map[Stat]float64
 
-	Wounds float64
-	State  ActorState
-	Status ActorStatus
+	Wounds  float64
+	Augment Augment
+	State   ActorState
+	Status  ActorStatus
 
 	IsAlive     bool
 	IsProtected bool
 	IsStaggered bool // cannot act
 	IsStunned   bool // cannot act, and cannot queue commands
 
-	meta actormeta
+	meta ActorMeta
 }
 
 type actorJSON struct {
@@ -67,6 +69,7 @@ type actorJSON struct {
 	PlayerID           uuid.UUID        `json:"player_ID"`
 	PositionID         *uuid.UUID       `json:"position_ID"`
 	Actions            []actionJSON     `json:"actions"`
+	Weapon             *weaponJSON      `json:"weapon"`
 	Affinities         []Affinity       `json:"affinities"`
 	AffinityDamage     map[Affinity]int `json:"affinity_damage"`
 	AffinityResistance map[Affinity]int `json:"affinity_resistance"`
@@ -75,6 +78,7 @@ type actorJSON struct {
 	UnmodifiedStats    map[Stat]int     `json:"unmodified_stats"`
 	AppliedModifiers   []uuid.UUID      `json:"applied_modifiers"`
 	Wounds             int              `json:"wounds"`
+	Augment            Augment          `json:"augment"`
 	State              ActorState       `json:"state"`
 	Status             ActorStatus      `json:"status"`
 	IsActive           bool             `json:"is_active"`
@@ -122,31 +126,38 @@ func NewActor(playerID uuid.UUID, def ActorDef) Actor {
 		Level:      100,
 
 		Actions: []Action{},
+		Weapon:  nil,
 
 		AffinityDamage:     map[Affinity]int{},
 		AffinityResistance: map[Affinity]int{},
 		AffinityImmunities: map[Affinity]float64{},
 		Stages:             map[Stat]int{},
-		Aux:                map[Stat]float64{},
+		AuxStats:           map[Stat]float64{},
 		Stats:              maps.Clone(def.Stats),
 
-		Wounds: 0,
-		State:  StateDefault,
-		Status: StatusNone,
+		Wounds:  0,
+		Augment: AugmentDefault,
+		State:   StateDefault,
+		Status:  StatusNone,
 
 		IsAlive:     true,
 		IsProtected: false,
 		IsStaggered: false,
 		IsStunned:   false,
 
-		meta: actormeta{
-			active_turns:   0,
-			inactive_turns: 0,
+		meta: ActorMeta{
+			Active_turns:   0,
+			Inactive_turns: 0,
 		},
 	}
 }
 
 func (a Actor) Clone() Actor {
+	var weapon *Weapon = nil
+	if a.Weapon != nil {
+		clone := a.Weapon.Clone()
+		weapon = &clone
+	}
 	return Actor{
 		ActorDef:   a.ActorDef.Clone(),
 		Level:      a.Level,
@@ -154,18 +165,20 @@ func (a Actor) Clone() Actor {
 		PositionID: a.PositionID,
 
 		Actions: slices.Clone(a.Actions),
+		Weapon:  weapon,
 
 		AffinityDamage:     maps.Clone(a.AffinityDamage),
 		AffinityResistance: maps.Clone(a.AffinityResistance),
 		AffinityImmunities: maps.Clone(a.AffinityImmunities),
 		UnmodifiedStats:    maps.Clone(a.UnmodifiedStats),
 		Stages:             maps.Clone(a.Stages),
-		Aux:                maps.Clone(a.Aux),
+		AuxStats:           maps.Clone(a.AuxStats),
 		Stats:              maps.Clone(a.Stats),
 
-		Wounds: a.Wounds,
-		State:  a.State,
-		Status: a.Status,
+		Wounds:  a.Wounds,
+		Augment: a.Augment,
+		State:   a.State,
+		Status:  a.Status,
 
 		IsAlive:     a.IsAlive,
 		IsProtected: a.IsProtected,
@@ -179,11 +192,25 @@ func (a Actor) Clone() Actor {
 func mapBaseStat(actor Actor, stat Stat, stats map[Stat]float64, aux float64) float64 {
 	base := stats[stat]*2 + aux
 	ratio := float64(actor.Level) / 100
-	result := base*ratio + 5
+	result := (base*ratio + 5) * actor.Augment.GetMultiplier(stat)
 	if stat == Health {
 		result += float64(actor.Level)
 	}
 	return result
+}
+func (a *Actor) getAux(stat Stat) float64 {
+	aux, ok := a.AuxStats[stat]
+	if !ok {
+		aux = 0
+	}
+	if a.Weapon != nil {
+		weapon_aux, ok := a.Weapon.AuxStats[stat]
+		if ok {
+			aux += weapon_aux
+		}
+	}
+
+	return aux
 }
 func (a *Actor) mapBaseStats() {
 	a.UnmodifiedStats = maps.Clone(a.Stats)
@@ -193,12 +220,7 @@ func (a *Actor) mapBaseStats() {
 			continue
 		}
 
-		aux, ok := a.Aux[stat]
-		if !ok {
-			aux = 0
-		}
-
-		a.Stats[stat] = mapBaseStat(*a, stat, a.Stats, aux)
+		a.Stats[stat] = mapBaseStat(*a, stat, a.Stats, a.getAux(stat))
 		a.UnmodifiedStats[stat] = mapBaseStat(*a, stat, a.UnmodifiedStats, 0)
 	}
 }
@@ -213,9 +235,9 @@ func (a *Actor) ApplyDamage(damage float64, resolved Actor) {
 }
 func (a *Actor) IncrementTurns() {
 	if a.IsActive() {
-		a.meta.active_turns++
+		a.meta.Active_turns++
 	} else {
-		a.meta.inactive_turns++
+		a.meta.Inactive_turns++
 	}
 }
 
@@ -258,9 +280,16 @@ func (a Actor) GetRemainingHealth() float64 {
 	health := a.Stats[Health]
 	return health - a.Wounds
 }
+func (a Actor) GetEffects() []Effect {
+	effects := slices.Clone(a.Effects)
+	if a.Weapon != nil {
+		effects = append(effects, a.Weapon.Effects...)
+	}
+	return effects
+}
 func (a Actor) GetModifiers() []Modifier {
 	modifiers := []Modifier{}
-	for _, effect := range a.Effects {
+	for _, effect := range a.GetEffects() {
 		if effect.Ready() {
 			modifier := effect.Bind(MakeContextFrom(a))
 			modifiers = append(modifiers, modifier)
@@ -270,7 +299,11 @@ func (a Actor) GetModifiers() []Modifier {
 	return modifiers
 }
 func (a Actor) GetActions() []Action {
-	return a.Actions
+	actions := slices.Clone(a.Actions)
+	if a.Weapon != nil {
+		actions = append(actions, a.Weapon.Actions...)
+	}
+	return actions
 }
 func (a Actor) GetActionByID(action_id uuid.UUID) (Action, bool) {
 	for _, action := range a.GetActions() {
@@ -280,6 +313,9 @@ func (a Actor) GetActionByID(action_id uuid.UUID) (Action, bool) {
 	}
 
 	return Action{}, false
+}
+func (a Actor) GetMeta() ActorMeta {
+	return a.meta
 }
 
 func (a Actor) ToJSON(g Game) actorJSON {
@@ -327,6 +363,12 @@ func (a Actor) ToJSON(g Game) actorJSON {
 		actions[i] = action.ToJSON(g, a)
 	}
 
+	var weapon *weaponJSON = nil
+	if a.Weapon != nil {
+		clone := a.Weapon.Clone().ToJSON(g, a)
+		weapon = &clone
+	}
+
 	return actorJSON{
 		ID:                 a.ID,
 		Name:               a.Name,
@@ -334,6 +376,7 @@ func (a Actor) ToJSON(g Game) actorJSON {
 		PlayerID:           a.PlayerID,
 		PositionID:         NilifyUUID(a.PositionID),
 		Actions:            actions,
+		Weapon:             weapon,
 		Affinities:         slices.Collect(maps.Keys(a.Affinities)),
 		AffinityDamage:     affinity_damage,
 		AffinityResistance: affinity_resistance,
@@ -342,6 +385,7 @@ func (a Actor) ToJSON(g Game) actorJSON {
 		UnmodifiedStats:    unmodified_stats,
 		AppliedModifiers:   applied_modifiers,
 		Wounds:             int(a.Wounds),
+		Augment:            a.Augment,
 		State:              a.State,
 		Status:             a.Status,
 		IsActive:           a.IsActive(),

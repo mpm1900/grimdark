@@ -386,6 +386,11 @@ func (g *Game) SetPosition(actor_id uuid.UUID, position_id uuid.UUID) {
 
 		s.UpdateActor(actor_id, func(a Actor) Actor {
 			a.PositionID = position_id
+			if position_id == uuid.Nil {
+				a.meta.Inactive_turns = 0
+			} else {
+				a.meta.Active_turns = 0
+			}
 			return a
 		})
 
