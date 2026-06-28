@@ -362,26 +362,7 @@ func (g *Game) SetPosition(actor_id uuid.UUID, position_id uuid.UUID) {
 		updated := false
 
 		s.UpdatePlayer(actor.PlayerID, func(player Player) Player {
-			updated = true
-
-			if position_id != uuid.Nil {
-				current_id, ok := player.Positions[position_id]
-				if !ok {
-					updated = false
-					return player
-				}
-
-				if current_id != actor_id {
-					evicted_id = current_id
-				}
-
-				player.Positions[position_id] = actor_id
-			}
-
-			if actor.IsActive() && player.Positions[actor.PositionID] == actor_id {
-				player.Positions[actor.PositionID] = uuid.Nil
-			}
-
+			evicted_id, updated = player.SetPosition(position_id, actor)
 			return player
 		})
 

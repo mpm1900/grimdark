@@ -98,38 +98,6 @@ function ActorTest({ game, actor }: { game: Game; actor: Actor }) {
                 </Table>
               </FieldContent>
             </Field>
-            <div className="flex gap-0">
-              <Field>
-                <FieldLabel>
-                  <Marker variant="separator">
-                    <MarkerContent>State</MarkerContent>
-                  </Marker>
-                </FieldLabel>
-                <FieldContent className="text-center capitalize">
-                  {actor.state}
-                </FieldContent>
-              </Field>
-              <Field>
-                <FieldLabel>
-                  <Marker variant="separator">
-                    <MarkerContent>Status</MarkerContent>
-                  </Marker>
-                </FieldLabel>
-                <FieldContent className="text-center capitalize">
-                  {actor.status}
-                </FieldContent>
-              </Field>
-              <Field>
-                <FieldLabel>
-                  <Marker variant="separator">
-                    <MarkerContent>Augment</MarkerContent>
-                  </Marker>
-                </FieldLabel>
-                <FieldContent className="text-center capitalize">
-                  {actor.augment}
-                </FieldContent>
-              </Field>
-            </div>
           </div>
           <div className="flex flex-col gap-4">
             <div className="grid grid-cols-2">
@@ -193,6 +161,38 @@ function ActorTest({ game, actor }: { game: Game; actor: Actor }) {
                       ))}
                     </TableBody>
                   </Table>
+                </FieldContent>
+              </Field>
+            </div>
+            <div className="grid grid-cols-3">
+              <Field>
+                <FieldLabel>
+                  <Marker variant="separator">
+                    <MarkerContent>Augment</MarkerContent>
+                  </Marker>
+                </FieldLabel>
+                <FieldContent className="text-center capitalize">
+                  {actor.augment}
+                </FieldContent>
+              </Field>
+              <Field>
+                <FieldLabel>
+                  <Marker variant="separator">
+                    <MarkerContent>State</MarkerContent>
+                  </Marker>
+                </FieldLabel>
+                <FieldContent className="text-center capitalize">
+                  {actor.state}
+                </FieldContent>
+              </Field>
+              <Field>
+                <FieldLabel>
+                  <Marker variant="separator">
+                    <MarkerContent>Status</MarkerContent>
+                  </Marker>
+                </FieldLabel>
+                <FieldContent className="text-center capitalize">
+                  {actor.status}
                 </FieldContent>
               </Field>
             </div>

@@ -29,3 +29,22 @@ func (p Player) GetOpenPosition() uuid.UUID {
 
 	return uuid.Nil
 }
+
+func (p *Player) SetPosition(position_id uuid.UUID, actor Actor) (uuid.UUID, bool) {
+	var evicted_id uuid.UUID
+
+	if position_id == uuid.Nil {
+		return evicted_id, false
+	}
+	current_id, ok := p.Positions[position_id]
+	if !ok {
+		return evicted_id, false
+	}
+
+	if current_id != actor.ID {
+		evicted_id = current_id
+	}
+
+	p.Positions[position_id] = actor.ID
+	return evicted_id, true
+}
