@@ -71,6 +71,12 @@ func (a Action) Bind(context Context) Command {
 	return command
 }
 
+func (a Action) ToPrompt() Prompt {
+	return Prompt{
+		Action: a,
+	}
+}
+
 type Command struct {
 	Bindable[Action]
 	Priority int

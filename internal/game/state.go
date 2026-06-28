@@ -8,15 +8,14 @@ import (
 )
 
 type State struct {
-	// turn ...
-	Players       []Player
-	Actors        []Actor
-	Transactions  Queue[Transaction]
-	Modifiers     []Modifier
-	Commands      Queue[Command]
-	Triggers      Queue[TriggerCommand]
-	Prompts       []Command
 	ActiveContext *Context
+	Actors        []Actor
+	Commands      Queue[Command]
+	Modifiers     []Modifier
+	Players       []Player
+	Prompts       Queue[PromptCommand]
+	Transactions  Queue[Transaction]
+	Triggers      Queue[TriggerCommand]
 }
 
 func (s *State) Clone() State {
@@ -50,6 +49,11 @@ func (s *State) Clone() State {
 		triggers[i].Context = triggers[i].Context.Clone()
 	}
 
+	prompts := slices.Clone(s.Prompts)
+	for i := range prompts {
+		prompts[i].Context = prompts[i].Context.Clone()
+	}
+
 	var activeContext *Context
 	if s.ActiveContext != nil {
 		cloned := s.ActiveContext.Clone()
@@ -57,13 +61,14 @@ func (s *State) Clone() State {
 	}
 
 	return State{
-		Players:       players,
-		Actors:        actors,
-		Transactions:  transactions,
-		Modifiers:     modifiers,
-		Commands:      commands,
-		Triggers:      triggers,
 		ActiveContext: activeContext,
+		Actors:        actors,
+		Commands:      commands,
+		Modifiers:     modifiers,
+		Players:       players,
+		Prompts:       prompts,
+		Transactions:  transactions,
+		Triggers:      triggers,
 	}
 }
 

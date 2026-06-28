@@ -221,7 +221,7 @@ func SwitchWithSource() Action {
 	return Action{
 		ID: uuid.MustParse("019f0f7c-50e5-7153-bede-2e8a3ef3dd60"),
 		Config: ActionConfig{
-			Name: "Switch",
+			Name:        "Switch",
 			Description: "User switches out for an ally.",
 		},
 		Resolve: func(g *Game, ctx Context, this ActionContext) []Transaction {
@@ -245,7 +245,7 @@ func SwitchIn(n int) Action {
 	return Action{
 		ID: uuid.MustParse("019f0f7c-9bf6-7bbe-8e88-e5fea98d0930"),
 		Config: ActionConfig{
-			Name: "Switch",
+			Name: "Switch In",
 		},
 		Resolve: func(g *Game, ctx Context, this ActionContext) []Transaction {
 			if len(ctx.ActorIDs) != len(ctx.PositionIDs) {
@@ -264,4 +264,9 @@ func SwitchIn(n int) Action {
 		TargetsPredicate: CombineFilters(Allies, InactiveActors, AliveActors),
 		ValidateContext:  ContextTargetLength(n),
 	}
+}
+
+// global actions
+var GLOBAL_ACTIONS = []Action{
+	SwitchWithSource(),
 }

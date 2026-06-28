@@ -70,7 +70,7 @@ func (i *Instance) UnregisterClient(client *Client) bool {
 func (i *Instance) BroadcastGame() {
 	json := i.Game.ToJSON()
 	for _, client := range i.Clients {
-		if !client.TryWriteResponse(NewGameMessage(client, &json)) {
+		if !client.TryWriteResponse(NewGameMessage(client, json)) {
 			// If we can't send, it's usually better to just log it for now
 			// rather than immediately unregistering, unless the client is truly dead.
 			// i.UnregisterClient(client)
@@ -80,7 +80,7 @@ func (i *Instance) BroadcastGame() {
 
 func (i *Instance) PostRegister(client *Client) {
 	json := i.Game.ToJSON()
-	client.TryWriteResponse(PostRegisterMessage(client, &json))
+	client.TryWriteResponse(PostRegisterMessage(client, json))
 }
 
 func (i *Instance) TargetIDsResponse(clientID uuid.UUID, context game.Context) {

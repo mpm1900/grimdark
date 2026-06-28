@@ -8,6 +8,7 @@ const INITIAL_GAME: Game = {
   modifiers: [],
   phase: 'init',
   players: [],
+  prompts: [],
   status: 'idle',
   turn: 0,
 }

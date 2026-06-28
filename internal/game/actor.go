@@ -313,8 +313,7 @@ func (a Actor) GetActions() []Action {
 		actions = append(actions, a.Weapon.Actions...)
 	}
 
-	// global actoins
-	actions = append(actions, SwitchWithSource())
+	actions = append(actions, GLOBAL_ACTIONS...)
 	return actions
 }
 func (a Actor) GetActionByID(action_id uuid.UUID) (Action, bool) {

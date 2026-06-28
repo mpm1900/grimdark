@@ -87,7 +87,7 @@ func NewGame() Game {
 		Modifiers:    []Modifier{},
 		Commands:     []Command{},
 		Triggers:     []TriggerCommand{},
-		Prompts:      []Command{},
+		Prompts:      []PromptCommand{},
 	}
 	var system_modifiers = []Modifier{
 		// map stat stages
@@ -312,6 +312,11 @@ func (g *Game) SortCommands() {
 		})
 	})
 }
+func (g *Game) PushPromptCommand(command PromptCommand) {
+	g.mutate(func(s *State) {
+		s.Prompts = append(s.Prompts, command)
+	})
+}
 func (g *Game) On(on TriggerOn, context Context) {
 	triggers := []TriggerCommand{}
 	for _, modifier := range g.GetModifiers() {
@@ -497,6 +502,18 @@ func (g *Game) Validate() bool {
 		}
 	}
 
+	for _, player := range g.State().Players {
+		open_positions := player.GetOpenPositions()
+		if len(open_positions) > 0 {
+			action := SwitchIn(len(open_positions))
+			ctx := NewContext()
+			ctx.PlayerID = player.ID
+			ctx.ActionID = action.ID
+			fmt.Println("pushing prompt")
+			g.PushPromptCommand((action).ToPrompt().Bind(ctx))
+		}
+	}
+
 	return valid
 }
 
@@ -582,14 +599,15 @@ func (g *Game) Next() bool {
 }
 
 type GameJSON struct {
-	ActiveContext *Context        `json:"active_context"`
-	Actors        []actorJSON     `json:"actors"`
-	Logs          []Bindable[Log] `json:"logs"`
-	Modifiers     []Modifier      `json:"modifiers"`
-	Phase         GamePhase       `json:"phase"`
-	Players       []Player        `json:"players"`
-	Status        GameStatus      `json:"status"`
-	Turn          int             `json:"turn"`
+	ActiveContext *Context               `json:"active_context"`
+	Actors        []actorJSON            `json:"actors"`
+	Logs          []Bindable[Log]        `json:"logs"`
+	Modifiers     []Modifier             `json:"modifiers"`
+	Phase         GamePhase              `json:"phase"`
+	Players       []Player               `json:"players"`
+	Prompts       []Bindable[actionJSON] `json:"prompts"`
+	Status        GameStatus             `json:"status"`
+	Turn          int                    `json:"turn"`
 }
 
 func (g Game) ToJSON() GameJSON {
@@ -599,6 +617,11 @@ func (g Game) ToJSON() GameJSON {
 		actors[i] = actor.ToJSON(g)
 	}
 
+	prompts := make([]Bindable[actionJSON], len(state.Prompts))
+	for i, prompt := range state.Prompts {
+		prompts[i] = bind(prompt.Payload.ToJSON(g, Actor{}), prompt.Context)
+	}
+
 	return GameJSON{
 		ActiveContext: state.ActiveContext,
 		Actors:        actors,
@@ -606,9 +629,19 @@ func (g Game) ToJSON() GameJSON {
 		Modifiers:     g.meta.modifiers,
 		Phase:         g.Phase,
 		Players:       state.Players,
+		Prompts:       prompts,
 		Status:        g.Status,
 		Turn:          g.Turn,
 	}
+}
+
+func (json *GameJSON) ForPlayer(player_ID uuid.UUID) {
+	prompts := slices.Clone(json.Prompts)
+	prompts = slices.DeleteFunc(prompts, func(p Bindable[actionJSON]) bool {
+		fmt.Println(p.Context.PlayerID, player_ID)
+		return p.Context.PlayerID != player_ID
+	})
+	json.Prompts = prompts
 }
 
 // temp functions

@@ -1,3 +1,4 @@
+import type { Action } from './action'
 import type { Actor } from './actor'
 import type { Context } from './context'
 import type { Bindable, ID, Phase, Status } from './core'
@@ -12,6 +13,7 @@ export type Game = {
   modifiers: Modifier[]
   phase: Phase
   players: Player[]
+  prompts: Bindable<Action>[]
   status: Status
   turn: number
 }

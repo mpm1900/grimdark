@@ -1,7 +1,6 @@
 package instance
 
 import (
-	"fmt"
 	"grimdark/internal/game"
 )
 
@@ -22,8 +21,17 @@ func findAction(g *game.Game, request Request) (game.Action, bool) {
 func getTargets(instance *Instance, request Request) int {
 	action, ok := findAction(&instance.Game, request)
 	if !ok {
-		instance.TargetIDsResponse(request.ClientID, request.Context)
-		return none
+		for _, global_action := range game.GLOBAL_ACTIONS {
+			if global_action.ID == request.Context.ActionID {
+				action = global_action
+				ok = true
+			}
+		}
+
+		if !ok {
+			instance.TargetIDsResponse(request.ClientID, request.Context)
+			return none
+		}
 	}
 
 	context := request.Context.Clone()
@@ -35,9 +43,6 @@ func getTargets(instance *Instance, request Request) int {
 		}
 	}
 
-	if action.Config.Name == "Switch" {
-		fmt.Printf("%+v", context)
-	}
 	instance.TargetIDsResponse(request.ClientID, context)
 	return none
 }
@@ -63,10 +68,6 @@ func pushAction(instance *Instance, request Request) int {
 	if !ok {
 		return none
 	}
-
-	//if action.State.Disabled {
-	//	return none
-	//}
 
 	instance.Game.PushCommand(action.Bind(request.Context))
 

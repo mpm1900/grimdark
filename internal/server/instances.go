@@ -45,8 +45,6 @@ func (ih *InstancesHandler) NewInstance(instanceID uuid.UUID, ctx context.Contex
 
 func (ih *InstancesHandler) createInstance(instanceID uuid.UUID, ctx context.Context) *instance.Instance {
 	i := instance.NewInstance(ctx, instanceID, ih.RemoveInstance)
-	instance.SetupGame(&i.Game)
-	i.RunGameActions()
 	return i
 }
 
@@ -125,6 +123,9 @@ func (ih *InstancesHandler) handleGameConnection(ctx context.Context) http.Handl
 			Username: user.Username,
 			Email:    user.Email,
 		})
+		instance.SetupGame(&i.Game, client.ID)
+		i.RunGameActions()
+
 		if err := client.Connect(w, r); err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
 			return

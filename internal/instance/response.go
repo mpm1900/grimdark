@@ -1,6 +1,7 @@
 package instance
 
 import (
+	"fmt"
 	"grimdark/internal/game"
 )
 
@@ -24,10 +25,12 @@ type Response struct {
 	Context *game.Context  `json:"context"`
 }
 
-func NewGameMessage(client *Client, g *game.GameJSON) Response {
+func NewGameMessage(client *Client, g game.GameJSON) Response {
+	fmt.Println(len(g.Prompts))
+	g.ForPlayer(client.ID)
 	return Response{
 		Type:    ResponseTypeGame,
-		Game:    g,
+		Game:    &g,
 		Clients: nil,
 	}
 }
@@ -40,10 +43,11 @@ func NewClientsMessage(clients []*Client) Response {
 	}
 }
 
-func PostRegisterMessage(client *Client, g *game.GameJSON) Response {
+func PostRegisterMessage(client *Client, g game.GameJSON) Response {
+	g.ForPlayer(client.ID)
 	return Response{
 		Type:    ResponseTypeJoinSuccess,
-		Game:    g,
+		Game:    &g,
 		Clients: []*Client{client},
 	}
 }

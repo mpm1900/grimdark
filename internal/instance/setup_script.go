@@ -6,9 +6,11 @@ import (
 	"grimdark/internal/game/actions"
 	"grimdark/internal/game/effects"
 	"grimdark/internal/game/weapons"
+
+	"github.com/google/uuid"
 )
 
-func SetupGame(g *game.Game) {
+func SetupGame(g *game.Game, player_ID uuid.UUID) {
 	effect := game.EffectSource(game.EffectPriorityStages, func(g game.Game, a game.Actor, ctx game.Context) game.Actor {
 		a.Stages[game.Evasion] = a.Stages[game.Evasion] + 1
 		a.AffinityResistance[game.Kinetic] += 1
@@ -60,6 +62,7 @@ func SetupGame(g *game.Game) {
 		return false
 	})
 	player := game.NewPlayer()
+	player.ID = player_ID
 	if len(g.State().Players) > 0 {
 		player = g.Base().Players[0]
 	}
@@ -94,7 +97,7 @@ func SetupGame(g *game.Game) {
 	g.AddActor(katie)
 
 	temp_player, _ := g.GetPlayer(player.ID)
-	g.SetPosition(max.ID, temp_player.GetOpenPosition())
+	g.SetPosition(max.ID, temp_player.GetOpenPositions()[0])
 	temp_player, _ = g.GetPlayer(player.ID)
 	// g.SetPosition(katie.ID, temp_player.GetOpenPosition())
 }

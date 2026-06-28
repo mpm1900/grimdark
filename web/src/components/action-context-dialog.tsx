@@ -44,8 +44,6 @@ function ActionContextDialog({
   validate_options.enabled = !!enabled
   const validate_query = useQuery(validate_options)
 
-  console.log(action.config.name, targets_context)
-
   return (
     <Dialog>
       {children}

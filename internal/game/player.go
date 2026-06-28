@@ -20,14 +20,15 @@ func NewPlayer() Player {
 	}
 }
 
-func (p Player) GetOpenPosition() uuid.UUID {
+func (p Player) GetOpenPositions() []uuid.UUID {
+	positions := []uuid.UUID{}
 	for pos, actor_id := range p.Positions {
 		if actor_id == uuid.Nil {
-			return pos
+			positions = append(positions, pos)
 		}
 	}
 
-	return uuid.Nil
+	return positions
 }
 
 func (p *Player) SetPosition(position_id uuid.UUID, actor Actor) (uuid.UUID, bool) {
