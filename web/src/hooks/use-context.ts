@@ -2,9 +2,9 @@ import type { Actor } from '#/lib/game/actor'
 import { NULL_CONTEXT, type Context } from '#/lib/game/context'
 import { useEffect, useState } from 'react'
 
-function useContext(targets_context: Context) {
-  const target_type =
-    targets_context.actor_IDs.length > 0 ? 'actor_IDs' : 'position_IDs'
+function useContext(targets_context: Context, target_type?: "position_IDs" | "actor_IDs") {
+  target_type = target_type ??
+    targets_context.position_IDs.length > 0 ? 'position_IDs' : 'actor_IDs'
   const [value, set] = useState({
     ...NULL_CONTEXT,
     action_ID: targets_context.action_ID,

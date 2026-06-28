@@ -33,16 +33,25 @@ func (p Player) GetOpenPositions() []uuid.UUID {
 
 func (p *Player) SetPosition(position_id uuid.UUID, actor Actor) (uuid.UUID, bool) {
 	var evicted_id uuid.UUID
+	updated := false
+
+	for pos, actor_id := range p.Positions {
+		if actor_id == actor.ID && pos != position_id {
+			p.Positions[pos] = uuid.Nil
+			updated = true
+		}
+	}
 
 	if position_id == uuid.Nil {
-		return evicted_id, false
+		return evicted_id, updated || actor.IsActive()
 	}
+
 	current_id, ok := p.Positions[position_id]
 	if !ok {
 		return evicted_id, false
 	}
 
-	if current_id != actor.ID {
+	if current_id != uuid.Nil && current_id != actor.ID {
 		evicted_id = current_id
 	}
 

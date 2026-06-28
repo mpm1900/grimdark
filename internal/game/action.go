@@ -15,6 +15,7 @@ type Action struct {
 	TargetsPredicate Filter[Actor]
 	MapContext       func(g Game, ctx Context, this ActionContext) Context
 
+	IsActive      bool
 	IsDisabled    bool
 	DisabledCheck func(g Game, source Actor) bool // TODO
 }

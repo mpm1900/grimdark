@@ -96,6 +96,11 @@ func (c Context) Clone() Context {
 	}
 }
 
+func MakeContextPlayer(player_id uuid.UUID) Context {
+	ctx := NewContext()
+	ctx.PlayerID = player_id
+	return ctx
+}
 func MakeContextFrom(actor Actor) Context {
 	ctx := NewContext()
 	ctx.SourceID = actor.ID

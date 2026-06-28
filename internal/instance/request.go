@@ -9,8 +9,6 @@ import (
 type RequestType = string
 
 const (
-	SetTeam        RequestType = "set-team"
-	Reset          RequestType = "reset"
 	PushAction     RequestType = "push-action"
 	CancelAction   RequestType = "cancel-action"
 	RunGameActions RequestType = "run-game-actions" // TEMP

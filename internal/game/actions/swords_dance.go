@@ -14,6 +14,7 @@ var SwordsDance = game.Action{
 		Description: "Raises user's Melee and Speed.",
 		Affinity:    game.Kinetic,
 	},
+	IsActive: true,
 	Resolve: game.AddSourceEffects(
 		1,
 		effects.StatUpSource(game.Speed, 1),

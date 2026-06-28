@@ -42,6 +42,8 @@ function validateContextQuery(context: Context) {
     queryFn: async () => {
       return validateContext(context)
     },
+    staleTime: 0,
+    gcTime: 0,
   })
 }
 

@@ -15,13 +15,15 @@ import { useQuery } from '@tanstack/react-query'
 import { Marker, MarkerContent } from './ui/marker'
 import { Field, FieldContent } from './ui/field'
 import { Button } from './ui/button'
-import { ChevronRight } from 'lucide-react'
+import { ChevronRight, Loader } from 'lucide-react'
 import { getTargetsFromContext, NULL_CONTEXT } from '#/lib/game/context'
 import { useSelector } from '@tanstack/react-store'
 import { gameStore } from '#/lib/stores/game'
 import { useContext } from '#/hooks/use-context'
 import { Toggle } from './ui/toggle'
 import { validateContextQuery } from '#/lib/queries/validate-context'
+import { sendContextMessage } from '#/lib/stores/socket'
+import { clientsStore } from '#/lib/stores/clients'
 
 function ActionContextDialog({
   actor,
@@ -33,16 +35,18 @@ function ActionContextDialog({
   action: Action
   enabled?: boolean
 }>) {
-  const targets_options = getTargetsQuery(actor, action.ID)
+  const client = useSelector(clientsStore, (s) => s.me!)
+  const actors = useSelector(gameStore, (g) => g.actors)
+  const targets_options = getTargetsQuery(actor.ID, actor.player_ID, action.ID, [actor.is_active])
   targets_options.enabled = !!enabled
   const targets_query = useQuery(targets_options)
   const targets_context = targets_query.data ?? NULL_CONTEXT
-  const actors = useSelector(gameStore, (g) => g.actors)
   const targets = getTargetsFromContext(actors, targets_context)
   const context = useContext(targets_context)
   const validate_options = validateContextQuery(context.value)
   validate_options.enabled = !!enabled
   const validate_query = useQuery(validate_options)
+  const is_loading = targets_query.isFetching || validate_query.isFetching
 
   return (
     <Dialog>
@@ -100,7 +104,12 @@ function ActionContextDialog({
                   </Toggle>
                 ))}
               </div>
-              {targets.length === 0 && (
+              {targets_query.isFetching && (
+                <div className="grid place-items-center absolute inset-0">
+                  <Loader className="animate-spin" />
+                </div>
+              )}
+              {targets.length === 0 && !is_loading && (
                 <Marker variant="separator">
                   <MarkerContent>
                     {validate_query.data
@@ -115,8 +124,14 @@ function ActionContextDialog({
         <DialogFooter>
           <DialogClose asChild>
             <Button
-              disabled={!validate_query.data || validate_query.isFetching}
+              disabled={!validate_query.data || is_loading}
               onClick={() => {
+                sendContextMessage({
+                  type: 'push-action',
+                  client_ID: client.ID,
+                  context: context.value,
+                })
+
                 context.reset()
               }}
             >

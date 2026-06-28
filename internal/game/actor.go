@@ -314,7 +314,9 @@ func (a Actor) GetActions() []Action {
 	}
 
 	actions = append(actions, GLOBAL_ACTIONS...)
-	return actions
+	return slices.DeleteFunc(actions, func(a Action) bool {
+		return !a.IsActive
+	})
 }
 func (a Actor) GetActionByID(action_id uuid.UUID) (Action, bool) {
 	for _, action := range a.GetActions() {

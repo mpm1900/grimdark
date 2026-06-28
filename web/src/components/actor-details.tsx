@@ -105,7 +105,7 @@ function AffinityResistanceTable({ actor }: { actor: Actor }) {
 
 function ActorCharacter({ actor }: { actor: Actor }) {
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-2">
       <Field>
         <FieldLabel>
           <Marker variant="separator">
@@ -121,10 +121,10 @@ function ActorCharacter({ actor }: { actor: Actor }) {
           </div>
         </FieldContent>
       </Field>
-      <AspectRatio ratio={16 / 9} className="rounded-lg bg-muted" />
       <div>
         <HealthBar type="value" actor={actor} />
       </div>
+      <AspectRatio ratio={16 / 9} className="rounded-lg bg-muted" />
     </div>
   )
 }

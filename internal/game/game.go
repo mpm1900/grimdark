@@ -223,6 +223,15 @@ func (g *Game) GetActionableActors() []Actor {
 func (g *Game) IsReadyToRun() bool {
 	return len(g.State().Commands) == len(g.GetActionableActors())
 }
+func (g *Game) PromptsReady() bool {
+	for _, prompt := range g.state.Prompts {
+		if !prompt.Ready {
+			return false
+		}
+	}
+
+	return true
+}
 
 func (g *Game) resolve() {
 	g.gamestate = resolving
@@ -315,6 +324,19 @@ func (g *Game) SortCommands() {
 func (g *Game) PushPromptCommand(command PromptCommand) {
 	g.mutate(func(s *State) {
 		s.Prompts = append(s.Prompts, command)
+	})
+}
+func (g *Game) UpdatePromptCommand(context Context) {
+	g.mutate(func(s *State) {
+		for i, cmd := range s.Prompts {
+			is_player := cmd.Context.PlayerID == context.PlayerID
+			is_source := cmd.Context.SourceID == context.SourceID
+			is_action := cmd.Context.ActionID == context.ActionID
+			if is_player && is_source && is_action {
+				s.Prompts[i].Context = context
+				s.Prompts[i].Ready = cmd.Payload.ValidateContext(*g, context)
+			}
+		}
 	})
 }
 func (g *Game) On(on TriggerOn, context Context) {
@@ -504,12 +526,13 @@ func (g *Game) Validate() bool {
 
 	for _, player := range g.State().Players {
 		open_positions := player.GetOpenPositions()
-		if len(open_positions) > 0 {
+		alive_inactive := g.FindActors(CombineFilters(AliveActors, Allies, InactiveActors), MakeContextPlayer(player.ID))
+		if len(open_positions) > 0 && len(alive_inactive) > 0 {
 			action := SwitchIn(len(open_positions))
 			ctx := NewContext()
 			ctx.PlayerID = player.ID
 			ctx.ActionID = action.ID
-			fmt.Println("pushing prompt")
+			ctx.PositionIDs = open_positions
 			g.PushPromptCommand((action).ToPrompt().Bind(ctx))
 		}
 	}
@@ -574,6 +597,14 @@ func (g *Game) NextCommand() {
 
 	g.PushTransactions(cmd.Resolve(g))
 }
+func (g *Game) NextPrompt() {
+	cmd, err := g.state.Prompts.Dequeue()
+	if err != nil {
+		return
+	}
+
+	g.PushTransactions(cmd.Resolve(g))
+}
 
 func (g *Game) Next() bool {
 	if len(g.state.Transactions) > 0 {
@@ -584,6 +615,16 @@ func (g *Game) Next() bool {
 	if len(g.state.Triggers) > 0 {
 		g.NextTrigger()
 		return true
+	}
+
+	if len(g.state.Prompts) > 0 {
+		fmt.Println("there are prompts to resolve")
+		if g.PromptsReady() {
+			fmt.Println("resolving")
+			g.NextPrompt()
+			return true
+		}
+		return false
 	}
 
 	if !g.Validate() {
@@ -617,9 +658,13 @@ func (g Game) ToJSON() GameJSON {
 		actors[i] = actor.ToJSON(g)
 	}
 
-	prompts := make([]Bindable[actionJSON], len(state.Prompts))
-	for i, prompt := range state.Prompts {
-		prompts[i] = bind(prompt.Payload.ToJSON(g, Actor{}), prompt.Context)
+	prompts := []Bindable[actionJSON]{}
+	for _, prompt := range state.Prompts {
+		if prompt.Ready {
+			continue
+		}
+
+		prompts = append(prompts, bind(prompt.Payload.ToJSON(g, Actor{}), prompt.Context))
 	}
 
 	return GameJSON{
@@ -638,7 +683,6 @@ func (g Game) ToJSON() GameJSON {
 func (json *GameJSON) ForPlayer(player_ID uuid.UUID) {
 	prompts := slices.Clone(json.Prompts)
 	prompts = slices.DeleteFunc(prompts, func(p Bindable[actionJSON]) bool {
-		fmt.Println(p.Context.PlayerID, player_ID)
 		return p.Context.PlayerID != player_ID
 	})
 	json.Prompts = prompts

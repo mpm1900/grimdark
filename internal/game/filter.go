@@ -66,7 +66,7 @@ func Allies(g Game, actor Actor, context Context) bool {
 	return actor.PlayerID == context.PlayerID
 }
 func OtherAllies(g Game, actor Actor, context Context) bool {
-	return Allies(g, actor, context) && actor.ID != context.SourceID
+	return Allies(g, actor, context) && NotSourceActor(g, actor, context)
 }
 func Enemies(g Game, actor Actor, context Context) bool {
 	return actor.PlayerID != context.PlayerID

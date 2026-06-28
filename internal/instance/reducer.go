@@ -5,33 +5,28 @@ import (
 )
 
 func findAction(g *game.Game, request Request) (game.Action, bool) {
-	actor, ok := g.GetSource(request.Context)
-	if !ok {
-		return game.Action{}, false
+	actor, actor_ok := g.GetSource(request.Context)
+	if actor_ok {
+		action, action_ok := actor.GetActionByID(request.Context.ActionID)
+		if action_ok {
+			return action, true
+		}
 	}
 
-	action, ok := actor.GetActionByID(request.Context.ActionID)
-	if !ok {
-		return game.Action{}, false
+	for _, global_action := range game.GLOBAL_ACTIONS {
+		if global_action.ID == request.Context.ActionID {
+			return global_action, true
+		}
 	}
 
-	return action, ok
+	return game.Action{}, false
 }
 
 func getTargets(instance *Instance, request Request) int {
 	action, ok := findAction(&instance.Game, request)
 	if !ok {
-		for _, global_action := range game.GLOBAL_ACTIONS {
-			if global_action.ID == request.Context.ActionID {
-				action = global_action
-				ok = true
-			}
-		}
-
-		if !ok {
-			instance.TargetIDsResponse(request.ClientID, request.Context)
-			return none
-		}
+		instance.TargetIDsResponse(request.ClientID, request.Context)
+		return none
 	}
 
 	context := request.Context.Clone()
@@ -70,10 +65,7 @@ func pushAction(instance *Instance, request Request) int {
 	}
 
 	instance.Game.PushCommand(action.Bind(request.Context))
-
-	if false {
-		instance.RunGameActions()
-	}
+	instance.RunGameActions()
 
 	return state
 }
@@ -88,8 +80,16 @@ func cancelAction(instance *Instance, request Request) int {
 
 	return state
 }
+func resolvePrompt(instance *Instance, request Request) int {
+	instance.Game.UpdatePromptCommand(request.Context)
+	if instance.Game.PromptsReady() {
+		instance.RunGameActions()
+	}
+
+	return state
+}
 func runGameActions(instance *Instance) int {
-	TestGame(&instance.Game)
+	// TestGame(&instance.Game)
 	if instance.Game.Status == game.GameStatusRunning {
 		return none
 	}
@@ -104,13 +104,12 @@ func Reducer(instance *Instance, request Request) int {
 		return getTargets(instance, request)
 	case ValidateContext:
 		return validateContext(instance, request)
-	case Reset:
-		// instance.Game.Reset()
-		return state
 	case PushAction:
 		return pushAction(instance, request)
 	case CancelAction:
 		return cancelAction(instance, request)
+	case ResolvePrompt:
+		return resolvePrompt(instance, request)
 	case RunGameActions:
 		return runGameActions(instance)
 	default:

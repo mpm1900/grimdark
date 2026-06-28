@@ -1,6 +1,7 @@
 package game
 
 import (
+	"fmt"
 	"math/rand/v2"
 	"strconv"
 
@@ -224,6 +225,7 @@ func SwitchWithSource() Action {
 			Name:        "Switch",
 			Description: "User switches out for an ally.",
 		},
+		IsActive: true,
 		Resolve: func(g *Game, ctx Context, this ActionContext) []Transaction {
 			if len(ctx.ActorIDs) != 1 {
 				return this.Done()
@@ -241,9 +243,15 @@ func SwitchWithSource() Action {
 		ValidateContext:  ContextTargetLength(1),
 	}
 }
+
+var si_ids map[int]uuid.UUID = map[int]uuid.UUID{
+	1: uuid.MustParse("019f0f7c-9bf6-7bbe-8e88-e5fea98d0930"),
+	2: uuid.MustParse("019f1016-2713-7bff-8435-e958d2f216f0"),
+}
+
 func SwitchIn(n int) Action {
 	return Action{
-		ID: uuid.MustParse("019f0f7c-9bf6-7bbe-8e88-e5fea98d0930"),
+		ID: si_ids[n],
 		Config: ActionConfig{
 			Name: "Switch In",
 		},
@@ -269,4 +277,6 @@ func SwitchIn(n int) Action {
 // global actions
 var GLOBAL_ACTIONS = []Action{
 	SwitchWithSource(),
+	SwitchIn(1),
+	SwitchIn(2),
 }

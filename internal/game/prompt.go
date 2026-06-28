@@ -7,6 +7,7 @@ type Prompt struct {
 type PromptCommand struct {
 	Bindable[Prompt]
 	Priority int
+	Ready    bool
 }
 
 func (a Prompt) Bind(context Context) PromptCommand {

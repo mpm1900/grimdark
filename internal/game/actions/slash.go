@@ -20,6 +20,7 @@ var Slash = game.Action{
 		CritChance:   0.05,
 		CritModifier: 1.5,
 	},
+	IsActive: true,
 	Resolve: game.BasicAttack(game.AttackConfig{
 		OnSuccessResult: func(g game.Game, context game.Context, this *game.ActionContext, result game.DamageResult) {
 			game.AddResultEffects(

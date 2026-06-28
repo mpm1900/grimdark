@@ -1,7 +1,6 @@
 package instance
 
 import (
-	"fmt"
 	"grimdark/internal/game"
 )
 
@@ -26,7 +25,6 @@ type Response struct {
 }
 
 func NewGameMessage(client *Client, g game.GameJSON) Response {
-	fmt.Println(len(g.Prompts))
 	g.ForPlayer(client.ID)
 	return Response{
 		Type:    ResponseTypeGame,

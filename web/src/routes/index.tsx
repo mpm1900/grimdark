@@ -1,5 +1,6 @@
 import { ActorDetails } from '#/components/actor-details'
 import { AppHeader } from '#/components/app-header'
+import { PromptController } from '#/components/prompt-controller'
 import { Card, CardContent } from '#/components/ui/card'
 import { RenderLog } from '#/lib/game/log'
 import { gameStore } from '#/lib/stores/game'
@@ -13,6 +14,7 @@ function Home() {
   const actors = useSelector(gameStore, (g) => g.actors)
   return (
     <ClientOnly>
+      <PromptController />
       <div>
         <AppHeader />
         <div className="pt-12 flex">
