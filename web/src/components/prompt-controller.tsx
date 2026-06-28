@@ -48,14 +48,14 @@ function PromptController() {
   return (
     <>
       <AlertDialog open={!!prompt}>
-        <AlertDialogContent>
+        <AlertDialogContent className="focus:outline-none focus-visible:outline-none">
           {prompt && (
             <>
               <AlertDialogHeader>
                 <AlertDialogTitle>
                   {prompt.payload.config.name}
                 </AlertDialogTitle>
-                <AlertDialogDescription>
+                <AlertDialogDescription >
                   {prompt.payload.config.description}
                 </AlertDialogDescription>
               </AlertDialogHeader>

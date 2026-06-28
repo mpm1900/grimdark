@@ -252,7 +252,8 @@ func SwitchIn(n int) Action {
 	return Action{
 		ID: si_ids[n],
 		Config: ActionConfig{
-			Name: "Switch In",
+			Name:        "Switch In",
+			Description: "Switch actor(s) into battle.",
 		},
 		Resolve: func(g *Game, ctx Context, this ActionContext) []Transaction {
 			if len(ctx.ActorIDs) != len(ctx.PositionIDs) {
