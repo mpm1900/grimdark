@@ -19,7 +19,6 @@ import {
 import { Marker, MarkerContent } from '#/components/ui/marker'
 import { Table, TableBody, TableCell, TableRow } from '#/components/ui/table'
 import type { Actor } from '#/lib/game/actor'
-import { NULL_CONTEXT, type Context } from '#/lib/game/context'
 import { AFFINITIES, STATS, type Stat } from '#/lib/game/core'
 import { getAppliedEffects, type Game } from '#/lib/game/game'
 import { RenderLog } from '#/lib/game/log'
@@ -47,15 +46,7 @@ function StatRow({ actor, stat }: { actor: Actor; stat: Stat }) {
 
 function ActorTest({ game, actor }: { game: Game; actor: Actor }) {
   const applied_effects = getAppliedEffects(game, actor)
-  const context: Context = {
-    ...NULL_CONTEXT,
-    action_ID: actor.actions[0].ID,
-    source_ID: actor.ID,
-    parent_ID: actor.ID,
-    player_ID: actor.player_ID,
-    position_IDs: [],
-  }
-  const targets_query = useQuery(getTargetsQuery(context))
+  const targets_query = useQuery(getTargetsQuery(actor, actor.actions[0].ID))
   console.log('data', targets_query.data)
   return (
     <Item variant="outline">
