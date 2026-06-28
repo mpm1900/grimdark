@@ -58,8 +58,6 @@ function getTargetsQuery(
     queryFn: async () => {
       return getTargets(context)
     },
-    staleTime: 0,
-    gcTime: 0,
   })
 }
 

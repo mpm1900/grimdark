@@ -618,9 +618,7 @@ func (g *Game) Next() bool {
 	}
 
 	if len(g.state.Prompts) > 0 {
-		fmt.Println("there are prompts to resolve")
 		if g.PromptsReady() {
-			fmt.Println("resolving")
 			g.NextPrompt()
 			return true
 		}
@@ -675,6 +673,7 @@ func (g Game) ToJSON() GameJSON {
 		Phase:         g.Phase,
 		Players:       state.Players,
 		Prompts:       prompts,
+		SliceID:       uuid.New(),
 		Status:        g.Status,
 		Turn:          g.Turn,
 	}

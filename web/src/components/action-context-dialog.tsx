@@ -37,7 +37,10 @@ function ActionContextDialog({
 }>) {
   const client = useSelector(clientsStore, (s) => s.me!)
   const actors = useSelector(gameStore, (g) => g.actors)
-  const targets_options = getTargetsQuery(actor.ID, actor.player_ID, action.ID, [actor.is_active])
+  const turn = useSelector(gameStore, (g) => g.turn)
+  const targets_options = getTargetsQuery(actor.ID, actor.player_ID, action.ID, [
+    turn,
+  ])
   targets_options.enabled = !!enabled
   const targets_query = useQuery(targets_options)
   const targets_context = targets_query.data ?? NULL_CONTEXT

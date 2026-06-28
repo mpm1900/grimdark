@@ -1,7 +1,6 @@
 package game
 
 import (
-	"fmt"
 	"math/rand/v2"
 	"strconv"
 
