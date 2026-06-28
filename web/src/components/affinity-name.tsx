@@ -35,4 +35,4 @@ function AffinityName({
   )
 }
 
-export { AffinityName }
+export { AffinityName, affinityVariants }

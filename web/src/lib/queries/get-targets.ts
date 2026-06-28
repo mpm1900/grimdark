@@ -22,7 +22,11 @@ async function getTargets(context: Context): Promise<Context> {
 
     const unsub = subscribe((_event, message) => {
       if (message) {
-        if (message.type === 'target-IDs') {
+        if (
+          message.type === 'target-IDs' &&
+          message.context?.source_ID === context.source_ID &&
+          message.context?.action_ID === context.action_ID
+        ) {
           resolve(message.context as Context)
           unsub()
         }
@@ -44,8 +48,8 @@ function getTargetsQuery(actor: Actor, action_ID: ID) {
     parent_ID: actor.ID,
     player_ID: actor.player_ID,
   }
-  return queryOptions({
-    queryKey: ['get-targets', contextToString(context)],
+  return queryOptions<Context>({
+    queryKey: ['get-targets', actor.ID, action_ID],
     queryFn: async () => {
       return getTargets(context)
     },

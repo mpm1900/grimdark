@@ -1,5 +1,6 @@
+import { ActionContextDialog } from '#/components/action-context-dialog'
 import { ActorFlag } from '#/components/actor-flag'
-import { AffinityName } from '#/components/affinity-name'
+import { AffinityName, affinityVariants } from '#/components/affinity-name'
 import {
   AffinityDamageValue,
   AffinityMultiplier,
@@ -9,22 +10,25 @@ import { AppHeader } from '#/components/app-header'
 import { StatValue } from '#/components/stat-value'
 import { Badge } from '#/components/ui/badge'
 import { Button } from '#/components/ui/button'
+import { DialogTrigger } from '#/components/ui/dialog'
 import { Field, FieldContent, FieldLabel } from '#/components/ui/field'
 import {
   Item,
+  ItemActions,
   ItemContent,
   ItemDescription,
+  ItemMedia,
   ItemTitle,
 } from '#/components/ui/item'
 import { Marker, MarkerContent } from '#/components/ui/marker'
 import { Table, TableBody, TableCell, TableRow } from '#/components/ui/table'
+import { WeaponDetails } from '#/components/weapon'
 import type { Actor } from '#/lib/game/actor'
 import { AFFINITIES, STATS, type Stat } from '#/lib/game/core'
 import { getAppliedEffects, type Game } from '#/lib/game/game'
 import { RenderLog } from '#/lib/game/log'
-import { getTargetsQuery } from '#/lib/queries/get-targets'
 import { gameStore } from '#/lib/stores/game'
-import { useQuery } from '@tanstack/react-query'
+import { cn } from '#/lib/utils'
 import { ClientOnly, createFileRoute } from '@tanstack/react-router'
 import { useSelector } from '@tanstack/react-store'
 
@@ -46,8 +50,7 @@ function StatRow({ actor, stat }: { actor: Actor; stat: Stat }) {
 
 function ActorTest({ game, actor }: { game: Game; actor: Actor }) {
   const applied_effects = getAppliedEffects(game, actor)
-  const targets_query = useQuery(getTargetsQuery(actor, actor.actions[0].ID))
-  console.log('data', targets_query.data)
+
   return (
     <Item variant="outline">
       <ItemContent className="gap-4">
@@ -238,23 +241,7 @@ function ActorTest({ game, actor }: { game: Game; actor: Actor }) {
                 </Marker>
               </FieldLabel>
               <FieldContent>
-                <Item variant="outline" className="p-2">
-                  <ItemContent>
-                    <ItemTitle>{actor.weapon?.name}</ItemTitle>
-                    <ItemDescription>
-                      Actions:{' '}
-                      {actor.weapon?.actions
-                        .map((a) => a.config.name)
-                        .join(', ')}
-                    </ItemDescription>
-                    <ItemDescription>
-                      Effects:{' '}
-                      {actor.weapon?.effects.map((e) => e.name).join(', ') || (
-                        <span className="italic">None</span>
-                      )}
-                    </ItemDescription>
-                  </ItemContent>
-                </Item>
+                {actor.weapon && <WeaponDetails weapon={actor.weapon} />}
               </FieldContent>
             </Field>
             <Field>
@@ -265,20 +252,54 @@ function ActorTest({ game, actor }: { game: Game; actor: Actor }) {
               </FieldLabel>
               <FieldContent className="flex flex-col gap-2">
                 {actor.actions.map((action) => (
-                  <Item key={action.ID} className="p-2" asChild>
-                    <Button
-                      variant="outline"
-                      className="h-auto"
-                      disabled={action.is_disabled}
-                    >
-                      <ItemContent>
-                        <ItemTitle>{action.config.name}</ItemTitle>
-                        <ItemDescription className="text-left">
-                          {action.config.description}
-                        </ItemDescription>
-                      </ItemContent>
-                    </Button>
-                  </Item>
+                  <ActionContextDialog
+                    key={action.ID}
+                    actor={actor}
+                    action={action}
+                    enabled={!action.is_disabled}
+                  >
+                    <Item className="p-2" asChild>
+                      <DialogTrigger asChild>
+                        <Button
+                          variant="outline"
+                          className="h-auto"
+                          disabled={action.is_disabled}
+                        >
+                          <ItemMedia>
+                            <AffinityName affinity={action.config.affinity} />
+                          </ItemMedia>
+                          <ItemContent>
+                            <ItemTitle>{action.config.name}</ItemTitle>
+                            <ItemDescription className="text-left">
+                              {action.config.description || (
+                                <span className="flex gap-2">
+                                  {action.config.accuracy && (
+                                    <span>
+                                      Accuracy {action.config.accuracy * 100}%
+                                    </span>
+                                  )}
+                                </span>
+                              )}
+                            </ItemDescription>
+                          </ItemContent>
+                          {!!action.config.power && (
+                            <ItemActions>
+                              <span
+                                className={cn(
+                                  'text-xl font-black',
+                                  affinityVariants({
+                                    affinity: action.config.affinity,
+                                  })
+                                )}
+                              >
+                                {action.config.power}
+                              </span>
+                            </ItemActions>
+                          )}
+                        </Button>
+                      </DialogTrigger>
+                    </Item>
+                  </ActionContextDialog>
                 ))}
               </FieldContent>
             </Field>

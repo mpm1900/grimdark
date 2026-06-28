@@ -13,7 +13,7 @@ var Slash = game.Action{
 		Name:         "Slash",
 		Affinity:     game.Kinetic,
 		Stat:         game.Melee,
-		Accuracy:     game.P(0.98),
+		Accuracy:     game.P(0.90),
 		Power:        70,
 		Lifesteal:    0.12,
 		Hits:         1,

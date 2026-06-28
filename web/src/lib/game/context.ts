@@ -1,4 +1,5 @@
 import z from 'zod'
+import type { Actor } from './actor'
 
 const ContextSchema = z.object({
   action_ID: z.string().nullable(),
@@ -18,6 +19,15 @@ function contextToString(c: Context): string {
   return `${c.action_ID ?? ''}.${c.parent_ID ?? ''}.${c.source_ID ?? ''}.${c.player_ID ?? ''}.${c.actor_IDs?.filter(Boolean).join('+')}.${c.position_IDs?.filter(Boolean).join('+')}`
 }
 
+function getTargetsFromContext(actors: Actor[], context: Context): Actor[] {
+  return actors.filter((a) => {
+    return (
+      context.actor_IDs.includes(a.ID) ||
+      context.position_IDs.includes(a.position_ID)
+    )
+  })
+}
+
 const NULL_CONTEXT: Context = {
   action_ID: null,
   effect_ID: null,
@@ -28,5 +38,5 @@ const NULL_CONTEXT: Context = {
   position_IDs: [],
 }
 
-export { ContextSchema, contextToString, NULL_CONTEXT }
+export { ContextSchema, contextToString, getTargetsFromContext, NULL_CONTEXT }
 export type { Context }
