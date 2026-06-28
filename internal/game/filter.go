@@ -50,14 +50,17 @@ func AllActors(g Game, actor Actor, context Context) bool {
 func ActiveActors(g Game, actor Actor, context Context) bool {
 	return actor.IsActive()
 }
+func InactiveActors(g Game, actor Actor, context Context) bool {
+	return !actor.IsActive()
+}
 func AliveActors(g Game, actor Actor, context Context) bool {
 	return actor.IsAlive
 }
+func DeadActors(g Game, actor Actor, context Context) bool {
+	return !actor.IsAlive
+}
 func NonStunnedActors(g Game, actor Actor, context Context) bool {
 	return !actor.IsStunned
-}
-func InactiveActors(g Game, actor Actor, context Context) bool {
-	return !actor.IsAlive
 }
 func Allies(g Game, actor Actor, context Context) bool {
 	return actor.PlayerID == context.PlayerID

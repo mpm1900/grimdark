@@ -13,7 +13,7 @@ import type { Action } from '#/lib/game/action'
 import { getTargetsQuery } from '#/lib/queries/get-targets'
 import { useQuery } from '@tanstack/react-query'
 import { Marker, MarkerContent } from './ui/marker'
-import { Field, FieldContent, FieldLabel } from './ui/field'
+import { Field, FieldContent } from './ui/field'
 import { Button } from './ui/button'
 import { ChevronRight } from 'lucide-react'
 import { getTargetsFromContext, NULL_CONTEXT } from '#/lib/game/context'
@@ -43,6 +43,8 @@ function ActionContextDialog({
   const validate_options = validateContextQuery(context.value)
   validate_options.enabled = !!enabled
   const validate_query = useQuery(validate_options)
+
+  console.log(action.config.name, targets_context)
 
   return (
     <Dialog>

@@ -519,8 +519,10 @@ func (g *Game) NextPhase() {
 	}
 }
 func (g *Game) NextTurn() {
+	if g.Turn > 0 {
+		g.IncrementActorTurns()
+	}
 	g.Turn++
-	g.IncrementActorTurns()
 	g.Phase = PhaseMain
 }
 func (g *Game) EndPhase() {

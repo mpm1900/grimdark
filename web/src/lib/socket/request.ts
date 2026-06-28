@@ -17,7 +17,6 @@ type SocketRequestType =
 
 type SocketRequest = {
   type: SocketRequestType
-  prompt_ID?: string
   client_ID: string
   context: Context
 }

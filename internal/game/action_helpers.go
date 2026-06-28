@@ -219,8 +219,10 @@ func CtxToAllOtherActiveTargets() func(g Game, ctx Context, this ActionContext) 
 // switches
 func SwitchWithSource() Action {
 	return Action{
+		ID: uuid.MustParse("019f0f7c-50e5-7153-bede-2e8a3ef3dd60"),
 		Config: ActionConfig{
 			Name: "Switch",
+			Description: "User switches out for an ally.",
 		},
 		Resolve: func(g *Game, ctx Context, this ActionContext) []Transaction {
 			if len(ctx.ActorIDs) != 1 {
@@ -241,6 +243,7 @@ func SwitchWithSource() Action {
 }
 func SwitchIn(n int) Action {
 	return Action{
+		ID: uuid.MustParse("019f0f7c-9bf6-7bbe-8e88-e5fea98d0930"),
 		Config: ActionConfig{
 			Name: "Switch",
 		},

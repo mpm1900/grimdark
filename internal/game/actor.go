@@ -11,7 +11,7 @@ type ActorState string
 type ActorStatus string
 
 const (
-	StateDefault ActorState = "default"
+	StateGrounded ActorState = "grounded"
 )
 
 const (
@@ -138,7 +138,7 @@ func NewActor(playerID uuid.UUID, def ActorDef) Actor {
 
 		Wounds:  0,
 		Augment: AugmentDefault,
-		State:   StateDefault,
+		State:   StateGrounded,
 		Status:  StatusNone,
 
 		IsAlive:     true,
@@ -312,6 +312,9 @@ func (a Actor) GetActions() []Action {
 	if a.Weapon != nil {
 		actions = append(actions, a.Weapon.Actions...)
 	}
+
+	// global actoins
+	actions = append(actions, SwitchWithSource())
 	return actions
 }
 func (a Actor) GetActionByID(action_id uuid.UUID) (Action, bool) {

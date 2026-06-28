@@ -1,6 +1,7 @@
 package instance
 
 import (
+	"fmt"
 	"grimdark/internal/game"
 )
 
@@ -34,6 +35,9 @@ func getTargets(instance *Instance, request Request) int {
 		}
 	}
 
+	if action.Config.Name == "Switch" {
+		fmt.Printf("%+v", context)
+	}
 	instance.TargetIDsResponse(request.ClientID, context)
 	return none
 }

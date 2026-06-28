@@ -11,7 +11,6 @@ import (
 func SetupGame(g *game.Game) {
 	effect := game.EffectSource(game.EffectPriorityStages, func(g game.Game, a game.Actor, ctx game.Context) game.Actor {
 		a.Stages[game.Evasion] = a.Stages[game.Evasion] + 1
-		// a.AffinityImmunities[game.Kinetic] = 0
 		a.AffinityResistance[game.Kinetic] += 1
 		return a
 	})
@@ -28,6 +27,12 @@ func SetupGame(g *game.Game) {
 		},
 	}
 	effect.Name = "test effect"
+
+	effect2 := game.EffectSource(game.EffectPriorityPostStagesStats, func(g game.Game, a game.Actor, ctx game.Context) game.Actor {
+		a.Stats[game.Melee] = a.Stats[game.Melee] / 2
+		return a
+	})
+	effect2.Name = "burned"
 
 	bypass := effects.StagesResetWhere(func(g game.Game, a game.Actor, ctx game.Context) bool {
 		active_context := g.State().ActiveContext
@@ -73,7 +78,7 @@ func SetupGame(g *game.Game) {
 		game.Cryo:   {},
 		game.Arcane: {},
 	}
-	katie_def.Effects = []game.Effect{effect}
+	katie_def.Effects = []game.Effect{effect, effect2}
 
 	katie := game.NewActor(player.ID, katie_def)
 	katie.AuxStats[game.Speed] = 10
@@ -91,5 +96,5 @@ func SetupGame(g *game.Game) {
 	temp_player, _ := g.GetPlayer(player.ID)
 	g.SetPosition(max.ID, temp_player.GetOpenPosition())
 	temp_player, _ = g.GetPlayer(player.ID)
-	g.SetPosition(katie.ID, temp_player.GetOpenPosition())
+	// g.SetPosition(katie.ID, temp_player.GetOpenPosition())
 }

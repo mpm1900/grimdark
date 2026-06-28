@@ -10,9 +10,9 @@ import (
 var SwordsDance = game.Action{
 	ID: uuid.MustParse("019f0aee-7aae-7efc-b8e7-d514f3ad2b18"),
 	Config: game.ActionConfig{
-		Name:     "Swords Dance",
+		Name:        "Swords Dance",
 		Description: "Raises user's Melee and Speed.",
-		Affinity: game.Kinetic,
+		Affinity:    game.Kinetic,
 	},
 	Resolve: game.AddSourceEffects(
 		1,
