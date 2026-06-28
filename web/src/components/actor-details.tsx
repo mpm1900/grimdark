@@ -36,7 +36,7 @@ function StatRow({ actor, stat }: { actor: Actor; stat: Stat }) {
       <TableCell className="text-end">
         {stage != 0 && <span>{stage}</span>}
       </TableCell>
-      <TableCell>
+      <TableCell className='text-end'>
         {stage != 0 && (
           <span className={cn(mult === 1 && 'opacity-45')}>
             x{mult.toFixed(2)}
@@ -67,10 +67,10 @@ function AffinityDamageTable({ actor }: { actor: Actor }) {
             <TableCell>
               <AffinityName affinity={affinity} />
             </TableCell>
-            <TableCell>
+            <TableCell className='text-end'>
               <AffinityDamageValue actor={actor} affinity={affinity} />
             </TableCell>
-            <TableCell>
+            <TableCell className='text-end'>
               <AffinityMultiplier value={actor.affinity_damage[affinity]} />
             </TableCell>
           </TableRow>
@@ -88,10 +88,10 @@ function AffinityResistanceTable({ actor }: { actor: Actor }) {
             <TableCell>
               <AffinityName affinity={affinity} />
             </TableCell>
-            <TableCell>
+            <TableCell className='text-end'>
               <AffinityResistanceValue actor={actor} affinity={affinity} />
             </TableCell>
-            <TableCell>
+            <TableCell className='text-end'>
               <AffinityMultiplier
                 value={actor.affinity_resistance[affinity] * -1}
               />
@@ -181,6 +181,9 @@ function ActorState({
           </ActorFlag>
           <ActorFlag actor={actor} flag="is_alive">
             Alive
+          </ActorFlag>
+          <ActorFlag actor={actor} flag="is_hidden">
+            Hidden
           </ActorFlag>
           <ActorFlag actor={actor} flag="is_protected">
             Protected
@@ -311,7 +314,7 @@ function ActorDetails({ actor }: { actor: Actor }) {
   const applied_effects = getAppliedEffects(game, actor)
 
   return (
-    <div className="grid grid-cols-3 gap-3 max-w-4xl">
+    <div className="grid grid-cols-3 gap-4 max-w-4xl">
       <div className="flex min-w-0 flex-col gap-4">
         <ActorCharacter actor={actor} />
         <ActorState actor={actor} applied_effects={applied_effects} />

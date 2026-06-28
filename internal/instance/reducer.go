@@ -33,7 +33,7 @@ func getTargets(instance *Instance, request Request) int {
 	context.ClearTargets()
 	actors := instance.Game.State().Actors
 	for _, actor := range actors {
-		if action.TargetsPredicate(instance.Game, actor, request.Context) {
+		if action.TargetsPredicate(instance.Game, actor, request.Context) && actor.Targetable() {
 			context.AddTarget(actor)
 		}
 	}
