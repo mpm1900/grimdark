@@ -9,6 +9,8 @@ import (
 
 type ActorState string
 type ActorStatus string
+type ActorRace string
+type ActorFaction string
 
 const (
 	StateGrounded ActorState = "grounded"
@@ -19,12 +21,22 @@ const (
 	StatusBurned ActorStatus = "burned"
 )
 
+const (
+	RaceHuman ActorRace = "human"
+)
+
+const (
+	FactionImperium ActorFaction = "imperium"
+)
+
 type ActorDef struct {
 	ID         uuid.UUID
-	Name       string
 	Affinities map[Affinity]struct{}
-	Stats      map[Stat]float64
 	Effects    []Effect
+	Faction    ActorFaction
+	Name       string
+	Race       ActorRace
+	Stats      map[Stat]float64
 }
 
 type ActorMeta struct {
@@ -66,6 +78,8 @@ type Actor struct {
 type actorJSON struct {
 	ID                 uuid.UUID        `json:"ID"`
 	Name               string           `json:"name"`
+	Race               ActorRace        `json:"race"`
+	Faction            ActorFaction     `json:"faction"`
 	Level              int              `json:"level"`
 	PlayerID           uuid.UUID        `json:"player_ID"`
 	PositionID         *uuid.UUID       `json:"position_ID"`
@@ -95,6 +109,8 @@ func NewActorDef() ActorDef {
 	return ActorDef{
 		ID:         uuid.New(),
 		Name:       "",
+		Race:       RaceHuman,
+		Faction:    FactionImperium,
 		Affinities: map[Affinity]struct{}{},
 		Stats: map[Stat]float64{
 			Health:         100,
@@ -106,6 +122,8 @@ func NewActorDef() ActorDef {
 			SpecialDefense: 100,
 			Accuracy:       1,
 			Evasion:        1,
+			CriticalChance: 1,
+			CriticalDamage: 1,
 		},
 		Effects: []Effect{},
 	}
@@ -114,10 +132,12 @@ func NewActorDef() ActorDef {
 func (d ActorDef) Clone() ActorDef {
 	return ActorDef{
 		ID:         d.ID,
-		Name:       d.Name,
 		Affinities: maps.Clone(d.Affinities),
-		Stats:      maps.Clone(d.Stats),
 		Effects:    slices.Clone(d.Effects),
+		Faction:    d.Faction,
+		Name:       d.Name,
+		Race:       d.Race,
+		Stats:      maps.Clone(d.Stats),
 	}
 }
 
@@ -221,8 +241,8 @@ func (a *Actor) mapBaseStats() {
 	a.UnmodifiedStats = maps.Clone(a.Stats)
 
 	for stat, _ := range a.Stats {
-		// accuracy and evasion are un-mapped
-		if stat == Accuracy || stat == Evasion {
+		// accuracy, evasion, crits, etc are un-mapped
+		if stat == Accuracy || stat == Evasion || stat == CriticalChance || stat == CriticalDamage {
 			continue
 		}
 
@@ -349,13 +369,13 @@ func (a Actor) ToJSON(g Game) actorJSON {
 	active_modifiers := slices.Collect(maps.Keys(g.AppliedModifiers(a.ID)))
 
 	for stat, v := range a.Stats {
-		if stat == Accuracy || stat == Evasion {
+		if stat == Accuracy || stat == Evasion || stat == CriticalChance || stat == CriticalDamage {
 			v = v * 100
 		}
 		stats[stat] = int(v)
 	}
 	for stat, v := range a.UnmodifiedStats {
-		if stat == Accuracy || stat == Evasion {
+		if stat == Accuracy || stat == Evasion || stat == CriticalChance || stat == CriticalDamage {
 			v = v * 100
 		}
 		unmodified_stats[stat] = int(v)
@@ -397,6 +417,8 @@ func (a Actor) ToJSON(g Game) actorJSON {
 	return actorJSON{
 		ID:                 a.ID,
 		Name:               a.Name,
+		Faction:            a.Faction,
+		Race:               a.Race,
 		Level:              a.Level,
 		PlayerID:           a.PlayerID,
 		PositionID:         NilifyUUID(a.PositionID),

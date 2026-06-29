@@ -22,6 +22,8 @@ export type Stat =
   | 'special-defense'
   | 'accuracy'
   | 'evasion'
+  | 'critical-chance'
+  | 'critical-damage'
 
 export type Phase = 'init' | 'start' | 'main' | 'end' | 'cleanup'
 
@@ -43,6 +45,7 @@ export const ALL_STATS: Stat[] = [
   'speed',
   'accuracy',
   'evasion',
+  'critical-chance',
 ]
 
 export const MAIN_STATS: Stat[] = [
@@ -54,10 +57,9 @@ export const MAIN_STATS: Stat[] = [
   'speed',
 ]
 
-export const ACCURACY_STATS: Stat[] = [
-  'accuracy',
-  'evasion',
-]
+export const ACCURACY_STATS: Stat[] = ['accuracy', 'evasion']
+
+export const CRITICAL_STATS: Stat[] = ['critical-chance', 'critical-damage']
 
 export const AFFINITIES: Affinity[] = [
   'arcane',

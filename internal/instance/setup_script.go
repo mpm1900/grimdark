@@ -13,6 +13,8 @@ import (
 func SetupGame(g *game.Game, player_ID uuid.UUID) {
 	effect := game.EffectSource(game.EffectPriorityStages, func(g game.Game, a game.Actor, ctx game.Context) game.Actor {
 		a.Stages[game.Accuracy] = a.Stages[game.Accuracy] + 1
+		a.Stages[game.CriticalChance] = a.Stages[game.CriticalChance] + 1
+		a.Stages[game.CriticalDamage] = a.Stages[game.CriticalDamage] - 1
 		a.AffinityResistance[game.Kinetic] += 1
 		return a
 	})

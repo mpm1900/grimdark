@@ -98,10 +98,12 @@ func NewGame() Game {
 			builder.Mod = 3
 			accuracy := builder.Resolve(Accuracy, a.Stats[Accuracy])
 			evasion := builder.Resolve(Evasion, a.Stats[Evasion])
+			crit_damage := builder.Resolve(CriticalDamage, a.Stats[CriticalDamage])
 
 			a.Stats = stats
 			a.Stats[Accuracy] = accuracy
 			a.Stats[Evasion] = evasion
+			a.Stats[CriticalDamage] = crit_damage
 
 			return a
 		}).Bind(NewContext()),
@@ -282,6 +284,13 @@ func (g *Game) AddModifiers(modifiers ...Modifier) {
 				continue
 			}
 		}
+	})
+}
+func (g *Game) RemoveModifiers(where Filter[Modifier], ctx Context) {
+	g.mutate(func(s *State) {
+		s.Modifiers = slices.DeleteFunc(s.Modifiers, func(m Modifier) bool {
+			return where(*g, m, ctx)
+		})
 	})
 }
 func (g *Game) PushCommand(command Command) {

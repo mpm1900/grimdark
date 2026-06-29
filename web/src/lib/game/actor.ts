@@ -12,6 +12,7 @@ export type Actor = {
   affinity_resistance: Record<Affinity, number>
   augment: string
   effects: Array<Effect>
+  faction: string
   is_active: boolean
   is_alive: boolean
   is_hidden: boolean
@@ -22,6 +23,7 @@ export type Actor = {
   name: string
   player_ID: ID
   position_ID: ID | null
+  race: string
   stages: Record<Stat, number>
   state: string
   stats: Record<Stat, number>

@@ -38,3 +38,22 @@ func MapStage(stage int, mod, input float64) float64 {
 	}
 	return input
 }
+
+func Factorial(n int) int {
+	var result int = 1
+	for i := 1; i <= n; i++ {
+		result *= i
+	}
+	return result
+}
+
+func GetCriticalChance(stage int) float64 {
+	if stage > 3 {
+		stage = 3
+	}
+	if stage < -3 {
+		return -3
+	}
+
+	return 1.0 / float64(Factorial(4-stage))
+}

@@ -12,6 +12,8 @@ const (
 	SpecialDefense Stat = "special-defense"
 	Accuracy       Stat = "accuracy"
 	Evasion        Stat = "evasion"
+	CriticalChance Stat = "critical-chance"
+	CriticalDamage Stat = "critical-damage"
 )
 
 var statDefenses map[Stat]Stat = map[Stat]Stat{

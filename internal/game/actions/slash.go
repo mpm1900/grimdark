@@ -17,7 +17,7 @@ var Slash = game.Action{
 		Power:        70,
 		Lifesteal:    0.12,
 		Hits:         1,
-		CritChance:   0.05,
+		CritChance:   0,
 		CritModifier: 1.5,
 	},
 	IsActive: true,

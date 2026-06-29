@@ -1,9 +1,15 @@
 import type { Actor } from '#/lib/game/actor'
-import { AFFINITIES, mapStage, type Stat, MAIN_STATS, ACCURACY_STATS } from '#/lib/game/core'
+import {
+  AFFINITIES,
+  mapStage,
+  type Stat,
+  MAIN_STATS,
+  ACCURACY_STATS,
+  CRITICAL_STATS,
+} from '#/lib/game/core'
 import { ActorFlag } from './actor-flag'
 import { AffinityName } from './affinity-name'
 import { HealthBar } from './health-bar'
-import { AspectRatio } from './ui/aspect-ratio'
 import { Badge } from './ui/badge'
 import { Field, FieldContent, FieldLabel } from './ui/field'
 import { Marker, MarkerContent } from './ui/marker'
@@ -18,10 +24,11 @@ import { ActionContextDialog } from './action-context-dialog'
 import { DialogTrigger } from './ui/dialog'
 import { ActionButton } from './action-button'
 import { StatValue } from './stat-value'
-import { cn } from '#/lib/utils'
+import { cn, sign } from '#/lib/utils'
 import { getAppliedEffects } from '#/lib/game/game'
 import { useSelector } from '@tanstack/react-store'
 import { gameStore } from '#/lib/stores/game'
+import { StatName } from './stat-name'
 
 function MainStatRow({ actor, stat }: { actor: Actor; stat: Stat }) {
   const stage = actor.stages[stat]
@@ -29,14 +36,16 @@ function MainStatRow({ actor, stat }: { actor: Actor; stat: Stat }) {
   const mult = mapStage(stage, mod, 1)
   return (
     <TableRow>
-      <TableCell className="capitalize">{stat}</TableCell>
+      <TableCell className="capitalize">
+        <StatName stat={stat}>{stat}</StatName>
+      </TableCell>
       <TableCell className="text-end">
         <StatValue actor={actor} stat={stat} />
       </TableCell>
       <TableCell className="text-end">
         {stage != 0 && <span>{stage}</span>}
       </TableCell>
-      <TableCell className='text-end'>
+      <TableCell className="text-end">
         {stage != 0 && (
           <span className={cn(mult === 1 && 'opacity-45')}>
             x{mult.toFixed(2)}
@@ -54,12 +63,16 @@ function AccuracyStatRow({ actor, stat }: { actor: Actor; stat: Stat }) {
     <TableRow>
       <TableCell className="capitalize">{stat}</TableCell>
       <TableCell className="text-end">
-        <StatValue actor={actor} stat={stat} map={v => `x${(v / 100).toFixed(2)}`} />
+        <StatValue
+          actor={actor}
+          stat={stat}
+          map={(v) => `x${(v / 100).toFixed(2)}`}
+        />
       </TableCell>
       <TableCell className="text-end">
         {stage != 0 && <span>{stage}</span>}
       </TableCell>
-      <TableCell className='text-end'>
+      <TableCell className="text-end">
         {stage != 0 && (
           <span className={cn(mult === 1 && 'opacity-45')}>
             x{mult.toFixed(2)}
@@ -69,17 +82,44 @@ function AccuracyStatRow({ actor, stat }: { actor: Actor; stat: Stat }) {
     </TableRow>
   )
 }
+function CriticalStatRow({ actor, stat }: { actor: Actor; stat: Stat }) {
+  const stage = actor.stages[stat]
+  return (
+    <TableRow>
+      <TableCell className="capitalize">{stat}</TableCell>
+      <TableCell className="text-end">
+        <span
+          className={cn({
+            'text-green-400': stage > 0,
+            'text-red-400': stage < 0,
+            'opacity-45': stage === 0,
+          })}
+        >
+          {sign(stage)}
+          {stage}
+        </span>
+      </TableCell>
+      <TableCell className="text-end">
+        {stage != 0 && <span>{stage}</span>}
+      </TableCell>
+      <TableCell className="text-end">
+        <span className="opacity-45">--</span>
+      </TableCell>
+    </TableRow>
+  )
+}
 function StatsTable({ actor }: { actor: Actor }) {
   return (
     <Table>
       <TableBody>
-        {MAIN_STATS.filter((s) => s !== 'health').map((stat) => (
+        {MAIN_STATS.map((stat) => (
           <MainStatRow key={stat} actor={actor} stat={stat} />
         ))}
-        {ACCURACY_STATS.filter((s) => s !== 'health').map((stat) => (
+        {ACCURACY_STATS.map((stat) => (
           <AccuracyStatRow key={stat} actor={actor} stat={stat} />
         ))}
-
+        <CriticalStatRow actor={actor} stat="critical-chance" />
+        <AccuracyStatRow actor={actor} stat="critical-damage" />
       </TableBody>
     </Table>
   )
@@ -94,10 +134,10 @@ function AffinityDamageTable({ actor }: { actor: Actor }) {
             <TableCell>
               <AffinityName affinity={affinity} />
             </TableCell>
-            <TableCell className='text-end'>
+            <TableCell className="text-end">
               <AffinityDamageValue actor={actor} affinity={affinity} />
             </TableCell>
-            <TableCell className='text-end'>
+            <TableCell className="text-end">
               <AffinityMultiplier value={actor.affinity_damage[affinity]} />
             </TableCell>
           </TableRow>
@@ -115,10 +155,10 @@ function AffinityResistanceTable({ actor }: { actor: Actor }) {
             <TableCell>
               <AffinityName affinity={affinity} />
             </TableCell>
-            <TableCell className='text-end'>
+            <TableCell className="text-end">
               <AffinityResistanceValue actor={actor} affinity={affinity} />
             </TableCell>
-            <TableCell className='text-end'>
+            <TableCell className="text-end">
               <AffinityMultiplier
                 value={actor.affinity_resistance[affinity] * -1}
               />
@@ -132,7 +172,7 @@ function AffinityResistanceTable({ actor }: { actor: Actor }) {
 
 function ActorCharacter({ actor }: { actor: Actor }) {
   return (
-    <div className="flex flex-col gap-2">
+    <div className="flex flex-col gap-4">
       <Field>
         <FieldLabel>
           <Marker variant="separator">
@@ -151,7 +191,32 @@ function ActorCharacter({ actor }: { actor: Actor }) {
       <div>
         <HealthBar type="value" actor={actor} />
       </div>
-      <AspectRatio ratio={16 / 9} className="rounded-lg bg-muted" />
+      <div className="flex flex-col gap-4">
+        <div className="grid grid-cols-2 text-sm">
+          <Field>
+            <FieldLabel className="text-muted-foreground">Race</FieldLabel>
+            <FieldContent className="capitalize">{actor.race}</FieldContent>
+          </Field>
+          <Field>
+            <FieldLabel className="text-muted-foreground">Faction</FieldLabel>
+            <FieldContent className="capitalize">{actor.faction}</FieldContent>
+          </Field>
+        </div>
+        <div className="grid grid-cols-3 text-sm">
+          <Field>
+            <FieldLabel className="text-muted-foreground">Class</FieldLabel>
+            <FieldContent className="capitalize">--</FieldContent>
+          </Field>
+          <Field>
+            <FieldLabel className="text-muted-foreground">Subclass</FieldLabel>
+            <FieldContent className="capitalize">--</FieldContent>
+          </Field>
+          <Field>
+            <FieldLabel className="text-muted-foreground">Augment</FieldLabel>
+            <FieldContent className="capitalize">{actor.augment}</FieldContent>
+          </Field>
+        </div>
+      </div>
     </div>
   )
 }
@@ -164,63 +229,43 @@ function ActorState({
 }) {
   return (
     <div className="flex flex-col gap-4">
-      <div className="grid grid-cols-3 text-xs">
-        <Field>
-          <FieldLabel>
-            <Marker variant="separator">
-              <MarkerContent>Augment</MarkerContent>
-            </Marker>
-          </FieldLabel>
-          <FieldContent className="text-center capitalize">
-            {actor.augment}
-          </FieldContent>
-        </Field>
-        <Field>
-          <FieldLabel>
-            <Marker variant="separator">
-              <MarkerContent>State</MarkerContent>
-            </Marker>
-          </FieldLabel>
-          <FieldContent className="text-center capitalize">
-            {actor.state}
-          </FieldContent>
-        </Field>
-        <Field>
-          <FieldLabel>
-            <Marker variant="separator">
-              <MarkerContent>Status</MarkerContent>
-            </Marker>
-          </FieldLabel>
-          <FieldContent className="text-center capitalize">
-            {actor.status}
-          </FieldContent>
-        </Field>
-      </div>
       <Field>
         <FieldLabel>
           <Marker variant="separator">
             <MarkerContent>Flags</MarkerContent>
           </Marker>
         </FieldLabel>
-        <FieldContent className="flex-row flex-wrap gap-2 min-w-0">
-          <ActorFlag actor={actor} flag="is_active">
-            Active
-          </ActorFlag>
-          <ActorFlag actor={actor} flag="is_alive">
-            Alive
-          </ActorFlag>
-          <ActorFlag actor={actor} flag="is_hidden">
-            Hidden
-          </ActorFlag>
-          <ActorFlag actor={actor} flag="is_protected">
-            Protected
-          </ActorFlag>
-          <ActorFlag actor={actor} flag="is_staggered">
-            Staggered
-          </ActorFlag>
-          <ActorFlag actor={actor} flag="is_stunned">
-            Stunned
-          </ActorFlag>
+        <FieldContent className="flex flex-col gap-4">
+          <div className="grid grid-cols-2 text-sm">
+            <Field>
+              <FieldLabel className="text-muted-foreground">State</FieldLabel>
+              <FieldContent className="capitalize">{actor.state}</FieldContent>
+            </Field>
+            <Field>
+              <FieldLabel className="text-muted-foreground">Status</FieldLabel>
+              <FieldContent className="capitalize">{actor.status}</FieldContent>
+            </Field>
+          </div>
+          <div className="flex flex-row flex-wrap gap-2 min-w-0">
+            <ActorFlag actor={actor} flag="is_active">
+              Active
+            </ActorFlag>
+            <ActorFlag actor={actor} flag="is_alive">
+              Alive
+            </ActorFlag>
+            <ActorFlag actor={actor} flag="is_hidden">
+              Hidden
+            </ActorFlag>
+            <ActorFlag actor={actor} flag="is_protected">
+              Protected
+            </ActorFlag>
+            <ActorFlag actor={actor} flag="is_staggered">
+              Staggered
+            </ActorFlag>
+            <ActorFlag actor={actor} flag="is_stunned">
+              Stunned
+            </ActorFlag>
+          </div>
         </FieldContent>
       </Field>
       <Field>

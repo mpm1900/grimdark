@@ -59,7 +59,9 @@ func (ac ActionConfig) GetAccuracy(source, target Actor, useBaseStats bool) floa
 func (ac ActionConfig) GetAccuracyResult(source, target Actor) AccuracyResult {
 	accuracy_roll := rand.Float64()
 	critical_roll := rand.Float64()
-	critical := ac.CritChance > critical_roll
+	critical_stage := int(ac.CritChance) + source.Stages[CriticalChance]
+	critical_chance := GetCriticalChance(critical_stage)
+	critical := critical_chance > critical_roll
 
 	accuracy := ac.GetAccuracy(source, target, critical)
 	success := ac.Accuracy == nil || accuracy > accuracy_roll

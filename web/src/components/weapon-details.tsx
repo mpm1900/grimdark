@@ -1,10 +1,8 @@
 import type { Stat } from '#/lib/game/core'
 import type { Weapon } from '#/lib/game/weapon'
-import { cn } from '#/lib/utils'
+import { cn, sign } from '#/lib/utils'
 import { entries } from '#/utils/maps'
 import { Item, ItemContent, ItemDescription, ItemTitle } from './ui/item'
-
-const sign = (v: number) => (v > 0 ? '+' : '-')
 
 function InlineAuxStats({
   aux_stats,
