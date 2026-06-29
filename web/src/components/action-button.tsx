@@ -24,7 +24,7 @@ function ActionButton({
       <Button
         {...props}
         variant="outline"
-        className="h-auto"
+        className="h-auto gap-2"
         disabled={action.is_disabled || !actor.is_active}
       >
         {action.config.affinity && (
@@ -73,6 +73,7 @@ function ActionButton({
                     </span>
                   </span>
                 )}
+                <span>...</span>
               </span>
             )}
           </ItemDescription>

@@ -6,9 +6,14 @@ function StatValue({
   actor,
   stat,
   className,
+  children,
   map,
   ...props
-}: React.ComponentProps<'span'> & { actor: Actor; stat: Stat; map?: (v: number) => string }) {
+}: React.ComponentProps<'span'> & {
+  actor: Actor
+  stat: Stat
+  map?: (v: number) => string
+}) {
   const value = actor.stats[stat]
   const unmodified = actor.unmodified_stats[stat]
   return (
@@ -22,7 +27,7 @@ function StatValue({
         className
       )}
     >
-      {map ? map(value) : value}
+      {children}
     </span>
   )
 }

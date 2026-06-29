@@ -14,7 +14,7 @@ func StatChangeSourceOnSuccess(g *game.Game, this game.Effect, ctx game.Context)
 	}
 
 	g.PushLog(game.NewLog(
-		"$source$ gained $effect$",
+		"$source$ gained $effect$.",
 		map[string]string{
 			"$source$": source.Name,
 			"$effect$": this.Name,
@@ -25,7 +25,7 @@ func StatChangeTargetsOnSuccess(g *game.Game, this game.Effect, ctx game.Context
 	targets := g.GetTargets(ctx)
 	for _, target := range targets {
 		g.PushLog(game.NewLog(
-			"$target$ gained $effect$",
+			"$target$ gained $effect$.",
 			map[string]string{
 				"$target$": target.Name,
 				"$effect$": this.Name,

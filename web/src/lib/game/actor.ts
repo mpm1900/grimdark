@@ -10,6 +10,7 @@ export type Actor = {
   affinities: Array<Affinity>
   affinity_damage: Record<Affinity, number>
   affinity_resistance: Record<Affinity, number>
+  affinity_immunities: Partial<Record<Affinity, number>>
   augment: string
   effects: Array<Effect>
   faction: string

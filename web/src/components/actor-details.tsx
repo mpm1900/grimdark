@@ -15,8 +15,9 @@ import { Field, FieldContent, FieldLabel } from './ui/field'
 import { Marker, MarkerContent } from './ui/marker'
 import { Table, TableBody, TableCell, TableRow } from './ui/table'
 import {
+  AffinityDamageMultiplier,
   AffinityDamageValue,
-  AffinityMultiplier,
+  AffinityResistanceMultiplier,
   AffinityResistanceValue,
 } from './affinity-value'
 import { WeaponDetails } from './weapon-details'
@@ -40,10 +41,16 @@ function MainStatRow({ actor, stat }: { actor: Actor; stat: Stat }) {
         <StatName stat={stat}>{stat}</StatName>
       </TableCell>
       <TableCell className="text-end">
-        <StatValue actor={actor} stat={stat} />
+        <StatValue actor={actor} stat={stat}>
+          {actor.stats[stat]}
+        </StatValue>
       </TableCell>
       <TableCell className="text-end">
-        {stage != 0 && <span>{stage}</span>}
+        {stage != 0 && (
+          <StatValue actor={actor} stat={stat}>
+            {stage}
+          </StatValue>
+        )}
       </TableCell>
       <TableCell className="text-end">
         {stage != 0 && (
@@ -63,14 +70,16 @@ function AccuracyStatRow({ actor, stat }: { actor: Actor; stat: Stat }) {
     <TableRow>
       <TableCell className="capitalize">{stat}</TableCell>
       <TableCell className="text-end">
-        <StatValue
-          actor={actor}
-          stat={stat}
-          map={(v) => `x${(v / 100).toFixed(2)}`}
-        />
+        <StatValue actor={actor} stat={stat}>
+          x{(actor.stats[stat] / 100).toFixed(2)}
+        </StatValue>
       </TableCell>
       <TableCell className="text-end">
-        {stage != 0 && <span>{stage}</span>}
+        {stage != 0 && (
+          <StatValue actor={actor} stat={stat}>
+            {stage}
+          </StatValue>
+        )}
       </TableCell>
       <TableCell className="text-end">
         {stage != 0 && (
@@ -100,7 +109,17 @@ function CriticalStatRow({ actor, stat }: { actor: Actor; stat: Stat }) {
         </span>
       </TableCell>
       <TableCell className="text-end">
-        {stage != 0 && <span>{stage}</span>}
+        {stage != 0 && (
+          <span
+            className={cn({
+              'text-green-400': stage > 0,
+              'text-red-400': stage < 0,
+              'opacity-45': stage === 0,
+            })}
+          >
+            {stage}
+          </span>
+        )}
       </TableCell>
       <TableCell className="text-end">
         <span className="opacity-45">--</span>
@@ -138,7 +157,7 @@ function AffinityDamageTable({ actor }: { actor: Actor }) {
               <AffinityDamageValue actor={actor} affinity={affinity} />
             </TableCell>
             <TableCell className="text-end">
-              <AffinityMultiplier value={actor.affinity_damage[affinity]} />
+              <AffinityDamageMultiplier actor={actor} affinity={affinity} />
             </TableCell>
           </TableRow>
         ))}
@@ -159,7 +178,9 @@ function AffinityResistanceTable({ actor }: { actor: Actor }) {
               <AffinityResistanceValue actor={actor} affinity={affinity} />
             </TableCell>
             <TableCell className="text-end">
-              <AffinityMultiplier
+              <AffinityResistanceMultiplier
+                actor={actor}
+                affinity={affinity}
                 value={actor.affinity_resistance[affinity] * -1}
               />
             </TableCell>
@@ -333,7 +354,7 @@ function ActorWeaponsAndActions({ actor }: { actor: Actor }) {
       <Field>
         <FieldLabel>
           <Marker variant="separator">
-            <MarkerContent>Weapon</MarkerContent>
+            <MarkerContent>Weapon(s)</MarkerContent>
           </Marker>
         </FieldLabel>
         <FieldContent>

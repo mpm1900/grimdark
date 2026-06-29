@@ -13,18 +13,21 @@ function AffinityResistanceValue({
   className,
   ...props
 }: React.ComponentProps<'span'> & { actor: Actor; affinity: Affinity }) {
+  const immunity = actor.affinity_immunities[affinity]
   const value = actor.affinity_resistance[affinity]
   const unmodified = getBaseAffinityResistance(actor, affinity)
+  console.log(value, unmodified)
 
   return (
     <span
       className={cn({
         'text-green-400': value > unmodified,
         'text-red-400': value < unmodified,
+        'text-amber-400': immunity !== undefined,
       })}
       {...props}
     >
-      {value}
+      {immunity !== undefined ? '∞' : value}
     </span>
   )
 }
@@ -52,17 +55,65 @@ function AffinityDamageValue({
   )
 }
 
-function AffinityMultiplier({
+function AffinityResistanceMultiplier({
+  actor,
+  affinity,
   value,
   className,
   ...props
-}: React.ComponentProps<'span'> & { value: number }) {
+}: React.ComponentProps<'span'> & {
+  actor: Actor
+  affinity: Affinity
+  value: number
+}) {
+  const immunity = actor.affinity_immunities[affinity]
   const mult = mapStage(value, 2, 1)
   return (
-    <span {...props} className={cn(mult === 1 && 'opacity-45', className)}>
+    <span
+      {...props}
+      className={cn(mult === 1 && !immunity && 'opacity-45', className)}
+    >
+      {immunity !== undefined ? (
+        <span
+          className={cn({
+            'text-green-400': immunity > 0,
+            'text-red-400': immunity < 0,
+          })}
+        >
+          x{immunity.toFixed(2)}
+        </span>
+      ) : (
+        <span>x{mult.toFixed(2)}</span>
+      )}
+    </span>
+  )
+}
+
+function AffinityDamageMultiplier({
+  actor,
+  affinity,
+  className,
+  ...props
+}: React.ComponentProps<'span'> & {
+  actor: Actor
+  affinity: Affinity
+}) {
+  const mult = mapStage(actor.affinity_damage[affinity], 2, 1)
+  return (
+    <span
+      {...props}
+      className={cn({
+        'opacity-45': mult === 1,
+      })}
+    >
       x{mult.toFixed(2)}
     </span>
   )
 }
 
-export { AffinityResistanceValue, AffinityDamageValue, AffinityMultiplier }
+export {
+  AffinityResistanceValue,
+  AffinityDamageValue,
+  AffinityResistanceMultiplier,
+  AffinityDamageMultiplier,
+}
