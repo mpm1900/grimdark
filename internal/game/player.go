@@ -4,40 +4,78 @@ import (
 	"github.com/google/uuid"
 )
 
+type PlayerPosition struct {
+	ID      uuid.UUID `json:"ID"`
+	ActorID uuid.UUID `json:"actor_ID"`
+}
+
 type Player struct {
-	ID        uuid.UUID               `json:"ID"`
-	User      User                    `json:"user"`
-	Positions map[uuid.UUID]uuid.UUID `json:"positions"`
+	ID        uuid.UUID        `json:"ID"`
+	User      User             `json:"user"`
+	Positions []PlayerPosition `json:"positions"`
 }
 
 func NewPlayer() Player {
 	return Player{
 		ID: uuid.New(),
-		Positions: map[uuid.UUID]uuid.UUID{
-			uuid.New(): uuid.Nil,
-			uuid.New(): uuid.Nil,
+		Positions: []PlayerPosition{
+			{
+				ID:      uuid.New(),
+				ActorID: uuid.Nil,
+			},
+			{
+				ID:      uuid.New(),
+				ActorID: uuid.Nil,
+			},
 		},
 	}
 }
 
 func (p Player) GetOpenPositions() []uuid.UUID {
 	positions := []uuid.UUID{}
-	for pos, actor_id := range p.Positions {
-		if actor_id == uuid.Nil {
-			positions = append(positions, pos)
+	for _, pos := range p.Positions {
+		if pos.ActorID == uuid.Nil {
+			positions = append(positions, pos.ID)
 		}
 	}
 
 	return positions
 }
+func (p Player) GetPosition(position_id uuid.UUID) (PlayerPosition, bool) {
+	for _, pos := range p.Positions {
+		if pos.ID == position_id {
+			return pos, true
+		}
+	}
 
+	return PlayerPosition{}, false
+}
+
+func (p *Player) UpdatePositions(where func(PlayerPosition) bool, updater func(PlayerPosition) PlayerPosition) {
+	for i, pos := range p.Positions {
+		if where(pos) {
+			p.Positions[i] = updater(pos)
+		}
+	}
+}
+func (p *Player) UpdatePosition(position_id uuid.UUID, updater func(PlayerPosition) PlayerPosition) {
+	p.UpdatePositions(func(pp PlayerPosition) bool {
+		return pp.ID == position_id
+	}, updater)
+}
+func (p *Player) UpdatePositionActor(position_id uuid.UUID, actor_id uuid.UUID) {
+	p.UpdatePosition(position_id, func(pp PlayerPosition) PlayerPosition {
+		pp.ActorID = actor_id
+		return pp
+	})
+}
 func (p *Player) SetPosition(position_id uuid.UUID, actor Actor) (uuid.UUID, bool) {
 	var evicted_id uuid.UUID
 	updated := false
 
-	for pos, actor_id := range p.Positions {
-		if actor_id == actor.ID && pos != position_id {
-			p.Positions[pos] = uuid.Nil
+	for _, pos := range p.Positions {
+		if pos.ActorID == actor.ID && pos.ID != position_id {
+			p.UpdatePositionActor(pos.ID, uuid.Nil)
 			updated = true
 		}
 	}
@@ -46,15 +84,15 @@ func (p *Player) SetPosition(position_id uuid.UUID, actor Actor) (uuid.UUID, boo
 		return evicted_id, updated || actor.IsActive()
 	}
 
-	current_id, ok := p.Positions[position_id]
+	current, ok := p.GetPosition(position_id)
 	if !ok {
 		return evicted_id, false
 	}
 
-	if current_id != uuid.Nil && current_id != actor.ID {
-		evicted_id = current_id
+	if current.ActorID != uuid.Nil && current.ActorID != actor.ID {
+		evicted_id = current.ActorID
 	}
 
-	p.Positions[position_id] = actor.ID
+	p.UpdatePositionActor(position_id, actor.ID)
 	return evicted_id, true
 }

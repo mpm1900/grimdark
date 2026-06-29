@@ -202,13 +202,25 @@ func (g *Game) GetTargets(context Context) []Actor {
 
 	return actors
 }
-func (g *Game) HydrateToCommand(context Context) (Command, bool) {
-	source, ok := g.GetSource(context)
-	if !ok {
-		return Command{}, false
+func (g *Game) FindAction(context Context) (Action, bool) {
+	actor, actor_ok := g.GetSource(context)
+	if actor_ok {
+		action, action_ok := actor.GetActionByID(context.ActionID)
+		if action_ok {
+			return action, true
+		}
 	}
 
-	action, ok := source.GetActionByID(context.ActionID)
+	for _, global_action := range GLOBAL_ACTIONS {
+		if global_action.ID == context.ActionID {
+			return global_action, true
+		}
+	}
+
+	return Action{}, false
+}
+func (g *Game) HydrateToCommand(context Context) (Command, bool) {
+	action, ok := g.FindAction(context)
 	if !ok {
 		return Command{}, false
 	}

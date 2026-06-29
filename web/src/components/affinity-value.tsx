@@ -16,7 +16,6 @@ function AffinityResistanceValue({
   const immunity = actor.affinity_immunities[affinity]
   const value = actor.affinity_resistance[affinity]
   const unmodified = getBaseAffinityResistance(actor, affinity)
-  console.log(value, unmodified)
 
   return (
     <span

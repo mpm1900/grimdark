@@ -4,26 +4,8 @@ import (
 	"grimdark/internal/game"
 )
 
-func findAction(g *game.Game, request Request) (game.Action, bool) {
-	actor, actor_ok := g.GetSource(request.Context)
-	if actor_ok {
-		action, action_ok := actor.GetActionByID(request.Context.ActionID)
-		if action_ok {
-			return action, true
-		}
-	}
-
-	for _, global_action := range game.GLOBAL_ACTIONS {
-		if global_action.ID == request.Context.ActionID {
-			return global_action, true
-		}
-	}
-
-	return game.Action{}, false
-}
-
 func getTargets(instance *Instance, request Request) int {
-	action, ok := findAction(&instance.Game, request)
+	action, ok := instance.Game.FindAction(request.Context)
 	if !ok {
 		instance.TargetIDsResponse(request.ClientID, request.Context)
 		return none
@@ -43,7 +25,7 @@ func getTargets(instance *Instance, request Request) int {
 }
 
 func validateContext(instance *Instance, request Request) int {
-	action, ok := findAction(&instance.Game, request)
+	action, ok := instance.Game.FindAction(request.Context)
 	if !ok {
 		instance.ValidateContextResponse(request.ClientID, request.Context, false)
 		return none

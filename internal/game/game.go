@@ -4,6 +4,7 @@ import (
 	"cmp"
 	"encoding/json"
 	"fmt"
+	"math"
 	"math/rand/v2"
 	"slices"
 
@@ -221,6 +222,31 @@ func (g *Game) GetActionableActors() []Actor {
 		AliveActors,
 		NonStunnedActors,
 	), NewContext())
+}
+func (g *Game) GetDistance(position_a uuid.UUID, position_b uuid.UUID) (int, bool) {
+	positions := []PlayerPosition{}
+	for i, player := range g.State().Players {
+		if i%2 == 1 {
+			positions = append(positions, player.Positions...)
+		} else {
+			pp := slices.Clone(player.Positions)
+			slices.Reverse(pp)
+			positions = append(positions, pp...)
+		}
+	}
+
+	index_a := slices.IndexFunc(positions, func(p PlayerPosition) bool {
+		return p.ID == position_a
+	})
+	index_b := slices.IndexFunc(positions, func(p PlayerPosition) bool {
+		return p.ID == position_b
+	})
+
+	if index_a == -1 || index_b == -1 {
+		return 0, false
+	}
+
+	return int(math.Abs(float64(index_a - index_b))), true
 }
 func (g *Game) IsReadyToRun() bool {
 	return len(g.State().Commands) == len(g.GetActionableActors())

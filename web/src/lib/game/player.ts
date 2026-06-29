@@ -3,6 +3,9 @@ import type { ID } from './core'
 
 export type Player = {
   ID: ID
-  positions: Record<ID, ID>
+  positions: Array<{
+    ID: ID
+    actor_ID: ID
+  }>
   user: User
 }

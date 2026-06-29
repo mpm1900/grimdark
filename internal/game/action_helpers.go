@@ -1,6 +1,7 @@
 package game
 
 import (
+	"fmt"
 	"math/rand/v2"
 	"strconv"
 
@@ -37,6 +38,9 @@ func BasicAttack(config AttackConfig) ActionResolver {
 			}
 
 			for _, target := range targets {
+				distance, _ := g.GetDistance(this.Source.PositionID, target.PositionID)
+				fmt.Println("distince is ", distance)
+
 				result := this.Action.Config.GetDamageResult(this.Source, target, targets)
 				dmg_ctx := MakeContextFor(this.Source, target)
 

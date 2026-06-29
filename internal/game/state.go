@@ -1,7 +1,6 @@
 package game
 
 import (
-	"maps"
 	"slices"
 
 	"github.com/google/uuid"
@@ -21,7 +20,7 @@ type State struct {
 func (s *State) Clone() State {
 	players := slices.Clone(s.Players)
 	for i := range players {
-		players[i].Positions = maps.Clone(players[i].Positions)
+		players[i].Positions = slices.Clone(players[i].Positions)
 	}
 
 	actors := make([]Actor, len(s.Actors))
