@@ -33,7 +33,7 @@ export type Bindable<T> = {
   payload: T
 }
 
-export const STATS: Stat[] = [
+export const ALL_STATS: Stat[] = [
   'health',
   'melee',
   'ranged',
@@ -41,6 +41,20 @@ export const STATS: Stat[] = [
   'martial-defense',
   'special-defense',
   'speed',
+  'accuracy',
+  'evasion',
+]
+
+export const MAIN_STATS: Stat[] = [
+  'melee',
+  'ranged',
+  'special',
+  'martial-defense',
+  'special-defense',
+  'speed',
+]
+
+export const ACCURACY_STATS: Stat[] = [
   'accuracy',
   'evasion',
 ]

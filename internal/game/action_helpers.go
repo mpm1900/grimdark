@@ -67,6 +67,19 @@ func AddResultEffects(chance float64, effects ...Effect) AttackEffectResult {
 			return
 		}
 
+		_, immune := result.Target.AffinityImmunities[this.Action.Config.Affinity]
+		if immune {
+			this.Push(PushLog(NewLog(
+				"$target$ was immune to $aff$.",
+				map[string]string{
+					"$target$": result.Target.Name,
+					"$aff$":    string(this.Action.Config.Affinity),
+				},
+			)).Bind(context))
+
+			return
+		}
+
 		modifiers := []Modifier{}
 		for _, effect := range effects {
 			modifiers = append(modifiers, effect.Bind(MakeModifierContext(this.Source, result.Target)))
@@ -104,6 +117,16 @@ func PostDamageLogs(result DamageResult, context Context, this *ActionContext) {
 	}
 
 	if !result.Success() {
+		_, immune := result.Target.AffinityImmunities[this.Action.Config.Affinity]
+		if immune {
+			this.Push(PushLog(NewLog(
+				"$target$ was immune to $aff$.",
+				map[string]string{
+					"$target$": result.Target.Name,
+					"$aff$":    string(this.Action.Config.Affinity),
+				},
+			)).Bind(context))
+		}
 		if result.Target.IsProtected {
 			this.Push(PushLog(NewLog(
 				"$target$ was protected.",
@@ -150,10 +173,37 @@ func DamageSideEffects(g *Game, context Context, result DamageResult, this *Acti
 }
 
 // resolvers
-func AddSourceEffects(chance float64, effects ...Effect) ActionResolver {
+func AddSourceEffects(config StatusConfig, chance float64, effects ...Effect) ActionResolver {
 	return func(g *Game, ctx Context, this ActionContext) []Transaction {
 		roll := rand.Float64()
 		if chance <= roll {
+			if config.OnFailureResult != nil {
+				config.OnFailureResult(*g, ctx, &this, AccuracyResult{})
+			}
+			if config.OnFailure != nil {
+				config.OnFailure(*g, ctx, &this)
+			}
+
+			return this.Done()
+		}
+
+		_, immune := this.Source.AffinityImmunities[this.Action.Config.Affinity]
+		if immune {
+			this.Push(PushLog(NewLog(
+				"$target$ was immune to $aff$.",
+				map[string]string{
+					"$target$": this.Source.Name,
+					"$aff$":    string(this.Action.Config.Affinity),
+				},
+			)).Bind(ctx))
+
+			if config.OnFailureResult != nil {
+				config.OnFailureResult(*g, ctx, &this, AccuracyResult{})
+			}
+			if config.OnFailure != nil {
+				config.OnFailure(*g, ctx, &this)
+			}
+
 			return this.Done()
 		}
 
@@ -162,6 +212,12 @@ func AddSourceEffects(chance float64, effects ...Effect) ActionResolver {
 			modifiers[i] = effect.Bind(ctx)
 		}
 		this.Push(AddModifiers(modifiers...).Bind(NewContext()))
+		if config.OnSuccessResult != nil {
+			config.OnSuccessResult(*g, ctx, &this, AccuracyResult{})
+		}
+		if config.OnSuccess != nil {
+			config.OnSuccess(*g, ctx, &this)
+		}
 		return this.Done()
 	}
 }
@@ -172,9 +228,20 @@ func AddTargetsEffects(config StatusConfig, effects ...Effect) ActionResolver {
 		success := false
 		for _, target := range targets {
 			result := this.Action.Config.GetAccuracyResult(this.Source, target)
+			_, immune := target.AffinityImmunities[this.Action.Config.Affinity]
+			if immune {
+				this.Push(PushLog(NewLog(
+					"$target$ was immune to $aff$.",
+					map[string]string{
+						"$target$": target.Name,
+						"$aff$":    string(this.Action.Config.Affinity),
+					},
+				)).Bind(ctx))
+			}
 
-			success = success || result.Success()
-			if result.Success() {
+			result_success := result.Success() && !immune
+			success = success || result_success
+			if result_success {
 				modifiers := make([]Modifier, len(effects))
 				for i, effect := range effects {
 					modifiers[i] = effect.Bind(ctx)
@@ -184,7 +251,7 @@ func AddTargetsEffects(config StatusConfig, effects ...Effect) ActionResolver {
 					config.OnSuccessResult(*g, ctx, &this, result)
 				}
 			}
-			if !result.Success() && config.OnFailureResult != nil {
+			if !result_success && config.OnFailureResult != nil {
 				config.OnFailureResult(*g, ctx, &this, result)
 			}
 		}

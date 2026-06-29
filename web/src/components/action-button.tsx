@@ -36,14 +36,20 @@ function ActionButton({
             {action.config.description || (
               <span className="flex gap-2">
                 {action.config.accuracy && (
-                  <span>Accuracy {action.config.accuracy * 100}%</span>
+                  <span className={cn({
+                    'text-green-400': actor.stats['accuracy'] > 100,
+                    'text-red-400': actor.stats['accuracy'] < 100
+                  })}>{Math.min(action.config.accuracy * 100, 100)}%</span>
+                )}
+                {action.config.stat && (
+                  <span className='capitalize'>{action.config.stat}</span>
                 )}
               </span>
             )}
           </ItemDescription>
         </ItemContent>
         {!!action.config.power && (
-          <ItemActions>
+          <ItemActions className='flex flex-col h-full items-start'>
             <span
               className={cn(
                 'text-xl font-black',

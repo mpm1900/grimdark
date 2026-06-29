@@ -120,9 +120,15 @@ func (c Command) Resolve(g *Game) []Transaction {
 }
 
 func (a Action) ToJSON(g Game, source Actor) actionJSON {
-	return actionJSON{
+	json := actionJSON{
 		ID:         a.ID,
 		Config:     a.Config,
 		IsDisabled: a.Disabled(g, source),
 	}
+
+	if json.Config.Accuracy != nil {
+		acc := *json.Config.Accuracy * source.Stats[Accuracy]
+		json.Config.Accuracy = &acc
+	}
+	return json
 }

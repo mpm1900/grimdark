@@ -16,6 +16,7 @@ var SwordsDance = game.Action{
 	},
 	IsActive: true,
 	Resolve: game.AddSourceEffects(
+		game.StatusConfig{},
 		1,
 		effects.StatUpSource(game.Speed, 1),
 		effects.StatUpSource(game.Melee, 1),

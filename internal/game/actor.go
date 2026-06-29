@@ -221,6 +221,7 @@ func (a *Actor) mapBaseStats() {
 	a.UnmodifiedStats = maps.Clone(a.Stats)
 
 	for stat, _ := range a.Stats {
+		// accuracy and evasion are un-mapped
 		if stat == Accuracy || stat == Evasion {
 			continue
 		}

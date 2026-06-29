@@ -1,5 +1,5 @@
 import type { Actor } from '#/lib/game/actor'
-import { AFFINITIES, mapStage, STATS, type Stat } from '#/lib/game/core'
+import { AFFINITIES, mapStage, type Stat, MAIN_STATS, ACCURACY_STATS } from '#/lib/game/core'
 import { ActorFlag } from './actor-flag'
 import { AffinityName } from './affinity-name'
 import { HealthBar } from './health-bar'
@@ -23,9 +23,9 @@ import { getAppliedEffects } from '#/lib/game/game'
 import { useSelector } from '@tanstack/react-store'
 import { gameStore } from '#/lib/stores/game'
 
-function StatRow({ actor, stat }: { actor: Actor; stat: Stat }) {
+function MainStatRow({ actor, stat }: { actor: Actor; stat: Stat }) {
   const stage = actor.stages[stat]
-  const mod = stat === 'accuracy' || stat === 'evasion' ? 3 : 2
+  const mod = 2
   const mult = mapStage(stage, mod, 1)
   return (
     <TableRow>
@@ -46,13 +46,40 @@ function StatRow({ actor, stat }: { actor: Actor; stat: Stat }) {
     </TableRow>
   )
 }
+function AccuracyStatRow({ actor, stat }: { actor: Actor; stat: Stat }) {
+  const stage = actor.stages[stat]
+  const mod = 3
+  const mult = mapStage(stage, mod, 1)
+  return (
+    <TableRow>
+      <TableCell className="capitalize">{stat}</TableCell>
+      <TableCell className="text-end">
+        <StatValue actor={actor} stat={stat} map={v => `x${(v / 100).toFixed(2)}`} />
+      </TableCell>
+      <TableCell className="text-end">
+        {stage != 0 && <span>{stage}</span>}
+      </TableCell>
+      <TableCell className='text-end'>
+        {stage != 0 && (
+          <span className={cn(mult === 1 && 'opacity-45')}>
+            x{mult.toFixed(2)}
+          </span>
+        )}
+      </TableCell>
+    </TableRow>
+  )
+}
 function StatsTable({ actor }: { actor: Actor }) {
   return (
     <Table>
       <TableBody>
-        {STATS.filter((s) => s !== 'health').map((stat) => (
-          <StatRow key={stat} actor={actor} stat={stat} />
+        {MAIN_STATS.filter((s) => s !== 'health').map((stat) => (
+          <MainStatRow key={stat} actor={actor} stat={stat} />
         ))}
+        {ACCURACY_STATS.filter((s) => s !== 'health').map((stat) => (
+          <AccuracyStatRow key={stat} actor={actor} stat={stat} />
+        ))}
+
       </TableBody>
     </Table>
   )

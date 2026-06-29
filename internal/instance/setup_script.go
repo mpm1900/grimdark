@@ -12,7 +12,7 @@ import (
 
 func SetupGame(g *game.Game, player_ID uuid.UUID) {
 	effect := game.EffectSource(game.EffectPriorityStages, func(g game.Game, a game.Actor, ctx game.Context) game.Actor {
-		a.Stages[game.Evasion] = a.Stages[game.Evasion] + 1
+		a.Stages[game.Accuracy] = a.Stages[game.Accuracy] + 1
 		a.AffinityResistance[game.Kinetic] += 1
 		return a
 	})
@@ -92,6 +92,9 @@ func SetupGame(g *game.Game, player_ID uuid.UUID) {
 		actions.SwordsDance,
 	}
 	katie.Weapon = &weapons.SlashSword
+	katie.AffinityImmunities = map[game.Affinity]float64{
+		game.Kinetic: 0,
+	}
 
 	g.AddActor(max)
 	g.AddActor(katie)
