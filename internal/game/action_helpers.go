@@ -317,6 +317,7 @@ func SwitchWithSource() Action {
 var si_ids map[int]uuid.UUID = map[int]uuid.UUID{
 	1: uuid.MustParse("019f0f7c-9bf6-7bbe-8e88-e5fea98d0930"),
 	2: uuid.MustParse("019f1016-2713-7bff-8435-e958d2f216f0"),
+	3: uuid.MustParse("019f1809-423a-7f2f-9a94-96532636ab4b"),
 }
 
 func SwitchIn(n int) Action {
@@ -350,4 +351,5 @@ var GLOBAL_ACTIONS = []Action{
 	SwitchWithSource(),
 	SwitchIn(1),
 	SwitchIn(2),
+	SwitchIn(3),
 }

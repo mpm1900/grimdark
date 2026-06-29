@@ -34,11 +34,12 @@ function PromptController() {
   const targets_context = targets_query.data ?? NULL_CONTEXT
   const targets = getTargetsFromContext(actors, targets_context)
   const context = useContext(targets_context)
+  const selected_actor_count = context.value.actor_IDs.filter(Boolean).length
   const resolved_context = {
     ...context.value,
     action_ID: prompt?.payload.ID ?? null,
     player_ID: prompt?.context.player_ID ?? null,
-    position_IDs: prompt?.context.position_IDs ?? [],
+    position_IDs: prompt?.context.position_IDs.slice(0, selected_actor_count) ?? [],
   }
   const validate_options = validateContextQuery(resolved_context)
   validate_options.enabled = !!prompt

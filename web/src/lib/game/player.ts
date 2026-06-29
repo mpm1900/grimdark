@@ -6,6 +6,8 @@ export type Player = {
   positions: Array<{
     ID: ID
     actor_ID: ID
+    player_ID: ID
+    rank: number
   }>
   user: User
 }

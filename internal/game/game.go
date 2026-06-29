@@ -4,7 +4,6 @@ import (
 	"cmp"
 	"encoding/json"
 	"fmt"
-	"math"
 	"math/rand/v2"
 	"slices"
 
@@ -223,30 +222,24 @@ func (g *Game) GetActionableActors() []Actor {
 		NonStunnedActors,
 	), NewContext())
 }
-func (g *Game) GetDistance(position_a uuid.UUID, position_b uuid.UUID) (int, bool) {
-	positions := []PlayerPosition{}
-	for i, player := range g.State().Players {
-		if i%2 == 1 {
-			positions = append(positions, player.Positions...)
-		} else {
-			pp := slices.Clone(player.Positions)
-			slices.Reverse(pp)
-			positions = append(positions, pp...)
+func (g *Game) GetPosition(position_id uuid.UUID) (PlayerPosition, bool) {
+	for _, player := range g.State().Players {
+		pos, ok := player.GetPosition(position_id)
+		if ok {
+			return pos, ok
 		}
 	}
 
-	index_a := slices.IndexFunc(positions, func(p PlayerPosition) bool {
-		return p.ID == position_a
-	})
-	index_b := slices.IndexFunc(positions, func(p PlayerPosition) bool {
-		return p.ID == position_b
-	})
-
-	if index_a == -1 || index_b == -1 {
+	return PlayerPosition{}, false
+}
+func (g *Game) GetDistance(a uuid.UUID, b uuid.UUID) (int, bool) {
+	position_a, aok := g.GetPosition(a)
+	position_b, bok := g.GetPosition(b)
+	if !aok || !bok {
 		return 0, false
 	}
 
-	return int(math.Abs(float64(index_a - index_b))), true
+	return position_a.GetDistanceFrom(position_b), true
 }
 func (g *Game) IsReadyToRun() bool {
 	return len(g.State().Commands) == len(g.GetActionableActors())
@@ -562,8 +555,9 @@ func (g *Game) Validate() bool {
 	for _, player := range g.State().Players {
 		open_positions := player.GetOpenPositions()
 		alive_inactive := g.FindActors(CombineFilters(AliveActors, Allies, InactiveActors), MakeContextPlayer(player.ID))
-		if len(open_positions) > 0 && len(alive_inactive) > 0 {
-			action := SwitchIn(len(open_positions))
+		size := min(len(open_positions), len(alive_inactive))
+		if size > 0 {
+			action := SwitchIn(size)
 			ctx := NewContext()
 			ctx.PlayerID = player.ID
 			ctx.ActionID = action.ID

@@ -5,8 +5,10 @@ import (
 )
 
 type PlayerPosition struct {
-	ID      uuid.UUID `json:"ID"`
-	ActorID uuid.UUID `json:"actor_ID"`
+	ID       uuid.UUID `json:"ID"`
+	ActorID  uuid.UUID `json:"actor_ID"`
+	PlayerID uuid.UUID `json:"player_ID"`
+	Rank     int       `json:"rank"`
 }
 
 type Player struct {
@@ -16,19 +18,39 @@ type Player struct {
 }
 
 func NewPlayer() Player {
+	player_ID := uuid.New()
 	return Player{
-		ID: uuid.New(),
+		ID: player_ID,
 		Positions: []PlayerPosition{
 			{
-				ID:      uuid.New(),
-				ActorID: uuid.Nil,
+				ID:       uuid.New(),
+				ActorID:  uuid.Nil,
+				PlayerID: player_ID,
+				Rank:     0,
 			},
 			{
-				ID:      uuid.New(),
-				ActorID: uuid.Nil,
+				ID:       uuid.New(),
+				ActorID:  uuid.Nil,
+				PlayerID: player_ID,
+				Rank:     1,
+			},
+			{
+				ID:       uuid.New(),
+				ActorID:  uuid.Nil,
+				PlayerID: player_ID,
+				Rank:     2,
 			},
 		},
 	}
+}
+
+func (p PlayerPosition) GetDistanceFrom(other PlayerPosition) int {
+	a := p.Rank
+	b := other.Rank
+	if p.PlayerID != other.PlayerID {
+		return a + b + 1
+	}
+	return Abs(a - b)
 }
 
 func (p Player) GetOpenPositions() []uuid.UUID {
@@ -44,6 +66,15 @@ func (p Player) GetOpenPositions() []uuid.UUID {
 func (p Player) GetPosition(position_id uuid.UUID) (PlayerPosition, bool) {
 	for _, pos := range p.Positions {
 		if pos.ID == position_id {
+			return pos, true
+		}
+	}
+
+	return PlayerPosition{}, false
+}
+func (p Player) GetPositionByActorID(actor_id uuid.UUID) (PlayerPosition, bool) {
+	for _, pos := range p.Positions {
+		if pos.ActorID == actor_id {
 			return pos, true
 		}
 	}

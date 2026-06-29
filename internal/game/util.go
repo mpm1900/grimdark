@@ -57,3 +57,10 @@ func GetCriticalChance(stage int) float64 {
 
 	return 1.0 / float64(Factorial(4-stage))
 }
+
+func Abs(x int) int {
+	if x < 0 {
+		return -x
+	}
+	return x
+}
