@@ -201,7 +201,9 @@ function ActorCharacter({ actor }: { actor: Actor }) {
           </Marker>
         </FieldLabel>
         <FieldContent className="flex flex-row justify-between items-center">
-          <span className="text-md font-black">{actor.name}</span>
+          <span className="text-md font-bold font-cinzel-dec">
+            {actor.name}
+          </span>
           <div className="flex gap-1">
             {AFFINITIES.filter((a) => actor.affinities.includes(a)).map((a) => (
               <AffinityName key={a} affinity={a} />

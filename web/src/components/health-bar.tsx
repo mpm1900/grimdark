@@ -1,5 +1,6 @@
 import type { Actor } from '#/lib/game/actor'
 import { cn } from '#/lib/utils'
+import { GothicProgress } from './gothic-ui/progress'
 import { Progress } from './ui/progress'
 
 type HealthBarType = 'value' | 'ratio'
@@ -16,15 +17,15 @@ function HealthBar({
   const remaining = health - actor.wounds
   const ratio = remaining / health
   return (
-    <Progress
+    <GothicProgress
       {...props}
-      className="h-5 rounded-sm"
+      className="h-8 rounded-sm"
       indicator={{
         className: cn('bg-red-400'),
       }}
       value={ratio * 100}
     >
-      <div className="absolute inset-y-0 right-2 font-bold [text-shadow:1px_1px_0_var(--color-black)] text-sm">
+      <div className="absolute inset-0 text-end grid place-items-center [text-shadow:1px_1px_0_var(--color-black)] text-sm">
         {type === 'value' && (
           <span>
             {remaining}/{health} HP
@@ -34,7 +35,7 @@ function HealthBar({
           <span>{((remaining * 100) / health).toFixed(0)}% HP</span>
         )}
       </div>
-    </Progress>
+    </GothicProgress>
   )
 }
 

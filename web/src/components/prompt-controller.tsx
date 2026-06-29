@@ -14,21 +14,28 @@ import { useQuery } from '@tanstack/react-query'
 import { getTargetsFromContext, NULL_CONTEXT } from '#/lib/game/context'
 import { useContext } from '#/hooks/use-context'
 import { validateContextQuery } from '#/lib/queries/validate-context'
-import { Toggle } from './ui/toggle'
 import { ChevronRight, Loader } from 'lucide-react'
 import { Marker, MarkerContent } from './ui/marker'
 import { sendContextMessage } from '#/lib/stores/socket'
-import { Button } from './ui/button'
+import {
+  GothicAlertDialogContent,
+  GothicAlertDialogTitle,
+  GothicDialogHeader,
+  GothicDialogTitle,
+} from './gothic-ui/dialog'
+import { GothicBigButton, GothicFramedButton } from './gothic-ui/button'
 
 function PromptController() {
   const prompt = useSelector(gameStore, (g) => g.prompts[0])
   const client = useSelector(clientsStore, (s) => s.me!)
   const actors = useSelector(gameStore, (g) => g.actors)
   const turn = useSelector(gameStore, (g) => g.turn)
-  const targets_options = getTargetsQuery(null, prompt?.context.player_ID, prompt?.payload.ID, [
-    prompt?.ID ?? '',
-    turn,
-  ])
+  const targets_options = getTargetsQuery(
+    null,
+    prompt?.context.player_ID,
+    prompt?.payload.ID,
+    [prompt?.ID ?? '', turn]
+  )
   targets_options.enabled = !!prompt
   const targets_query = useQuery(targets_options)
   const targets_context = targets_query.data ?? NULL_CONTEXT
@@ -39,7 +46,8 @@ function PromptController() {
     ...context.value,
     action_ID: prompt?.payload.ID ?? null,
     player_ID: prompt?.context.player_ID ?? null,
-    position_IDs: prompt?.context.position_IDs.slice(0, selected_actor_count) ?? [],
+    position_IDs:
+      prompt?.context.position_IDs.slice(0, selected_actor_count) ?? [],
   }
   const validate_options = validateContextQuery(resolved_context)
   validate_options.enabled = !!prompt
@@ -49,53 +57,53 @@ function PromptController() {
   return (
     <>
       <AlertDialog open={!!prompt}>
-        <AlertDialogContent className="focus:outline-none focus-visible:outline-none">
+        <GothicAlertDialogContent className="focus:outline-none focus-visible:outline-none">
           {prompt && (
             <>
-              <AlertDialogHeader>
-                <AlertDialogTitle>
+              <GothicDialogHeader>
+                <GothicAlertDialogTitle>
                   {prompt.payload.config.name}
-                </AlertDialogTitle>
-                <AlertDialogDescription >
+                </GothicAlertDialogTitle>
+              </GothicDialogHeader>
+              {prompt.payload.config.description && (
+                <div className="text-center text-muted-foreground">
                   {prompt.payload.config.description}
-                </AlertDialogDescription>
-              </AlertDialogHeader>
-              <div>
-                <div className="gap-4 grid grid-cols-2">
-                  {targets.map((target) => (
-                    <Toggle
-                      key={target.ID}
-                      variant="outline"
-                      pressed={context.hasTarget(target)}
-                      onPressedChange={(pressed) =>
-                        pressed
-                          ? context.addTarget(target)
-                          : context.removeTarget(target)
-                      }
-                    >
-                      {target.name}
-                    </Toggle>
-                  ))}
                 </div>
-                {targets_query.isFetching && (
-                  <div className="grid place-items-center absolute inset-0">
-                    <Loader className="animate-spin" />
-                  </div>
-                )}
-                {targets.length === 0 && !is_loading && (
-                  <Marker variant="separator">
-                    <MarkerContent>
-                      {validate_query.data
-                        ? "This action doesn't have targets."
-                        : 'No targets available.'}
-                    </MarkerContent>
-                  </Marker>
-                )}
+              )}
+              <div className="gap-0 grid grid-cols-2 px-4">
+                {targets.map((target) => (
+                  <GothicBigButton
+                    key={target.ID}
+                    variant={context.hasTarget(target) ? 'red' : 'basic'}
+                    onClick={() =>
+                      !context.hasTarget(target)
+                        ? context.addTarget(target)
+                        : context.removeTarget(target)
+                    }
+                  >
+                    {target.name}
+                  </GothicBigButton>
+                ))}
               </div>
+              {targets_query.isFetching && (
+                <div className="grid place-items-center absolute inset-0">
+                  <Loader className="animate-spin" />
+                </div>
+              )}
+              {targets.length === 0 && !is_loading && (
+                <Marker variant="separator">
+                  <MarkerContent>
+                    {validate_query.data
+                      ? "This action doesn't have targets."
+                      : 'No targets available.'}
+                  </MarkerContent>
+                </Marker>
+              )}
             </>
           )}
-          <AlertDialogFooter>
-            <Button
+          <AlertDialogFooter className="p-2">
+            <GothicFramedButton
+              variant="red"
               disabled={!validate_query.data || is_loading}
               onClick={() => {
                 sendContextMessage({
@@ -107,11 +115,10 @@ function PromptController() {
                 context.reset()
               }}
             >
-              Choose <ChevronRight />
-            </Button>
+              Choose
+            </GothicFramedButton>
           </AlertDialogFooter>
-        </AlertDialogContent>
-
+        </GothicAlertDialogContent>
       </AlertDialog>
     </>
   )

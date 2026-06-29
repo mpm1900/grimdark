@@ -1,29 +1,25 @@
 import type { Actor } from '#/lib/game/actor'
 import type { PropsWithChildren } from 'react'
-import {
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from './ui/dialog'
+import { Dialog, DialogClose, DialogFooter } from './ui/dialog'
 import type { Action } from '#/lib/game/action'
 import { getTargetsQuery } from '#/lib/queries/get-targets'
 import { useQuery } from '@tanstack/react-query'
 import { Marker, MarkerContent } from './ui/marker'
 import { Field, FieldContent } from './ui/field'
-import { Button } from './ui/button'
-import { ChevronRight, Loader } from 'lucide-react'
+import { Loader } from 'lucide-react'
 import { getTargetsFromContext, NULL_CONTEXT } from '#/lib/game/context'
 import { useSelector } from '@tanstack/react-store'
 import { gameStore } from '#/lib/stores/game'
 import { useContext } from '#/hooks/use-context'
-import { Toggle } from './ui/toggle'
 import { validateContextQuery } from '#/lib/queries/validate-context'
 import { sendContextMessage } from '#/lib/stores/socket'
 import { clientsStore } from '#/lib/stores/clients'
+import { GothicBigButton, GothicFramedButton } from './gothic-ui/button'
+import {
+  GothicDialogContent,
+  GothicDialogHeader,
+  GothicDialogTitle,
+} from './gothic-ui/dialog'
 
 function ActionContextDialog({
   actor,
@@ -38,9 +34,12 @@ function ActionContextDialog({
   const client = useSelector(clientsStore, (s) => s.me!)
   const actors = useSelector(gameStore, (g) => g.actors)
   const turn = useSelector(gameStore, (g) => g.turn)
-  const targets_options = getTargetsQuery(actor.ID, actor.player_ID, action.ID, [
-    turn,
-  ])
+  const targets_options = getTargetsQuery(
+    actor.ID,
+    actor.player_ID,
+    action.ID,
+    [turn]
+  )
   targets_options.enabled = !!enabled
   const targets_query = useQuery(targets_options)
   const targets_context = targets_query.data ?? NULL_CONTEXT
@@ -54,14 +53,16 @@ function ActionContextDialog({
   return (
     <Dialog>
       {children}
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>{action.config.name}</DialogTitle>
-          {action.config.description && (
-            <DialogDescription>{action.config.description}</DialogDescription>
-          )}
-        </DialogHeader>
-        <div className="grid grid-cols-3">
+      <GothicDialogContent>
+        <GothicDialogHeader>
+          <GothicDialogTitle>{action.config.name}</GothicDialogTitle>
+        </GothicDialogHeader>
+        {action.config.description && (
+          <div className="text-center text-muted-foreground">
+            {action.config.description}
+          </div>
+        )}
+        <div className="grid grid-cols-3 px-3">
           {action.config.accuracy && (
             <Marker variant="separator">
               <MarkerContent>
@@ -87,46 +88,43 @@ function ActionContextDialog({
             </Marker>
           )}
         </div>
-        <div>
-          <Field>
-            <FieldContent>
-              <div className="gap-4 grid grid-cols-2">
-                {targets.map((target) => (
-                  <Toggle
-                    key={target.ID}
-                    variant="outline"
-                    pressed={context.hasTarget(target)}
-                    onPressedChange={(pressed) =>
-                      pressed
-                        ? context.addTarget(target)
-                        : context.removeTarget(target)
-                    }
-                    disabled={!enabled}
-                  >
-                    {target.name}
-                  </Toggle>
-                ))}
-              </div>
-              {targets_query.isFetching && (
-                <div className="grid place-items-center absolute inset-0">
-                  <Loader className="animate-spin" />
-                </div>
-              )}
-              {targets.length === 0 && !is_loading && (
-                <Marker variant="separator">
-                  <MarkerContent>
-                    {validate_query.data
-                      ? "This action doesn't have targets."
-                      : 'No targets available.'}
-                  </MarkerContent>
-                </Marker>
-              )}
-            </FieldContent>
-          </Field>
+        <div className="px-4">
+          <div className="grid grid-cols-2">
+            {targets.map((target) => (
+              <GothicBigButton
+                key={target.ID}
+                variant={context.hasTarget(target) ? 'red' : 'basic'}
+                // pressed={context.hasTarget(target)}
+                onClick={(e) =>
+                  !context.hasTarget(target)
+                    ? context.addTarget(target)
+                    : context.removeTarget(target)
+                }
+                disabled={!enabled}
+              >
+                {target.name}
+              </GothicBigButton>
+            ))}
+          </div>
+          {targets_query.isFetching && (
+            <div className="grid place-items-center absolute inset-0">
+              <Loader className="animate-spin" />
+            </div>
+          )}
+          {targets.length === 0 && !is_loading && (
+            <Marker variant="separator" className="px-6">
+              <MarkerContent>
+                {validate_query.data
+                  ? "This action doesn't have targets."
+                  : 'No targets available.'}
+              </MarkerContent>
+            </Marker>
+          )}
         </div>
-        <DialogFooter>
+        <DialogFooter className="p-2">
           <DialogClose asChild>
-            <Button
+            <GothicFramedButton
+              variant="red"
               disabled={!validate_query.data || is_loading}
               onClick={() => {
                 sendContextMessage({
@@ -138,11 +136,11 @@ function ActionContextDialog({
                 context.reset()
               }}
             >
-              Choose <ChevronRight />
-            </Button>
+              Choose
+            </GothicFramedButton>
           </DialogClose>
         </DialogFooter>
-      </DialogContent>
+      </GothicDialogContent>
     </Dialog>
   )
 }
