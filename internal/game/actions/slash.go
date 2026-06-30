@@ -11,7 +11,8 @@ var Slash = game.Action{
 	ID: uuid.MustParse("019f0aec-8b34-72cc-bbcc-36350e9fa6fb"),
 	Config: game.ActionConfig{
 		Name:         "Slash",
-		Affinity:     game.Kinetic,
+		Description: "Slashes target and possibly applies Speed Down.",
+		Affinity:     game.Psychic,
 		Stat:         game.Melee,
 		Accuracy:     game.P(0.90),
 		Power:        70,
@@ -34,5 +35,5 @@ var Slash = game.Action{
 		},
 	}),
 	ValidateContext:  game.ContextTargetLength(1),
-	TargetsPredicate: game.CombineFilters(game.ActiveActors, game.OtherAllies),
+	TargetsPredicate: game.CombineFilters(game.ActiveActors, game.Allies),
 }

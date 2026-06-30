@@ -8,6 +8,7 @@ type HealthBarType = 'value' | 'ratio'
 function HealthBar({
   actor,
   type,
+  className,
   ...props
 }: React.ComponentProps<typeof Progress> & {
   actor: Actor
@@ -19,16 +20,13 @@ function HealthBar({
   return (
     <GothicProgress
       {...props}
-      className="h-8 rounded-sm"
-      indicator={{
-        className: cn('bg-red-400'),
-      }}
+      className={cn('h-6 font-cinzel font-semibold rounded-xs', className)}
       value={ratio * 100}
     >
-      <div className="absolute inset-0 text-end grid place-items-center [text-shadow:1px_1px_0_var(--color-black)] text-sm">
+      <div className="absolute inset-0 flex items-center justify-end pr-1 text-foreground/70 [text-shadow:1px_1px_0_var(--color-black)] text-sm">
         {type === 'value' && (
           <span>
-            {remaining}/{health} HP
+            {remaining}/{health}
           </span>
         )}
         {type === 'ratio' && (

@@ -1,4 +1,8 @@
-import { HeadContent, Scripts, createRootRouteWithContext } from '@tanstack/react-router'
+import {
+  HeadContent,
+  Scripts,
+  createRootRouteWithContext,
+} from '@tanstack/react-router'
 
 import app_css from '../styles.css?url'
 import type { QueryClient } from '@tanstack/react-query'
@@ -13,6 +17,22 @@ interface RouterContext {
     user: User | null
   }
 }
+
+const gothicPreloadImages = [
+  ...['Gray', 'Red'].flatMap((color) =>
+    ['Normal', 'Hovered', 'Pressed', 'Disabled'].map(
+      (state) => `/gothic/ButtonFramed${color}_${state}.png`
+    )
+  ),
+  ...['Gray', 'Green', 'Red'].flatMap((color) =>
+    ['Normal', 'Hovered', 'Pressed', 'Disabled'].map(
+      (state) => `/gothic/ButtonStandart${color}_${state}.png`
+    )
+  ),
+  ...['Normal', 'Hovered', 'Pressed', 'Disabled'].map(
+    (state) => `/gothic/SquareRedButtonExit_${state}.png`
+  ),
+]
 
 export const Route = createRootRouteWithContext<RouterContext>()({
   beforeLoad: async ({ context, location }) => {
@@ -45,6 +65,12 @@ export const Route = createRootRouteWithContext<RouterContext>()({
         rel: 'stylesheet',
         href: app_css,
       },
+      ...gothicPreloadImages.map((href) => ({
+        rel: 'preload',
+        as: 'image',
+        type: 'image/png',
+        href,
+      })),
     ],
   }),
   shellComponent: RootDocument,
@@ -53,15 +79,29 @@ export const Route = createRootRouteWithContext<RouterContext>()({
 
 function RootDocument({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className='dark'>
+    <html lang="en" className="dark">
       <head>
         <HeadContent />
       </head>
       <body>
+        <GothicImagePreloader />
         <TooltipProvider>{children}</TooltipProvider>
         <Toaster position="bottom-center" />
         <Scripts />
       </body>
     </html>
+  )
+}
+
+function GothicImagePreloader() {
+  return (
+    <div
+      aria-hidden
+      className="pointer-events-none fixed size-0 overflow-hidden opacity-0"
+    >
+      {gothicPreloadImages.map((src) => (
+        <img key={src} src={src} alt="" width={1} height={1} />
+      ))}
+    </div>
   )
 }

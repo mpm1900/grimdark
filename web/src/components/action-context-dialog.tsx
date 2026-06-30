@@ -5,7 +5,6 @@ import type { Action } from '#/lib/game/action'
 import { getTargetsQuery } from '#/lib/queries/get-targets'
 import { useQuery } from '@tanstack/react-query'
 import { Marker, MarkerContent } from './ui/marker'
-import { Field, FieldContent } from './ui/field'
 import { Loader } from 'lucide-react'
 import { getTargetsFromContext, NULL_CONTEXT } from '#/lib/game/context'
 import { useSelector } from '@tanstack/react-store'
@@ -20,6 +19,7 @@ import {
   GothicDialogHeader,
   GothicDialogTitle,
 } from './gothic-ui/dialog'
+import { STAT_LABELS } from '#/lib/game/core'
 
 function ActionContextDialog({
   actor,
@@ -54,42 +54,63 @@ function ActionContextDialog({
     <Dialog>
       {children}
       <GothicDialogContent>
+        <div className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-24 overflow-hidden">
+          <div className="absolute left-1/2 h-full w-[calc(100%+5rem)] -translate-x-1/2 bg-[url('/gothic/DialogFlag.png')] bg-[length:100%_100%] bg-center bg-no-repeat opacity-70" />
+        </div>
+
         <GothicDialogHeader>
           <GothicDialogTitle>{action.config.name}</GothicDialogTitle>
         </GothicDialogHeader>
+
+        {!!action.config.power && (
+          <div className="grid grid-cols-3 px-3 pb-3 bg-right">
+            {!!action.config.stat && (
+              <div className="flex flex-col items-center">
+                <Marker variant="separator">
+                  <MarkerContent>Stat</MarkerContent>
+                </Marker>
+                {STAT_LABELS[action.config.stat]}
+              </div>
+            )}
+            {!!action.config.power && (
+              <div className="flex flex-col items-center">
+                <Marker variant="separator">
+                  <MarkerContent>Power</MarkerContent>
+                </Marker>
+                {action.config.power}
+              </div>
+            )}
+            {action.config.accuracy && (
+              <div className="flex flex-col items-center">
+                <Marker variant="separator">
+                  <MarkerContent>Accuracy</MarkerContent>
+                </Marker>
+                {Math.min(action.config.accuracy * 100, 100)}%
+              </div>
+            )}
+          </div>
+        )}
         {action.config.description && (
-          <div className="text-center text-muted-foreground">
+          <div className="text-center text-white/60">
             {action.config.description}
           </div>
         )}
-        <div className="grid grid-cols-3 px-3">
-          {action.config.accuracy && (
-            <Marker variant="separator">
-              <MarkerContent>
-                Accuracy: {action.config.accuracy * 100}%
-              </MarkerContent>
-            </Marker>
-          )}
-          {!!action.config.power && (
-            <Marker variant="separator">
-              <MarkerContent>Power: {action.config.power}</MarkerContent>
-            </Marker>
-          )}
-          {!!action.config.recoil && (
-            <Marker variant="separator">
-              <MarkerContent>Recoil: {action.config.recoil}</MarkerContent>
-            </Marker>
-          )}
-          {!action.config.recoil && !!action.config.lifesteal && (
-            <Marker variant="separator">
-              <MarkerContent>
-                Lifesteal: {action.config.lifesteal * 100}%
-              </MarkerContent>
-            </Marker>
-          )}
-        </div>
         <div className="px-4">
-          <div className="grid grid-cols-2">
+          {targets.length === 0 && !is_loading && (
+            <Marker variant="separator" className="px-6">
+              <MarkerContent>
+                {validate_query.data
+                  ? "This action doesn't have targets."
+                  : 'No targets available.'}
+              </MarkerContent>
+            </Marker>
+          )}
+          {targets.length > 0 && (
+            <Marker variant="separator" className="px-16">
+              <MarkerContent>Select Targets</MarkerContent>
+            </Marker>
+          )}
+          <div className="grid grid-cols-2 mt-3">
             {targets.map((target) => (
               <GothicBigButton
                 key={target.ID}
@@ -107,21 +128,12 @@ function ActionContextDialog({
             ))}
           </div>
           {targets_query.isFetching && (
-            <div className="grid place-items-center absolute inset-0">
+            <div className="grid place-items-center inset-0">
               <Loader className="animate-spin" />
             </div>
           )}
-          {targets.length === 0 && !is_loading && (
-            <Marker variant="separator" className="px-6">
-              <MarkerContent>
-                {validate_query.data
-                  ? "This action doesn't have targets."
-                  : 'No targets available.'}
-              </MarkerContent>
-            </Marker>
-          )}
         </div>
-        <DialogFooter className="p-2">
+        <DialogFooter className="p-0 -mr-1 -mb-0.5">
           <DialogClose asChild>
             <GothicFramedButton
               variant="red"
@@ -136,7 +148,7 @@ function ActionContextDialog({
                 context.reset()
               }}
             >
-              Choose
+              Confirm
             </GothicFramedButton>
           </DialogClose>
         </DialogFooter>

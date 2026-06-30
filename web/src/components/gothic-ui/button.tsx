@@ -7,27 +7,26 @@ import { cva, type VariantProps } from 'class-variance-authority'
 const gothicButtonVariants = cva(
   cn(
     'font-cinzel [text-shadow:0_1px_0_var(--color-black)] text-sm font-bold select-none whitespace-nowrap',
-    'inline-flex shrink-0 items-center justify-center gap-2 outline-none ring-1 ring-black',
-    '[image-rendering:pixelated]'
+    'inline-flex shrink-0 items-center justify-center gap-2 outline-none ring-1 ring-black'
   ),
   {
     variants: {
       variant: {
         basic: cn(
-          'px-3 py-1 border-[4px] border-solid border-transparent bg-transparent text-white/80',
+          'px-3 py-1 border-[4px] border-solid border-transparent bg-transparent text-foreground/80',
           '[border-image-slice:18_fill] [border-image-repeat:repeat-infinite]',
           "[border-image-source:url('/gothic/ButtonFramedGray_Normal.png')]",
-          "active:[border-image-source:url('/gothic/ButtonFramedGray_Pressed.png')] active:text-white/60",
-          "disabled:[border-image-source:url('/gothic/ButtonFramedGray_Disabled.png')] disabled:pointer-events-none disabled:text-white/60",
-          "hover:[border-image-source:url('/gothic/ButtonFramedGray_Hovered.png')] hover:text-white"
+          "active:[border-image-source:url('/gothic/ButtonFramedGray_Pressed.png')] active:text-foreground/60",
+          "disabled:[border-image-source:url('/gothic/ButtonFramedGray_Disabled.png')] disabled:pointer-events-none disabled:text-foreground/60",
+          "hover:[border-image-source:url('/gothic/ButtonFramedGray_Hovered.png')] hover:text-foreground"
         ),
         red: cn(
-          'px-3 py-1 border-[4px] border-solid border-transparent bg-transparent text-white/80',
+          'px-3 py-1 border-[4px] border-solid border-transparent bg-transparent text-foreground/80',
           '[border-image-slice:18_fill] [border-image-repeat:repeat-infinite]',
           "[border-image-source:url('/gothic/ButtonFramedRed_Normal.png')]",
-          "active:[border-image-source:url('/gothic/ButtonFramedRed_Pressed.png')] active:text-white/60",
-          "disabled:[border-image-source:url('/gothic/ButtonFramedRed_Disabled.png')] disabled:pointer-events-none disabled:text-white/60",
-          "hover:[border-image-source:url('/gothic/ButtonFramedRed_Hovered.png')] hover:text-white"
+          "active:[border-image-source:url('/gothic/ButtonFramedRed_Pressed.png')] active:text-foreground/60",
+          "disabled:[border-image-source:url('/gothic/ButtonFramedRed_Disabled.png')] disabled:pointer-events-none disabled:text-foreground/60",
+          "hover:[border-image-source:url('/gothic/ButtonFramedRed_Hovered.png')] hover:text-foreground"
         ),
       },
     },
@@ -60,35 +59,34 @@ function GothicFramedButton({
 const gothicBigButtonVariants = cva(
   cn(
     'font-cinzel [text-shadow:0_1px_0_var(--color-black)] text-sm font-bold select-none whitespace-nowrap',
-    'inline-flex shrink-0 items-center justify-center gap-2 outline-none',
-    '[image-rendering:pixelated]'
+    'inline-flex shrink-0 items-center justify-center gap-2 outline-none'
   ),
   {
     variants: {
       variant: {
         basic: cn(
-          'min-h-12 px-8 py-2 border-x-[16px] border-y-[6px] border-solid border-transparent bg-transparent text-white/80',
+          'min-h-12 px-8 py-2 border-x-[16px] border-y-[6px] border-solid border-transparent bg-transparent text-foreground/80',
           '[border-image-slice:12_40_12_40_fill] [border-image-repeat:stretch]',
           "[border-image-source:url('/gothic/ButtonStandartGray_Normal.png')]",
-          "active:[border-image-source:url('/gothic/ButtonStandartGray_Pressed.png')] active:text-white/60",
-          "disabled:[border-image-source:url('/gothic/ButtonStandartGray_Disabled.png')] disabled:pointer-events-none disabled:text-white/60",
-          "hover:[border-image-source:url('/gothic/ButtonStandartGray_Hovered.png')] hover:text-white"
+          "active:[border-image-source:url('/gothic/ButtonStandartGray_Pressed.png')] active:text-foreground/60",
+          "disabled:[border-image-source:url('/gothic/ButtonStandartGray_Disabled.png')] disabled:pointer-events-none disabled:text-foreground/60",
+          "hover:[border-image-source:url('/gothic/ButtonStandartGray_Hovered.png')] hover:text-foreground"
         ),
         red: cn(
-          'min-h-12 px-8 py-2 border-x-[16px] border-y-[6px] border-solid border-transparent bg-transparent text-white/80',
+          'min-h-12 px-8 py-2 border-x-[16px] border-y-[6px] border-solid border-transparent bg-transparent text-foreground/80',
           '[border-image-slice:12_40_12_40_fill] [border-image-repeat:stretch]',
           "[border-image-source:url('/gothic/ButtonStandartRed_Normal.png')]",
-          "active:[border-image-source:url('/gothic/ButtonStandartRed_Pressed.png')] active:text-white/60",
-          "disabled:[border-image-source:url('/gothic/ButtonStandartRed_Disabled.png')] disabled:pointer-events-none disabled:text-white/60",
-          "hover:[border-image-source:url('/gothic/ButtonStandartRed_Hovered.png')] hover:text-white"
+          "active:[border-image-source:url('/gothic/ButtonStandartRed_Pressed.png')] active:text-foreground/60",
+          "disabled:[border-image-source:url('/gothic/ButtonStandartRed_Disabled.png')] disabled:pointer-events-none disabled:text-foreground/60",
+          "hover:[border-image-source:url('/gothic/ButtonStandartRed_Hovered.png')] hover:text-foreground"
         ),
         green: cn(
-          'min-h-12 px-8 py-2 border-x-[16px] border-y-[6px] border-solid border-transparent bg-transparent text-white/80',
+          'min-h-12 px-8 py-2 border-x-[16px] border-y-[6px] border-solid border-transparent bg-transparent text-foreground/80',
           '[border-image-slice:12_40_12_40_fill] [border-image-repeat:stretch]',
           "[border-image-source:url('/gothic/ButtonStandartGreen_Normal.png')]",
-          "active:[border-image-source:url('/gothic/ButtonStandartGreen_Pressed.png')] active:text-white/60",
-          "disabled:[border-image-source:url('/gothic/ButtonStandartGreen_Disabled.png')] disabled:pointer-events-none disabled:text-white/60",
-          "hover:[border-image-source:url('/gothic/ButtonStandartGreen_Hovered.png')] hover:text-white"
+          "active:[border-image-source:url('/gothic/ButtonStandartGreen_Pressed.png')] active:text-foreground/60",
+          "disabled:[border-image-source:url('/gothic/ButtonStandartGreen_Disabled.png')] disabled:pointer-events-none disabled:text-foreground/60",
+          "hover:[border-image-source:url('/gothic/ButtonStandartGreen_Hovered.png')] hover:text-foreground"
         ),
       },
     },
@@ -131,7 +129,7 @@ function GothicCloseButton({
       data-slot="button"
       className={cn(
         'm-0 inline-flex size-6 shrink-0 items-center justify-center border-0 bg-transparent p-0 outline-none',
-        'bg-contain bg-center bg-no-repeat [image-rendering:pixelated]',
+        'bg-contain bg-center bg-no-repeat',
         "bg-[url('/gothic/SquareRedButtonExit_Normal.png')]",
         "hover:bg-[url('/gothic/SquareRedButtonExit_Hovered.png')]",
         "active:bg-[url('/gothic/SquareRedButtonExit_Pressed.png')]",

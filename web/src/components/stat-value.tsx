@@ -21,7 +21,7 @@ function StatValue({
       {...props}
       className={cn(
         {
-          'text-green-400': value > unmodified,
+          'text-positive': value > unmodified,
           'text-red-400': value < unmodified,
         },
         className

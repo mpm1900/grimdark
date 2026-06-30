@@ -24,13 +24,12 @@ function GothicDialogContent({
         data-slot="dialog-content"
         className={cn(
           'fixed top-[50%] left-[50%] z-50 grid w-full max-w-[calc(100%-2rem)] translate-x-[-50%] translate-y-[-50%] gap-4 p-0 shadow-lg duration-200 outline-none data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95 sm:max-w-lg',
-          'border-[10px] border-solid border-transparent bg-neutral-950 text-card-foreground',
+          'border-[10px] border-solid border-transparent bg-gradient-to-b from-neutral-950 to-[oklch(10%_0_0)] text-card-foreground',
           'bg-clip-border',
-          // '[image-rendering:pixelated]',
           "[border-image-source:url('/gothic/SkillFrameVert.png')]",
           '[border-image-slice:22_fill]',
           '[border-image-repeat:stretch]',
-          'pt-12 font-serif',
+          'pt-8 font-serif',
           className
         )}
         {...props}
@@ -59,12 +58,12 @@ function GothicAlertDialogContent({
         data-slot="alert-dialog-content"
         className={cn(
           'fixed top-[50%] left-[50%] z-50 grid w-full max-w-[calc(100%-2rem)] translate-x-[-50%] translate-y-[-50%] gap-4 p-0 shadow-lg duration-200 outline-none data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95 sm:max-w-lg',
-          'border-[10px] border-solid border-transparent bg-neutral-950 text-card-foreground',
+          'border-[10px] border-solid border-transparent bg-gradient-to-b from-neutral-950 to-[oklch(10.5%_0_0)] text-card-foreground',
           'bg-clip-border',
           "[border-image-source:url('/gothic/SkillFrameVert.png')]",
           '[border-image-slice:22_fill]',
           '[border-image-repeat:stretch]',
-          'pt-16 font-serif',
+          'pt-8 font-serif',
           className
         )}
         {...props}
@@ -113,7 +112,7 @@ function GothicDialogTitle({
     <DialogPrimitive.Title
       data-slot="dialog-title"
       className={cn(
-        'font-cinzel-dec text-lg leading-none font-semibold text-muted-foreground',
+        'font-cinzel-dec text-lg leading-none font-semibold text-foreground/60',
         '[text-shadow:1px_2px_0_var(--color-black)]',
         className
       )}
@@ -130,7 +129,7 @@ function GothicAlertDialogTitle({
     <AlertDialogPrimitive.Title
       data-slot="alert-dialog-title"
       className={cn(
-        'font-cinzel-dec text-lg leading-none font-semibold text-muted-foreground',
+        'font-cinzel-dec text-lg leading-none font-semibold text-foreground/60',
         className
       )}
       {...props}

@@ -2,13 +2,17 @@ import * as React from 'react'
 
 import { cn } from '#/lib/utils'
 
-function GothicCard({ className, ...props }: React.ComponentProps<'div'>) {
+function GothicCard({
+  className,
+  children,
+  ...props
+}: React.ComponentProps<'div'>) {
   return (
     <div
       data-slot="card"
       className={cn(
-        'flex flex-col gap-4 py-4 text-card-foreground',
-        'border-[10px] border-solid border-transparent bg-neutral-950',
+        'flex flex-col gap-4 py-3 text-card-foreground relative',
+        'border-[10px] border-solid border-transparent bg-gradient-to-b from-neutral-900 to-[oklch(10%_0_0)]',
         'bg-clip-border',
         '[image-rendering:pixelated]',
         "[border-image-source:url('/gothic/SkillFrameVert_Dark.png')]",
@@ -17,7 +21,9 @@ function GothicCard({ className, ...props }: React.ComponentProps<'div'>) {
         className
       )}
       {...props}
-    />
+    >
+      {children}
+    </div>
   )
 }
 
@@ -28,7 +34,7 @@ function GothicCardContent({
   return (
     <div
       data-slot="card-content"
-      className={cn('px-4', className)}
+      className={cn('px-3', className)}
       {...props}
     />
   )

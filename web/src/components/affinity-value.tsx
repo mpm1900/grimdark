@@ -20,7 +20,7 @@ function AffinityResistanceValue({
   return (
     <span
       className={cn({
-        'text-green-400': value > unmodified,
+        'text-positive': value > unmodified,
         'text-red-400': value < unmodified,
         'text-amber-400': immunity !== undefined,
       })}
@@ -44,7 +44,7 @@ function AffinityDamageValue({
   return (
     <span
       className={cn({
-        'text-green-400': value > unmodified,
+        'text-positive': value > unmodified,
         'text-red-400': value < unmodified,
       })}
       {...props}
@@ -75,8 +75,8 @@ function AffinityResistanceMultiplier({
       {immunity !== undefined ? (
         <span
           className={cn({
-            'text-green-400': immunity > 0,
-            'text-red-400': immunity < 0,
+            'text-positive': immunity > 0,
+            'text-amber-400': immunity <= 0,
           })}
         >
           x{immunity.toFixed(2)}

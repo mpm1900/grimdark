@@ -5,12 +5,10 @@ import {
   type Stat,
   MAIN_STATS,
   ACCURACY_STATS,
-  CRITICAL_STATS,
+  STAT_LABELS,
 } from '#/lib/game/core'
 import { ActorFlag } from './actor-flag'
 import { AffinityName } from './affinity-name'
-import { HealthBar } from './health-bar'
-import { Badge } from './ui/badge'
 import { Field, FieldContent, FieldLabel } from './ui/field'
 import { Marker, MarkerContent } from './ui/marker'
 import { Table, TableBody, TableCell, TableRow } from './ui/table'
@@ -30,6 +28,17 @@ import { getAppliedEffects } from '#/lib/game/game'
 import { useSelector } from '@tanstack/react-store'
 import { gameStore } from '#/lib/stores/game'
 import { StatName } from './stat-name'
+import { GothicBadge } from './gothic-ui/badge'
+
+import {
+  TbHexagonNumber1,
+  TbHexagonNumber2,
+  TbHexagonNumber3,
+  TbHexagonNumber1Filled,
+  TbHexagonNumber2Filled,
+  TbHexagonNumber3Filled,
+} from 'react-icons/tb'
+import { ActorFrame } from './actor-frame'
 
 function MainStatRow({ actor, stat }: { actor: Actor; stat: Stat }) {
   const stage = actor.stages[stat]
@@ -37,8 +46,8 @@ function MainStatRow({ actor, stat }: { actor: Actor; stat: Stat }) {
   const mult = mapStage(stage, mod, 1)
   return (
     <TableRow>
-      <TableCell className="capitalize">
-        <StatName stat={stat}>{stat}</StatName>
+      <TableCell className="capitalize font-cinzel">
+        <StatName stat={stat}>{STAT_LABELS[stat]}</StatName>
       </TableCell>
       <TableCell className="text-end">
         <StatValue actor={actor} stat={stat}>
@@ -54,7 +63,15 @@ function MainStatRow({ actor, stat }: { actor: Actor; stat: Stat }) {
       </TableCell>
       <TableCell className="text-end">
         {stage != 0 && (
-          <span className={cn(mult === 1 && 'opacity-45')}>
+          <span
+            className={cn(
+              {
+                'text-positive': stage > 0,
+                'text-red-400': stage < 0,
+              },
+              mult === 1 && 'opacity-45'
+            )}
+          >
             x{mult.toFixed(2)}
           </span>
         )}
@@ -68,25 +85,26 @@ function AccuracyStatRow({ actor, stat }: { actor: Actor; stat: Stat }) {
   const mult = mapStage(stage, mod, 1)
   return (
     <TableRow>
-      <TableCell className="capitalize">{stat}</TableCell>
-      <TableCell className="text-end">
-        <StatValue actor={actor} stat={stat}>
-          x{(actor.stats[stat] / 100).toFixed(2)}
-        </StatValue>
+      <TableCell className="capitalize font-cinzel">
+        {STAT_LABELS[stat]}
       </TableCell>
+      <TableCell className="text-end"></TableCell>
       <TableCell className="text-end">
-        {stage != 0 && (
+        {!!stage && (
           <StatValue actor={actor} stat={stat}>
-            {stage}
+            {sign(stage)}
+            {Math.abs(stage)}
           </StatValue>
         )}
       </TableCell>
       <TableCell className="text-end">
-        {stage != 0 && (
-          <span className={cn(mult === 1 && 'opacity-45')}>
-            x{mult.toFixed(2)}
-          </span>
-        )}
+        <StatValue
+          actor={actor}
+          stat={stat}
+          className={cn(actor.stats[stat] === 100 && 'opacity-50')}
+        >
+          x{mult.toFixed(2)}
+        </StatValue>
       </TableCell>
     </TableRow>
   )
@@ -95,41 +113,31 @@ function CriticalStatRow({ actor, stat }: { actor: Actor; stat: Stat }) {
   const stage = actor.stages[stat]
   return (
     <TableRow>
-      <TableCell className="capitalize">{stat}</TableCell>
-      <TableCell className="text-end">
-        <span
-          className={cn({
-            'text-green-400': stage > 0,
-            'text-red-400': stage < 0,
-            'opacity-45': stage === 0,
-          })}
-        >
-          {sign(stage)}
-          {stage}
-        </span>
+      <TableCell className="capitalize font-cinzel">
+        {STAT_LABELS[stat]}
       </TableCell>
+      <TableCell className="text-end"></TableCell>
       <TableCell className="text-end">
-        {stage != 0 && (
+        {!!stage && (
           <span
             className={cn({
-              'text-green-400': stage > 0,
+              'text-positive': stage > 0,
               'text-red-400': stage < 0,
               'opacity-45': stage === 0,
             })}
           >
-            {stage}
+            {sign(stage)}
+            {Math.abs(stage)}
           </span>
         )}
       </TableCell>
-      <TableCell className="text-end">
-        <span className="opacity-45">--</span>
-      </TableCell>
+      <TableCell className="text-end text-foreground/40">--</TableCell>
     </TableRow>
   )
 }
 function StatsTable({ actor }: { actor: Actor }) {
   return (
-    <Table>
+    <Table className="font-mono">
       <TableBody>
         {MAIN_STATS.map((stat) => (
           <MainStatRow key={stat} actor={actor} stat={stat} />
@@ -137,8 +145,8 @@ function StatsTable({ actor }: { actor: Actor }) {
         {ACCURACY_STATS.map((stat) => (
           <AccuracyStatRow key={stat} actor={actor} stat={stat} />
         ))}
-        <CriticalStatRow actor={actor} stat="critical-chance" />
         <AccuracyStatRow actor={actor} stat="critical-damage" />
+        <CriticalStatRow actor={actor} stat="critical-chance" />
       </TableBody>
     </Table>
   )
@@ -146,7 +154,7 @@ function StatsTable({ actor }: { actor: Actor }) {
 
 function AffinityDamageTable({ actor }: { actor: Actor }) {
   return (
-    <Table>
+    <Table className="font-mono">
       <TableBody>
         {AFFINITIES.map((affinity) => (
           <TableRow key={affinity}>
@@ -167,7 +175,7 @@ function AffinityDamageTable({ actor }: { actor: Actor }) {
 }
 function AffinityResistanceTable({ actor }: { actor: Actor }) {
   return (
-    <Table>
+    <Table className="font-mono">
       <TableBody>
         {AFFINITIES.map((affinity) => (
           <TableRow key={affinity}>
@@ -194,49 +202,67 @@ function AffinityResistanceTable({ actor }: { actor: Actor }) {
 function ActorCharacter({ actor }: { actor: Actor }) {
   return (
     <div className="flex flex-col gap-4">
-      <Field>
-        <FieldLabel>
-          <Marker variant="separator">
-            <MarkerContent>Character Lv.{actor.level}</MarkerContent>
-          </Marker>
-        </FieldLabel>
-        <FieldContent className="flex flex-row justify-between items-center">
-          <span className="text-md font-bold font-cinzel-dec">
-            {actor.name}
-          </span>
-          <div className="flex gap-1">
-            {AFFINITIES.filter((a) => actor.affinities.includes(a)).map((a) => (
-              <AffinityName key={a} affinity={a} />
-            ))}
-          </div>
-        </FieldContent>
-      </Field>
-      <div>
-        <HealthBar type="value" actor={actor} />
-      </div>
-      <div className="flex flex-col gap-4">
+      <ActorFrame actor={actor} />
+
+      <div className="flex flex-col gap-2 text-foreground font-serif">
         <div className="grid grid-cols-2 text-sm">
-          <Field>
-            <FieldLabel className="text-muted-foreground">Race</FieldLabel>
+          <Field className="gap-0">
+            <FieldLabel className="text-muted-foreground font-cinzel">
+              Race
+            </FieldLabel>
             <FieldContent className="capitalize">{actor.race}</FieldContent>
           </Field>
-          <Field>
-            <FieldLabel className="text-muted-foreground">Faction</FieldLabel>
+          <Field className="gap-0">
+            <FieldLabel className="text-muted-foreground font-cinzel">
+              Faction
+            </FieldLabel>
             <FieldContent className="capitalize">{actor.faction}</FieldContent>
           </Field>
         </div>
         <div className="grid grid-cols-3 text-sm">
-          <Field>
-            <FieldLabel className="text-muted-foreground">Class</FieldLabel>
+          <Field className="gap-0">
+            <FieldLabel className="text-muted-foreground font-cinzel">
+              Class
+            </FieldLabel>
             <FieldContent className="capitalize">--</FieldContent>
           </Field>
-          <Field>
-            <FieldLabel className="text-muted-foreground">Subclass</FieldLabel>
+          <Field className="gap-0">
+            <FieldLabel className="text-muted-foreground font-cinzel">
+              Subclass
+            </FieldLabel>
             <FieldContent className="capitalize">--</FieldContent>
           </Field>
-          <Field>
-            <FieldLabel className="text-muted-foreground">Augment</FieldLabel>
+          <Field className="gap-0">
+            <FieldLabel className="text-muted-foreground font-cinzel">
+              Augment
+            </FieldLabel>
             <FieldContent className="capitalize">{actor.augment}</FieldContent>
+          </Field>
+        </div>
+        <div className="grid grid-cols-3 text-sm">
+          <Field className="gap-0 text-foreground">
+            <FieldLabel className="text-muted-foreground font-cinzel">
+              State
+            </FieldLabel>
+            <FieldContent className="capitalize text-foreground">
+              {actor.state}
+            </FieldContent>
+          </Field>
+          <Field className="gap-0">
+            <FieldLabel className="text-muted-foreground font-cinzel">
+              Status
+            </FieldLabel>
+            <FieldContent className="capitalize text-foreground">
+              {actor.status}
+            </FieldContent>
+          </Field>
+          <Field className="gap-0">
+            <FieldLabel className="text-muted-foreground font-cinzel">
+              Position
+            </FieldLabel>
+            <FieldContent className="capitalize">
+              <ActorPosition actor={actor} />
+            </FieldContent>
           </Field>
         </div>
       </div>
@@ -255,21 +281,31 @@ function ActorState({
       <Field>
         <FieldLabel>
           <Marker variant="separator">
+            <MarkerContent>Abilities</MarkerContent>
+          </Marker>
+        </FieldLabel>
+        <FieldContent className="min-w-0 flex-row flex-wrap gap-2">
+          {actor.effects
+            .filter((e) => !!e.name)
+            .map((effect) => (
+              <GothicBadge
+                variant="default"
+                key={effect.ID}
+                className="capitalize"
+              >
+                {effect.name}
+              </GothicBadge>
+            ))}
+        </FieldContent>
+      </Field>
+      <Field>
+        <FieldLabel>
+          <Marker variant="separator">
             <MarkerContent>Flags</MarkerContent>
           </Marker>
         </FieldLabel>
-        <FieldContent className="flex flex-col gap-4">
-          <div className="grid grid-cols-2 text-sm">
-            <Field>
-              <FieldLabel className="text-muted-foreground">State</FieldLabel>
-              <FieldContent className="capitalize">{actor.state}</FieldContent>
-            </Field>
-            <Field>
-              <FieldLabel className="text-muted-foreground">Status</FieldLabel>
-              <FieldContent className="capitalize">{actor.status}</FieldContent>
-            </Field>
-          </div>
-          <div className="flex flex-row flex-wrap gap-2 min-w-0">
+        <FieldContent className="flex flex-col gap-4 font-serif">
+          <div className="min-w-0 flex flex-row flex-wrap gap-2">
             <ActorFlag actor={actor} flag="is_active">
               Active
             </ActorFlag>
@@ -299,10 +335,10 @@ function ActorState({
         </FieldLabel>
         <FieldContent className="min-w-0 flex-row flex-wrap gap-2">
           {applied_effects.map((effect) => (
-            <Badge variant="outline" key={effect.ID} className="capitalize">
+            <GothicBadge variant="empty" key={effect.ID} className="capitalize">
               {effect.name}
               {effect.count > 1 && `(${effect.count})`}
-            </Badge>
+            </GothicBadge>
           ))}
           {applied_effects.length === 0 && (
             <span className="italic text-muted-foreground">None</span>
@@ -312,9 +348,22 @@ function ActorState({
     </div>
   )
 }
+function ActorPosition({ actor }: { actor: Actor }) {
+  const player = useSelector(gameStore, (g) =>
+    g.players.find((p) => p.ID === actor.player_ID)
+  )
+  const position = player?.positions.find((p) => p.ID === actor.position_ID)
+  return (
+    <div className="flex gap-1 text-foreground [&_svg]:size-5">
+      {position?.rank === 2 ? <TbHexagonNumber3Filled /> : <TbHexagonNumber3 />}
+      {position?.rank === 1 ? <TbHexagonNumber2Filled /> : <TbHexagonNumber2 />}
+      {position?.rank === 0 ? <TbHexagonNumber1Filled /> : <TbHexagonNumber1 />}
+    </div>
+  )
+}
 function ActorStats({ actor }: { actor: Actor }) {
   return (
-    <div className="flex min-w-0 flex-col gap-4">
+    <div className="flex min-w-0 flex-col gap-4 text-foreground">
       <Field>
         <FieldLabel>
           <Marker variant="separator">
@@ -366,26 +415,10 @@ function ActorWeaponsAndActions({ actor }: { actor: Actor }) {
       <Field>
         <FieldLabel>
           <Marker variant="separator">
-            <MarkerContent>Source Effects</MarkerContent>
-          </Marker>
-        </FieldLabel>
-        <FieldContent className="min-w-0 flex-row flex-wrap gap-2">
-          {actor.effects
-            .filter((e) => !!e.name)
-            .map((effect) => (
-              <Badge variant="outline" key={effect.ID} className="capitalize">
-                {effect.name}
-              </Badge>
-            ))}
-        </FieldContent>
-      </Field>
-      <Field>
-        <FieldLabel>
-          <Marker variant="separator">
             <MarkerContent>Actions</MarkerContent>
           </Marker>
         </FieldLabel>
-        <FieldContent className="flex flex-col gap-2">
+        <FieldContent className="flex flex-col gap-0">
           {actor.actions.map((action) => (
             <ActionContextDialog
               key={action.ID}

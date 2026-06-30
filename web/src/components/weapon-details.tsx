@@ -2,6 +2,7 @@ import type { Stat } from '#/lib/game/core'
 import type { Weapon } from '#/lib/game/weapon'
 import { cn, sign } from '#/lib/utils'
 import { entries } from '#/utils/maps'
+import { GothicFrame } from './gothic-ui/frame'
 import { Item, ItemContent, ItemDescription, ItemTitle } from './ui/item'
 
 function InlineAuxStats({
@@ -15,7 +16,7 @@ function InlineAuxStats({
         <span
           key={i}
           className={cn('capitalize', {
-            'text-green-400': aux > 0,
+            'text-positive': aux > 0,
             'text-red-400': aux < 0,
           })}
         >
@@ -29,12 +30,13 @@ function InlineAuxStats({
 
 function WeaponDetails({ weapon }: { weapon: Weapon }) {
   return (
-    <Item variant="outline" className="p-2">
+    <GothicFrame>
       <ItemContent>
-        <ItemTitle>{weapon.name}</ItemTitle>
-        <div>
+        <span className="font-cinzel font-semibold">{weapon.name}</span>
+        <div className="font-serif">
           <ItemDescription>
-            Actions: {weapon.actions.map((a) => a.config.name).join(', ')}
+            <span>Actions:</span>{' '}
+            {weapon.actions.map((a) => a.config.name).join(', ')}
           </ItemDescription>
           <ItemDescription>
             Effects:{' '}
@@ -47,7 +49,7 @@ function WeaponDetails({ weapon }: { weapon: Weapon }) {
           </ItemDescription>
         </div>
       </ItemContent>
-    </Item>
+    </GothicFrame>
   )
 }
 

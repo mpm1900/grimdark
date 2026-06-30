@@ -46,6 +46,7 @@ export const ALL_STATS: Stat[] = [
   'accuracy',
   'evasion',
   'critical-chance',
+  'critical-damage',
 ]
 
 export const MAIN_STATS: Stat[] = [
@@ -60,6 +61,33 @@ export const MAIN_STATS: Stat[] = [
 export const ACCURACY_STATS: Stat[] = ['accuracy', 'evasion']
 
 export const CRITICAL_STATS: Stat[] = ['critical-chance', 'critical-damage']
+
+export const STAT_LABELS: Record<Stat, string> = {
+  health: 'Health',
+  melee: 'Melee',
+  ranged: 'Ranged',
+  special: 'Special',
+  'martial-defense': 'Martial Def.',
+  'special-defense': 'Special Def.',
+  speed: 'Speed',
+  accuracy: 'Accuracy',
+  evasion: 'Evasion',
+  'critical-chance': 'Crit. Chance',
+  'critical-damage': 'Crit. Damage',
+}
+export const STAT_SLUGS: Record<Stat, string> = {
+  health: 'Hp',
+  melee: 'Mel',
+  ranged: 'Rgd',
+  special: 'Spc',
+  'martial-defense': 'M.Def',
+  'special-defense': 'S.Def',
+  speed: 'Spe',
+  accuracy: 'Acc',
+  evasion: 'Eva',
+  'critical-chance': 'Crit.%',
+  'critical-damage': 'Crit.Dmg',
+}
 
 export const AFFINITIES: Affinity[] = [
   'arcane',

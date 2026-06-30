@@ -288,11 +288,11 @@ func CtxToAllOtherActiveTargets() func(g Game, ctx Context, this ActionContext) 
 }
 
 // switches
-func SwitchWithSource() Action {
+func Retreat() Action {
 	return Action{
 		ID: uuid.MustParse("019f0f7c-50e5-7153-bede-2e8a3ef3dd60"),
 		Config: ActionConfig{
-			Name:        "Switch",
+			Name:        "Retreat",
 			Description: "User switches out for an ally.",
 		},
 		IsActive: true,
@@ -348,7 +348,7 @@ func SwitchIn(n int) Action {
 
 // global actions
 var GLOBAL_ACTIONS = []Action{
-	SwitchWithSource(),
+	Retreat(),
 	SwitchIn(1),
 	SwitchIn(2),
 	SwitchIn(3),

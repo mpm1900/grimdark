@@ -29,14 +29,17 @@ function GothicProgress({
   return (
     <ProgressPrimitive.Root
       data-slot="progress"
-      className={cn('relative w-full overflow-hidden bg-black', className)}
+      className={cn(
+        'relative w-full overflow-hidden bg-neutral-950 border-2 border-foreground/30 ring ring-black',
+        className
+      )}
       value={value}
       {...props}
     >
       <div
         data-slot="progress-track"
         className={cn(
-          'absolute inset-x-[2%] inset-y-[18%] overflow-hidden',
+          'absolute inset-x-0 inset-y-0 overflow-hidden bg-neutral-950 my-px',
           trackClassName
         )}
         {...track}
@@ -44,7 +47,8 @@ function GothicProgress({
         <ProgressPrimitive.Indicator
           data-slot="progress-indicator"
           className={cn(
-            'h-full w-full bg-[url("/gothic/HealthBarMini_Fill_Middle.png")] bg-[length:100%_100%] bg-center bg-no-repeat transition-[clip-path] duration-300 ease-out',
+            'h-full w-full bg-[url("/gothic/HealthBarMini_Fill.png")] bg-[length:100%_100%] bg-center bg-no-repeat transition-[clip-path] duration-300 ease-out',
+            'm-px',
             indicatorClassName
           )}
           style={{
@@ -53,19 +57,19 @@ function GothicProgress({
           }}
           {...indicator}
         />
+        <div
+          aria-hidden
+          data-slot="progress-glass"
+          className={cn(
+            'pointer-events-none absolute inset-0 left-px right-px',
+            '[border-image-source:url("/gothic/HealthBarMini_Glass.png")]',
+            '[border-image-slice:15_fill]',
+            '[border-image-repeat:stretch]',
+            frameClassName
+          )}
+          {...frame}
+        />
       </div>
-      <div
-        aria-hidden
-        data-slot="progress-frame"
-        className={cn(
-          'pointer-events-none absolute inset-0 border-[3px] border-solid border-transparent',
-          '[border-image-source:url("/gothic/HealthBarMini_frame.png")]',
-          '[border-image-slice:15_fill]',
-          '[border-image-repeat:stretch]',
-          frameClassName
-        )}
-        {...frame}
-      />
       {children}
     </ProgressPrimitive.Root>
   )

@@ -1,27 +1,19 @@
 import { gameStore } from '#/lib/stores/game'
 import { useSelector } from '@tanstack/react-store'
-import {
-  AlertDialog,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from './ui/alert-dialog'
+import { AlertDialog, AlertDialogFooter } from './ui/alert-dialog'
 import { clientsStore } from '#/lib/stores/clients'
 import { getTargetsQuery } from '#/lib/queries/get-targets'
 import { useQuery } from '@tanstack/react-query'
 import { getTargetsFromContext, NULL_CONTEXT } from '#/lib/game/context'
 import { useContext } from '#/hooks/use-context'
 import { validateContextQuery } from '#/lib/queries/validate-context'
-import { ChevronRight, Loader } from 'lucide-react'
+import { Loader } from 'lucide-react'
 import { Marker, MarkerContent } from './ui/marker'
 import { sendContextMessage } from '#/lib/stores/socket'
 import {
   GothicAlertDialogContent,
   GothicAlertDialogTitle,
   GothicDialogHeader,
-  GothicDialogTitle,
 } from './gothic-ui/dialog'
 import { GothicBigButton, GothicFramedButton } from './gothic-ui/button'
 
@@ -58,6 +50,9 @@ function PromptController() {
     <>
       <AlertDialog open={!!prompt}>
         <GothicAlertDialogContent className="focus:outline-none focus-visible:outline-none">
+          <div className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-24 overflow-hidden">
+            <div className="absolute left-1/2 h-full w-[calc(100%+5rem)] -translate-x-1/2 bg-[url('/gothic/DialogFlag.png')] bg-[length:100%_100%] bg-center bg-no-repeat opacity-70" />
+          </div>
           {prompt && (
             <>
               <GothicDialogHeader>
@@ -66,10 +61,26 @@ function PromptController() {
                 </GothicAlertDialogTitle>
               </GothicDialogHeader>
               {prompt.payload.config.description && (
-                <div className="text-center text-muted-foreground">
+                <div className="text-center text-white/60">
                   {prompt.payload.config.description}
                 </div>
               )}
+              <div className="px-4">
+                {targets.length === 0 && !is_loading && (
+                  <Marker variant="separator" className="px-6">
+                    <MarkerContent>
+                      {validate_query.data
+                        ? "This action doesn't have targets."
+                        : 'No targets available.'}
+                    </MarkerContent>
+                  </Marker>
+                )}
+                {targets.length > 0 && (
+                  <Marker variant="separator" className="px-16">
+                    <MarkerContent>Select Targets</MarkerContent>
+                  </Marker>
+                )}
+              </div>
               <div className="gap-0 grid grid-cols-2 px-4">
                 {targets.map((target) => (
                   <GothicBigButton
@@ -86,7 +97,7 @@ function PromptController() {
                 ))}
               </div>
               {targets_query.isFetching && (
-                <div className="grid place-items-center absolute inset-0">
+                <div className="grid place-items-center mt-4">
                   <Loader className="animate-spin" />
                 </div>
               )}
@@ -101,7 +112,7 @@ function PromptController() {
               )}
             </>
           )}
-          <AlertDialogFooter className="p-2">
+          <AlertDialogFooter className="p-0 -mr-1 -mb-0.5">
             <GothicFramedButton
               variant="red"
               disabled={!validate_query.data || is_loading}
@@ -115,7 +126,7 @@ function PromptController() {
                 context.reset()
               }}
             >
-              Choose
+              Confirm
             </GothicFramedButton>
           </AlertDialogFooter>
         </GothicAlertDialogContent>

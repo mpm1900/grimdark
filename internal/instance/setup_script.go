@@ -34,6 +34,8 @@ func SetupGame(g *game.Game, player_ID uuid.UUID) {
 
 	effect2 := game.EffectSource(game.EffectPriorityPostStagesStats, func(g game.Game, a game.Actor, ctx game.Context) game.Actor {
 		a.Stats[game.Melee] = a.Stats[game.Melee] / 2
+		// this below is the wrong priority, testing only
+		a.Status = game.StatusBurned
 		return a
 	})
 	effect2.Name = "burned"
