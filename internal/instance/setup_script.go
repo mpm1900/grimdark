@@ -100,6 +100,27 @@ func SetupGame(g *game.Game, player_ID uuid.UUID) {
 		game.Kinetic: 0,
 	}
 
+	gabe_def := game.NewActorDef()
+	gabe_def.Name = "gabe"
+	gabe_def.Affinities = map[game.Affinity]struct{}{
+		game.Cryo:   {},
+		game.Arcane: {},
+	}
+	gabe_def.Effects = []game.Effect{effect, effect2}
+
+	gabe := game.NewActor(player.ID, gabe_def)
+	if len(g.State().Players) == 0 {
+		g.AddPlayers(player)
+	}
+	gabe.Actions = []game.Action{
+		actions.SwordsDance,
+	}
+	gabe.Weapon = &weapons.SlashSword
+	gabe.AffinityImmunities = map[game.Affinity]float64{
+		game.Kinetic: 0,
+	}
+
 	g.AddActor(max)
 	g.AddActor(katie)
+	g.AddActor(gabe)
 }

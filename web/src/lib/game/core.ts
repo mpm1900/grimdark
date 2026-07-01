@@ -40,9 +40,9 @@ export const ALL_STATS: Stat[] = [
   'melee',
   'ranged',
   'special',
+  'speed',
   'martial-defense',
   'special-defense',
-  'speed',
   'accuracy',
   'evasion',
   'critical-chance',
@@ -53,9 +53,9 @@ export const MAIN_STATS: Stat[] = [
   'melee',
   'ranged',
   'special',
+  'speed',
   'martial-defense',
   'special-defense',
-  'speed',
 ]
 
 export const ACCURACY_STATS: Stat[] = ['accuracy', 'evasion']

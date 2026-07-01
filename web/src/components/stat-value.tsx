@@ -22,7 +22,7 @@ function StatValue({
       className={cn(
         {
           'text-positive': value > unmodified,
-          'text-red-400': value < unmodified,
+          'text-negative': value < unmodified,
         },
         className
       )}

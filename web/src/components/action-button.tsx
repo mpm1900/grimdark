@@ -55,7 +55,7 @@ function ActionButton({
                   <span
                     className={cn({
                       'text-positive': actor.stats['accuracy'] > 100,
-                      'text-red-400': actor.stats['accuracy'] < 100,
+                      'text-negative': actor.stats['accuracy'] < 100,
                     })}
                   >
                     {Math.min(action.config.accuracy * 100, 100)}%
@@ -66,7 +66,7 @@ function ActionButton({
                     <span
                       className={cn({
                         'text-positive': actor.stats['critical-chance'] > 100,
-                        'text-red-400': actor.stats['critical-chance'] < 100,
+                        'text-negative': actor.stats['critical-chance'] < 100,
                       })}
                     >
                       {(action.config.crit_chance * 100).toFixed(0)}%
@@ -75,7 +75,7 @@ function ActionButton({
                     <span
                       className={cn({
                         'text-positive': actor.stats['critical-damage'] > 100,
-                        'text-red-400': actor.stats['critical-damage'] < 100,
+                        'text-negative': actor.stats['critical-damage'] < 100,
                       })}
                     >
                       x{action.config.crit_modifier.toFixed(2)}

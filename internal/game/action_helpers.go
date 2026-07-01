@@ -294,6 +294,7 @@ func Retreat() Action {
 		Config: ActionConfig{
 			Name:        "Retreat",
 			Description: "User switches out for an ally.",
+			TargetCount: 1,
 		},
 		IsActive: true,
 		Resolve: func(g *Game, ctx Context, this ActionContext) []Transaction {
@@ -321,11 +322,16 @@ var si_ids map[int]uuid.UUID = map[int]uuid.UUID{
 }
 
 func SwitchIn(n int) Action {
+	noun := "actor"
+	if n > 1 {
+		noun = "actors"
+	}
 	return Action{
 		ID: si_ids[n],
 		Config: ActionConfig{
 			Name:        "Switch In",
-			Description: "Switch actor(s) into battle.",
+			Description: fmt.Sprintf("Switch %s into battle.", noun),
+			TargetCount: n,
 		},
 		Resolve: func(g *Game, ctx Context, this ActionContext) []Transaction {
 			if len(ctx.ActorIDs) != len(ctx.PositionIDs) {

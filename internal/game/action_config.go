@@ -17,6 +17,7 @@ type ActionConfig struct {
 	Priority     int      `json:"priority"`
 	Recoil       float64  `json:"recoil"`
 	Stat         Stat     `json:"stat"`
+	TargetCount  int      `json:"target_count"`
 	// TOOD
 	// - cost
 }

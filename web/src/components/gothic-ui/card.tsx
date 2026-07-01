@@ -11,10 +11,9 @@ function GothicCard({
     <div
       data-slot="card"
       className={cn(
-        'flex flex-col gap-4 py-3 text-card-foreground relative',
+        'flex flex-col gap-4 py-3 relative',
         'border-[10px] border-solid border-transparent bg-gradient-to-b from-neutral-900 to-[oklch(10%_0_0)]',
         'bg-clip-border',
-        '[image-rendering:pixelated]',
         "[border-image-source:url('/gothic/SkillFrameVert_Dark.png')]",
         '[border-image-slice:22_fill]',
         '[border-image-repeat:stretch]',

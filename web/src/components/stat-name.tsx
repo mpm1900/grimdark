@@ -1,3 +1,4 @@
+import { STAT_ICONS } from '#/icons/stats'
 import type { Stat } from '#/lib/game/core'
 import { cn } from '#/lib/utils'
 import { cva } from 'class-variance-authority'
@@ -29,8 +30,17 @@ function StatName({
   className,
   ...props
 }: React.ComponentProps<'span'> & { stat: Stat }) {
+  const Icon = STAT_ICONS[stat]
   return (
-    <span {...props} className={cn(statVariants({ stat }), className)}>
+    <span
+      {...props}
+      className={cn(
+        statVariants({ stat }),
+        'flex items-center gap-1',
+        className
+      )}
+    >
+      {Icon && <Icon className="text-foreground/40 size-5" />}
       {children}
     </span>
   )

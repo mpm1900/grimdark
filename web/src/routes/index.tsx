@@ -18,21 +18,24 @@ function Home() {
       <PromptController />
       <div>
         <AppHeader />
-        <div className="pt-12 flex">
-          <div className="p-4 flex flex-col gap-3">
-            {actors.map((actor) => (
-              <GothicCard key={actor.ID}>
-                <GothicCardContent>
-                  <ActorDetails actor={actor} />
-                </GothicCardContent>
-              </GothicCard>
-            ))}
+        <div className="pt-12 flex flex-col">
+          fsdfsd
+          <div className='flex'>
+            <div className="p-4 flex flex-col gap-3">
+              {actors.map((actor) => (
+                <GothicCard key={actor.ID} className='p-0'>
+                  <GothicCardContent className='p-0'>
+                    <ActorDetails actor={actor} />
+                  </GothicCardContent>
+                </GothicCard>
+              ))}
+            </div>
+            <ul className="p-4">
+              {game.logs.map((log) => (
+                <li key={log.ID}>{RenderLog(log)}</li>
+              ))}
+            </ul>
           </div>
-          <ul className="p-4">
-            {game.logs.map((log) => (
-              <li key={log.ID}>{RenderLog(log)}</li>
-            ))}
-          </ul>
         </div>
       </div>
     </ClientOnly>

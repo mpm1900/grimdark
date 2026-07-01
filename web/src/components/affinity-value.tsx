@@ -21,7 +21,7 @@ function AffinityResistanceValue({
     <span
       className={cn({
         'text-positive': value > unmodified,
-        'text-red-400': value < unmodified,
+        'text-negative': value < unmodified,
         'text-amber-400': immunity !== undefined,
       })}
       {...props}
@@ -45,7 +45,7 @@ function AffinityDamageValue({
     <span
       className={cn({
         'text-positive': value > unmodified,
-        'text-red-400': value < unmodified,
+        'text-negative': value < unmodified,
       })}
       {...props}
     >

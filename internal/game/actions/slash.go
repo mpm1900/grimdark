@@ -11,7 +11,7 @@ var Slash = game.Action{
 	ID: uuid.MustParse("019f0aec-8b34-72cc-bbcc-36350e9fa6fb"),
 	Config: game.ActionConfig{
 		Name:         "Slash",
-		Description: "Slashes target and possibly applies Speed Down.",
+		Description:  "Slashes target and possibly applies Speed Down.",
 		Affinity:     game.Psychic,
 		Stat:         game.Melee,
 		Accuracy:     game.P(0.90),
@@ -20,6 +20,7 @@ var Slash = game.Action{
 		Hits:         1,
 		CritChance:   0,
 		CritModifier: 1.5,
+		TargetCount:  1,
 	},
 	IsActive: true,
 	Resolve: game.BasicAttack(game.AttackConfig{

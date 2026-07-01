@@ -57,8 +57,16 @@ const tinyBadgeVariants = cva(
     variants: {
       variant: {
         default: 'bg-neutral-950 text-foreground border',
-        positive: 'bg-neutral-950 text-emerald-300 border-emerald-900/50',
-        negative: 'bg-neutral-950 text-red-300 border-red-900/50',
+        positive: 'bg-neutral-950 text-lime-200 border-lime-900/50',
+        negative: 'bg-neutral-950 text-red-200 border-red-900/50',
+
+        // statuses
+        bleeding: 'bg-red-950 text-red-300 border-red-800/50',
+        burned: 'bg-orange-950 text-orange-300 border-orange-800/50',
+        frozen: 'bg-cyan-950 text-cyan-300 border-cyan-800/50',
+        poisoned: 'bg-green-950 text-green-200 border-green-900/50',
+        shocked: 'bg-yellow-950 text-blue-200 border-yellow-600/50',
+        sleeping: 'bg-neutral-950 text-purple-300 border-purple-800/50',
       },
     },
     defaultVariants: {

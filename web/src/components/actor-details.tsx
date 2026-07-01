@@ -39,6 +39,7 @@ import {
   TbHexagonNumber3Filled,
 } from 'react-icons/tb'
 import { ActorFrame } from './actor-frame'
+import { GothicHighlightFrame } from './gothic-ui/frame'
 
 function MainStatRow({ actor, stat }: { actor: Actor; stat: Stat }) {
   const stage = actor.stages[stat]
@@ -67,7 +68,7 @@ function MainStatRow({ actor, stat }: { actor: Actor; stat: Stat }) {
             className={cn(
               {
                 'text-positive': stage > 0,
-                'text-red-400': stage < 0,
+                'text-negative': stage < 0,
               },
               mult === 1 && 'opacity-45'
             )}
@@ -122,7 +123,7 @@ function CriticalStatRow({ actor, stat }: { actor: Actor; stat: Stat }) {
           <span
             className={cn({
               'text-positive': stage > 0,
-              'text-red-400': stage < 0,
+              'text-negative': stage < 0,
               'opacity-45': stage === 0,
             })}
           >
@@ -202,46 +203,38 @@ function AffinityResistanceTable({ actor }: { actor: Actor }) {
 function ActorCharacter({ actor }: { actor: Actor }) {
   return (
     <div className="flex flex-col gap-4">
-      <ActorFrame actor={actor} />
+      <ActorFrame actor={actor} className='-mt-2' />
 
-      <div className="flex flex-col gap-2 text-foreground font-serif">
-        <div className="grid grid-cols-2 text-sm">
+      <div className="font-serif space-y-2 text-center px-3">
+        <div className="grid grid-cols-3 text-sm">
           <Field className="gap-0">
-            <FieldLabel className="text-muted-foreground font-cinzel">
+            <FieldLabel className="text-foreground/60 font-cinzel">
               Race
             </FieldLabel>
             <FieldContent className="capitalize">{actor.race}</FieldContent>
           </Field>
           <Field className="gap-0">
-            <FieldLabel className="text-muted-foreground font-cinzel">
+            <FieldLabel className="text-foreground/60 font-cinzel">
               Faction
             </FieldLabel>
             <FieldContent className="capitalize">{actor.faction}</FieldContent>
           </Field>
-        </div>
-        <div className="grid grid-cols-3 text-sm">
           <Field className="gap-0">
-            <FieldLabel className="text-muted-foreground font-cinzel">
+            <FieldLabel className="text-foreground/60 font-cinzel">
               Class
             </FieldLabel>
             <FieldContent className="capitalize">--</FieldContent>
           </Field>
+        </div>
+        <div className="grid grid-cols-3 text-sm">
           <Field className="gap-0">
-            <FieldLabel className="text-muted-foreground font-cinzel">
-              Subclass
-            </FieldLabel>
-            <FieldContent className="capitalize">--</FieldContent>
-          </Field>
-          <Field className="gap-0">
-            <FieldLabel className="text-muted-foreground font-cinzel">
+            <FieldLabel className="text-foreground/60 font-cinzel">
               Augment
             </FieldLabel>
             <FieldContent className="capitalize">{actor.augment}</FieldContent>
           </Field>
-        </div>
-        <div className="grid grid-cols-3 text-sm">
           <Field className="gap-0 text-foreground">
-            <FieldLabel className="text-muted-foreground font-cinzel">
+            <FieldLabel className="text-foreground/60 font-cinzel">
               State
             </FieldLabel>
             <FieldContent className="capitalize text-foreground">
@@ -249,19 +242,11 @@ function ActorCharacter({ actor }: { actor: Actor }) {
             </FieldContent>
           </Field>
           <Field className="gap-0">
-            <FieldLabel className="text-muted-foreground font-cinzel">
+            <FieldLabel className="text-foreground/60 font-cinzel">
               Status
             </FieldLabel>
             <FieldContent className="capitalize text-foreground">
               {actor.status}
-            </FieldContent>
-          </Field>
-          <Field className="gap-0">
-            <FieldLabel className="text-muted-foreground font-cinzel">
-              Position
-            </FieldLabel>
-            <FieldContent className="capitalize">
-              <ActorPosition actor={actor} />
             </FieldContent>
           </Field>
         </div>
@@ -277,7 +262,7 @@ function ActorState({
   applied_effects: ReturnType<typeof getAppliedEffects>
 }) {
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-4 px-2">
       <Field>
         <FieldLabel>
           <Marker variant="separator">
@@ -348,91 +333,59 @@ function ActorState({
     </div>
   )
 }
-function ActorPosition({ actor }: { actor: Actor }) {
-  const player = useSelector(gameStore, (g) =>
-    g.players.find((p) => p.ID === actor.player_ID)
-  )
-  const position = player?.positions.find((p) => p.ID === actor.position_ID)
-  return (
-    <div className="flex gap-1 text-foreground [&_svg]:size-5">
-      {position?.rank === 2 ? <TbHexagonNumber3Filled /> : <TbHexagonNumber3 />}
-      {position?.rank === 1 ? <TbHexagonNumber2Filled /> : <TbHexagonNumber2 />}
-      {position?.rank === 0 ? <TbHexagonNumber1Filled /> : <TbHexagonNumber1 />}
-    </div>
-  )
-}
+
 function ActorStats({ actor }: { actor: Actor }) {
   return (
     <div className="flex min-w-0 flex-col gap-4 text-foreground">
-      <Field>
-        <FieldLabel>
-          <Marker variant="separator">
-            <MarkerContent>Stats</MarkerContent>
-          </Marker>
-        </FieldLabel>
-        <FieldContent>
-          <StatsTable actor={actor} />
-        </FieldContent>
-      </Field>
-      <div className="grid grid-cols-2">
-        <Field>
-          <FieldLabel>
-            <Marker variant="separator">
-              <MarkerContent>Resistances</MarkerContent>
-            </Marker>
-          </FieldLabel>
-          <FieldContent>
-            <AffinityResistanceTable actor={actor} />
-          </FieldContent>
-        </Field>
-        <Field>
-          <FieldLabel>
-            <Marker variant="separator">
-              <MarkerContent>Damage</MarkerContent>
-            </Marker>
-          </FieldLabel>
-          <FieldContent>
-            <AffinityDamageTable actor={actor} />
-          </FieldContent>
-        </Field>
-      </div>
+      <GothicHighlightFrame className="-mx-2">
+        <StatsTable actor={actor} />
+        <div className="grid grid-cols-2 p-3 -mx-2">
+          <Field>
+            <FieldLabel>
+              <Marker variant="separator">
+                <MarkerContent>Resistances</MarkerContent>
+              </Marker>
+            </FieldLabel>
+            <FieldContent>
+              <AffinityResistanceTable actor={actor} />
+            </FieldContent>
+          </Field>
+          <Field>
+            <FieldLabel>
+              <Marker variant="separator">
+                <MarkerContent>Damage</MarkerContent>
+              </Marker>
+            </FieldLabel>
+            <FieldContent>
+              <AffinityDamageTable actor={actor} />
+            </FieldContent>
+          </Field>
+        </div>
+      </GothicHighlightFrame>
     </div>
   )
 }
 function ActorWeaponsAndActions({ actor }: { actor: Actor }) {
   return (
-    <div className="flex min-w-0 flex-col gap-4">
-      <Field>
-        <FieldLabel>
-          <Marker variant="separator">
-            <MarkerContent>Weapon(s)</MarkerContent>
-          </Marker>
-        </FieldLabel>
-        <FieldContent>
-          {actor.weapon && <WeaponDetails weapon={actor.weapon} />}
-        </FieldContent>
-      </Field>
-      <Field>
-        <FieldLabel>
-          <Marker variant="separator">
-            <MarkerContent>Actions</MarkerContent>
-          </Marker>
-        </FieldLabel>
-        <FieldContent className="flex flex-col gap-0">
-          {actor.actions.map((action) => (
-            <ActionContextDialog
-              key={action.ID}
-              actor={actor}
-              action={action}
-              enabled={!action.is_disabled}
-            >
-              <DialogTrigger asChild>
-                <ActionButton action={action} actor={actor} />
-              </DialogTrigger>
-            </ActionContextDialog>
-          ))}
-        </FieldContent>
-      </Field>
+    <div className="flex min-w-0 flex-col">
+      {actor.weapon && <WeaponDetails weapon={actor.weapon} />}
+      <Marker variant="separator" className='hidden'>
+        <MarkerContent>Actions</MarkerContent>
+      </Marker>
+      <div className="flex flex-col gap-0">
+        {actor.actions.map((action) => (
+          <ActionContextDialog
+            key={action.ID}
+            actor={actor}
+            action={action}
+            enabled={!action.is_disabled}
+          >
+            <DialogTrigger asChild>
+              <ActionButton action={action} actor={actor} />
+            </DialogTrigger>
+          </ActionContextDialog>
+        ))}
+      </div>
     </div>
   )
 }
@@ -442,7 +395,7 @@ function ActorDetails({ actor }: { actor: Actor }) {
   const applied_effects = getAppliedEffects(game, actor)
 
   return (
-    <div className="grid grid-cols-3 gap-4 max-w-4xl">
+    <div className="grid grid-cols-3 max-w-4xl">
       <div className="flex min-w-0 flex-col gap-4">
         <ActorCharacter actor={actor} />
         <ActorState actor={actor} applied_effects={applied_effects} />

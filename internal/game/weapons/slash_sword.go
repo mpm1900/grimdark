@@ -14,5 +14,8 @@ var SlashSword = game.Weapon{
 	AuxStats: map[game.Stat]float64{
 		game.Melee: 20,
 	},
-	Effects: []game.Effect{},
+	Description: "A large sword, designed for slashing.",
+	Effects:     []game.Effect{},
+	Hands:       2,
+	WeaponType:  "Sword",
 }

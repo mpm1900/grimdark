@@ -5,7 +5,6 @@ import type { Action } from '#/lib/game/action'
 import { getTargetsQuery } from '#/lib/queries/get-targets'
 import { useQuery } from '@tanstack/react-query'
 import { Marker, MarkerContent } from './ui/marker'
-import { Loader } from 'lucide-react'
 import { getTargetsFromContext, NULL_CONTEXT } from '#/lib/game/context'
 import { useSelector } from '@tanstack/react-store'
 import { gameStore } from '#/lib/stores/game'
@@ -13,13 +12,14 @@ import { useContext } from '#/hooks/use-context'
 import { validateContextQuery } from '#/lib/queries/validate-context'
 import { sendContextMessage } from '#/lib/stores/socket'
 import { clientsStore } from '#/lib/stores/clients'
-import { GothicBigButton, GothicFramedButton } from './gothic-ui/button'
+import { GothicFramedButton } from './gothic-ui/button'
 import {
   GothicDialogContent,
   GothicDialogHeader,
   GothicDialogTitle,
 } from './gothic-ui/dialog'
 import { STAT_LABELS } from '#/lib/game/core'
+import { TargetsButtonGrid } from './targets-button-grid'
 
 function ActionContextDialog({
   actor,
@@ -32,7 +32,6 @@ function ActionContextDialog({
   enabled?: boolean
 }>) {
   const client = useSelector(clientsStore, (s) => s.me!)
-  const actors = useSelector(gameStore, (g) => g.actors)
   const turn = useSelector(gameStore, (g) => g.turn)
   const targets_options = getTargetsQuery(
     actor.ID,
@@ -43,7 +42,6 @@ function ActionContextDialog({
   targets_options.enabled = !!enabled
   const targets_query = useQuery(targets_options)
   const targets_context = targets_query.data ?? NULL_CONTEXT
-  const targets = getTargetsFromContext(actors, targets_context)
   const context = useContext(targets_context)
   const validate_options = validateContextQuery(context.value)
   validate_options.enabled = !!enabled
@@ -63,7 +61,7 @@ function ActionContextDialog({
         </GothicDialogHeader>
 
         {!!action.config.power && (
-          <div className="grid grid-cols-3 px-3 pb-3 bg-right">
+          <div className="grid grid-cols-4 px-3 pb-3 bg-right">
             {!!action.config.stat && (
               <div className="flex flex-col items-center">
                 <Marker variant="separator">
@@ -88,6 +86,12 @@ function ActionContextDialog({
                 {Math.min(action.config.accuracy * 100, 100)}%
               </div>
             )}
+            <div className="flex flex-col items-center">
+              <Marker variant="separator">
+                <MarkerContent>Range</MarkerContent>
+              </Marker>
+              1
+            </div>
           </div>
         )}
         {action.config.description && (
@@ -95,44 +99,12 @@ function ActionContextDialog({
             {action.config.description}
           </div>
         )}
-        <div className="px-4">
-          {targets.length === 0 && !is_loading && (
-            <Marker variant="separator" className="px-6">
-              <MarkerContent>
-                {validate_query.data
-                  ? "This action doesn't have targets."
-                  : 'No targets available.'}
-              </MarkerContent>
-            </Marker>
-          )}
-          {targets.length > 0 && (
-            <Marker variant="separator" className="px-16">
-              <MarkerContent>Select Targets</MarkerContent>
-            </Marker>
-          )}
-          <div className="grid grid-cols-2 mt-3">
-            {targets.map((target) => (
-              <GothicBigButton
-                key={target.ID}
-                variant={context.hasTarget(target) ? 'red' : 'basic'}
-                // pressed={context.hasTarget(target)}
-                onClick={(e) =>
-                  !context.hasTarget(target)
-                    ? context.addTarget(target)
-                    : context.removeTarget(target)
-                }
-                disabled={!enabled}
-              >
-                {target.name}
-              </GothicBigButton>
-            ))}
-          </div>
-          {targets_query.isFetching && (
-            <div className="grid place-items-center inset-0">
-              <Loader className="animate-spin" />
-            </div>
-          )}
-        </div>
+        <TargetsButtonGrid
+          actor={actor}
+          action={action}
+          context={context}
+          className="px-4"
+        />
         <DialogFooter className="p-0 -mr-1 -mb-0.5">
           <DialogClose asChild>
             <GothicFramedButton

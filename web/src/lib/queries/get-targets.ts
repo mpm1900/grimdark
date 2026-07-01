@@ -3,7 +3,6 @@ import { contextToString, NULL_CONTEXT, type Context } from '../game/context'
 import { subscribe } from '../socket/connect'
 import { clientsStore } from '../stores/clients'
 import { sendContextMessage } from '../stores/socket'
-import type { Actor } from '../game/actor'
 import type { ID } from '../game/core'
 
 async function getTargets(context: Context): Promise<Context> {
@@ -41,17 +40,17 @@ async function getTargets(context: Context): Promise<Context> {
 }
 
 function getTargetsQuery(
-  source_ID: ID | null,
-  player_ID: ID | null,
+  source_ID: ID | null | undefined,
+  player_ID: ID | null | undefined,
   action_ID: ID,
   deps: (boolean | number | string)[]
 ) {
   const context: Context = {
     ...NULL_CONTEXT,
     action_ID,
-    source_ID: source_ID,
-    parent_ID: source_ID,
-    player_ID: player_ID,
+    source_ID: source_ID ?? null,
+    parent_ID: source_ID ?? null,
+    player_ID: player_ID ?? null,
   }
   return queryOptions<Context>({
     queryKey: ['get-targets', contextToString(context), ...deps],
