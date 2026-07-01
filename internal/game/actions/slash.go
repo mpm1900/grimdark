@@ -37,5 +37,5 @@ var Slash = game.Action{
 		},
 	}),
 	ValidateContext:  game.ContextTargetLength(1),
-	TargetsPredicate: game.CombineFilters(game.ActiveActors, game.ActionRange(1)),
+	TargetsPredicate: game.CombineFilters(game.ActiveActors, game.Enemies, game.ActionRange(1)),
 }

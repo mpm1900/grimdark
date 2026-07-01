@@ -43,8 +43,8 @@ function ActorFrame({
   return (
     <div className={cn('relative flex -ml-1 -mt-1', className)} {...props}>
       <img
-        src="/img/portrait1.png"
-        className="absolute size-18 top-1 left-1 bg-neutral-950 hidden"
+        src="/img/portrait1_.png"
+        className="absolute size-18 top-1 left-1 bg-neutral-950"
       />
       <div className="relative bg-[url('/gothic/CharacterTopFrame_Cframe.png')] z-10 size-20 bg-cover">
         {position && (
@@ -69,7 +69,7 @@ function ActorFrame({
           </>
         )}
       </div>
-      <div className="relative flex-1 flex flex-col -ml-1 mt-2.5 pr-1 bg-[url('/gothic/DialogFlag_stone_shadow.png')] bg-[length:100%_100%] bg-center bg-no-repeat">
+      <div className="relative flex-1 flex flex-col -ml-1 mt-[7px] pr-1 bg-[url('/gothic/DialogFlag_stone_shadow.png')] bg-[length:100%_100%] bg-center bg-no-repeat">
         <div className="h-1 bg-gradient-to-b from-white/40 to-neutral-800/60 border -mr-1 border-black mb-1" />
         <div className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-24 overflow-hidden">
           <div className="absolute left-1/2 h-full w-[calc(100%+5rem)] -translate-x-1/2 opacity-70" />

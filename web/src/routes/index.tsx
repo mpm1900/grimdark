@@ -1,5 +1,6 @@
 import { AppHeader } from '#/components/app-header'
-import { GothicChatPanel } from '#/components/gothic-ui/frame'
+import { GothicCard } from '#/components/gothic-ui/card'
+import { GothicChatPanel, GothicFrame } from '#/components/gothic-ui/frame'
 import { PlayerPositions } from '#/components/player-positions'
 import { PromptController } from '#/components/prompt-controller'
 import { ScrollArea } from '#/components/ui/scroll-area'
@@ -23,7 +24,7 @@ function Home() {
 
         <div className="relative flex h-full min-h-0 flex-col overflow-hidden pt-12">
           <div className="min-h-0 flex-1" />
-          <div className="flex shrink-0 px-6 pb-6">
+          <div className="flex shrink-0 px-6 z-10 -mb-4">
             {client_player && (
               <PlayerPositions
                 className="flex-1 gap-1"
@@ -39,25 +40,21 @@ function Home() {
               />
             )}
           </div>
+          <div className="bg-[url(/gothic/DecoratedLineHorizontal.png)] h-7 bg-center bg-contain bg-repeat-x -mb-1"></div>
           <div className="flex justify-between items-end">
-            <div className="h-[188px]">
-              <img
-                src="/gothic/SkillBarRightColb_reverse.png"
-                className="h-full"
-              />
-            </div>
-            <GothicChatPanel className="h-[188px] w-[512px]">
-              <div className="h-8 leading-8 pt-1 mb-1 pl-6 font-cinzel text-foreground/60 font-semibold">
+            <div></div>
+            <GothicCard className="h-50 w-[512px] flex bg-neutral-950 p-0">
+              <GothicFrame className="-mx-1.5 -mt-1.5 py-1.5 leading-0 font-cinzel text-foreground/20 font-semibold bg-neutral-950">
                 Battle Log
-              </div>
-              <ScrollArea className="h-[148px] mr-2 pb-2 font-serif text-foreground/40">
+              </GothicFrame>
+              <div className="flex-1 overflow-auto font-serif text-foreground/40">
                 <ul className="px-4">
                   {game.logs.map((log) => (
                     <li key={log.ID}>{RenderLog(log)}</li>
                   ))}
                 </ul>
-              </ScrollArea>
-            </GothicChatPanel>
+              </div>
+            </GothicCard>
           </div>
         </div>
       </div>
