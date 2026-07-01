@@ -69,7 +69,7 @@ const gothicBigButtonVariants = cva(
           '[border-image-slice:12_40_12_40_fill] [border-image-repeat:stretch]',
           "[border-image-source:url('/gothic/ButtonStandartGray_Normal.png')]",
           "active:[border-image-source:url('/gothic/ButtonStandartGray_Pressed.png')] active:text-foreground/60",
-          "disabled:[border-image-source:url('/gothic/ButtonStandartGray_Disabled.png')] disabled:pointer-events-none disabled:text-foreground/60",
+          "disabled:[border-image-source:url('/gothic/ButtonStandartGray_Disabled.png')] disabled:pointer-events-none disabled:text-foreground/40",
           "hover:[border-image-source:url('/gothic/ButtonStandartGray_Hovered.png')] hover:text-foreground"
         ),
         red: cn(

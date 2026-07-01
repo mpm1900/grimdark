@@ -19,7 +19,10 @@ function GothicFrame({ className, ...props }: React.ComponentProps<'div'>) {
   )
 }
 
-function GothicShadowFrame({ className, ...props }: React.ComponentProps<'div'>) {
+function GothicShadowFrame({
+  className,
+  ...props
+}: React.ComponentProps<'div'>) {
   return (
     <div
       data-slot="gothic-frame"
@@ -37,8 +40,10 @@ function GothicShadowFrame({ className, ...props }: React.ComponentProps<'div'>)
   )
 }
 
-
-function GothicHighlightFrame({ className, ...props }: React.ComponentProps<'div'>) {
+function GothicHighlightFrame({
+  className,
+  ...props
+}: React.ComponentProps<'div'>) {
   return (
     <div
       data-slot="gothic-highlight-frame"
@@ -56,4 +61,22 @@ function GothicHighlightFrame({ className, ...props }: React.ComponentProps<'div
   )
 }
 
-export { GothicFrame, GothicShadowFrame, GothicHighlightFrame }
+function GothicChatPanel({ className, ...props }: React.ComponentProps<'div'>) {
+  return (
+    <div
+      data-slot="gothic-chat-panel"
+      className={cn(
+        'relative isolate text-foreground p-1',
+        'before:pointer-events-none before:absolute before:inset-0 before:-z-10',
+        'before:border-t-[30px] before:border-x-[6px] before:border-b-[10px] before:border-solid before:border-transparent',
+        "before:[border-image-source:url('/gothic/SkillBarMiddleSlot.png')]",
+        'before:[border-image-slice:25_10_10_10_fill]',
+        'before:[border-image-repeat:stretch]',
+        className
+      )}
+      {...props}
+    />
+  )
+}
+
+export { GothicFrame, GothicShadowFrame, GothicHighlightFrame, GothicChatPanel }

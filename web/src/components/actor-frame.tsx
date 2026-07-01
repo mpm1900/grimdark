@@ -44,14 +44,14 @@ function ActorFrame({
     <div className={cn('relative flex -ml-1 -mt-1', className)} {...props}>
       <img
         src="/img/portrait1.png"
-        className="absolute size-18 top-3 left-1 bg-neutral-950"
+        className="absolute size-18 top-1 left-1 bg-neutral-950 hidden"
       />
       <div className="relative bg-[url('/gothic/CharacterTopFrame_Cframe.png')] z-10 size-20 bg-cover">
         {position && (
           <>
             <TinyBadge
               variant="default"
-              className="absolute top-1.5 rounded-xs rounded-b-sm right-0 font-cinzel border-white/30 text-foreground/60"
+              className="absolute top-1.5 left-1/2 -translate-x-1/2 rounded-xs rounded-b-sm font-cinzel border-white/30 text-foreground/60"
             >
               Lv {actor.level}
             </TinyBadge>
@@ -61,7 +61,7 @@ function ActorFrame({
             {actor.status !== 'none' && (
               <TinyBadge
                 variant={actor.status as any}
-                className="absolute -bottom-1 left-4 pl-2 pr-1 capitalize font-cinzel"
+                className="absolute -bottom-0.5 left-4 pl-2 pr-1 capitalize font-cinzel"
               >
                 {actor.status}
               </TinyBadge>
@@ -90,7 +90,7 @@ function ActorFrame({
             type="value"
             className="rounded-l-none -ml-px"
           />
-          <div className="absolute -bottom-1 left-1 flex gap-0.5">
+          <div className="absolute -bottom-[6px] left-1 flex gap-0.5">
             {[...MAIN_STATS, ...ACCURACY_STATS].map((stat) => (
               <StatMultBadge key={stat} actor={actor} stat={stat} />
             ))}

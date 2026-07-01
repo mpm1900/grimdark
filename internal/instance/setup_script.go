@@ -6,11 +6,9 @@ import (
 	"grimdark/internal/game/actions"
 	"grimdark/internal/game/effects"
 	"grimdark/internal/game/weapons"
-
-	"github.com/google/uuid"
 )
 
-func SetupGame(g *game.Game, player_ID uuid.UUID) {
+func SetupGame(g *game.Game, user game.User) {
 	effect := game.EffectSource(game.EffectPriorityStages, func(g game.Game, a game.Actor, ctx game.Context) game.Actor {
 		a.Stages[game.Accuracy] = a.Stages[game.Accuracy] + 1
 		a.Stages[game.CriticalChance] = a.Stages[game.CriticalChance] + 1
@@ -66,7 +64,8 @@ func SetupGame(g *game.Game, player_ID uuid.UUID) {
 		return false
 	})
 	player := game.NewPlayer()
-	player.ID = player_ID
+	player.ID = user.ID
+	player.User = user
 	if len(g.State().Players) > 0 {
 		player = g.Base().Players[0]
 	}

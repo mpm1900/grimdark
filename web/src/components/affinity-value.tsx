@@ -70,7 +70,7 @@ function AffinityResistanceMultiplier({
   return (
     <span
       {...props}
-      className={cn(mult === 1 && !immunity && 'opacity-45', className)}
+      className={cn(mult === 1 && !immunity && 'text-foreground/20', className)}
     >
       {immunity !== undefined ? (
         <span
@@ -102,7 +102,7 @@ function AffinityDamageMultiplier({
     <span
       {...props}
       className={cn({
-        'opacity-45': mult === 1,
+        'text-foreground/20': mult === 1,
       })}
     >
       x{mult.toFixed(2)}

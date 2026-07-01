@@ -61,7 +61,7 @@ function MainStatRow({ actor, stat }: { actor: Actor; stat: Stat }) {
                 'text-positive': stage > 0,
                 'text-negative': stage < 0,
               },
-              mult === 1 && 'opacity-45'
+              mult === 1 && 'text-foreground/20'
             )}
           >
             x{mult.toFixed(2)}
@@ -93,7 +93,7 @@ function AccuracyStatRow({ actor, stat }: { actor: Actor; stat: Stat }) {
         <StatValue
           actor={actor}
           stat={stat}
-          className={cn(actor.stats[stat] === 100 && 'opacity-50')}
+          className={cn(actor.stats[stat] === 100 && 'text-foreground/20')}
         >
           x{mult.toFixed(2)}
         </StatValue>
@@ -115,7 +115,6 @@ function CriticalStatRow({ actor, stat }: { actor: Actor; stat: Stat }) {
             className={cn({
               'text-positive': stage > 0,
               'text-negative': stage < 0,
-              'opacity-45': stage === 0,
             })}
           >
             {sign(stage)}
@@ -123,7 +122,7 @@ function CriticalStatRow({ actor, stat }: { actor: Actor; stat: Stat }) {
           </span>
         )}
       </TableCell>
-      <TableCell className="text-end text-foreground/40">--</TableCell>
+      <TableCell className="text-end text-foreground/20">--</TableCell>
     </TableRow>
   )
 }

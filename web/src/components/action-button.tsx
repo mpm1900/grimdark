@@ -27,7 +27,7 @@ function ActionButton({
     <GothicFramedButton
       {...props}
       variant="basic"
-      className="h-auto"
+      className="h-auto w-full min-w-0 justify-start"
       disabled={action.is_disabled || !actor.is_active || status === 'running'}
     >
       {action.config.affinity && (
@@ -35,25 +35,39 @@ function ActionButton({
           <AffinityName affinity={action.config.affinity} />
         </ItemMedia>
       )}
-      <ItemContent className="gap-0 py-0.5">
+      <ItemContent className="gap-0 py-0.5 min-w-0 overflow-hidden">
         <ItemTitle
           className={cn('text-white', action.is_disabled && 'text-white/60')}
         >
           {action.config.name}
         </ItemTitle>
-        <ItemDescription className="text-left font-serif text-foreground/70">
-          {!action.config.power && action.config.description}
+        <ItemDescription className="block min-w-0 max-w-full overflow-hidden text-ellipsis whitespace-nowrap text-left font-serif text-foreground/70">
+          {!action.config.power && (
+            <span className="block truncate">
+              {action.is_disabled && (
+                <span className="text-red-300/40">[Disabled] </span>
+              )}
+              {action.config.description}
+            </span>
+          )}
           {!!action.config.power && (
-            <span className="flex gap-2 font-cinzel text-white/50">
+            <span className="font-cinzel text-white/50">
+              {action.is_disabled && (
+                <span className="text-red-300/40">[Disabled] </span>
+              )}
               {action.config.stat && (
-                <StatName stat={action.config.stat} className="font-serif">
+                <StatName
+                  stat={action.config.stat}
+                  className="mr-2 inline-flex items-baseline align-baseline font-serif [&>svg]:self-center"
+                  hideIcon
+                >
                   {STAT_LABELS[action.config.stat]}
                 </StatName>
               )}
-              <span className="flex gap-2 font-semibold">
+              <span className="mr-2 font-semibold">
                 {action.config.accuracy && (
                   <span
-                    className={cn({
+                    className={cn('mr-2', {
                       'text-positive': actor.stats['accuracy'] > 100,
                       'text-negative': actor.stats['accuracy'] < 100,
                     })}
@@ -62,7 +76,7 @@ function ActionButton({
                   </span>
                 )}
                 {action.config.crit_chance && (
-                  <span className={cn('flex items-center')}>
+                  <span className="inline-flex items-baseline align-baseline">
                     <span
                       className={cn({
                         'text-positive': actor.stats['critical-chance'] > 100,
@@ -71,7 +85,7 @@ function ActionButton({
                     >
                       {(action.config.crit_chance * 100).toFixed(0)}%
                     </span>
-                    <MdKeyboardDoubleArrowRight />
+                    <MdKeyboardDoubleArrowRight className="self-center" />
                     <span
                       className={cn({
                         'text-positive': actor.stats['critical-damage'] > 100,
@@ -82,6 +96,9 @@ function ActionButton({
                     </span>
                   </span>
                 )}
+              </span>
+              <span className="font-serif text-foreground/70">
+                {action.config.description}
               </span>
             </span>
           )}

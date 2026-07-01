@@ -28,8 +28,12 @@ function StatName({
   stat,
   children,
   className,
+  hideIcon,
   ...props
-}: React.ComponentProps<'span'> & { stat: Stat }) {
+}: React.ComponentProps<'span'> & {
+  stat: Stat
+  hideIcon?: boolean
+}) {
   const Icon = STAT_ICONS[stat]
   return (
     <span
@@ -40,7 +44,7 @@ function StatName({
         className
       )}
     >
-      {Icon && <Icon className="text-foreground/40 size-5" />}
+      {Icon && !hideIcon && <Icon className="text-foreground/40 size-5" />}
       {children}
     </span>
   )

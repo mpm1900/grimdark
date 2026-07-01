@@ -123,7 +123,7 @@ func (ih *InstancesHandler) handleGameConnection(ctx context.Context) http.Handl
 			Username: user.Username,
 			Email:    user.Email,
 		})
-		instance.SetupGame(&i.Game, client.ID)
+		instance.SetupGame(&i.Game, *client.User)
 		i.RunGameActions()
 
 		if err := client.Connect(w, r); err != nil {
