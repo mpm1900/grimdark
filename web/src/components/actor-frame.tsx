@@ -101,4 +101,37 @@ function ActorFrame({
   )
 }
 
-export { ActorFrame }
+function ActorFrameSlim({
+  actor,
+  className,
+  ...props
+}: React.ComponentProps<'div'> & { actor: Actor }) {
+  return (
+    <div className={cn('relative mt-4', className)} {...props}>
+      <div className="flex flex-row justify-between items-center pr-1 pb-1">
+        <span className="text-sm leading-0 font-bold font-cinzel-dec [text-shadow:2px_1px_0_var(--color-black)] text-foreground -mb-1">
+          {actor.name}
+        </span>
+        <div className="flex gap-0">
+          {AFFINITIES.filter((a) => actor.affinities.includes(a)).map((a) => (
+            <AffinityName key={a} affinity={a} />
+          ))}
+        </div>
+      </div>
+      <div className="relative">
+        <HealthBar
+          actor={actor}
+          type="value"
+          className="rounded-l-none -ml-px"
+        />
+        <div className="absolute -bottom-[6px] left-0 flex gap-0.5">
+          {[...MAIN_STATS, ...ACCURACY_STATS].map((stat) => (
+            <StatMultBadge key={stat} actor={actor} stat={stat} />
+          ))}
+        </div>
+      </div>
+    </div>
+  )
+}
+
+export { ActorFrame, ActorFrameSlim }

@@ -2,7 +2,7 @@ import type { Player } from '#/lib/game/player'
 import { gameStore } from '#/lib/stores/game'
 import { cn } from '#/lib/utils'
 import { useSelector } from '@tanstack/react-store'
-import { ActorFrame } from './actor-frame'
+import { ActorFrame, ActorFrameSlim } from './actor-frame'
 import { Popover, PopoverTrigger } from './ui/popover'
 import { GothicPopoverContent } from './gothic-ui/popover'
 import { ActorDetails } from './actor-details'
@@ -38,11 +38,15 @@ function PlayerPosition({
     <div className="relative flex-1">
       {actor && (
         <Popover>
-          <PopoverTrigger>
-            <div className="relative z-10">
+          <PopoverTrigger className="w-full">
+            <div className="relative z-10 px-8 flex justify-center">
               <img
-                src="/gothic/CharSHRef.png"
-                className={cn('relative z-10', !actor && 'opacity-0')}
+                src="/img/69_Asset_35.png"
+                className={cn(
+                  'w-full max-w-[120px] [image-rendering:pixelated] relative z-10',
+                  !actor && 'opacity-0',
+                  reverse && '-scale-x-100'
+                )}
               />
             </div>
           </PopoverTrigger>
@@ -57,7 +61,7 @@ function PlayerPosition({
           </GothicPopoverContent>
         </Popover>
       )}
-      {actor && <ActorFrame actor={actor} className="relative z-40" />}
+      {actor && <ActorFrameSlim actor={actor} className="relative z-40 px-2" />}
     </div>
   )
 }
@@ -67,7 +71,7 @@ function PlayerPositionPlatform({ reverse }: { reverse?: boolean }) {
     <div className="relative flex-1" style={positionStyle}>
       <div
         className={cn(
-          'pointer-events-none absolute bottom-14 left-1/2 size-20 w-full border-6 ring-2 ring-black',
+          'pointer-events-none absolute bottom-10 left-1/2 size-20 w-full border-6 ring-2 ring-black',
           {
             'bg-red-950/40 border-red-900': reverse,
             'bg-emerald-950/40 border-emerald-800': !reverse,
@@ -99,9 +103,7 @@ function PlayerPositions({
     >
       <div
         className={cn(
-          'pointer-events-none absolute inset-0 z-0 gap-2 flex flex-row-reverse items-end',
-          reverse && 'flex-row -translate-x-4',
-          !reverse && 'translate-x-4'
+          'pointer-events-none absolute inset-0 z-0 gap-2 flex flex-row-reverse items-end'
         )}
         style={sidePerspectiveStyle}
       >
