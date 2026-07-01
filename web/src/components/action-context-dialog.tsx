@@ -90,7 +90,7 @@ function ActionContextDialog({
               <Marker variant="separator">
                 <MarkerContent>Range</MarkerContent>
               </Marker>
-              1
+              {action.config.range}
             </div>
           </div>
         )}

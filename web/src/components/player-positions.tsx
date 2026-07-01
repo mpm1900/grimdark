@@ -22,7 +22,7 @@ function PlayerPosition({
       <img
         src="/gothic/CharSHRef.png"
         className={cn(
-          '-scale-x-100',
+          '-scale-x-100 p-4 px-8 pb-0 -mb-4',
           reverse && 'scale-x-100',
           !actor && 'opacity-0'
         )}

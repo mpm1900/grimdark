@@ -15,6 +15,7 @@ type ActionConfig struct {
 	Name         string   `json:"name"`
 	Power        float64  `json:"power"`
 	Priority     int      `json:"priority"`
+	Range        int      `json:"range"`
 	Recoil       float64  `json:"recoil"`
 	Stat         Stat     `json:"stat"`
 	TargetCount  int      `json:"target_count"`

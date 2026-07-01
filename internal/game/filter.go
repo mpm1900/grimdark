@@ -82,6 +82,26 @@ func TargetActors(g Game, actor Actor, context Context) bool {
 	is_pos := actor.IsActive() && slices.Contains(context.PositionIDs, actor.PositionID)
 	return is_actor || is_pos
 }
+func ActionRange(action_range int) Filter[Actor] {
+	return func(g Game, target Actor, ctx Context) bool {
+		source, ok := g.GetSource(ctx)
+		if !ok {
+			return false
+		}
+
+		source_pos, ok := g.GetPosition(source.PositionID)
+		if !ok {
+			return false
+		}
+		target_pos, ok := g.GetPosition(target.PositionID)
+		if !ok {
+			return false
+		}
+
+		distance := source_pos.GetDistanceFrom(target_pos)
+		return action_range >= distance
+	}
+}
 
 // trigger validation filters
 func TriggerTargetMatchesModifierParent(g Game, trigger Context, modifier Context) bool {

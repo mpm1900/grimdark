@@ -19,7 +19,7 @@ function GothicPopoverContent({
         className={cn(
           'relative isolate z-50 w-72 origin-(--radix-popover-content-transform-origin)',
           'text-popover-foreground shadow-md outline-hidden data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95',
-          '[&>span]:z-0 [&>span]:translate-y-[-6px]',
+          '[&>span]:z-0 [&>span]:translate-y-[-5px]',
           className
         )}
         {...props}
@@ -37,8 +37,8 @@ function GothicPopoverContent({
           {children}
         </div>
         <PopoverPrimitive.Arrow
-          height={24}
-          width={57}
+          height={20}
+          width={47}
           className="block fill-transparent bg-[url('/gothic/PopoverArrow.png')] bg-contain bg-center bg-no-repeat bottom-3"
         />
       </PopoverPrimitive.Content>

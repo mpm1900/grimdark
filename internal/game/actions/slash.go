@@ -21,6 +21,7 @@ var Slash = game.Action{
 		CritChance:   0,
 		CritModifier: 1.5,
 		TargetCount:  1,
+		Range:        1,
 	},
 	IsActive: true,
 	Resolve: game.BasicAttack(game.AttackConfig{
@@ -36,5 +37,5 @@ var Slash = game.Action{
 		},
 	}),
 	ValidateContext:  game.ContextTargetLength(1),
-	TargetsPredicate: game.CombineFilters(game.ActiveActors, game.Allies),
+	TargetsPredicate: game.CombineFilters(game.ActiveActors, game.ActionRange(1)),
 }
