@@ -29,15 +29,6 @@ import { useSelector } from '@tanstack/react-store'
 import { gameStore } from '#/lib/stores/game'
 import { StatName } from './stat-name'
 import { GothicBadge } from './gothic-ui/badge'
-
-import {
-  TbHexagonNumber1,
-  TbHexagonNumber2,
-  TbHexagonNumber3,
-  TbHexagonNumber1Filled,
-  TbHexagonNumber2Filled,
-  TbHexagonNumber3Filled,
-} from 'react-icons/tb'
 import { ActorFrame } from './actor-frame'
 import { GothicHighlightFrame } from './gothic-ui/frame'
 
@@ -203,7 +194,7 @@ function AffinityResistanceTable({ actor }: { actor: Actor }) {
 function ActorCharacter({ actor }: { actor: Actor }) {
   return (
     <div className="flex flex-col gap-4">
-      <ActorFrame actor={actor} className='-mt-2' />
+      <ActorFrame actor={actor} className="-mt-2" />
 
       <div className="font-serif space-y-2 text-center px-3">
         <div className="grid grid-cols-3 text-sm">
@@ -369,7 +360,7 @@ function ActorWeaponsAndActions({ actor }: { actor: Actor }) {
   return (
     <div className="flex min-w-0 flex-col">
       {actor.weapon && <WeaponDetails weapon={actor.weapon} />}
-      <Marker variant="separator" className='hidden'>
+      <Marker variant="separator" className="hidden">
         <MarkerContent>Actions</MarkerContent>
       </Marker>
       <div className="flex flex-col gap-0">

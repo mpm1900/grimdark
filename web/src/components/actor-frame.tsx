@@ -12,7 +12,6 @@ import { useSelector } from '@tanstack/react-store'
 import { AffinityName } from './affinity-name'
 import { TinyBadge } from './gothic-ui/badge'
 import { HealthBar } from './health-bar'
-import { ImperiumIcon } from '#/icons/general'
 import { cn } from '#/lib/utils'
 
 function StatMultBadge({ actor, stat }: { actor: Actor; stat: Stat }) {
@@ -32,13 +31,17 @@ function StatMultBadge({ actor, stat }: { actor: Actor; stat: Stat }) {
   )
 }
 
-function ActorFrame({ actor, className, ...props }: React.ComponentProps<'div'> & { actor: Actor }) {
+function ActorFrame({
+  actor,
+  className,
+  ...props
+}: React.ComponentProps<'div'> & { actor: Actor }) {
   const player = useSelector(gameStore, (g) =>
     g.players.find((p) => p.ID === actor.player_ID)
   )
   const position = player?.positions.find((p) => p.ID === actor.position_ID)
   return (
-    <div className={cn("relative flex -ml-1 -mt-1", className)}  {...props}>
+    <div className={cn('relative flex -ml-1 -mt-1', className)} {...props}>
       <img
         src="/img/portrait1.png"
         className="absolute size-18 top-3 left-1 bg-neutral-950"
