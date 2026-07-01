@@ -6,6 +6,7 @@ import { cva } from 'class-variance-authority'
 import { GothicFrame, GothicShadowFrame } from './gothic-ui/frame'
 import { ItemContent, ItemDescription } from './ui/item'
 import { Separator } from './ui/separator'
+import { statVariants } from './stat-name'
 
 function InlineAuxStats({
   aux_stats,
@@ -100,8 +101,15 @@ function WeaponDetails({ weapon }: { weapon: Weapon }) {
               <span className="text-foreground/40 block font-cinzel font-semibold">
                 Actions
               </span>
-              <span className="pl-4">
-                {weapon.actions.map((a) => a.config.name).join(', ')}
+              <span className="pl-4 space-x-2">
+                {weapon.actions.map((a) => (
+                  <span
+                    key={a.ID}
+                    className={statVariants({ stat: a.config.stat })}
+                  >
+                    {a.config.name}
+                  </span>
+                ))}
               </span>
             </ItemDescription>
             <ItemDescription className="text-foreground/80">

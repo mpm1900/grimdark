@@ -50,4 +50,4 @@ function StatName({
   )
 }
 
-export { StatName }
+export { StatName, statVariants }

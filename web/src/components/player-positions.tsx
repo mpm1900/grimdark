@@ -35,7 +35,7 @@ function PlayerPosition({
           <GothicPopoverContent
             className="w-auto"
             collisionPadding={16}
-            sideOffset={16}
+            sideOffset={4}
           >
             <ActorDetails actor={actor} />
           </GothicPopoverContent>
