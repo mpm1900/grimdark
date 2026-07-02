@@ -34,6 +34,7 @@ var Slash = game.Action{
 				0.5,
 				effects.StaggerTargets(),
 			)(g, context, this, result)
+			this.Push(game.PushSourceForwards().Bind(context))
 		},
 	}),
 	ValidateContext:  game.ContextTargetLength(1),

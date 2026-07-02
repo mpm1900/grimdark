@@ -497,6 +497,19 @@ func (g *Game) moveActorByRank(actor_id uuid.UUID, direction int) bool {
 	}
 
 	g.SetPosition(actor.ID, next.ID)
+	log_ctx := MakeContextFrom(actor)
+	if direction > 0 {
+		log := NewLog("$actor$ moved backwards.", map[string]string{
+			"$actor$": actor.Name,
+		})
+		g.PushLog(log.Bind(log_ctx))
+	}
+	if direction < 0 {
+		log := NewLog("$actor$ moved forwards.", map[string]string{
+			"$actor$": actor.Name,
+		})
+		g.PushLog(log.Bind(log_ctx))
+	}
 	return true
 }
 func (g *Game) getActorRank(actor_id uuid.UUID) (Actor, Player, PlayerPosition, bool) {
