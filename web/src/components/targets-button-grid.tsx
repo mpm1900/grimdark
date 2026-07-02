@@ -24,6 +24,7 @@ function TargetsButtonGrid({
   context: ReturnType<typeof useContext>
   disabled?: boolean
 }) {
+  const players = useSelector(gameStore, (g) => g.players)
   const actors = useSelector(gameStore, (g) => g.actors)
   const turn = useSelector(gameStore, (g) => g.turn)
   const targets_options = getTargetsQuery(
@@ -58,27 +59,59 @@ function TargetsButtonGrid({
           <MarkerContent>Select Targets</MarkerContent>
         </Marker>
       )}
-      <div className="grid grid-cols-2 mt-3">
-        {targets.map((target) => (
-          <GothicBigButton
-            key={target.ID}
-            variant={context.hasTarget(target) ? 'red' : 'basic'}
-            disabled={
-              disabled || !context.hasTarget(target)
-                ? selected.length === action.config.target_count
-                : false
-            }
-            onClick={() =>
-              !context.hasTarget(target)
-                ? context.addTarget(target)
-                : context.removeTarget(target)
-            }
-            onMouseEnter={() => setHoverPosition(target.position_ID)}
-          >
-            {target.name}
-          </GothicBigButton>
-        ))}
-      </div>
+      {targets_context.position_IDs.length > 0 ? (
+        <div className="grid grid-cols-3 mt-3">
+          {players
+            .flatMap((p) => p.positions.slice().reverse())
+            .map((pos, i) => {
+              const target = actors.find((t) => t.position_ID === pos.ID)
+              const is_target = !!targets.find((t) => t.ID === target?.ID)
+              if (!target) return <div key={i} />
+              return (
+                <GothicBigButton
+                  key={target.ID}
+                  variant={context.hasTarget(target) ? 'red' : 'basic'}
+                  disabled={
+                    !is_target ||
+                    (disabled || !context.hasTarget(target)
+                      ? selected.length === action.config.target_count
+                      : false)
+                  }
+                  onClick={() =>
+                    !context.hasTarget(target)
+                      ? context.addTarget(target)
+                      : context.removeTarget(target)
+                  }
+                  onMouseEnter={() => setHoverPosition(target.position_ID)}
+                >
+                  {target.name}
+                </GothicBigButton>
+              )
+            })}
+        </div>
+      ) : (
+        <div className="grid grid-cols-3 mt-3">
+          {targets.map((target) => (
+            <GothicBigButton
+              key={target.ID}
+              variant={context.hasTarget(target) ? 'red' : 'basic'}
+              disabled={
+                disabled || !context.hasTarget(target)
+                  ? selected.length === action.config.target_count
+                  : false
+              }
+              onClick={() =>
+                !context.hasTarget(target)
+                  ? context.addTarget(target)
+                  : context.removeTarget(target)
+              }
+              onMouseEnter={() => setHoverPosition(target.position_ID)}
+            >
+              {target.name}
+            </GothicBigButton>
+          ))}
+        </div>
+      )}
       {targets_query.isFetching && (
         <div className="grid place-items-center inset-0">
           <Loader className="animate-spin" />
