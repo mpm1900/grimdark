@@ -3,6 +3,11 @@ import type { Context } from './context'
 
 export type ID = string
 
+function isIdNull(id: ID | null | undefined): boolean {
+  if (!id) return true
+  return id === '00000000-0000-0000-0000-000000000000'
+}
+
 export type Affinity =
   | 'arcane'
   | 'cryo'
@@ -187,4 +192,4 @@ function mapStage(stage: number, mod: number, input: number) {
   return input
 }
 
-export { getBaseAffinityResistance, getBaseAffinityDamage, mapStage }
+export { isIdNull, getBaseAffinityResistance, getBaseAffinityDamage, mapStage }

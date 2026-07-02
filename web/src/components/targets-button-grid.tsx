@@ -83,6 +83,7 @@ function TargetsButtonGrid({
                       : context.removeTarget(target)
                   }
                   onMouseEnter={() => setHoverPosition(target.position_ID)}
+                  onMouseLeave={() => setHoverPosition(null)}
                 >
                   {target.name}
                 </GothicBigButton>
@@ -106,6 +107,7 @@ function TargetsButtonGrid({
                   : context.removeTarget(target)
               }
               onMouseEnter={() => setHoverPosition(target.position_ID)}
+              onMouseLeave={() => setHoverPosition(null)}
             >
               {target.name}
             </GothicBigButton>

@@ -2,8 +2,7 @@ import { ActionButton } from '#/components/action-button'
 import { ActionContextDialog } from '#/components/action-context-dialog'
 import { ActorFrame } from '#/components/actor-frame'
 import { AppHeader } from '#/components/app-header'
-import { GothicBadge } from '#/components/gothic-ui/badge'
-import { GothicFramedButton } from '#/components/gothic-ui/button'
+import { BattleLog } from '#/components/battle-log'
 import { GothicCard } from '#/components/gothic-ui/card'
 import { GothicFrame } from '#/components/gothic-ui/frame'
 import { PlayerPositions } from '#/components/player-positions'
@@ -83,15 +82,7 @@ function Home() {
               */}
             </GothicFrame>
             <GothicCard className="h-full min-w-0 max-w-1/4 flex-1 flex bg-neutral-950 p-0">
-              <div className="flex-1 overflow-auto font-serif text-foreground/40">
-                <ul className="px-1">
-                  {game.logs.map((log) => (
-                    <li key={log.ID} className="leading-4.5 text-sm">
-                      {RenderLog(log)}
-                    </li>
-                  ))}
-                </ul>
-              </div>
+              <BattleLog />
             </GothicCard>
           </div>
         </div>

@@ -679,6 +679,7 @@ type GameJSON struct {
 	Logs          []Bindable[Log]        `json:"logs"`
 	Modifiers     []Modifier             `json:"modifiers"`
 	Phase         GamePhase              `json:"phase"`
+	PlayerID      uuid.UUID              `json:"player_ID"`
 	Players       []Player               `json:"players"`
 	Prompts       []Bindable[actionJSON] `json:"prompts"`
 	Status        GameStatus             `json:"status"`
@@ -707,6 +708,7 @@ func (g Game) ToJSON() GameJSON {
 		Logs:          g.Logs,
 		Modifiers:     g.meta.modifiers,
 		Phase:         g.Phase,
+		PlayerID:      uuid.Nil,
 		Players:       state.Players,
 		Prompts:       prompts,
 		Status:        g.Status,
@@ -715,6 +717,7 @@ func (g Game) ToJSON() GameJSON {
 }
 
 func (json *GameJSON) ForPlayer(player_ID uuid.UUID) {
+	json.PlayerID = player_ID
 	prompts := slices.Clone(json.Prompts)
 	prompts = slices.DeleteFunc(prompts, func(p Bindable[actionJSON]) bool {
 		return p.Context.PlayerID != player_ID

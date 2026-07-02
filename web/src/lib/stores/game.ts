@@ -1,6 +1,6 @@
 import { Store } from '@tanstack/store'
 import type { Game } from '../game/game'
-import { setSourceActor, setTargetPositions } from './ui'
+import { setDefaultActiveActor, setSourceActor, setTargetPositions } from './ui'
 
 const INITIAL_GAME: Game = {
   active_context: null,
@@ -8,6 +8,7 @@ const INITIAL_GAME: Game = {
   logs: [],
   modifiers: [],
   phase: 'init',
+  player_ID: '',
   players: [],
   prompts: [],
   status: 'idle',
@@ -18,9 +19,9 @@ const gameStore = new Store<Game>(INITIAL_GAME)
 
 gameStore.subscribe((game) => {
   console.log('game', game)
-  console.log(game.active_context?.source_ID)
   setSourceActor(game.active_context?.source_ID)
   setTargetPositions(game.active_context?.position_IDs ?? [])
+  setDefaultActiveActor(game)
 })
 
 export { gameStore }

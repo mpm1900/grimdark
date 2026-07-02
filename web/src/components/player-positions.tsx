@@ -24,7 +24,10 @@ function PlayerPosition({
   )
   const active_actor = useSelector(uiStore, (s) => s.active_actor)
   return (
-    <div className={cn('relative flex-1', className)} {...props}>
+    <div
+      className={cn('relative flex-1 h-[428px] -mb-2', className)}
+      {...props}
+    >
       {actor && (
         <div
           className="relative z-10 px-8 py-2 flex justify-center"

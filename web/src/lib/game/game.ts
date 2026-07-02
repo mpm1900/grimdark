@@ -12,6 +12,7 @@ export type Game = {
   logs: Bindable<Log>[]
   modifiers: Modifier[]
   phase: Phase
+  player_ID: ID
   players: Player[]
   prompts: Bindable<Action>[]
   status: Status

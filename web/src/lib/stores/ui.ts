@@ -1,4 +1,6 @@
 import { Store } from '@tanstack/store'
+import type { Game } from '../game/game'
+import { isIdNull } from '../game/core'
 
 export type Ui = {
   active_actor: string | null
@@ -44,9 +46,29 @@ function setTargetPositions(positions: string[]) {
   }))
 }
 
+function setDefaultActiveActor(game: Game) {
+  uiStore.setState((old) => {
+    if (old.active_actor) {
+      return old
+    }
+
+    const player = game.players.find((p) => p.ID === game.player_ID)
+    const position = player?.positions.find((p) => p.rank === 0)
+    if (!position || isIdNull(position.actor_ID)) {
+      return old
+    }
+
+    return {
+      ...old,
+      active_actor: position.actor_ID,
+    }
+  })
+}
+
 export {
   uiStore,
   setActiveActor,
+  setDefaultActiveActor,
   setSourceActor,
   setTargetPositions,
   setHoverPosition,
