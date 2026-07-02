@@ -13,15 +13,12 @@ func Intimidate() game.Effect {
 		Validate: game.TriggerSourceMatchesModifierParent,
 		Action: game.Action{
 			Resolve: func(g *game.Game, ctx game.Context, this game.ActionContext) []game.Transaction {
-				modifiers := []game.Modifier{}
 				other_actors := g.FindActors(game.CombineFilters(game.ActiveActors, game.NotSourceActor), ctx)
 				for _, target := range other_actors {
 					target_ctx := game.MakeModifierContext(this.Source, target)
-					modifiers = append(modifiers, StatDownTargets(game.Special, 1).Bind(target_ctx))
+					mutation := game.AddModifiers(StatDownTargets(game.Special, 1).Bind(target_ctx))
+					this.Push(mutation.Bind(game.NewContext()))
 				}
-
-				mutation := game.AddModifiers(modifiers...)
-				this.Push(mutation.Bind(game.NewContext()))
 
 				return this.Done()
 			},

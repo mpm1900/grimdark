@@ -78,7 +78,7 @@ function PlayerPositions({
       <PlatformParent reverse={reverse} className="flex-1">
         {player.positions.map((position) => (
           <Platform
-            key={position.actor_ID + position.ID}
+            key={position.ID}
             variant={
               hover_position === position.ID
                 ? reverse
@@ -100,7 +100,7 @@ function PlayerPositions({
       >
         {player.positions.map((position) => (
           <PlayerPosition
-            key={position.actor_ID + position.ID}
+            key={position.ID}
             hover_position={hover_position}
             position={position}
             reverse={reverse}
