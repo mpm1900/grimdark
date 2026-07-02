@@ -17,7 +17,7 @@ type Action struct {
 
 	IsActive      bool
 	IsDisabled    bool
-	DisabledCheck func(g Game, source Actor) bool // TODO
+	DisabledCheck func(g Game, source Actor) bool
 }
 
 type actionJSON struct {

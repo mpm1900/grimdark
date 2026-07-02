@@ -82,6 +82,16 @@ func TargetActors(g Game, actor Actor, context Context) bool {
 	is_pos := actor.IsActive() && slices.Contains(context.PositionIDs, actor.PositionID)
 	return is_actor || is_pos
 }
+func PositionRank(rank int) Filter[Actor] {
+	return func(g Game, a Actor, ctx Context) bool {
+		position, ok := g.GetPosition(a.PositionID)
+		if !ok {
+			return false
+		}
+
+		return position.Rank == rank
+	}
+}
 func ActionRange(action_range int) Filter[Actor] {
 	return func(g Game, target Actor, ctx Context) bool {
 		source, ok := g.GetSource(ctx)

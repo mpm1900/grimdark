@@ -47,8 +47,6 @@ function AppHeader() {
           />
         )}
 
-        <span>Turn {turn}</span>
-
         {client && (
           <div className="flex gap-2">
             <Button
@@ -74,6 +72,7 @@ function AppHeader() {
           )}
         </div>
       </div>
+      <div className="absolute left-1/2 -translate-x-1/2">Turn {turn}</div>
       <div className="flex items-center gap-4 px-2">
         <div className="font-mono text-sm flex items-center">
           {user && (

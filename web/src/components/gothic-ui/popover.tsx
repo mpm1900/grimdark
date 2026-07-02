@@ -2,6 +2,7 @@ import * as React from 'react'
 import { Popover as PopoverPrimitive } from 'radix-ui'
 
 import { cn } from '#/lib/utils.ts'
+import { GothicCloseButton } from './button'
 
 function GothicPopoverContent({
   className,
@@ -26,7 +27,7 @@ function GothicPopoverContent({
       >
         <div
           className={cn(
-            'flex flex-col',
+            'flex flex-col isolate',
             'border-[10px] border-solid border-transparent bg-gradient-to-b from-neutral-900 to-[oklch(10%_0_0)]',
             'bg-clip-border',
             "[border-image-source:url('/gothic/SkillFrameVert_Dark.png')]",
@@ -35,6 +36,11 @@ function GothicPopoverContent({
           )}
         >
           {children}
+          <PopoverPrimitive.Close asChild>
+            <GothicCloseButton className="absolute z-10 right-0.5 top-0.5 shadow-[0px_0px_6px_1px_rgba(0,_0,_0,_0.5)] z-20">
+              <span className="sr-only">Close</span>
+            </GothicCloseButton>
+          </PopoverPrimitive.Close>
         </div>
         <PopoverPrimitive.Arrow
           height={20}

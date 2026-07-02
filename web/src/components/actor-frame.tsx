@@ -89,32 +89,28 @@ function ActorFrameSlim({
   return (
     <div className={cn('relative mt-4', className)} {...props}>
       <div className="flex flex-row justify-between items-end mb-1">
-        <span className="text-sm font-bold font-cinzel-dec [text-shadow:2px_1px_0_var(--color-black)] text-foreground -mb-1">
-          {actor.name}
-        </span>
-        <div className="flex gap-0">
-          <Popover>
-            <PopoverTrigger
-              className="cursor-pointer -mr-1"
-              asChild
-              onClick={(e) => {
-                e.stopPropagation()
-              }}
-            >
-              <GothicMiniButton className="p-0 pt-0.5 px-1">
-                {actor.level}
-              </GothicMiniButton>
-            </PopoverTrigger>
-            <GothicPopoverContent
-              className="w-auto"
-              side={'top'}
-              align="center"
-              collisionPadding={16}
-            >
-              <ActorStatsPanel actor={actor} />
-            </GothicPopoverContent>
-          </Popover>
-        </div>
+        <Popover>
+          <PopoverTrigger
+            className="cursor-pointer -mr-1"
+            onClick={(e) => {
+              e.stopPropagation()
+            }}
+          >
+            <span className="text-sm font-bold font-cinzel-dec [text-shadow:2px_1px_0_var(--color-black)] text-foreground -mb-1 hover:underline">
+              {actor.name}
+            </span>
+          </PopoverTrigger>
+          <GothicPopoverContent
+            className="w-auto"
+            side={'top'}
+            align="center"
+            collisionPadding={16}
+          >
+            <ActorStatsPanel actor={actor} />
+          </GothicPopoverContent>
+        </Popover>
+
+        <div className="flex gap-0"></div>
       </div>
       <div className="relative">
         <HealthBar

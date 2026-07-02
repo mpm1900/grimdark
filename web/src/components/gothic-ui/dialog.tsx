@@ -37,7 +37,7 @@ function GothicDialogContent({
         {children}
         {showCloseButton && (
           <DialogPrimitive.Close data-slot="dialog-close" asChild>
-            <GothicCloseButton className="absolute z-10 -right-1 -top-1 shadow-[0px_0px_6px_1px_rgba(0,_0,_0,_0.5)]">
+            <GothicCloseButton className="absolute z-10 -right-2 -top-2 shadow-[0px_0px_6px_1px_rgba(0,_0,_0,_0.5)]">
               <span className="sr-only">Close</span>
             </GothicCloseButton>
           </DialogPrimitive.Close>
