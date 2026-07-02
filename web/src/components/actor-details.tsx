@@ -193,7 +193,7 @@ function AffinityResistanceTable({ actor }: { actor: Actor }) {
 function ActorCharacter({ actor }: { actor: Actor }) {
   return (
     <div className="flex flex-col gap-4">
-      <ActorFrame actor={actor} className="-mt-2" />
+      <ActorFrame actor={actor} className="-mt-1.5 -ml-1" />
 
       <div className="font-serif space-y-2 text-center px-3">
         <div className="grid grid-cols-3 text-sm">
@@ -326,7 +326,7 @@ function ActorState({
 
 function ActorStats({ actor }: { actor: Actor }) {
   return (
-    <div className="flex min-w-0 flex-col gap-4 text-foreground">
+    <div className="flex min-w-2/5 xl:min-w-1/3 flex-col gap-4 text-foreground">
       <GothicHighlightFrame className="-mx-2">
         <StatsTable actor={actor} />
         <div className="grid grid-cols-2 p-3 -mx-2">
@@ -385,7 +385,7 @@ function ActorDetails({ actor }: { actor: Actor }) {
   const applied_effects = getAppliedEffects(game, actor)
 
   return (
-    <div className="grid grid-cols-3 max-w-4xl">
+    <div className="flex max-w-4xl">
       <div className="flex min-w-0 flex-col gap-4">
         <ActorCharacter actor={actor} />
         <ActorState actor={actor} applied_effects={applied_effects} />

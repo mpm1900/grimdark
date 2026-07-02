@@ -2,32 +2,20 @@ import type { Player } from '#/lib/game/player'
 import { gameStore } from '#/lib/stores/game'
 import { cn } from '#/lib/utils'
 import { useSelector } from '@tanstack/react-store'
-import { ActorFrame, ActorFrameSlim } from './actor-frame'
+import { ActorFrameSlim } from './actor-frame'
 import { Popover, PopoverTrigger } from './ui/popover'
 import { GothicPopoverContent } from './gothic-ui/popover'
 import { ActorDetails } from './actor-details'
-
-const positionStyle = {
-  transformStyle: 'preserve-3d',
-} satisfies React.CSSProperties
-
-const platformStyle = {
-  transform: 'translateX(-50%) rotateX(86deg)',
-  transformOrigin: 'center center',
-} satisfies React.CSSProperties
-
-function getSidePerspectiveStyle(reverse?: boolean) {
-  return {
-    perspective: '300px',
-    perspectiveOrigin: reverse ? '0% 50%' : '100% 50%',
-    transformStyle: 'preserve-3d',
-  } satisfies React.CSSProperties
-}
+import { Platform, PlatformParent } from './platform'
+import { type ComponentProps } from 'react'
+import { setActiveActor, setHoverPosition, uiStore } from '#/lib/stores/ui'
 
 function PlayerPosition({
+  className,
   position,
   reverse,
-}: {
+  ...props
+}: ComponentProps<'div'> & {
   position: Player['positions'][number]
   reverse?: boolean
 }) {
@@ -35,7 +23,7 @@ function PlayerPosition({
     g.actors.find((a) => a.position_ID === position.ID)
   )
   return (
-    <div className="relative flex-1">
+    <div className={cn('relative flex-1', className)} {...props}>
       {actor && (
         <Popover>
           <PopoverTrigger className="w-full">
@@ -43,7 +31,7 @@ function PlayerPosition({
               <img
                 src="/img/69_Asset_35.png"
                 className={cn(
-                  'w-full max-w-[120px] [image-rendering:pixelated] relative z-10',
+                  'w-full max-w-30 [image-rendering:pixelated] relative z-10',
                   !actor && 'opacity-0',
                   reverse && '-scale-x-100'
                 )}
@@ -55,30 +43,20 @@ function PlayerPosition({
             side={reverse ? 'left' : 'right'}
             align="end"
             collisionPadding={16}
-            sideOffset={4}
           >
             <ActorDetails actor={actor} />
           </GothicPopoverContent>
         </Popover>
       )}
-      {actor && <ActorFrameSlim actor={actor} className="relative z-40 px-2" />}
-    </div>
-  )
-}
-
-function PlayerPositionPlatform({ reverse }: { reverse?: boolean }) {
-  return (
-    <div className="relative flex-1" style={positionStyle}>
-      <div
-        className={cn(
-          'pointer-events-none absolute bottom-10 left-1/2 size-20 w-full border-6 ring-2 ring-black',
-          {
-            'bg-red-950/40 border-red-900': reverse,
-            'bg-emerald-950/40 border-emerald-800': !reverse,
-          }
-        )}
-        style={platformStyle}
-      />
+      {actor && (
+        <ActorFrameSlim
+          actor={actor}
+          className="relative z-40 px-2 cursor-pointer"
+          onClick={() => {
+            setActiveActor(actor.ID)
+          }}
+        />
+      )}
     </div>
   )
 }
@@ -89,8 +67,7 @@ function PlayerPositions({
   reverse,
   ...props
 }: React.ComponentProps<'div'> & { player: Player; reverse?: boolean }) {
-  const sidePerspectiveStyle = getSidePerspectiveStyle(reverse)
-
+  const hover_position = useSelector(uiStore, (s) => s.hover_position)
   return (
     <div
       {...props}
@@ -101,16 +78,23 @@ function PlayerPositions({
       )}
       style={props.style}
     >
-      <div
-        className={cn(
-          'pointer-events-none absolute inset-0 z-0 gap-2 flex flex-row-reverse items-end'
-        )}
-        style={sidePerspectiveStyle}
-      >
+      <PlatformParent reverse={reverse} className="flex-1">
         {player.positions.map((position) => (
-          <PlayerPositionPlatform key={position.ID} reverse={reverse} />
+          <Platform
+            key={position.ID}
+            variant={
+              hover_position === position.ID
+                ? reverse
+                  ? 'enemy-active'
+                  : 'player-active'
+                : reverse
+                  ? 'enemy'
+                  : 'player'
+            }
+            className="flex-1"
+          />
         ))}
-      </div>
+      </PlatformParent>
       <div
         className={cn(
           'relative z-10 flex flex-1 flex-row-reverse items-end gap-1',
@@ -122,6 +106,8 @@ function PlayerPositions({
             key={position.ID}
             position={position}
             reverse={reverse}
+            onMouseEnter={() => setHoverPosition(position.ID)}
+            onMouseLeave={() => setHoverPosition(null)}
           />
         ))}
       </div>

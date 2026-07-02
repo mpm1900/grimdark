@@ -5,7 +5,7 @@ type TriggerOn string
 const (
 	OnActorEnter    TriggerOn = "on-actor-enter"
 	OnActorLeave    TriggerOn = "on-actor-leave"
-	OnDamageSend    TriggerOn = "on-damage-recieve"
+	OnDamageSend    TriggerOn = "on-damage-send"
 	OnDamageRecieve TriggerOn = "on-damage-recieve"
 	OnModifierAdd   TriggerOn = "on-modifier-add"
 	OnTurnEnd       TriggerOn = "on-turn-end"

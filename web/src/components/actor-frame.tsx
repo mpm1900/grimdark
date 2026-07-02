@@ -41,7 +41,7 @@ function ActorFrame({
   )
   const position = player?.positions.find((p) => p.ID === actor.position_ID)
   return (
-    <div className={cn('relative flex -ml-1 -mt-1', className)} {...props}>
+    <div className={cn('relative flex', className)} {...props}>
       <img
         src="/img/portrait1_.png"
         className="absolute size-18 top-1 left-1 bg-neutral-950"

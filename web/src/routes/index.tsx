@@ -1,11 +1,16 @@
+import { ActionButton } from '#/components/action-button'
+import { ActionContextDialog } from '#/components/action-context-dialog'
+import { ActorFrame } from '#/components/actor-frame'
 import { AppHeader } from '#/components/app-header'
 import { GothicCard } from '#/components/gothic-ui/card'
 import { GothicFrame } from '#/components/gothic-ui/frame'
 import { PlayerPositions } from '#/components/player-positions'
 import { PromptController } from '#/components/prompt-controller'
+import { DialogTrigger } from '#/components/ui/dialog'
 import { RenderLog } from '#/lib/game/log'
 import { clientsStore } from '#/lib/stores/clients'
 import { gameStore } from '#/lib/stores/game'
+import { uiStore } from '#/lib/stores/ui'
 import { ClientOnly, createFileRoute } from '@tanstack/react-router'
 import { useSelector } from '@tanstack/react-store'
 
@@ -14,11 +19,14 @@ export const Route = createFileRoute('/')({ component: Home })
 function Home() {
   const game = useSelector(gameStore, (g) => g)
   const client = useSelector(clientsStore, (s) => s.me)
+  const active_actor_id = useSelector(uiStore, (s) => s.active_actor)
+  const active_actor = game.actors.find((a) => a.ID === active_actor_id)
   const client_player = game.players.find((p) => p.user.id === client?.ID)
+
   return (
     <ClientOnly>
       <PromptController />
-      <div className="h-dvh overflow-hidden">
+      <div className="h-dvh overflow-hidden bg-center bg-cover">
         <AppHeader />
 
         <div className="relative flex h-full min-h-0 flex-col overflow-hidden pt-12 z-20">
@@ -39,13 +47,28 @@ function Home() {
               />
             )}
           </div>
-          <div className="bg-[url(/gothic/DecoratedLineHorizontal.png)] h-7 bg-center bg-contain bg-repeat-x -mb-1"></div>
-          <div className="flex justify-between items-end -z-10">
-            <div></div>
-            <GothicCard className="h-50 w-[512px] flex bg-neutral-950 p-0">
-              <GothicFrame className="-mx-2 -mt-1.5 py-1.5 leading-0 font-cinzel text-foreground/20 font-semibold bg-neutral-950">
-                Battle Log
-              </GothicFrame>
+          <div className="bg-[url(/gothic/DecoratedLineHorizontal.png)] h-7 bg-center bg-contain bg-repeat-x"></div>
+          <div className="flex items-start -z-10 bg-neutral-950">
+            <GothicFrame className="relative flex flex-1 flex-col h-full p-0">
+              {active_actor && (
+                <ActorFrame actor={active_actor} className="-mt-2.5 -ml-1.5" />
+              )}
+            </GothicFrame>
+            <GothicFrame className="grid grid-cols-2 max-w-1/3 gap-px p-0">
+              {active_actor?.actions.map((action) => (
+                <ActionContextDialog
+                  key={action.ID}
+                  actor={active_actor}
+                  action={action}
+                  enabled={!action.is_disabled}
+                >
+                  <DialogTrigger asChild>
+                    <ActionButton action={action} actor={active_actor} />
+                  </DialogTrigger>
+                </ActionContextDialog>
+              ))}
+            </GothicFrame>
+            <GothicCard className="h-51 min-w-0 max-w-1/4 flex-1 flex bg-neutral-950 p-0">
               <div className="flex-1 overflow-auto font-serif text-foreground/40">
                 <ul className="px-2">
                   {game.logs.map((log) => (

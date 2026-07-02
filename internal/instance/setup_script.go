@@ -22,7 +22,11 @@ func SetupGame(g *game.Game, user game.User) {
 			Validate: game.TriggerTargetMatchesModifierParent,
 			Action: game.Action{
 				Resolve: func(g *game.Game, ctx game.Context, this game.ActionContext) []game.Transaction {
+					targets := g.GetTargets(ctx)
 					fmt.Println(game.OnDamageRecieve)
+					for _, t := range targets {
+						fmt.Println(t.Name)
+					}
 					return this.Done()
 				},
 			},
