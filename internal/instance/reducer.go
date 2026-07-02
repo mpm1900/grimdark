@@ -47,7 +47,7 @@ func pushAction(instance *Instance, request Request) int {
 	}
 
 	instance.Game.PushCommand(action.Bind(request.Context))
-	instance.RunGameActions()
+	// instance.RunGameActions()
 
 	return state
 }

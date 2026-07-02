@@ -60,23 +60,24 @@ function getVariant(
   if (store.range_positions.includes(position.ID)) {
     return 'player-hover'
   }
+
   if (position.player_ID === client_ID) {
-    if (store.hover_position === position.ID) {
-      return 'player-hover'
-    }
     if (store.active_actor == position.actor_ID) {
       return 'player-active'
+    }
+    if (store.hover_position === position.ID) {
+      return 'player-hover'
     }
 
     return 'player'
   }
 
   if (position.player_ID !== client_ID) {
-    if (store.hover_position === position.ID) {
-      return 'enemy-hover'
-    }
     if (store.active_actor == position.actor_ID) {
       return 'enemy-active'
+    }
+    if (store.hover_position === position.ID) {
+      return 'enemy-hover'
     }
 
     return 'enemy'

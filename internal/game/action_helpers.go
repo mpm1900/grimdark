@@ -365,10 +365,7 @@ func Swap() Action {
 		Resolve: func(g *Game, ctx Context, this ActionContext) []Transaction {
 			targets := g.GetTargets(ctx)
 			for _, target := range targets {
-				target_ctx := MakeContextFrom(target)
-
-				this.Push(SetPositionSource(target.PositionID).Bind(ctx))
-				this.Push(SetPositionSource(this.Source.PositionID).Bind(target_ctx))
+				this.Push(SwapPositions(this.Source, target).Bind(ctx))
 			}
 
 			return this.Done()

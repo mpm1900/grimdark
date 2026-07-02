@@ -471,6 +471,70 @@ func (g *Game) SetPosition(actor_id uuid.UUID, position_id uuid.UUID) {
 		g.SetPosition(evicted_id, actor.PositionID)
 	}
 }
+func (g *Game) PushForwards(actor_id uuid.UUID) {
+	g.moveActorByRank(actor_id, -1)
+}
+func (g *Game) PushToFront(actor_id uuid.UUID) {
+	for g.moveActorByRank(actor_id, -1) {
+	}
+}
+func (g *Game) PushBackwards(actor_id uuid.UUID) {
+	g.moveActorByRank(actor_id, 1)
+}
+func (g *Game) PushToBack(actor_id uuid.UUID) {
+	for g.moveActorByRank(actor_id, 1) {
+	}
+}
+func (g *Game) moveActorByRank(actor_id uuid.UUID, direction int) bool {
+	actor, player, position, ok := g.getActorRank(actor_id)
+	if !ok {
+		return false
+	}
+
+	next, ok := nextPositionByRank(player.Positions, position.Rank, direction)
+	if !ok {
+		return false
+	}
+
+	g.SetPosition(actor.ID, next.ID)
+	return true
+}
+func (g *Game) getActorRank(actor_id uuid.UUID) (Actor, Player, PlayerPosition, bool) {
+	state := g.State()
+	actor, ok := state.FindActorByID(actor_id)
+	if !ok || actor.PositionID == uuid.Nil {
+		return Actor{}, Player{}, PlayerPosition{}, false
+	}
+
+	player, ok := state.FindPlayerByID(actor.PlayerID)
+	if !ok {
+		return Actor{}, Player{}, PlayerPosition{}, false
+	}
+
+	position, ok := player.GetPosition(actor.PositionID)
+	if !ok {
+		return Actor{}, Player{}, PlayerPosition{}, false
+	}
+
+	return actor, player, position, true
+}
+func nextPositionByRank(positions []PlayerPosition, rank int, direction int) (PlayerPosition, bool) {
+	var next PlayerPosition
+	found := false
+
+	for _, position := range positions {
+		if direction < 0 && position.Rank < rank && (!found || position.Rank > next.Rank) {
+			next = position
+			found = true
+		}
+		if direction > 0 && position.Rank > rank && (!found || position.Rank < next.Rank) {
+			next = position
+			found = true
+		}
+	}
+
+	return next, found
+}
 func (g *Game) DamageTargets(context Context, damage float64) {
 	for _, target := range g.GetTargets(context) {
 		g.MutateActor(target.ID, func(a Actor) Actor {
@@ -676,6 +740,7 @@ func (g *Game) Next() bool {
 type GameJSON struct {
 	ActiveContext *Context               `json:"active_context"`
 	Actors        []actorJSON            `json:"actors"`
+	Commands      []Bindable[actionJSON] `json:"commands"`
 	Logs          []Bindable[Log]        `json:"logs"`
 	Modifiers     []Modifier             `json:"modifiers"`
 	Phase         GamePhase              `json:"phase"`
@@ -701,10 +766,15 @@ func (g Game) ToJSON() GameJSON {
 
 		prompts = append(prompts, bind(prompt.Payload.ToJSON(g, Actor{}), prompt.Context))
 	}
+	commands := []Bindable[actionJSON]{}
+	for _, command := range state.Commands {
+		commands = append(prompts, bind(command.Payload.ToJSON(g, Actor{}), command.Context))
+	}
 
 	return GameJSON{
 		ActiveContext: state.ActiveContext,
 		Actors:        actors,
+		Commands:      commands,
 		Logs:          g.Logs,
 		Modifiers:     g.meta.modifiers,
 		Phase:         g.Phase,
@@ -722,7 +792,12 @@ func (json *GameJSON) ForPlayer(player_ID uuid.UUID) {
 	prompts = slices.DeleteFunc(prompts, func(p Bindable[actionJSON]) bool {
 		return p.Context.PlayerID != player_ID
 	})
+	commands := slices.Clone(json.Prompts)
+	commands = slices.DeleteFunc(commands, func(p Bindable[actionJSON]) bool {
+		return p.Context.PlayerID != player_ID
+	})
 	json.Prompts = prompts
+	json.Commands = commands
 }
 
 // temp functions

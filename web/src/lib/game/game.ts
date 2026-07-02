@@ -9,6 +9,7 @@ import type { Player } from './player'
 export type Game = {
   active_context: Context | null
   actors: Actor[]
+  commands: Bindable<Action>[]
   logs: Bindable<Log>[]
   modifiers: Modifier[]
   phase: Phase

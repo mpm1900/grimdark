@@ -10,14 +10,15 @@ import {
 import { gameStore } from '#/lib/stores/game'
 import { useSelector } from '@tanstack/react-store'
 import { AffinityName } from './affinity-name'
-import { GothicBadge, TinyBadge } from './gothic-ui/badge'
+import { TinyBadge } from './gothic-ui/badge'
 import { HealthBar } from './health-bar'
 import { cn } from '#/lib/utils'
-import { Info } from 'lucide-react'
 import { Popover, PopoverTrigger } from './ui/popover'
 import { GothicPopoverContent } from './gothic-ui/popover'
 import { ActorDetails } from './actor-details'
 import { GothicMiniButton } from './gothic-ui/button'
+import { ActorStatsPanel } from './panels/actor-stats'
+import { ActorPortrait } from './actor-portrait'
 
 function StatMultBadge({ actor, stat }: { actor: Actor; stat: Stat }) {
   const stage = actor.stages[stat]
@@ -47,33 +48,7 @@ function ActorFrame({
   const position = player?.positions.find((p) => p.ID === actor.position_ID)
   return (
     <div className={cn('relative flex', className)} {...props}>
-      <img
-        src="/img/portrait1_.png"
-        className="absolute size-18 top-1 left-1 bg-neutral-950"
-      />
-      <div className="relative bg-[url('/gothic/CharacterTopFrame_Cframe.png')] z-10 size-20 bg-cover">
-        {position && (
-          <>
-            <TinyBadge
-              variant="default"
-              className="absolute top-1.5 left-1/2 -translate-x-1/2 rounded-xs rounded-b-sm font-cinzel border-white/30 text-foreground/60"
-            >
-              Lv {actor.level}
-            </TinyBadge>
-            <div className="absolute -bottom-2 left-0 bg-[url('/gothic/MiniIconUIFrame_48.png')] bg-cover z-10 size-6 grid place-items-center text-foreground/70 font-bold font-cinzel">
-              {position.rank + 1}
-            </div>
-            {actor.status !== 'none' && (
-              <TinyBadge
-                variant={actor.status as any}
-                className="absolute -bottom-0.5 left-4 pl-2 pr-1 capitalize font-cinzel"
-              >
-                {actor.status}
-              </TinyBadge>
-            )}
-          </>
-        )}
-      </div>
+      <ActorPortrait actor={actor} position={position} />
       <div className="relative flex-1 flex flex-col -ml-1 mt-[7px] pr-1 bg-[url('/gothic/DialogFlag_stone_shadow.png')] bg-[length:100%_100%] bg-center bg-no-repeat">
         <div className="h-1 bg-gradient-to-b from-white/40 to-neutral-800/60 border -mr-1 border-black mb-1" />
         <div className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-24 overflow-hidden">
@@ -133,10 +108,10 @@ function ActorFrameSlim({
             <GothicPopoverContent
               className="w-auto"
               side={'top'}
-              align="end"
+              align="center"
               collisionPadding={16}
             >
-              <ActorDetails actor={actor} />
+              <ActorStatsPanel actor={actor} />
             </GothicPopoverContent>
           </Popover>
         </div>

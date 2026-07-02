@@ -1,194 +1,19 @@
 import type { Actor } from '#/lib/game/actor'
-import {
-  AFFINITIES,
-  mapStage,
-  type Stat,
-  MAIN_STATS,
-  ACCURACY_STATS,
-  STAT_LABELS,
-} from '#/lib/game/core'
 import { ActorFlag } from './actor-flag'
-import { AffinityName } from './affinity-name'
 import { Field, FieldContent, FieldLabel } from './ui/field'
 import { Marker, MarkerContent } from './ui/marker'
-import { Table, TableBody, TableCell, TableRow } from './ui/table'
-import {
-  AffinityDamageMultiplier,
-  AffinityDamageValue,
-  AffinityResistanceMultiplier,
-  AffinityResistanceValue,
-} from './affinity-value'
 import { WeaponDetails } from './weapon-details'
 import { ActionContextDialog } from './action-context-dialog'
 import { DialogTrigger } from './ui/dialog'
 import { ActionButton } from './action-button'
-import { StatValue } from './stat-value'
-import { cn, sign } from '#/lib/utils'
 import { getAppliedEffects } from '#/lib/game/game'
 import { useSelector } from '@tanstack/react-store'
 import { gameStore } from '#/lib/stores/game'
-import { StatName } from './stat-name'
 import { GothicBadge } from './gothic-ui/badge'
 import { ActorFrame } from './actor-frame'
 import { GothicHighlightFrame } from './gothic-ui/frame'
-
-function MainStatRow({ actor, stat }: { actor: Actor; stat: Stat }) {
-  const stage = actor.stages[stat]
-  const mod = 2
-  const mult = mapStage(stage, mod, 1)
-  return (
-    <TableRow>
-      <TableCell className="capitalize font-cinzel">
-        <StatName stat={stat}>{STAT_LABELS[stat]}</StatName>
-      </TableCell>
-      <TableCell className="text-end">
-        <StatValue actor={actor} stat={stat}>
-          {actor.stats[stat]}
-        </StatValue>
-      </TableCell>
-      <TableCell className="text-end">
-        {stage != 0 && (
-          <StatValue actor={actor} stat={stat}>
-            {stage}
-          </StatValue>
-        )}
-      </TableCell>
-      <TableCell className="text-end">
-        {stage != 0 && (
-          <span
-            className={cn(
-              {
-                'text-positive': stage > 0,
-                'text-negative': stage < 0,
-              },
-              mult === 1 && 'text-foreground/20'
-            )}
-          >
-            x{mult.toFixed(2)}
-          </span>
-        )}
-      </TableCell>
-    </TableRow>
-  )
-}
-function AccuracyStatRow({ actor, stat }: { actor: Actor; stat: Stat }) {
-  const stage = actor.stages[stat]
-  const mod = 3
-  const mult = mapStage(stage, mod, 1)
-  return (
-    <TableRow>
-      <TableCell className="capitalize font-cinzel">
-        {STAT_LABELS[stat]}
-      </TableCell>
-      <TableCell className="text-end"></TableCell>
-      <TableCell className="text-end">
-        {!!stage && (
-          <StatValue actor={actor} stat={stat}>
-            {sign(stage)}
-            {Math.abs(stage)}
-          </StatValue>
-        )}
-      </TableCell>
-      <TableCell className="text-end">
-        <StatValue
-          actor={actor}
-          stat={stat}
-          className={cn(actor.stats[stat] === 100 && 'text-foreground/20')}
-        >
-          x{mult.toFixed(2)}
-        </StatValue>
-      </TableCell>
-    </TableRow>
-  )
-}
-function CriticalStatRow({ actor, stat }: { actor: Actor; stat: Stat }) {
-  const stage = actor.stages[stat]
-  return (
-    <TableRow>
-      <TableCell className="capitalize font-cinzel">
-        {STAT_LABELS[stat]}
-      </TableCell>
-      <TableCell className="text-end"></TableCell>
-      <TableCell className="text-end">
-        {!!stage && (
-          <span
-            className={cn({
-              'text-positive': stage > 0,
-              'text-negative': stage < 0,
-            })}
-          >
-            {sign(stage)}
-            {Math.abs(stage)}
-          </span>
-        )}
-      </TableCell>
-      <TableCell className="text-end text-foreground/20">--</TableCell>
-    </TableRow>
-  )
-}
-function StatsTable({ actor }: { actor: Actor }) {
-  return (
-    <Table className="font-mono">
-      <TableBody>
-        {MAIN_STATS.map((stat) => (
-          <MainStatRow key={stat} actor={actor} stat={stat} />
-        ))}
-        {ACCURACY_STATS.map((stat) => (
-          <AccuracyStatRow key={stat} actor={actor} stat={stat} />
-        ))}
-        <AccuracyStatRow actor={actor} stat="critical-damage" />
-        <CriticalStatRow actor={actor} stat="critical-chance" />
-      </TableBody>
-    </Table>
-  )
-}
-
-function AffinityDamageTable({ actor }: { actor: Actor }) {
-  return (
-    <Table className="font-mono">
-      <TableBody>
-        {AFFINITIES.map((affinity) => (
-          <TableRow key={affinity}>
-            <TableCell>
-              <AffinityName affinity={affinity} />
-            </TableCell>
-            <TableCell className="text-end">
-              <AffinityDamageValue actor={actor} affinity={affinity} />
-            </TableCell>
-            <TableCell className="text-end">
-              <AffinityDamageMultiplier actor={actor} affinity={affinity} />
-            </TableCell>
-          </TableRow>
-        ))}
-      </TableBody>
-    </Table>
-  )
-}
-function AffinityResistanceTable({ actor }: { actor: Actor }) {
-  return (
-    <Table className="font-mono">
-      <TableBody>
-        {AFFINITIES.map((affinity) => (
-          <TableRow key={affinity}>
-            <TableCell>
-              <AffinityName affinity={affinity} />
-            </TableCell>
-            <TableCell className="text-end">
-              <AffinityResistanceValue actor={actor} affinity={affinity} />
-            </TableCell>
-            <TableCell className="text-end">
-              <AffinityResistanceMultiplier
-                actor={actor}
-                affinity={affinity}
-                value={actor.affinity_resistance[affinity] * -1}
-              />
-            </TableCell>
-          </TableRow>
-        ))}
-      </TableBody>
-    </Table>
-  )
-}
+import { StatsTable } from './stats-table'
+import { AffinitiesTable } from './affinities-table'
 
 function ActorCharacter({ actor }: { actor: Actor }) {
   return (
@@ -201,19 +26,25 @@ function ActorCharacter({ actor }: { actor: Actor }) {
             <FieldLabel className="text-foreground/60 font-cinzel">
               Race
             </FieldLabel>
-            <FieldContent className="capitalize text-foreground">{actor.race}</FieldContent>
+            <FieldContent className="capitalize text-foreground">
+              {actor.race}
+            </FieldContent>
           </Field>
           <Field className="gap-0">
             <FieldLabel className="text-foreground/60 font-cinzel">
               Faction
             </FieldLabel>
-            <FieldContent className="capitalize text-foreground">{actor.faction}</FieldContent>
+            <FieldContent className="capitalize text-foreground">
+              {actor.faction}
+            </FieldContent>
           </Field>
           <Field className="gap-0">
             <FieldLabel className="text-foreground/60 font-cinzel">
               Class
             </FieldLabel>
-            <FieldContent className="capitalize text-foreground">--</FieldContent>
+            <FieldContent className="capitalize text-foreground">
+              --
+            </FieldContent>
           </Field>
         </div>
         <div className="grid grid-cols-3 text-sm">
@@ -221,7 +52,9 @@ function ActorCharacter({ actor }: { actor: Actor }) {
             <FieldLabel className="text-foreground/60 font-cinzel">
               Augment
             </FieldLabel>
-            <FieldContent className="capitalize text-foreground">{actor.augment}</FieldContent>
+            <FieldContent className="capitalize text-foreground">
+              {actor.augment}
+            </FieldContent>
           </Field>
           <Field className="gap-0 text-foreground">
             <FieldLabel className="text-foreground/60 font-cinzel">
@@ -329,28 +162,7 @@ function ActorStats({ actor }: { actor: Actor }) {
     <div className="flex min-w-2/5 xl:min-w-1/3 flex-col gap-4 text-foreground">
       <GothicHighlightFrame className="-mx-2">
         <StatsTable actor={actor} />
-        <div className="grid grid-cols-2 p-3 -mx-2">
-          <Field>
-            <FieldLabel>
-              <Marker variant="separator">
-                <MarkerContent>Resistances</MarkerContent>
-              </Marker>
-            </FieldLabel>
-            <FieldContent>
-              <AffinityResistanceTable actor={actor} />
-            </FieldContent>
-          </Field>
-          <Field>
-            <FieldLabel>
-              <Marker variant="separator">
-                <MarkerContent>Damage</MarkerContent>
-              </Marker>
-            </FieldLabel>
-            <FieldContent>
-              <AffinityDamageTable actor={actor} />
-            </FieldContent>
-          </Field>
-        </div>
+        <AffinitiesTable actor={actor} />
       </GothicHighlightFrame>
     </div>
   )

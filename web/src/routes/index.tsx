@@ -8,7 +8,6 @@ import { GothicFrame } from '#/components/gothic-ui/frame'
 import { PlayerPositions } from '#/components/player-positions'
 import { PromptController } from '#/components/prompt-controller'
 import { DialogTrigger } from '#/components/ui/dialog'
-import { RenderLog } from '#/lib/game/log'
 import { clientsStore } from '#/lib/stores/clients'
 import { gameStore } from '#/lib/stores/game'
 import { uiStore } from '#/lib/stores/ui'
@@ -56,7 +55,6 @@ function Home() {
                 <ActorFrame actor={active_actor} className="-mt-1.5 -ml-0.5" />
               )}
             </GothicFrame>
-
             <GothicFrame className="flex-row h-full max-w-1/3 gap-px bg-neutral-950 z-10">
               {/*
               <GothicFramedButton className="h-full">

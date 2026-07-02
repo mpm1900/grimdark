@@ -142,3 +142,44 @@ func SetPositionSource(position_id uuid.UUID) Mutation {
 		},
 	}
 }
+func SwapPositions(a, b Actor) Mutation {
+	return Mutation{
+		delta: func(g *Game, ctx Context) []uuid.UUID {
+			g.SetPosition(a.ID, b.PositionID)
+			g.SetPosition(b.ID, a.PositionID)
+			return []uuid.UUID{a.ID, b.ID}
+		},
+	}
+}
+func PushSourceForwards() Mutation {
+	return Mutation{
+		delta: func(g *Game, ctx Context) []uuid.UUID {
+			g.PushForwards(ctx.SourceID)
+			return []uuid.UUID{ctx.SourceID}
+		},
+	}
+}
+func PushSourceToFront() Mutation {
+	return Mutation{
+		delta: func(g *Game, ctx Context) []uuid.UUID {
+			g.PushToFront(ctx.SourceID)
+			return []uuid.UUID{ctx.SourceID}
+		},
+	}
+}
+func PushSourceBackwards() Mutation {
+	return Mutation{
+		delta: func(g *Game, ctx Context) []uuid.UUID {
+			g.PushBackwards(ctx.SourceID)
+			return []uuid.UUID{ctx.SourceID}
+		},
+	}
+}
+func PushSourceToBack() Mutation {
+	return Mutation{
+		delta: func(g *Game, ctx Context) []uuid.UUID {
+			g.PushToBack(ctx.SourceID)
+			return []uuid.UUID{ctx.SourceID}
+		},
+	}
+}
