@@ -34,5 +34,7 @@ func (c PromptCommand) Resolve(g *Game) []Transaction {
 	if c.Payload.MapContext != nil {
 		context = c.Payload.MapContext(*g, context, action_context)
 	}
+	g.SetActiveContext(context)
+
 	return c.Payload.Resolve(g, context, action_context)
 }

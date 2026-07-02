@@ -10,7 +10,7 @@ import {
 import { gameStore } from '#/lib/stores/game'
 import { useSelector } from '@tanstack/react-store'
 import { AffinityName } from './affinity-name'
-import { TinyBadge } from './gothic-ui/badge'
+import { GothicBadge, TinyBadge } from './gothic-ui/badge'
 import { HealthBar } from './health-bar'
 import { cn } from '#/lib/utils'
 import { Info } from 'lucide-react'
@@ -112,14 +112,21 @@ function ActorFrameSlim({
 }: React.ComponentProps<'div'> & { actor: Actor }) {
   return (
     <div className={cn('relative mt-4', className)} {...props}>
-      <div className="flex flex-row justify-between items-center pr-1 pb-1">
+      <div className="flex flex-row justify-between items-baseline pr-1 pb-1">
         <span className="text-sm leading-0 font-bold font-cinzel-dec [text-shadow:2px_1px_0_var(--color-black)] text-foreground -mb-1">
           {actor.name}
         </span>
         <div className="flex gap-0">
           <Popover>
-            <PopoverTrigger className="cursor-pointer">
-              <Info className="size-4 text-foreground/40 hover:text-foreground/60" />
+            <PopoverTrigger
+              className="cursor-pointer"
+              onClick={(e) => {
+                e.stopPropagation()
+              }}
+            >
+              <GothicBadge className="h-4" variant="disabled">
+                {actor.level}
+              </GothicBadge>
             </PopoverTrigger>
             <GothicPopoverContent
               className="w-auto"

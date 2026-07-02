@@ -3,9 +3,10 @@ import { gameStore } from '#/lib/stores/game'
 import { cn } from '#/lib/utils'
 import { useSelector } from '@tanstack/react-store'
 import { ActorFrameSlim } from './actor-frame'
-import { Platform, PlatformParent } from './platform'
+import { getVariant, Platform, PlatformParent } from './platform'
 import { type ComponentProps } from 'react'
 import { setActiveActor, setHoverPosition, uiStore } from '#/lib/stores/ui'
+import { clientsStore } from '#/lib/stores/clients'
 
 function PlayerPosition({
   className,
@@ -64,6 +65,8 @@ function PlayerPositions({
   reverse,
   ...props
 }: React.ComponentProps<'div'> & { player: Player; reverse?: boolean }) {
+  const client = useSelector(clientsStore, (s) => s.me!)
+  const ui = useSelector(uiStore, (ui) => ui)
   const hover_position = useSelector(uiStore, (s) => s.hover_position)
   return (
     <div
@@ -79,15 +82,7 @@ function PlayerPositions({
         {player.positions.map((position) => (
           <Platform
             key={position.ID}
-            variant={
-              hover_position === position.ID
-                ? reverse
-                  ? 'enemy-active'
-                  : 'player-active'
-                : reverse
-                  ? 'enemy'
-                  : 'player'
-            }
+            variant={getVariant(ui, client.ID, position)}
             className="flex-1"
           />
         ))}

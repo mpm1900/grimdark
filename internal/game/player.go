@@ -17,27 +17,26 @@ type Player struct {
 	Positions []PlayerPosition `json:"positions"`
 }
 
-func NewPlayer() Player {
-	player_ID := uuid.New()
+func NewPlayer(id uuid.UUID) Player {
 	return Player{
-		ID: player_ID,
+		ID: id,
 		Positions: []PlayerPosition{
 			{
 				ID:       uuid.New(),
 				ActorID:  uuid.Nil,
-				PlayerID: player_ID,
+				PlayerID: id,
 				Rank:     0,
 			},
 			{
 				ID:       uuid.New(),
 				ActorID:  uuid.Nil,
-				PlayerID: player_ID,
+				PlayerID: id,
 				Rank:     1,
 			},
 			{
 				ID:       uuid.New(),
 				ActorID:  uuid.Nil,
-				PlayerID: player_ID,
+				PlayerID: id,
 				Rank:     2,
 			},
 		},

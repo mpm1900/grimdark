@@ -84,10 +84,6 @@ type Command struct {
 }
 
 func (c Command) Resolve(g *Game) []Transaction {
-	g.mutate(func(s *State) {
-		s.ActiveContext = &c.Context
-	})
-
 	action_context := ActionContext{
 		Action:       c.Payload,
 		Source:       g.GetSourceAction(c.Context),
@@ -98,6 +94,7 @@ func (c Command) Resolve(g *Game) []Transaction {
 	if c.Payload.MapContext != nil {
 		context = c.Payload.MapContext(*g, context, action_context)
 	}
+	g.SetActiveContext(context)
 
 	action_context.Push(
 		PushLog(NewLog("$source$ used $action$.", map[string]string{

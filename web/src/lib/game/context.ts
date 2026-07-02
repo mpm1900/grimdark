@@ -9,8 +9,8 @@ const ContextSchema = z.object({
   parent_ID: z.string().nullable(),
   source_ID: z.string().nullable(),
 
-  actor_IDs: z.array(z.string().nullable()),
-  position_IDs: z.array(z.string().nullable()),
+  actor_IDs: z.array(z.string()),
+  position_IDs: z.array(z.string()),
 })
 
 type Context = z.output<typeof ContextSchema>
@@ -23,7 +23,7 @@ function getTargetsFromContext(actors: Actor[], context: Context): Actor[] {
   return actors.filter((a) => {
     return (
       context.actor_IDs.includes(a.ID) ||
-      context.position_IDs.includes(a.position_ID)
+      context.position_IDs.includes(a.position_ID as string)
     )
   })
 }

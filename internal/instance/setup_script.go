@@ -6,6 +6,8 @@ import (
 	"grimdark/internal/game/actions"
 	"grimdark/internal/game/effects"
 	"grimdark/internal/game/weapons"
+
+	"github.com/google/uuid"
 )
 
 func SetupGame(g *game.Game, user game.User) {
@@ -55,8 +57,7 @@ func SetupGame(g *game.Game, user game.User) {
 		return false
 	})
 	bypass.Name = "bypass effect"
-	player := game.NewPlayer()
-	player.ID = user.ID
+	player := game.NewPlayer(user.ID)
 	player.User = user
 	if len(g.State().Players) > 0 {
 		player = g.Base().Players[0]
@@ -105,7 +106,7 @@ func SetupGame(g *game.Game, user game.User) {
 	}
 
 	// temp opponent
-	g.AddPlayers(game.NewPlayer())
+	g.AddPlayers(game.NewPlayer(uuid.New()))
 	gabe.Actions = []game.Action{
 		actions.SwordsDance,
 	}

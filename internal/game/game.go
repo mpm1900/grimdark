@@ -148,6 +148,12 @@ func (g *Game) modify(updater func(*State)) {
 
 	updater(&g.resolved)
 }
+func (g *Game) SetActiveContext(context Context) {
+	g.mutate(func(s *State) {
+		cloned := context.Clone()
+		s.ActiveContext = &cloned
+	})
+}
 func (g *Game) PushLog(log Bindable[Log]) {
 	// fmt.Println(log.Payload.Resolve())
 	g.Logs = append(g.Logs, log)
