@@ -17,6 +17,7 @@ import { Info } from 'lucide-react'
 import { Popover, PopoverTrigger } from './ui/popover'
 import { GothicPopoverContent } from './gothic-ui/popover'
 import { ActorDetails } from './actor-details'
+import { GothicMiniButton } from './gothic-ui/button'
 
 function StatMultBadge({ actor, stat }: { actor: Actor; stat: Stat }) {
   const stage = actor.stages[stat]
@@ -112,21 +113,22 @@ function ActorFrameSlim({
 }: React.ComponentProps<'div'> & { actor: Actor }) {
   return (
     <div className={cn('relative mt-4', className)} {...props}>
-      <div className="flex flex-row justify-between items-baseline pr-1 pb-1">
-        <span className="text-sm leading-0 font-bold font-cinzel-dec [text-shadow:2px_1px_0_var(--color-black)] text-foreground -mb-1">
+      <div className="flex flex-row justify-between items-end mb-1">
+        <span className="text-sm font-bold font-cinzel-dec [text-shadow:2px_1px_0_var(--color-black)] text-foreground -mb-1">
           {actor.name}
         </span>
         <div className="flex gap-0">
           <Popover>
             <PopoverTrigger
-              className="cursor-pointer"
+              className="cursor-pointer -mr-1"
+              asChild
               onClick={(e) => {
                 e.stopPropagation()
               }}
             >
-              <GothicBadge className="h-4" variant="disabled">
+              <GothicMiniButton className="p-0 pt-0.5 px-1">
                 {actor.level}
-              </GothicBadge>
+              </GothicMiniButton>
             </PopoverTrigger>
             <GothicPopoverContent
               className="w-auto"

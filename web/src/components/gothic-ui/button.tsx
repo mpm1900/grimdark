@@ -116,6 +116,30 @@ function GothicBigButton({
   )
 }
 
+function GothicMiniButton({
+  className,
+  asChild = false,
+  ...props
+}: React.ComponentProps<'button'> & {
+  asChild?: boolean
+}) {
+  const Comp = asChild ? Slot.Root : 'button'
+  return (
+    <Comp
+      data-slot="button"
+      className={cn(
+        'inline-flex w-fit shrink-0 items-center justify-center gap-1 border-[3px] border-solid border-transparent bg-transparent px-1 py-0.5 transition-colors [image-rendering:pixelated] [&>svg]:pointer-events-none [&>svg]:size-3',
+        'text-xs font-semibold font-cinzel whitespace-nowrap leading-none text-foreground/80 [text-shadow:0_1px_0_var(--color-black)]',
+        '[border-image-slice:8_fill] [border-image-repeat:stretch] [border-image-source:url("/gothic/ButtonLittleGray_Normal.png")] text-foreground/80',
+        'hover:[border-image-slice:8_fill] hover:[border-image-repeat:stretch] hover:[border-image-source:url("/gothic/ButtonLittleGray_Hovered.png")] hover:text-foreground',
+        'active:[border-image-slice:8_fill] active:[border-image-repeat:stretch] active:[border-image-source:url("/gothic/ButtonLittleGray_Pressed.png")] active:text-foreground/70',
+        className
+      )}
+      {...props}
+    />
+  )
+}
+
 function GothicCloseButton({
   className,
   asChild = false,
@@ -141,4 +165,4 @@ function GothicCloseButton({
   )
 }
 
-export { GothicFramedButton, GothicBigButton, GothicCloseButton }
+export { GothicFramedButton, GothicBigButton, GothicMiniButton, GothicCloseButton }

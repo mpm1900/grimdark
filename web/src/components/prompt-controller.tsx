@@ -66,6 +66,7 @@ function PromptController() {
               <TargetsButtonGrid
                 actor={null}
                 action={prompt.payload}
+                className='px-4'
                 context={{
                   ...context,
                   value: resolved_context,

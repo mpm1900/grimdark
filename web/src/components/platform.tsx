@@ -40,7 +40,7 @@ const platformVariants = cva(
         'enemy-active': 'bg-orange-900/60 border-orange-700',
         'enemy-hover': 'bg-orange-900/40 border-orange-900',
         source: 'bg-foreground/20 border-foreground/60',
-        targeted: 'bg-red-900/40 border-red-700',
+        targeted: 'bg-red-900/40 border-red-800',
       },
     },
   }
