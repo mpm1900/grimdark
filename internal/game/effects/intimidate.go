@@ -16,7 +16,7 @@ func Intimidate() game.Effect {
 				modifiers := []game.Modifier{}
 				other_actors := g.FindActors(game.CombineFilters(game.ActiveActors, game.NotSourceActor), ctx)
 				for _, target := range other_actors {
-					target_ctx := game.MakeContextFor(this.Source, target)
+					target_ctx := game.MakeModifierContext(this.Source, target)
 					modifiers = append(modifiers, StatDownTargets(game.Special, 1).Bind(target_ctx))
 				}
 

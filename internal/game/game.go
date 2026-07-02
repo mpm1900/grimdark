@@ -451,7 +451,8 @@ func (g *Game) SetPosition(actor_id uuid.UUID, position_id uuid.UUID) {
 				g.PushLog(log.Bind(trigger_context))
 			}
 			g.On(OnActorLeave, trigger_context)
-		} else {
+		}
+		if actor.PositionID == uuid.Nil {
 			log := NewLog("$actor$ joined the battle.", map[string]string{
 				"$actor$": actor.Name,
 			})
@@ -461,7 +462,7 @@ func (g *Game) SetPosition(actor_id uuid.UUID, position_id uuid.UUID) {
 	})
 
 	if evicted_id != uuid.Nil {
-		g.SetPosition(evicted_id, uuid.Nil)
+		g.SetPosition(evicted_id, actor.PositionID)
 	}
 }
 func (g *Game) DamageTargets(context Context, damage float64) {

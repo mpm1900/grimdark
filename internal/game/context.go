@@ -116,8 +116,9 @@ func MakeContextFor(source Actor, targets ...Actor) Context {
 	return ctx
 }
 func MakeModifierContext(source Actor, target Actor) Context {
-	ctx := MakeContextFor(source, target)
+	ctx := MakeContextFrom(source)
 	ctx.ParentID = target.ID
+	ctx.AddModifierTarget(target)
 	return ctx
 }
 
@@ -127,6 +128,9 @@ func (c *Context) AddTarget(target Actor) {
 	} else {
 		c.ActorIDs = append(c.ActorIDs, target.ID)
 	}
+}
+func (c *Context) AddModifierTarget(target Actor) {
+	c.ActorIDs = append(c.ActorIDs, target.ID)
 }
 func (c *Context) RemoveTarget(target Actor) {
 	actor_ids := []uuid.UUID{}

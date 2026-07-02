@@ -51,10 +51,10 @@ function Home() {
             )}
           </div>
           <div className="bg-[url(/gothic/DecoratedLineHorizontal.png)] hidden h-7 bg-center bg-contain bg-repeat-x"></div>
-          <div className="h-52 flex items-start -z-10 bg-neutral-950 mt-6">
+          <div className="h-48 flex items-start -z-10 bg-neutral-950 mt-6">
             <GothicFrame className="relative flex flex-1 flex-col h-full">
               {active_actor && (
-                <ActorFrame actor={active_actor} className="-mt-1.5 -ml-1.5" />
+                <ActorFrame actor={active_actor} className="-mt-1.5 -ml-0.5" />
               )}
             </GothicFrame>
 

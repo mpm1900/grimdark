@@ -247,8 +247,9 @@ func AddTargetsEffects(config StatusConfig, effects ...Effect) ActionResolver {
 			success = success || result_success
 			if result_success {
 				modifiers := make([]Modifier, len(effects))
+				target_ctx := MakeModifierContext(this.Source, target)
 				for i, effect := range effects {
-					modifiers[i] = effect.Bind(ctx)
+					modifiers[i] = effect.Bind(target_ctx)
 				}
 				this.Push(AddModifiers(modifiers...).Bind(NewContext()))
 				if config.OnSuccessResult != nil {
@@ -352,9 +353,35 @@ func SwitchIn(n int) Action {
 	}
 }
 
+func Swap() Action {
+	return Action{
+		ID: uuid.MustParse("019f20f2-0860-7149-a11e-fbc3df357824"),
+		Config: ActionConfig{
+			Name:        "Swap",
+			Description: "User switches places with target ally.",
+			TargetCount: 1,
+		},
+		IsActive: true,
+		Resolve: func(g *Game, ctx Context, this ActionContext) []Transaction {
+			targets := g.GetTargets(ctx)
+			for _, target := range targets {
+				target_ctx := MakeContextFrom(target)
+
+				this.Push(SetPositionSource(target.PositionID).Bind(ctx))
+				this.Push(SetPositionSource(this.Source.PositionID).Bind(target_ctx))
+			}
+
+			return this.Done()
+		},
+		TargetsPredicate: CombineFilters(OtherAllies, ActiveActors, AliveActors),
+		ValidateContext:  ContextTargetLength(1),
+	}
+}
+
 // global actions
 var GLOBAL_ACTIONS = []Action{
 	Retreat(),
+	Swap(),
 	SwitchIn(1),
 	SwitchIn(2),
 	SwitchIn(3),

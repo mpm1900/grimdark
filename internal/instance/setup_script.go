@@ -55,18 +55,6 @@ func SetupGame(g *game.Game, user game.User) {
 		return false
 	})
 	bypass.Name = "bypass effect"
-	bypass_aux := effects.AuxResetWhere(func(g game.Game, a game.Actor, ctx game.Context) bool {
-		active_context := g.State().ActiveContext
-		if active_context == nil {
-			return false
-		}
-
-		if active_context.SourceID == ctx.ParentID {
-			return active_context.HasTarget(a)
-		}
-
-		return false
-	})
 	player := game.NewPlayer()
 	player.ID = user.ID
 	player.User = user
@@ -79,7 +67,7 @@ func SetupGame(g *game.Game, user game.User) {
 		game.Fire: {},
 	}
 	max := game.NewActor(player.ID, max_def)
-	max.Effects = []game.Effect{bypass, bypass_aux, effects.Intimidate()}
+	max.Effects = []game.Effect{bypass, effects.Intimidate()}
 	max.Weapon = &weapons.SlashSword
 
 	katie_def := game.NewActorDef()
@@ -115,6 +103,9 @@ func SetupGame(g *game.Game, user game.User) {
 	if len(g.State().Players) == 0 {
 		g.AddPlayers(player)
 	}
+
+	// temp opponent
+	g.AddPlayers(game.NewPlayer())
 	gabe.Actions = []game.Action{
 		actions.SwordsDance,
 	}
