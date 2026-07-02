@@ -2,6 +2,8 @@ import { ActionButton } from '#/components/action-button'
 import { ActionContextDialog } from '#/components/action-context-dialog'
 import { ActorFrame } from '#/components/actor-frame'
 import { AppHeader } from '#/components/app-header'
+import { GothicBadge } from '#/components/gothic-ui/badge'
+import { GothicFramedButton } from '#/components/gothic-ui/button'
 import { GothicCard } from '#/components/gothic-ui/card'
 import { GothicFrame } from '#/components/gothic-ui/frame'
 import { PlayerPositions } from '#/components/player-positions'
@@ -22,6 +24,7 @@ function Home() {
   const active_actor_id = useSelector(uiStore, (s) => s.active_actor)
   const active_actor = game.actors.find((a) => a.ID === active_actor_id)
   const client_player = game.players.find((p) => p.user.id === client?.ID)
+  const other_player = game.players.find((p) => p.user.id !== client?.ID)
 
   return (
     <ClientOnly>
@@ -39,40 +42,53 @@ function Home() {
               />
             )}
             <div className="w-1/12" />
-            {client_player && (
+            {other_player && (
               <PlayerPositions
                 className="flex-1 gap-1"
-                player={client_player}
+                player={other_player}
                 reverse
               />
             )}
           </div>
-          <div className="bg-[url(/gothic/DecoratedLineHorizontal.png)] h-7 bg-center bg-contain bg-repeat-x"></div>
-          <div className="flex items-start -z-10 bg-neutral-950">
-            <GothicFrame className="relative flex flex-1 flex-col h-full p-0">
+          <div className="bg-[url(/gothic/DecoratedLineHorizontal.png)] hidden h-7 bg-center bg-contain bg-repeat-x"></div>
+          <div className="h-52 flex items-start -z-10 bg-neutral-950 mt-6">
+            <GothicFrame className="relative flex flex-1 flex-col h-full">
               {active_actor && (
-                <ActorFrame actor={active_actor} className="-mt-2.5 -ml-1.5" />
+                <ActorFrame actor={active_actor} className="-mt-1.5 -ml-1.5" />
               )}
             </GothicFrame>
-            <GothicFrame className="grid grid-cols-2 max-w-1/3 gap-px p-0">
-              {active_actor?.actions.map((action) => (
-                <ActionContextDialog
-                  key={action.ID}
-                  actor={active_actor}
-                  action={action}
-                  enabled={!action.is_disabled}
-                >
-                  <DialogTrigger asChild>
-                    <ActionButton action={action} actor={active_actor} />
-                  </DialogTrigger>
-                </ActionContextDialog>
-              ))}
+
+            <GothicFrame className="flex-row h-full max-w-1/3 gap-px bg-neutral-950 z-10">
+              {/*
+              <GothicFramedButton className="h-full">
+              </GothicFramedButton>
+              */}
+              <div className="grid grid-cols-2 grid-rows-3">
+                {active_actor?.actions.map((action) => (
+                  <ActionContextDialog
+                    key={action.ID}
+                    actor={active_actor}
+                    action={action}
+                    enabled={!action.is_disabled}
+                  >
+                    <DialogTrigger asChild>
+                      <ActionButton action={action} actor={active_actor} />
+                    </DialogTrigger>
+                  </ActionContextDialog>
+                ))}
+              </div>
+              {/*
+              <GothicFramedButton className="h-full">
+              </GothicFramedButton>
+              */}
             </GothicFrame>
-            <GothicCard className="h-51 min-w-0 max-w-1/4 flex-1 flex bg-neutral-950 p-0">
+            <GothicCard className="h-full min-w-0 max-w-1/4 flex-1 flex bg-neutral-950 p-0">
               <div className="flex-1 overflow-auto font-serif text-foreground/40">
-                <ul className="px-2">
+                <ul className="px-1">
                   {game.logs.map((log) => (
-                    <li key={log.ID}>{RenderLog(log)}</li>
+                    <li key={log.ID} className="leading-4.5 text-sm">
+                      {RenderLog(log)}
+                    </li>
                   ))}
                 </ul>
               </div>

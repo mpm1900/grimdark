@@ -33,7 +33,7 @@ function InlineAuxStats({
   )
 }
 
-const weaponWrapper = cva('-m-1 p-px', {
+const weaponWrapper = cva('p-px', {
   variants: {
     rarity: {
       common: 'bg-gradient-to-b from-foreground/60 to-foreground/0',
@@ -44,7 +44,7 @@ const weaponWrapper = cva('-m-1 p-px', {
     rarity: 'common',
   },
 })
-const weaponBody = cva('relative bg-neutral-900', {
+const weaponBody = cva('relative bg-neutral-900 pb-1', {
   variants: {
     rarity: {
       common: 'shadow-[inset_2px_2px_18px_0px_rgba(0,_0,_0,_0.8)]',
@@ -70,9 +70,9 @@ const weaponTitle = cva('font-cinzel font-semibold block text-lg', {
 function WeaponDetails({ weapon }: { weapon: Weapon }) {
   const rarity = 'rare'
   return (
-    <GothicFrame className="font-serif p-0">
+    <GothicFrame className="font-serif">
       <div className={weaponWrapper({ rarity: rarity })}>
-        <ItemContent className={weaponBody({ rarity: rarity })}>
+        <div className={weaponBody({ rarity: rarity })}>
           <div className="p-2">
             <div className="absolute z-0 bottom-0 -right-3 -top-4 overflow-hidden">
               <img
@@ -124,7 +124,7 @@ function WeaponDetails({ weapon }: { weapon: Weapon }) {
               <InlineAuxStats className="pl-4" aux_stats={weapon.aux_stats} />
             </ItemDescription>
           </GothicShadowFrame>
-        </ItemContent>
+        </div>
       </div>
     </GothicFrame>
   )

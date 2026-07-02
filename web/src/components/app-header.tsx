@@ -22,7 +22,7 @@ function AppHeader() {
   const game_status = useSelector(gameStore, (g) => g.status)
   const turn = useSelector(gameStore, (g) => g.turn)
   return (
-    <header className="fixed flex justify-between p-1 z-20 w-full">
+    <header className="fixed flex justify-between p-1 z-30 w-full">
       <div className="flex items-center gap-2">
         <Link to="/" className="pl-2">
           <GiWingedSword />

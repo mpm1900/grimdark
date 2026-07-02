@@ -5,8 +5,9 @@ function GothicFrame({ className, ...props }: React.ComponentProps<'div'>) {
     <div
       data-slot="gothic-frame"
       className={cn(
-        'flex flex-col gap-4 px-1 text-foreground',
-        'border-[10px] border-solid border-transparent',
+        'flex flex-col p-1.5 text-foreground',
+        'border-0 border-solid border-transparent',
+        '[border-image-width:10px]',
         'bg-clip-border',
         'bg-neutral-900',
         "[border-image-source:url('/gothic/SkillFrameNormal.png')]",

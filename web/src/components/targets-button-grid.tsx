@@ -10,6 +10,7 @@ import { useQuery } from '@tanstack/react-query'
 import { getTargetsFromContext, NULL_CONTEXT } from '#/lib/game/context'
 import { useContext } from '#/hooks/use-context'
 import { validateContextQuery } from '#/lib/queries/validate-context'
+import { setHoverPosition } from '#/lib/stores/ui'
 
 function TargetsButtonGrid({
   actor,
@@ -72,6 +73,7 @@ function TargetsButtonGrid({
                 ? context.addTarget(target)
                 : context.removeTarget(target)
             }
+            onMouseEnter={() => setHoverPosition(target.position_ID)}
           >
             {target.name}
           </GothicBigButton>

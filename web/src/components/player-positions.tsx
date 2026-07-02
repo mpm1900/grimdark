@@ -3,50 +3,47 @@ import { gameStore } from '#/lib/stores/game'
 import { cn } from '#/lib/utils'
 import { useSelector } from '@tanstack/react-store'
 import { ActorFrameSlim } from './actor-frame'
-import { Popover, PopoverTrigger } from './ui/popover'
-import { GothicPopoverContent } from './gothic-ui/popover'
-import { ActorDetails } from './actor-details'
 import { Platform, PlatformParent } from './platform'
 import { type ComponentProps } from 'react'
 import { setActiveActor, setHoverPosition, uiStore } from '#/lib/stores/ui'
 
 function PlayerPosition({
   className,
+  hover_position,
   position,
   reverse,
   ...props
 }: ComponentProps<'div'> & {
+  hover_position: string | null
   position: Player['positions'][number]
   reverse?: boolean
 }) {
   const actor = useSelector(gameStore, (g) =>
     g.actors.find((a) => a.position_ID === position.ID)
   )
+  const active_actor = useSelector(uiStore, (s) => s.active_actor)
   return (
     <div className={cn('relative flex-1', className)} {...props}>
       {actor && (
-        <Popover>
-          <PopoverTrigger className="w-full">
-            <div className="relative z-10 px-8 flex justify-center">
-              <img
-                src="/img/69_Asset_35.png"
-                className={cn(
-                  'w-full max-w-30 [image-rendering:pixelated] relative z-10',
-                  !actor && 'opacity-0',
-                  reverse && '-scale-x-100'
-                )}
-              />
-            </div>
-          </PopoverTrigger>
-          <GothicPopoverContent
-            className="w-auto"
-            side={reverse ? 'left' : 'right'}
-            align="end"
-            collisionPadding={16}
-          >
-            <ActorDetails actor={actor} />
-          </GothicPopoverContent>
-        </Popover>
+        <div
+          className="relative z-10 px-8 py-2 flex justify-center"
+          onClick={() => {
+            setActiveActor(actor.ID)
+          }}
+        >
+          <img
+            src="/img/69_Asset_35.png"
+            className={cn(
+              'w-full max-w-30 relative z-10',
+              !actor && 'opacity-0',
+              reverse && '-scale-x-100',
+              {
+                'opacity-50': hover_position !== position.ID,
+                'opacity-100': active_actor === position.actor_ID,
+              }
+            )}
+          />
+        </div>
       )}
       {actor && (
         <ActorFrameSlim
@@ -104,6 +101,7 @@ function PlayerPositions({
         {player.positions.map((position) => (
           <PlayerPosition
             key={position.ID}
+            hover_position={hover_position}
             position={position}
             reverse={reverse}
             onMouseEnter={() => setHoverPosition(position.ID)}

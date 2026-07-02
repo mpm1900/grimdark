@@ -13,6 +13,10 @@ import { AffinityName } from './affinity-name'
 import { TinyBadge } from './gothic-ui/badge'
 import { HealthBar } from './health-bar'
 import { cn } from '#/lib/utils'
+import { Info } from 'lucide-react'
+import { Popover, PopoverTrigger } from './ui/popover'
+import { GothicPopoverContent } from './gothic-ui/popover'
+import { ActorDetails } from './actor-details'
 
 function StatMultBadge({ actor, stat }: { actor: Actor; stat: Stat }) {
   const stage = actor.stages[stat]
@@ -113,9 +117,19 @@ function ActorFrameSlim({
           {actor.name}
         </span>
         <div className="flex gap-0">
-          {AFFINITIES.filter((a) => actor.affinities.includes(a)).map((a) => (
-            <AffinityName key={a} affinity={a} />
-          ))}
+          <Popover>
+            <PopoverTrigger className="cursor-pointer">
+              <Info className="size-4 text-foreground/40 hover:text-foreground/60" />
+            </PopoverTrigger>
+            <GothicPopoverContent
+              className="w-auto"
+              side={'top'}
+              align="end"
+              collisionPadding={16}
+            >
+              <ActorDetails actor={actor} />
+            </GothicPopoverContent>
+          </Popover>
         </div>
       </div>
       <div className="relative">
