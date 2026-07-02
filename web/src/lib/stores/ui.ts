@@ -5,6 +5,7 @@ import { isIdNull } from '../game/core'
 export type Ui = {
   active_actor: string | null
   hover_position: string | null
+  range_positions: string[]
   source_actor: string | null
   target_positions: string[]
 }
@@ -12,6 +13,7 @@ export type Ui = {
 const INITIAL_UI: Ui = {
   active_actor: null,
   hover_position: null,
+  range_positions: [],
   source_actor: null,
   target_positions: [],
 }
@@ -29,6 +31,13 @@ function setHoverPosition(actor_id: string | null) {
   uiStore.setState((old) => ({
     ...old,
     hover_position: actor_id,
+  }))
+}
+
+function setRangePositions(positions: string[]) {
+  uiStore.setState((old) => ({
+    ...old,
+    range_positions: positions,
   }))
 }
 
@@ -69,6 +78,7 @@ export {
   uiStore,
   setActiveActor,
   setDefaultActiveActor,
+  setRangePositions,
   setSourceActor,
   setTargetPositions,
   setHoverPosition,

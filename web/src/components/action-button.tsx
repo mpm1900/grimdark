@@ -16,19 +16,40 @@ import { GothicFramedButton } from './gothic-ui/button'
 import { STAT_LABELS } from '#/lib/game/core'
 import { useSelector } from '@tanstack/react-store'
 import { gameStore } from '#/lib/stores/game'
+import { getTargetsQuery } from '#/lib/queries/get-targets'
+import { useQuery } from '@tanstack/react-query'
+import { NULL_CONTEXT } from '#/lib/game/context'
+import { setRangePositions } from '#/lib/stores/ui'
 
 function ActionButton({
   action,
   actor,
   ...props
 }: React.ComponentProps<typeof Button> & { action: Action; actor: Actor }) {
+  const turn = useSelector(gameStore, g => g.turn)
   const status = useSelector(gameStore, (g) => g.status)
+  const targets_options = getTargetsQuery(
+    actor?.ID,
+    actor?.player_ID,
+    action.ID,
+    [turn]
+  )
+  targets_options.enabled = !props.disabled
+  const targets_query = useQuery(targets_options)
+  const targets_context = targets_query.data ?? NULL_CONTEXT
+
   return (
     <GothicFramedButton
       {...props}
       variant="basic"
       className="h-auto w-full min-w-0 justify-start"
       disabled={action.is_disabled || !actor.is_active || status === 'running'}
+      onMouseEnter={() => {
+        setRangePositions(targets_context.position_IDs)
+      }}
+      onMouseLeave={() => {
+        setRangePositions([])
+      }}
     >
       {action.config.affinity && (
         <ItemMedia>

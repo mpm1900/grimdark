@@ -57,6 +57,9 @@ function getVariant(
   if (store.target_positions.includes(position.ID)) {
     return 'targeted'
   }
+  if (store.range_positions.includes(position.ID)) {
+    return 'player-hover'
+  }
   if (position.player_ID === client_ID) {
     if (store.hover_position === position.ID) {
       return 'player-hover'

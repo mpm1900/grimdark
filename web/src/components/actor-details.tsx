@@ -201,19 +201,19 @@ function ActorCharacter({ actor }: { actor: Actor }) {
             <FieldLabel className="text-foreground/60 font-cinzel">
               Race
             </FieldLabel>
-            <FieldContent className="capitalize">{actor.race}</FieldContent>
+            <FieldContent className="capitalize text-foreground">{actor.race}</FieldContent>
           </Field>
           <Field className="gap-0">
             <FieldLabel className="text-foreground/60 font-cinzel">
               Faction
             </FieldLabel>
-            <FieldContent className="capitalize">{actor.faction}</FieldContent>
+            <FieldContent className="capitalize text-foreground">{actor.faction}</FieldContent>
           </Field>
           <Field className="gap-0">
             <FieldLabel className="text-foreground/60 font-cinzel">
               Class
             </FieldLabel>
-            <FieldContent className="capitalize">--</FieldContent>
+            <FieldContent className="capitalize text-foreground">--</FieldContent>
           </Field>
         </div>
         <div className="grid grid-cols-3 text-sm">
@@ -221,7 +221,7 @@ function ActorCharacter({ actor }: { actor: Actor }) {
             <FieldLabel className="text-foreground/60 font-cinzel">
               Augment
             </FieldLabel>
-            <FieldContent className="capitalize">{actor.augment}</FieldContent>
+            <FieldContent className="capitalize text-foreground">{actor.augment}</FieldContent>
           </Field>
           <Field className="gap-0 text-foreground">
             <FieldLabel className="text-foreground/60 font-cinzel">
