@@ -21,6 +21,45 @@ import {
 import { STAT_LABELS } from '#/lib/game/core'
 import { TargetsButtonGrid } from './targets-button-grid'
 
+function AttackDetails({ action }: { action: Action }) {
+  return (
+    <div className="flex [&>div]:flex-1 px-3 pb-3 bg-right">
+      {!!action.config.stat && (
+        <div className="flex flex-col items-center">
+          <Marker variant="separator">
+            <MarkerContent>Stat</MarkerContent>
+          </Marker>
+          {STAT_LABELS[action.config.stat]}
+        </div>
+      )}
+      {!!action.config.power && (
+        <div className="flex flex-col items-center">
+          <Marker variant="separator">
+            <MarkerContent>Power</MarkerContent>
+          </Marker>
+          {action.config.power}
+        </div>
+      )}
+      {action.config.accuracy && (
+        <div className="flex flex-col items-center">
+          <Marker variant="separator">
+            <MarkerContent>Accuracy</MarkerContent>
+          </Marker>
+          {Math.min(action.config.accuracy * 100, 100)}%
+        </div>
+      )}
+      {action.config.range !== null && (
+        <div className="flex flex-col items-center">
+          <Marker variant="separator">
+            <MarkerContent>Range</MarkerContent>
+          </Marker>
+          {action.config.range}
+        </div>
+      )}
+    </div>
+  )
+}
+
 function ActionContextDialog({
   actor,
   action,
@@ -60,40 +99,7 @@ function ActionContextDialog({
           <GothicDialogTitle>{action.config.name}</GothicDialogTitle>
         </GothicDialogHeader>
 
-        {!!action.config.power && (
-          <div className="grid grid-cols-4 px-3 pb-3 bg-right">
-            {!!action.config.stat && (
-              <div className="flex flex-col items-center">
-                <Marker variant="separator">
-                  <MarkerContent>Stat</MarkerContent>
-                </Marker>
-                {STAT_LABELS[action.config.stat]}
-              </div>
-            )}
-            {!!action.config.power && (
-              <div className="flex flex-col items-center">
-                <Marker variant="separator">
-                  <MarkerContent>Power</MarkerContent>
-                </Marker>
-                {action.config.power}
-              </div>
-            )}
-            {action.config.accuracy && (
-              <div className="flex flex-col items-center">
-                <Marker variant="separator">
-                  <MarkerContent>Accuracy</MarkerContent>
-                </Marker>
-                {Math.min(action.config.accuracy * 100, 100)}%
-              </div>
-            )}
-            <div className="flex flex-col items-center">
-              <Marker variant="separator">
-                <MarkerContent>Range</MarkerContent>
-              </Marker>
-              {action.config.range}
-            </div>
-          </div>
-        )}
+        {!!action.config.power && <AttackDetails action={action} />}
         {action.config.description && (
           <div className="text-center text-white/60">
             {action.config.description}

@@ -12,6 +12,37 @@ import { useContext } from '#/hooks/use-context'
 import { validateContextQuery } from '#/lib/queries/validate-context'
 import { setHoverPosition } from '#/lib/stores/ui'
 
+function TargetButton({
+  is_done,
+  is_selected,
+  is_valid_target,
+  target,
+  disabled,
+  onClick,
+}: Omit<React.ComponentProps<typeof GothicBigButton>, 'onClick'> & {
+  is_done: boolean
+  is_selected: boolean
+  is_valid_target: boolean
+  target: Actor | undefined
+  onClick: (actor: Actor, is_selected: boolean) => void
+}) {
+  if (!target) return <div />
+  return (
+    <GothicBigButton
+      key={target.ID}
+      variant={is_selected ? 'red' : 'basic'}
+      disabled={
+        !is_valid_target || disabled || (!is_selected ? is_done : false)
+      }
+      onMouseEnter={() => setHoverPosition(target.position_ID)}
+      onMouseLeave={() => setHoverPosition(null)}
+      onClick={() => onClick(target, !is_selected)}
+    >
+      {target.name}
+    </GothicBigButton>
+  )
+}
+
 function TargetsButtonGrid({
   actor,
   action,
@@ -65,52 +96,33 @@ function TargetsButtonGrid({
             .flatMap((p) => p.positions.slice().reverse())
             .map((pos, i) => {
               const target = actors.find((t) => t.position_ID === pos.ID)
-              const is_target = !!targets.find((t) => t.ID === target?.ID)
-              if (!target) return <div key={i} />
               return (
-                <GothicBigButton
-                  key={target.ID}
-                  variant={context.hasTarget(target) ? 'red' : 'basic'}
-                  disabled={
-                    !is_target ||
-                    (disabled || !context.hasTarget(target)
-                      ? selected.length === action.config.target_count
-                      : false)
+                <TargetButton
+                  key={i}
+                  is_done={selected.length === action.config.target_count}
+                  is_selected={!!target && context.hasTarget(target)}
+                  is_valid_target={!!targets.find((t) => t.ID === target?.ID)}
+                  target={target}
+                  onClick={(t, selected) =>
+                    selected ? context.addTarget(t) : context.removeTarget(t)
                   }
-                  onClick={() =>
-                    !context.hasTarget(target)
-                      ? context.addTarget(target)
-                      : context.removeTarget(target)
-                  }
-                  onMouseEnter={() => setHoverPosition(target.position_ID)}
-                  onMouseLeave={() => setHoverPosition(null)}
-                >
-                  {target.name}
-                </GothicBigButton>
+                />
               )
             })}
         </div>
       ) : (
         <div className="grid grid-cols-3 mt-3">
           {targets.map((target) => (
-            <GothicBigButton
+            <TargetButton
               key={target.ID}
-              variant={context.hasTarget(target) ? 'red' : 'basic'}
-              disabled={
-                disabled || !context.hasTarget(target)
-                  ? selected.length === action.config.target_count
-                  : false
+              is_done={selected.length === action.config.target_count}
+              is_selected={!!target && context.hasTarget(target)}
+              is_valid_target={!!targets.find((t) => t.ID === target?.ID)}
+              target={target}
+              onClick={(t, selected) =>
+                selected ? context.addTarget(t) : context.removeTarget(t)
               }
-              onClick={() =>
-                !context.hasTarget(target)
-                  ? context.addTarget(target)
-                  : context.removeTarget(target)
-              }
-              onMouseEnter={() => setHoverPosition(target.position_ID)}
-              onMouseLeave={() => setHoverPosition(null)}
-            >
-              {target.name}
-            </GothicBigButton>
+            />
           ))}
         </div>
       )}

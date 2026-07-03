@@ -21,7 +21,7 @@ var Slash = game.Action{
 		CritChance:   0,
 		CritModifier: 1.5,
 		TargetCount:  1,
-		Range:        1,
+		Range:        game.P(1),
 	},
 	IsActive: true,
 	Resolve: game.BasicAttack(game.AttackConfig{

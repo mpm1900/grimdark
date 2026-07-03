@@ -11,7 +11,7 @@ export type ActionConfig = {
   name: string
   power: number
   priority: number
-  range: number
+  range: number | null
   recoil: number
   stat: Stat | null
   target_count: number

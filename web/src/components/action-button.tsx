@@ -11,9 +11,8 @@ import {
   ItemMedia,
   ItemTitle,
 } from './ui/item'
-import { StatIcon, StatName } from './stat-name'
+import { StatIcon } from './stat-name'
 import { GothicFramedButton } from './gothic-ui/button'
-import { STAT_LABELS } from '#/lib/game/core'
 import { useSelector } from '@tanstack/react-store'
 import { gameStore } from '#/lib/stores/game'
 import { getTargetsQuery } from '#/lib/queries/get-targets'
