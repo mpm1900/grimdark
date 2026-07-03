@@ -7,8 +7,11 @@ type TriggerOn string
 const (
 	OnActorEnter    TriggerOn = "on-actor-enter"
 	OnActorLeave    TriggerOn = "on-actor-leave"
+	OnActorMove     TriggerOn = "on-actor-move"
 	OnDamageSend    TriggerOn = "on-damage-send"
 	OnDamageRecieve TriggerOn = "on-damage-recieve"
+	OnCriticalHit   TriggerOn = "on-critical-hit"
+	OnMiss          TriggerOn = "on-miss"
 	OnModifierAdd   TriggerOn = "on-modifier-add"
 	OnTurnEnd       TriggerOn = "on-turn-end"
 )
@@ -21,14 +24,20 @@ type Trigger struct {
 
 type TriggerCommand struct {
 	Bindable[Trigger]
-	Priority int
+	ParentContext Context
+	Priority      int
 }
 
 func (a Trigger) Bind(context Context) TriggerCommand {
+	return a.BindWithParent(context, context)
+}
+
+func (a Trigger) BindWithParent(context Context, parent_context Context) TriggerCommand {
 	bindable := bind(a, context)
 	command := TriggerCommand{
-		Bindable: bindable,
-		Priority: a.Config.Priority,
+		Bindable:      bindable,
+		ParentContext: parent_context,
+		Priority:      a.Config.Priority,
 	}
 	return command
 }
@@ -40,7 +49,7 @@ func (c TriggerCommand) Resolve(g *Game) []Transaction {
 
 	action_context := ActionContext{
 		Action:       c.Payload.Action,
-		Source:       g.GetSourceAction(c.Context),
+		Source:       c.GetParent(*g),
 		transactions: []Transaction{},
 	}
 
@@ -58,4 +67,13 @@ func (c TriggerCommand) Resolve(g *Game) []Transaction {
 	g.PushLog(log)
 
 	return c.Payload.Resolve(g, context, action_context)
+}
+
+func (c TriggerCommand) GetParent(g Game) Actor {
+	parent, ok := g.GetParent(c.ParentContext)
+	if ok {
+		return parent
+	}
+
+	return g.GetSourceAction(c.ParentContext)
 }

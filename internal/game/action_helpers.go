@@ -38,9 +38,6 @@ func BasicAttack(config AttackConfig) ActionResolver {
 			}
 
 			for _, target := range targets {
-				distance, _ := g.GetDistance(this.Source.PositionID, target.PositionID)
-				fmt.Println("distince is ", distance)
-
 				result := this.Action.Config.GetDamageResult(this.Source, target, targets)
 				dmg_ctx := MakeContextFor(this.Source, target)
 
@@ -152,10 +149,13 @@ func PostDamageLogs(result DamageResult, context Context, this *ActionContext) {
 	}
 }
 func DamageSideEffects(g *Game, context Context, result DamageResult, this *ActionContext, config AttackConfig) {
+	trigger_context := MakeContextFor(this.Source, result.Target)
 	if result.Success() {
-		trigger_context := MakeContextFor(this.Source, result.Target)
 		g.On(OnDamageSend, trigger_context)
 		g.On(OnDamageRecieve, trigger_context)
+		if result.Critical {
+			g.On(OnCriticalHit, trigger_context)
+		}
 
 		if this.Action.Config.Recoil > 0 {
 			recoil_ctx := MakeContextFor(this.Source, this.Source)
@@ -172,6 +172,9 @@ func DamageSideEffects(g *Game, context Context, result DamageResult, this *Acti
 		}
 	}
 	if !result.Success() && config.OnFailureResult != nil {
+		if !result.AccuracyResult.Pass {
+			g.On(OnMiss, trigger_context)
+		}
 		config.OnFailureResult(*g, context, this, result)
 	}
 }

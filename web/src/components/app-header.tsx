@@ -7,11 +7,11 @@ import { gameStore } from '#/lib/stores/game'
 import { sendContextMessage, socketStore } from '#/lib/stores/socket'
 import { Link } from '@tanstack/react-router'
 import { useSelector } from '@tanstack/react-store'
-import { Globe, Loader2, LogOut, TriangleAlert, Unplug } from 'lucide-react'
+import { Globe, Loader2, TriangleAlert, Unplug } from 'lucide-react'
 import { GiWhirlpoolShuriken, GiWingedSword } from 'react-icons/gi'
 import { InstanceCombobox } from './instance-combobox'
 import { Button } from './ui/button'
-import { Tooltip, TooltipContent, TooltipTrigger } from './ui/tooltip'
+import { GothicFramedButton } from './gothic-ui/button'
 
 function AppHeader() {
   const { data: user } = useUser()
@@ -49,7 +49,8 @@ function AppHeader() {
 
         {client && (
           <div className="flex gap-2">
-            <Button
+            <GothicFramedButton
+              variant="red"
               disabled={game_status === 'running'}
               onClick={() => {
                 sendContextMessage({
@@ -60,7 +61,7 @@ function AppHeader() {
               }}
             >
               Run
-            </Button>
+            </GothicFramedButton>
           </div>
         )}
         <div className="flex items-center">
@@ -72,25 +73,19 @@ function AppHeader() {
           )}
         </div>
       </div>
-      <div className="absolute left-1/2 -translate-x-1/2">Turn {turn}</div>
+      <div className="absolute -top-1 left-1/2 -translate-x-1/2 bg-[url(/gothic/TitleHeroFrame.png)] bg-cover bg-no-repeat h-20 leading-15 w-40 text-center font-cinzel-dec font-bold text-foreground/60">
+        T<span className="font-cinzel">urn {turn}</span>
+      </div>
       <div className="flex items-center gap-4 px-2">
         <div className="font-mono text-sm flex items-center">
           {user && (
             <div className="flex items-center gap-2">
-              <Tooltip>
-                <TooltipTrigger>
-                  <span className="hidden lg:inline">{user.email}</span>
-                </TooltipTrigger>
-                <TooltipContent>{user.id}</TooltipContent>
-              </Tooltip>
               <Button
                 variant="ghost"
-                size="icon"
-                className="size-8"
                 onClick={() => logout.mutate()}
                 title="Logout"
               >
-                <LogOut className="size-4" />
+                <span className="hidden lg:inline">{user.email}</span>
               </Button>
             </div>
           )}

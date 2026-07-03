@@ -1,0 +1,32 @@
+package actions
+
+import (
+	"grimdark/internal/game"
+
+	"github.com/google/uuid"
+)
+
+var Blast = game.Action{
+	ID: uuid.MustParse("019f287e-fdf6-7fc4-87b0-0a0060efc424"),
+	Config: game.ActionConfig{
+		Name:         "Blast",
+		Description:  "A blast of arcane energy.",
+		Affinity:     game.Arcane,
+		Stat:         game.Special,
+		Accuracy:     game.P(1.0),
+		Power:        80,
+		Lifesteal:    0,
+		Hits:         1,
+		CritChance:   0,
+		CritModifier: 1.5,
+		TargetCount:  1,
+	},
+	IsActive: true,
+	Resolve: game.BasicAttack(game.AttackConfig{
+		OnSuccessResult: func(g game.Game, context game.Context, this *game.ActionContext, result game.DamageResult) {
+
+		},
+	}),
+	ValidateContext:  game.ContextTargetLength(1),
+	TargetsPredicate: game.CombineFilters(game.ActiveActors, game.NotSourceActor, game.PositionRank(2)),
+}

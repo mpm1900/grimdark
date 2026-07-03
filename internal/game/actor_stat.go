@@ -31,6 +31,7 @@ var percentStats map[Stat]struct{} = map[Stat]struct{}{
 	Accuracy:       {},
 	Evasion:        {},
 	CriticalChance: {},
+	CriticalDamage: {},
 }
 
 var statDefenses map[Stat]Stat = map[Stat]Stat{

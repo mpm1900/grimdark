@@ -2,6 +2,7 @@ import { STAT_ICONS } from '#/icons/stats'
 import type { Stat } from '#/lib/game/core'
 import { cn } from '#/lib/utils'
 import { cva } from 'class-variance-authority'
+import type { IconBaseProps, IconType } from 'react-icons/lib'
 
 const statVariants = cva('', {
   variants: {
@@ -45,10 +46,18 @@ function StatName({
         className
       )}
     >
-      {Icon && !hideIcon && <Icon className="text-foreground/40 size-5" />}
+      {Icon && !hideIcon && <Icon className="size-5" />}
       {children}
     </span>
   )
 }
 
-export { StatName, statVariants }
+function StatIcon({
+  stat,
+  ...props
+}: React.ComponentProps<IconType> & { stat: Stat }) {
+  const Icon = STAT_ICONS[stat]
+  return <Icon {...props} />
+}
+
+export { StatName, StatIcon, statVariants }

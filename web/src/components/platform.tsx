@@ -3,6 +3,8 @@ import { cn } from '#/lib/utils'
 import { cva, type VariantProps } from 'class-variance-authority'
 import type { Ui } from '#/lib/stores/ui'
 import type { Player } from '#/lib/game/player'
+import type { Game } from '#/lib/game/game'
+import type { Status } from '#/lib/game/core'
 
 function PlatformParent({
   children,
@@ -49,7 +51,8 @@ const platformVariants = cva(
 function getVariant(
   store: Ui,
   client_ID: string,
-  position: Player['positions'][number]
+  position: Player['positions'][number],
+  status: Status
 ): VariantProps<typeof platformVariants>['variant'] {
   if (store.source_actor === position.actor_ID) {
     return 'source'
@@ -62,7 +65,7 @@ function getVariant(
     if (store.range_positions.includes(position.ID)) {
       return 'player-hover'
     }
-    if (store.active_actor == position.actor_ID) {
+    if (store.active_actor == position.actor_ID && status === 'idle') {
       return 'player-active'
     }
     if (store.hover_position === position.ID) {
@@ -76,13 +79,13 @@ function getVariant(
     if (store.range_positions.includes(position.ID)) {
       return 'enemy-hover'
     }
-    if (store.active_actor == position.actor_ID) {
+    if (store.active_actor == position.actor_ID && status === 'idle') {
       return 'enemy-active'
     }
     if (store.hover_position === position.ID) {
       return 'enemy-hover'
     }
-
+    
     return 'enemy'
   }
 }

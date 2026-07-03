@@ -11,7 +11,7 @@ import {
   ItemMedia,
   ItemTitle,
 } from './ui/item'
-import { StatName } from './stat-name'
+import { StatIcon, StatName } from './stat-name'
 import { GothicFramedButton } from './gothic-ui/button'
 import { STAT_LABELS } from '#/lib/game/core'
 import { useSelector } from '@tanstack/react-store'
@@ -43,7 +43,7 @@ function ActionButton({
     <GothicFramedButton
       {...props}
       variant="basic"
-      className="h-auto w-full min-w-0 justify-start"
+      className="relative h-auto w-full min-w-0 justify-start overflow-hidden"
       disabled={
         disabled ||
         action.is_disabled ||
@@ -57,6 +57,12 @@ function ActionButton({
         setRangePositions([])
       }}
     >
+      {action.config.stat && (
+        <StatIcon
+          stat={action.config.stat}
+          className="size-15 absolute opacity-20 -right-6 bottom-0"
+        />
+      )}
       {action.config.affinity && (
         <ItemMedia>
           <AffinityName affinity={action.config.affinity} />
@@ -64,7 +70,10 @@ function ActionButton({
       )}
       <ItemContent className="gap-0 py-0.5 min-w-0 overflow-hidden">
         <ItemTitle
-          className={cn('text-white', action.is_disabled && 'text-white/60')}
+          className={cn(
+            'text-white gap-1',
+            action.is_disabled && 'text-white/60'
+          )}
         >
           {action.config.name}
         </ItemTitle>
@@ -82,26 +91,10 @@ function ActionButton({
               {action.is_disabled && (
                 <span className="text-red-300/40">[Disabled] </span>
               )}
-              {action.config.stat && (
-                <StatName
-                  stat={action.config.stat}
-                  className="mr-2 inline-flex items-baseline align-baseline font-serif [&>svg]:self-center"
-                  hideIcon
-                >
-                  {STAT_LABELS[action.config.stat]}
-                </StatName>
-              )}
               <span className="mr-2 font-semibold">
-                {action.config.accuracy && (
-                  <span
-                    className={cn('mr-2', {
-                      'text-positive': actor.stats['accuracy'] > 100,
-                      'text-negative': actor.stats['accuracy'] < 100,
-                    })}
-                  >
-                    {Math.min(action.config.accuracy * 100, 100)}%
-                  </span>
-                )}
+                <span className="font-serif font-normal text-foreground/70">
+                  {action.config.description}
+                </span>
                 {action.config.crit_chance && (
                   <span className="inline-flex items-baseline align-baseline">
                     <span
@@ -124,15 +117,12 @@ function ActionButton({
                   </span>
                 )}
               </span>
-              <span className="font-serif text-foreground/70">
-                {action.config.description}
-              </span>
             </span>
           )}
         </ItemDescription>
       </ItemContent>
       {!!action.config.power && (
-        <ItemActions className="flex flex-col h-full items-start">
+        <ItemActions className="relative flex flex-col gap-0 h-full items-end -mt-1 font-cinzel">
           <span
             className={cn(
               'text-xl font-black font-cinzel-dec',
@@ -143,6 +133,16 @@ function ActionButton({
           >
             {action.config.power}
           </span>
+          {action.config.accuracy && (
+            <span
+              className={cn('text-foreground/80 text-xs font-semibold', {
+                'text-positive/80': actor.stats['accuracy'] > 100,
+                'text-negative/80': actor.stats['accuracy'] < 100,
+              })}
+            >
+              {Math.min(action.config.accuracy * 100, 100)}%
+            </span>
+          )}
         </ItemActions>
       )}
     </GothicFramedButton>

@@ -384,7 +384,7 @@ func (g *Game) On(on TriggerOn, context Context) {
 				continue
 			}
 
-			triggers = append(triggers, trigger.Bind(context))
+			triggers = append(triggers, trigger.BindWithParent(context, modifier.Context))
 		}
 	}
 
@@ -498,6 +498,7 @@ func (g *Game) moveActorByRank(actor_id uuid.UUID, direction int) bool {
 
 	g.SetPosition(actor.ID, next.ID)
 	log_ctx := MakeContextFrom(actor)
+	log_ctx.PositionIDs = []uuid.UUID{next.ID}
 	if direction > 0 {
 		log := NewLog("$source$ moved backwards.", map[string]string{
 			"$source$": actor.Name,
@@ -510,6 +511,8 @@ func (g *Game) moveActorByRank(actor_id uuid.UUID, direction int) bool {
 		})
 		g.PushLog(log.Bind(log_ctx))
 	}
+
+	g.On(OnActorMove, log_ctx)
 	return true
 }
 func (g *Game) getActorRank(actor_id uuid.UUID) (Actor, Player, PlayerPosition, bool) {
@@ -636,6 +639,8 @@ func (g *Game) Validate() bool {
 		}
 	}
 
+	g.condensePositions()
+
 	for _, player := range g.State().Players {
 		open_positions := player.GetOpenPositions()
 		alive_inactive := g.FindActors(CombineFilters(AliveActors, Allies, InactiveActors), MakeContextPlayer(player.ID))
@@ -651,6 +656,44 @@ func (g *Game) Validate() bool {
 	}
 
 	return valid
+}
+
+func (g *Game) condensePositions() bool {
+	moved := false
+	for {
+		actorID, ok := g.nextActorBehindGap()
+		if !ok {
+			return moved
+		}
+
+		if !g.moveActorByRank(actorID, -1) {
+			return moved
+		}
+		moved = true
+	}
+}
+
+func (g *Game) nextActorBehindGap() (uuid.UUID, bool) {
+	for _, player := range g.State().Players {
+		positions := slices.Clone(player.Positions)
+		slices.SortStableFunc(positions, func(a, b PlayerPosition) int {
+			return cmp.Compare(a.Rank, b.Rank)
+		})
+
+		foundGap := false
+		for _, position := range positions {
+			if position.ActorID == uuid.Nil {
+				foundGap = true
+				continue
+			}
+
+			if foundGap {
+				return position.ActorID, true
+			}
+		}
+	}
+
+	return uuid.Nil, false
 }
 
 // control

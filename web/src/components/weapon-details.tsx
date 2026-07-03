@@ -55,7 +55,7 @@ const weaponBody = cva('relative bg-neutral-900 pb-1', {
     rarity: 'common',
   },
 })
-const weaponTitle = cva('font-cinzel font-semibold block text-lg', {
+const weaponTitle = cva('font-cinzel font-semibold block text-md', {
   variants: {
     rarity: {
       common: 'text-foreground',
@@ -85,7 +85,7 @@ function WeaponDetails({ weapon }: { weapon: Weapon }) {
               <span className={weaponTitle({ rarity: rarity })}>
                 {weapon.name}
               </span>
-              <span className="text-foreground/60 block text-sm leading-none">
+              <span className="text-foreground/60 block text-xs leading-none">
                 Common {weapon.hands}-handed {weapon.weapon_type}
               </span>
             </div>
@@ -93,7 +93,7 @@ function WeaponDetails({ weapon }: { weapon: Weapon }) {
           <div className="px-3">
             <Separator />
           </div>
-          <div className="text-foreground/80 italic text-xs px-6">
+          <div className="text-foreground/80 italic text-xs px-6 py-2">
             {weapon.description}
           </div>
           <GothicShadowFrame className="z-10 mt-6 m-1 space-y-1">

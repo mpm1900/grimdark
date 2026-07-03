@@ -46,6 +46,7 @@ func (s *State) Clone() State {
 	triggers := slices.Clone(s.Triggers)
 	for i := range triggers {
 		triggers[i].Context = triggers[i].Context.Clone()
+		triggers[i].ParentContext = triggers[i].ParentContext.Clone()
 	}
 
 	prompts := slices.Clone(s.Prompts)
