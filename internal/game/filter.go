@@ -109,7 +109,7 @@ func ActionRange(action_range int) Filter[Actor] {
 		}
 
 		distance := source_pos.GetDistanceFrom(target_pos)
-		return action_range >= distance
+		return action_range + int(source.Stats[Range]) >= distance
 	}
 }
 

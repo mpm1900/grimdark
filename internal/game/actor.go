@@ -125,6 +125,7 @@ func NewActorDef() ActorDef {
 			Evasion:        1,
 			CriticalChance: 1,
 			CriticalDamage: 1,
+			Range:          0,
 		},
 		Effects: []Effect{},
 	}
@@ -242,8 +243,7 @@ func (a *Actor) mapBaseStats() {
 	a.UnmodifiedStats = maps.Clone(a.Stats)
 
 	for stat, _ := range a.Stats {
-		// accuracy, evasion, crits, etc are un-mapped
-		if stat == Accuracy || stat == Evasion || stat == CriticalChance || stat == CriticalDamage {
+		if _, ok := mappedStats[stat]; !ok {
 			continue
 		}
 
@@ -370,13 +370,13 @@ func (a Actor) ToJSON(g Game) actorJSON {
 	active_modifiers := slices.Collect(maps.Keys(g.AppliedModifiers(a.ID)))
 
 	for stat, v := range a.Stats {
-		if stat == Accuracy || stat == Evasion || stat == CriticalChance || stat == CriticalDamage {
+		if _, ok := percentStats[stat]; ok {
 			v = v * 100
 		}
 		stats[stat] = int(v)
 	}
 	for stat, v := range a.UnmodifiedStats {
-		if stat == Accuracy || stat == Evasion || stat == CriticalChance || stat == CriticalDamage {
+		if _, ok := percentStats[stat]; ok {
 			v = v * 100
 		}
 		unmodified_stats[stat] = int(v)

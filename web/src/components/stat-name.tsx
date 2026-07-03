@@ -17,6 +17,7 @@ const statVariants = cva('', {
       evasion: '',
       'critical-chance': '',
       'critical-damage': '',
+      range: '',
     },
   },
   defaultVariants: {

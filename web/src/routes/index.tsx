@@ -34,7 +34,8 @@ function Home() {
         <AppHeader />
 
         <div className="relative flex h-full min-h-0 flex-col overflow-hidden pt-12 z-20">
-          <div className="min-h-0 flex-1" />
+          <div className="absolute inset-0 bottom-1/2 bg-neutral-900" />
+          <div className="flex-1" />
           <div className="flex shrink-0 px-3 z-10 -mb-1">
             {client_player && (
               <PlayerPositions

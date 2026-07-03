@@ -105,8 +105,33 @@ func SetupGame(g *game.Game, user game.User) {
 		g.AddPlayers(player)
 	}
 
-	// temp opponent
-	g.AddPlayers(game.NewPlayer(uuid.New()))
+	if len(g.FindActors(func(g game.Game, a game.Actor, ctx game.Context) bool {
+		return a.Name == "Monster"
+	}, game.NewContext())) == 0 {
+		opp := game.NewPlayer(uuid.New())
+		open_positions := opp.GetOpenPositions()
+		if len(open_positions) >= 3 {
+			newMonster := func() game.Actor {
+				opp_def := game.NewActorDef()
+				opp_def.Name = "Monster"
+				opp_def.Affinities = map[game.Affinity]struct{}{
+					game.Poison: {},
+				}
+				return game.NewActor(opp.ID, opp_def)
+			}
+			opp1 := newMonster()
+			opp2 := newMonster()
+			opp3 := newMonster()
+			g.AddPlayers(opp)
+			g.AddActor(opp1)
+			g.AddActor(opp2)
+			g.AddActor(opp3)
+			g.SetPosition(opp1.ID, open_positions[0])
+			g.SetPosition(opp2.ID, open_positions[1])
+			g.SetPosition(opp3.ID, open_positions[2])
+		}
+	}
+
 	gabe.Actions = []game.Action{
 		actions.SwordsDance,
 	}

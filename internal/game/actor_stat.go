@@ -14,7 +14,24 @@ const (
 	Evasion        Stat = "evasion"
 	CriticalChance Stat = "critical-chance"
 	CriticalDamage Stat = "critical-damage"
+	Range          Stat = "range"
 )
+
+var mappedStats map[Stat]struct{} = map[Stat]struct{}{
+	Health:         {},
+	Speed:          {},
+	Melee:          {},
+	Ranged:         {},
+	Special:        {},
+	MartialDefense: {},
+	SpecialDefense: {},
+}
+
+var percentStats map[Stat]struct{} = map[Stat]struct{}{
+	Accuracy:       {},
+	Evasion:        {},
+	CriticalChance: {},
+}
 
 var statDefenses map[Stat]Stat = map[Stat]Stat{
 	Melee:    MartialDefense,

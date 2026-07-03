@@ -4,7 +4,7 @@ import { cn, sign } from '#/lib/utils'
 import { entries } from '#/utils/maps'
 import { cva } from 'class-variance-authority'
 import { GothicFrame, GothicShadowFrame } from './gothic-ui/frame'
-import { ItemContent, ItemDescription } from './ui/item'
+import { ItemDescription } from './ui/item'
 import { Separator } from './ui/separator'
 import { statVariants } from './stat-name'
 

@@ -80,7 +80,7 @@ function MultiplierStatRow({ actor, stat }: { actor: Actor; stat: Stat }) {
     </TableRow>
   )
 }
-function CriticalStatRow({ actor, stat }: { actor: Actor; stat: Stat }) {
+function OffsetStatRow({ actor, stat }: { actor: Actor; stat: Stat }) {
   const stage = actor.stages[stat]
   return (
     <TableRow>
@@ -121,7 +121,8 @@ function StatsTable({
           <MultiplierStatRow key={stat} actor={actor} stat={stat} />
         ))}
         <MultiplierStatRow actor={actor} stat="critical-damage" />
-        <CriticalStatRow actor={actor} stat="critical-chance" />
+        <OffsetStatRow actor={actor} stat="critical-chance" />
+        <OffsetStatRow actor={actor} stat="range" />
       </TableBody>
     </Table>
   )

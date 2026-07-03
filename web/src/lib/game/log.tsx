@@ -35,6 +35,7 @@ function RenderTerm({
           key={key}
           className={cn({
             'text-emerald-200/60': source?.player_ID === client_ID,
+            'text-orange-300/60': source?.player_ID !== client_ID,
           })}
         >
           {terms[term_key]}
@@ -48,6 +49,7 @@ function RenderTerm({
           key={key}
           className={cn({
             'text-emerald-200/60': target?.player_ID === client_ID,
+            'text-orange-300/60': target?.player_ID !== client_ID,
           })}
         >
           {terms[term_key]}

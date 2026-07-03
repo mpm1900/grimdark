@@ -57,11 +57,11 @@ function getVariant(
   if (store.target_positions.includes(position.ID)) {
     return 'targeted'
   }
-  if (store.range_positions.includes(position.ID)) {
-    return 'player-hover'
-  }
 
   if (position.player_ID === client_ID) {
+    if (store.range_positions.includes(position.ID)) {
+      return 'player-hover'
+    }
     if (store.active_actor == position.actor_ID) {
       return 'player-active'
     }
@@ -73,6 +73,9 @@ function getVariant(
   }
 
   if (position.player_ID !== client_ID) {
+    if (store.range_positions.includes(position.ID)) {
+      return 'enemy-hover'
+    }
     if (store.active_actor == position.actor_ID) {
       return 'enemy-active'
     }
