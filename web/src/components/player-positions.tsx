@@ -7,6 +7,8 @@ import { getVariant, Platform, PlatformParent } from './platform'
 import { type ComponentProps } from 'react'
 import { setActiveActor, setHoverPosition, uiStore } from '#/lib/stores/ui'
 import { clientsStore } from '#/lib/stores/clients'
+import { GothicFramedButton } from './gothic-ui/button'
+import { sendContextMessage } from '#/lib/stores/socket'
 
 function PlayerPosition({
   className,
@@ -19,10 +21,13 @@ function PlayerPosition({
   position: Player['positions'][number]
   reverse?: boolean
 }) {
+  const client = useSelector(clientsStore, (s) => s.me)
   const actor = useSelector(gameStore, (g) =>
     g.actors.find((a) => a.position_ID === position.ID)
   )
+  const commands = useSelector(gameStore, (g) => g.commands)
   const active_actor = useSelector(uiStore, (s) => s.active_actor)
+  const actor_command = commands.find((c) => c.context.source_ID === actor?.ID)
   return (
     <div
       className={cn('relative flex-1 h-[428px] -mb-2', className)}
@@ -47,6 +52,21 @@ function PlayerPosition({
               }
             )}
           />
+          {!!actor_command && (
+            <div className="absolute inset-0 grid place-items-center z-20">
+              <GothicFramedButton
+                onClick={() => {
+                  sendContextMessage({
+                    type: 'cancel-action',
+                    client_ID: client?.ID!,
+                    context: actor_command.context,
+                  })
+                }}
+              >
+                Cancel Action
+              </GothicFramedButton>
+            </div>
+          )}
         </div>
       )}
       {actor && (

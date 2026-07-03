@@ -1,5 +1,7 @@
 package game
 
+import "fmt"
+
 type TriggerOn string
 
 const (
@@ -47,6 +49,13 @@ func (c TriggerCommand) Resolve(g *Game) []Transaction {
 		context = c.Payload.MapContext(*g, context, action_context)
 	}
 	g.SetActiveContext(context)
+
+	log := NewLog(fmt.Sprintf("$source$'s $action$ trigger (%s)", c.Payload.On), map[string]string{
+		"$source$": action_context.Source.Name,
+		"$action$": c.Payload.Config.Name,
+	}).Bind(context)
+	log.Payload.Type = "trigger"
+	g.PushLog(log)
 
 	return c.Payload.Resolve(g, context, action_context)
 }

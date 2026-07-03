@@ -8,12 +8,14 @@ import (
 type Log struct {
 	Template string            `json:"template"`
 	Terms    map[string]string `json:"terms"`
+	Type     string            `json:"type"`
 }
 
 func NewLog(template string, terms map[string]string) Log {
 	return Log{
 		Template: template,
 		Terms:    terms,
+		Type:     "message",
 	}
 }
 

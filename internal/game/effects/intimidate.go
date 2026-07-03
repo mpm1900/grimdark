@@ -12,6 +12,9 @@ func Intimidate() game.Effect {
 		On:       game.OnActorEnter,
 		Validate: game.TriggerSourceMatchesModifierParent,
 		Action: game.Action{
+			Config: game.ActionConfig{
+				Name: "Intimidate",
+			},
 			Resolve: func(g *game.Game, ctx game.Context, this game.ActionContext) []game.Transaction {
 				other_actors := g.FindActors(game.CombineFilters(game.ActiveActors, game.NotSourceActor), ctx)
 				for _, target := range other_actors {

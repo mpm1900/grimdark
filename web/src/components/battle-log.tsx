@@ -25,7 +25,7 @@ function BattleLog({ className, ...props }: React.ComponentProps<'div'>) {
         {logs.map((log, index) => (
           <li
             key={log.ID}
-            className="leading-4.5 text-sm"
+            className="leading-4.5 text-sm truncate"
             ref={index === logs.length - 1 ? endRef : undefined}
           >
             {RenderLog(log)}

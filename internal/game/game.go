@@ -677,6 +677,9 @@ func (g *Game) NextTurn() {
 	}
 	g.Turn++
 	g.Phase = PhaseMain
+	log := NewLog(fmt.Sprintf("Turn %d", g.Turn), map[string]string{})
+	log.Type = "turn"
+	g.PushLog(log.Bind(NewContext()))
 }
 func (g *Game) EndPhase() {
 	g.DecrementModifiers()
@@ -698,7 +701,6 @@ func (g *Game) NextTrigger() {
 		return
 	}
 
-	g.PushLog(NewLog(fmt.Sprintf("%s", trig.Payload.On), map[string]string{}).Bind(NewContext()))
 	g.PushTransactions(trig.Resolve(g))
 }
 func (g *Game) NextCommand() {
@@ -781,7 +783,7 @@ func (g Game) ToJSON() GameJSON {
 	}
 	commands := []Bindable[actionJSON]{}
 	for _, command := range state.Commands {
-		commands = append(prompts, bind(command.Payload.ToJSON(g, Actor{}), command.Context))
+		commands = append(commands, bind(command.Payload.ToJSON(g, Actor{}), command.Context))
 	}
 
 	return GameJSON{
@@ -805,12 +807,13 @@ func (json *GameJSON) ForPlayer(player_ID uuid.UUID) {
 	prompts = slices.DeleteFunc(prompts, func(p Bindable[actionJSON]) bool {
 		return p.Context.PlayerID != player_ID
 	})
-	commands := slices.Clone(json.Prompts)
+	commands := slices.Clone(json.Commands)
 	commands = slices.DeleteFunc(commands, func(p Bindable[actionJSON]) bool {
 		return p.Context.PlayerID != player_ID
 	})
 	json.Prompts = prompts
 	json.Commands = commands
+
 }
 
 // temp functions

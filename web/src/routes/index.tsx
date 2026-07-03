@@ -21,6 +21,9 @@ function Home() {
   const client = useSelector(clientsStore, (s) => s.me)
   const active_actor_id = useSelector(uiStore, (s) => s.active_actor)
   const active_actor = game.actors.find((a) => a.ID === active_actor_id)
+  const acitve_actor_command = game.commands.find(
+    (c) => c.context.source_ID === active_actor?.ID
+  )
   const client_player = game.players.find((p) => p.user.id === client?.ID)
   const other_player = game.players.find((p) => p.user.id !== client?.ID)
 
@@ -56,10 +59,6 @@ function Home() {
               )}
             </GothicFrame>
             <GothicFrame className="flex-row h-full max-w-1/3 gap-px bg-neutral-950 z-10">
-              {/*
-              <GothicFramedButton className="h-full">
-              </GothicFramedButton>
-              */}
               <div className="grid grid-cols-2 grid-rows-3">
                 {active_actor?.actions.map((action) => (
                   <ActionContextDialog
@@ -69,15 +68,15 @@ function Home() {
                     enabled={!action.is_disabled}
                   >
                     <DialogTrigger asChild>
-                      <ActionButton action={action} actor={active_actor} />
+                      <ActionButton
+                        action={action}
+                        actor={active_actor}
+                        disabled={!!acitve_actor_command}
+                      />
                     </DialogTrigger>
                   </ActionContextDialog>
                 ))}
               </div>
-              {/*
-              <GothicFramedButton className="h-full">
-              </GothicFramedButton>
-              */}
             </GothicFrame>
             <GothicCard className="h-full min-w-0 max-w-1/4 flex-1 flex bg-neutral-950 p-0">
               <BattleLog />

@@ -24,9 +24,10 @@ import { setRangePositions } from '#/lib/stores/ui'
 function ActionButton({
   action,
   actor,
+  disabled,
   ...props
 }: React.ComponentProps<typeof Button> & { action: Action; actor: Actor }) {
-  const turn = useSelector(gameStore, g => g.turn)
+  const turn = useSelector(gameStore, (g) => g.turn)
   const status = useSelector(gameStore, (g) => g.status)
   const targets_options = getTargetsQuery(
     actor?.ID,
@@ -34,7 +35,7 @@ function ActionButton({
     action.ID,
     [turn]
   )
-  targets_options.enabled = !props.disabled
+  targets_options.enabled = !disabled
   const targets_query = useQuery(targets_options)
   const targets_context = targets_query.data ?? NULL_CONTEXT
 
@@ -43,7 +44,12 @@ function ActionButton({
       {...props}
       variant="basic"
       className="h-auto w-full min-w-0 justify-start"
-      disabled={action.is_disabled || !actor.is_active || status === 'running'}
+      disabled={
+        disabled ||
+        action.is_disabled ||
+        !actor.is_active ||
+        status === 'running'
+      }
       onMouseEnter={() => {
         setRangePositions(targets_context.position_IDs)
       }}

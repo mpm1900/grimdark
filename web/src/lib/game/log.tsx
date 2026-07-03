@@ -5,10 +5,12 @@ import { clientsStore } from '../stores/clients'
 import { cn } from '../utils'
 import { getTargetsFromContext, type Context } from './context'
 import type { Game } from './game'
+import { Marker, MarkerContent } from '#/components/ui/marker'
 
 export type Log = {
   template: string
   terms: Record<string, string>
+  type: string
 }
 
 function RenderTerm({
@@ -32,7 +34,7 @@ function RenderTerm({
         <span
           key={key}
           className={cn({
-            'text-teal-300': source?.player_ID === client_ID,
+            'text-emerald-200/60': source?.player_ID === client_ID,
           })}
         >
           {terms[term_key]}
@@ -45,7 +47,7 @@ function RenderTerm({
         <span
           key={key}
           className={cn({
-            'text-teal-300': target?.player_ID === client_ID,
+            'text-emerald-200/60': target?.player_ID === client_ID,
           })}
         >
           {terms[term_key]}
@@ -58,8 +60,20 @@ function RenderTerm({
 
 export function RenderLog(log: Bindable<Log>): React.ReactNode {
   const game = gameStore.get()
-  const { template, terms } = log.payload
+  const { template, terms, type } = log.payload
   const keys = Object.keys(terms).sort((a, b) => b.length - a.length)
+
+  if (type === 'trigger') {
+    // return <span className='font-cinzel font-semibold text-center'>{template.replace(/-/, ' ')}:</span>
+  }
+
+  if (type === 'turn') {
+    return (
+      <Marker variant="separator">
+        <MarkerContent>{template}</MarkerContent>
+      </Marker>
+    )
+  }
 
   if (keys.length === 0) {
     return template
