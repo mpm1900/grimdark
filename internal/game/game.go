@@ -92,19 +92,7 @@ func NewGame() Game {
 	var system_modifiers = []Modifier{
 		// map stat stages
 		EffectActorsAll(EffectPriorityMapStages, func(g Game, a Actor, ctx Context) Actor {
-			builder := NewStageBuilder(a.Stages)
-			stats := builder.ResolveAll(a.Stats)
-
-			builder.Mod = 3
-			accuracy := builder.Resolve(Accuracy, a.Stats[Accuracy])
-			evasion := builder.Resolve(Evasion, a.Stats[Evasion])
-			crit_damage := builder.Resolve(CriticalDamage, a.Stats[CriticalDamage])
-
-			a.Stats = stats
-			a.Stats[Accuracy] = accuracy
-			a.Stats[Evasion] = evasion
-			a.Stats[CriticalDamage] = crit_damage
-
+			a.mapStagedStats()
 			return a
 		}).Bind(NewContext()),
 		// map base stats

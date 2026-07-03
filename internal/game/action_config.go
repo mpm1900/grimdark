@@ -15,7 +15,7 @@ type ActionConfig struct {
 	Name         string   `json:"name"`
 	Power        float64  `json:"power"`
 	Priority     int      `json:"priority"`
-	Range        *int      `json:"range"`
+	Range        *int     `json:"range"`
 	Recoil       float64  `json:"recoil"`
 	Stat         Stat     `json:"stat"`
 	TargetCount  int      `json:"target_count"`
@@ -92,8 +92,8 @@ func (ac ActionConfig) GetDamageResult(source, target Actor, targets []Actor) Da
 	base := ac.GetBaseDamage(source, target, accuracy.Critical)
 	raw := base * affinity
 
-	if accuracy.Critical {
-		raw = raw * ac.CritModifier
+	if accuracy.Critical || true {
+		raw = raw * ac.CritModifier * source.Stats[CriticalDamage]
 	}
 
 	if len(targets) > 1 {

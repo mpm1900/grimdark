@@ -56,10 +56,9 @@ function MultiplierStatRow({ actor, stat }: { actor: Actor; stat: Stat }) {
   const mult = mapStage(stage, mod, 1)
   return (
     <TableRow>
-      <TableCell className="capitalize font-cinzel">
+      <TableCell className="capitalize font-cinzel" colSpan={2}>
         {STAT_LABELS[stat]}
       </TableCell>
-      <TableCell className="text-end"></TableCell>
       <TableCell className="text-end">
         {!!stage && (
           <StatValue actor={actor} stat={stat}>
@@ -84,10 +83,9 @@ function OffsetStatRow({ actor, stat }: { actor: Actor; stat: Stat }) {
   const stage = actor.stages[stat]
   return (
     <TableRow>
-      <TableCell className="capitalize font-cinzel">
+      <TableCell className="capitalize font-cinzel" colSpan={2}>
         {STAT_LABELS[stat]}
       </TableCell>
-      <TableCell className="text-end"></TableCell>
       <TableCell className="text-end">
         {!!stage && (
           <span
@@ -120,6 +118,7 @@ function StatsTable({
         {ACCURACY_STATS.map((stat) => (
           <MultiplierStatRow key={stat} actor={actor} stat={stat} />
         ))}
+        <MultiplierStatRow actor={actor} stat="effect-chance" />
         <MultiplierStatRow actor={actor} stat="critical-damage" />
         <OffsetStatRow actor={actor} stat="critical-chance" />
         <OffsetStatRow actor={actor} stat="range" />

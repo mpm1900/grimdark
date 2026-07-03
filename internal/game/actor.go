@@ -125,6 +125,7 @@ func NewActorDef() ActorDef {
 			Evasion:        1,
 			CriticalChance: 1,
 			CriticalDamage: 1,
+			EffectChance:   1,
 			Range:          0,
 		},
 		Effects: []Effect{},
@@ -156,9 +157,11 @@ func NewActor(playerID uuid.UUID, def ActorDef) Actor {
 		AffinityDamage:     map[Affinity]int{},
 		AffinityResistance: map[Affinity]int{},
 		AffinityImmunities: map[Affinity]float64{},
-		Stages:             map[Stat]int{},
-		AuxStats:           map[Stat]float64{},
-		Stats:              maps.Clone(def.Stats),
+		Stages: map[Stat]int{
+			EffectChance: 1,
+		},
+		AuxStats: map[Stat]float64{},
+		Stats:    maps.Clone(def.Stats),
 
 		Wounds:  0,
 		Augment: AugmentDefault,
@@ -250,6 +253,22 @@ func (a *Actor) mapBaseStats() {
 		a.Stats[stat] = mapBaseStat(*a, stat, a.Stats, a.getAux(stat))
 		a.UnmodifiedStats[stat] = mapBaseStat(*a, stat, a.UnmodifiedStats, 0)
 	}
+}
+func (a *Actor) mapStagedStats() {
+	builder := NewStageBuilder(a.Stages)
+	stats := builder.ResolveAll(a.Stats)
+
+	builder.Mod = 3
+	accuracy := builder.Resolve(Accuracy, a.Stats[Accuracy])
+	evasion := builder.Resolve(Evasion, a.Stats[Evasion])
+	crit_damage := builder.Resolve(CriticalDamage, a.Stats[CriticalDamage])
+	effect_chance := builder.Resolve(EffectChance, a.Stats[EffectChance])
+
+	a.Stats = stats
+	a.Stats[Accuracy] = accuracy
+	a.Stats[Evasion] = evasion
+	a.Stats[CriticalDamage] = crit_damage
+	a.Stats[EffectChance] = effect_chance
 }
 
 func (a *Actor) ApplyDamage(damage float64, resolved Actor) {

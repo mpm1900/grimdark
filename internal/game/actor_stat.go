@@ -10,10 +10,12 @@ const (
 	Special        Stat = "special"
 	MartialDefense Stat = "martial-defense"
 	SpecialDefense Stat = "special-defense"
+
 	Accuracy       Stat = "accuracy"
 	Evasion        Stat = "evasion"
 	CriticalChance Stat = "critical-chance"
 	CriticalDamage Stat = "critical-damage"
+	EffectChance   Stat = "effect-chance"
 	Range          Stat = "range"
 )
 
@@ -32,6 +34,7 @@ var percentStats map[Stat]struct{} = map[Stat]struct{}{
 	Evasion:        {},
 	CriticalChance: {},
 	CriticalDamage: {},
+	EffectChance:   {},
 }
 
 var statDefenses map[Stat]Stat = map[Stat]Stat{

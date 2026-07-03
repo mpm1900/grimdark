@@ -29,6 +29,7 @@ export type Stat =
   | 'evasion'
   | 'critical-chance'
   | 'critical-damage'
+  | 'effect-chance'
   | 'range'
 
 export type Phase = 'init' | 'start' | 'main' | 'end' | 'cleanup'
@@ -81,6 +82,7 @@ export const STAT_LABELS: Record<Stat, string> = {
   evasion: 'Evasion',
   'critical-chance': 'Crit. Chance',
   'critical-damage': 'Crit. Damage',
+  'effect-chance': 'Effect Chance',
   range: 'Range',
 }
 export const STAT_SLUGS: Record<Stat, string> = {
@@ -95,6 +97,7 @@ export const STAT_SLUGS: Record<Stat, string> = {
   evasion: 'Eva',
   'critical-chance': 'Crit.%',
   'critical-damage': 'Crit.Dmg',
+  'effect-chance': 'Eff.%+',
   range: 'range',
 }
 

@@ -2,7 +2,7 @@ import { STAT_ICONS } from '#/icons/stats'
 import type { Stat } from '#/lib/game/core'
 import { cn } from '#/lib/utils'
 import { cva } from 'class-variance-authority'
-import type { IconBaseProps, IconType } from 'react-icons/lib'
+import type { IconType } from 'react-icons/lib'
 
 const statVariants = cva('', {
   variants: {
@@ -18,6 +18,7 @@ const statVariants = cva('', {
       evasion: '',
       'critical-chance': '',
       'critical-damage': '',
+      'effect-chance': '',
       range: '',
     },
   },

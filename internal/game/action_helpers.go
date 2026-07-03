@@ -2,7 +2,6 @@ package game
 
 import (
 	"fmt"
-	"math/rand/v2"
 	"strconv"
 
 	"github.com/google/uuid"
@@ -64,10 +63,11 @@ func BasicAttack(config AttackConfig) ActionResolver {
 
 func AddResultEffects(chance float64, effects ...Effect) AttackEffectResult {
 	return func(g Game, context Context, this *ActionContext, result DamageResult) {
-		if !Chance(chance) {
+		if !Chance(chance * this.Source.Stats[EffectChance]) {
 			return
 		}
 
+		// actors are immune to the secondary effects of actions too
 		_, immune := result.Target.AffinityImmunities[this.Action.Config.Affinity]
 		if immune {
 			this.Push(PushLog(NewLog(
@@ -182,8 +182,8 @@ func DamageSideEffects(g *Game, context Context, result DamageResult, this *Acti
 // resolvers
 func AddSourceEffects(config StatusConfig, chance float64, effects ...Effect) ActionResolver {
 	return func(g *Game, ctx Context, this ActionContext) []Transaction {
-		roll := rand.Float64()
-		if chance <= roll {
+		chance = chance * this.Source.Stats[EffectChance]
+		if !Chance(chance) {
 			if config.OnFailureResult != nil {
 				config.OnFailureResult(*g, ctx, &this, AccuracyResult{})
 			}
@@ -229,8 +229,19 @@ func AddSourceEffects(config StatusConfig, chance float64, effects ...Effect) Ac
 	}
 }
 
-func AddTargetsEffects(config StatusConfig, effects ...Effect) ActionResolver {
+func AddTargetsEffects(config StatusConfig, chance float64, effects ...Effect) ActionResolver {
 	return func(g *Game, ctx Context, this ActionContext) []Transaction {
+		chance = chance * this.Source.Stats[EffectChance]
+		if !Chance(chance) {
+			if config.OnFailureResult != nil {
+				config.OnFailureResult(*g, ctx, &this, AccuracyResult{})
+			}
+			if config.OnFailure != nil {
+				config.OnFailure(*g, ctx, &this)
+			}
+
+			return this.Done()
+		}
 		targets := g.GetTargets(ctx)
 		success := false
 		for _, target := range targets {
