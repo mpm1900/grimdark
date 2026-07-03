@@ -3,8 +3,9 @@ import { cn } from '#/lib/utils'
 import { cva, type VariantProps } from 'class-variance-authority'
 import type { Ui } from '#/lib/stores/ui'
 import type { Player } from '#/lib/game/player'
-import type { Game } from '#/lib/game/game'
 import type { Status } from '#/lib/game/core'
+import { ChevronRight } from 'lucide-react'
+import { FaArrowRight, FaChevronRight } from 'react-icons/fa6'
 
 function PlatformParent({
   children,
@@ -35,14 +36,15 @@ const platformVariants = cva(
   {
     variants: {
       variant: {
-        player: 'bg-emerald-950/20 border-emerald-800/40',
-        'player-active': 'bg-emerald-900/60 border-emerald-700',
-        'player-hover': 'bg-emerald-900/40 border-emerald-900',
-        enemy: 'bg-orange-950/20 border-orange-900/40',
-        'enemy-active': 'bg-orange-900/60 border-orange-700',
-        'enemy-hover': 'bg-orange-900/40 border-orange-900',
-        source: 'bg-foreground/20 border-foreground/60',
-        targeted: 'bg-red-900/40 border-red-800',
+        player: 'bg-emerald-950/20 border-emerald-800/40 text-emerald-800/40',
+        'player-active':
+          'bg-emerald-900/60 border-emerald-700 text-emerald-700',
+        'player-hover': 'bg-emerald-900/40 border-emerald-900 text-emerald-900',
+        enemy: 'bg-orange-950/20 border-orange-900/40 text-orange-900/40',
+        'enemy-active': 'bg-orange-900/60 border-orange-700 text-orange-700',
+        'enemy-hover': 'bg-orange-900/40 border-orange-900 text-orange-900',
+        source: 'bg-foreground/20 border-foreground/60 text-foreground/60',
+        targeted: 'bg-red-900/40 border-red-800 text-red-800',
       },
     },
   }
@@ -85,7 +87,7 @@ function getVariant(
     if (store.hover_position === position.ID) {
       return 'enemy-hover'
     }
-    
+
     return 'enemy'
   }
 }
@@ -100,8 +102,20 @@ function Platform({
       <div
         className={platformVariants({
           variant,
+          className:
+            'flex items-end relative overflow-hidden [&>svg]:opacity-50',
         })}
-      />
+      >
+        {/*
+        <FaChevronRight className="absolute top-0 bottom-0 -translate-x-1/2 size-full" />
+        <FaChevronRight className="absolute top-0 bottom-0 -translate-x-1/3 size-full" />
+        <FaChevronRight className="absolute top-0 bottom-0 -translate-x-1/6 size-full" />
+        <FaChevronRight className="absolute top-0 bottom-0 translate-x-1/3 size-full" />
+        <FaChevronRight className="absolute top-0 bottom-0 translate-x-1/2 size-full" />
+        <FaChevronRight className="absolute top-0 bottom-0 translate-x-1/6 size-full" />
+        <FaChevronRight className="absolute top-0 bottom-0 size-full" />
+        */}
+      </div>
     </div>
   )
 }

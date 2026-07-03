@@ -15,10 +15,9 @@ import { HealthBar } from './health-bar'
 import { cn } from '#/lib/utils'
 import { Popover, PopoverTrigger } from './ui/popover'
 import { GothicPopoverContent } from './gothic-ui/popover'
-import { ActorDetails } from './actor-details'
-import { GothicMiniButton } from './gothic-ui/button'
 import { ActorStatsPanel } from './panels/actor-stats'
 import { ActorPortrait } from './actor-portrait'
+import { clientsStore } from '#/lib/stores/clients'
 
 function StatMultBadge({ actor, stat }: { actor: Actor; stat: Stat }) {
   const stage = actor.stages[stat]
@@ -70,7 +69,7 @@ function ActorFrame({
             type="value"
             className="rounded-l-none -ml-px"
           />
-          <div className="absolute -bottom-[6px] left-1 flex gap-0.5">
+          <div className="absolute -bottom-1.5 left-1 flex gap-0.5">
             {[...MAIN_STATS, ...ACCURACY_STATS].map((stat) => (
               <StatMultBadge key={stat} actor={actor} stat={stat} />
             ))}
@@ -86,6 +85,7 @@ function ActorFrameSlim({
   className,
   ...props
 }: React.ComponentProps<'div'> & { actor: Actor }) {
+  const client = useSelector(clientsStore, (s) => s.me)
   return (
     <div className={cn('relative mt-4', className)} {...props}>
       <div className="flex flex-row justify-between items-end mb-1">
@@ -117,8 +117,9 @@ function ActorFrameSlim({
           actor={actor}
           type="value"
           className="rounded-l-none -ml-px"
+          hide_numbers={client?.ID !== actor.player_ID}
         />
-        <div className="absolute -bottom-[6px] left-0 flex gap-0.5">
+        <div className="absolute -bottom-1.5 left-0 flex gap-0.5">
           {[...MAIN_STATS, ...ACCURACY_STATS].map((stat) => (
             <StatMultBadge key={stat} actor={actor} stat={stat} />
           ))}
