@@ -1,12 +1,63 @@
 import type React from 'react'
 import type { Bindable } from './core'
+import { gameStore } from '../stores/game'
+import { clientsStore } from '../stores/clients'
+import { cn } from '../utils'
+import { getTargetsFromContext, type Context } from './context'
+import type { Game } from './game'
 
 export type Log = {
   template: string
   terms: Record<string, string>
 }
 
+function RenderTerm({
+  context,
+  game,
+  key,
+  terms,
+  term_key,
+}: {
+  context: Context
+  game: Game
+  key: string
+  terms: Record<string, string>
+  term_key: string
+}) {
+  const client_ID = clientsStore.get().me?.ID
+  switch (term_key) {
+    case '$source$':
+      const source = game.actors.find((a) => a.ID === context.source_ID)
+      return (
+        <span
+          key={key}
+          className={cn({
+            'text-teal-300': source?.player_ID === client_ID,
+          })}
+        >
+          {terms[term_key]}
+        </span>
+      )
+    case '$target$':
+      const targets = getTargetsFromContext(game.actors, context)
+      const target = targets[0]
+      return (
+        <span
+          key={key}
+          className={cn({
+            'text-teal-300': target?.player_ID === client_ID,
+          })}
+        >
+          {terms[term_key]}
+        </span>
+      )
+    default:
+      return <span key={key}>{terms[term_key]}</span>
+  }
+}
+
 export function RenderLog(log: Bindable<Log>): React.ReactNode {
+  const game = gameStore.get()
   const { template, terms } = log.payload
   const keys = Object.keys(terms).sort((a, b) => b.length - a.length)
 
@@ -36,10 +87,14 @@ export function RenderLog(log: Bindable<Log>): React.ReactNode {
             return [part]
           }
 
-          return [
-            part,
-            <span key={`${log.ID}-${key}-${i}-${partIndex}`}>{terms[key]}</span>,
-          ]
+          const term = RenderTerm({
+            context: log.context,
+            game,
+            key: `${log.ID}-${key}-${i}-${partIndex}`,
+            terms,
+            term_key: key,
+          })
+          return [part, term]
         })
       )
     }

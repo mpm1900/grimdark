@@ -64,7 +64,10 @@ function AffinitiesTable({
   ...props
 }: React.ComponentProps<'div'> & { actor: Actor }) {
   return (
-    <div className={cn('grid grid-cols-2 p-3 -mx-2', className)} {...props}>
+    <div
+      className={cn('grid grid-cols-2 p-3 -mx-2 text-foreground/80', className)}
+      {...props}
+    >
       <div>
         <Marker variant="separator">
           <MarkerContent>Resistances</MarkerContent>

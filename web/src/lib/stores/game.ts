@@ -5,6 +5,7 @@ import { setDefaultActiveActor, setSourceActor, setTargetPositions } from './ui'
 const INITIAL_GAME: Game = {
   active_context: null,
   actors: [],
+  commands: [],
   logs: [],
   modifiers: [],
   phase: 'init',

@@ -446,21 +446,21 @@ func (g *Game) SetPosition(actor_id uuid.UUID, position_id uuid.UUID) {
 			})
 
 			if actor.IsAlive {
-				log := NewLog("$actor$ left the battle.", map[string]string{
-					"$actor$": actor.Name,
+				log := NewLog("$source$ left the battle.", map[string]string{
+					"$source$": actor.Name,
 				})
 				g.PushLog(log.Bind(trigger_context))
 			} else {
-				log := NewLog("$actor$ died.", map[string]string{
-					"$actor$": actor.Name,
+				log := NewLog("$source$ died.", map[string]string{
+					"$source$": actor.Name,
 				})
 				g.PushLog(log.Bind(trigger_context))
 			}
 			g.On(OnActorLeave, trigger_context)
 		}
 		if actor.PositionID == uuid.Nil {
-			log := NewLog("$actor$ joined the battle.", map[string]string{
-				"$actor$": actor.Name,
+			log := NewLog("$source$ joined the battle.", map[string]string{
+				"$source$": actor.Name,
 			})
 			g.PushLog(log.Bind(trigger_context))
 			g.On(OnActorEnter, trigger_context)
@@ -499,14 +499,14 @@ func (g *Game) moveActorByRank(actor_id uuid.UUID, direction int) bool {
 	g.SetPosition(actor.ID, next.ID)
 	log_ctx := MakeContextFrom(actor)
 	if direction > 0 {
-		log := NewLog("$actor$ moved backwards.", map[string]string{
-			"$actor$": actor.Name,
+		log := NewLog("$source$ moved backwards.", map[string]string{
+			"$source$": actor.Name,
 		})
 		g.PushLog(log.Bind(log_ctx))
 	}
 	if direction < 0 {
-		log := NewLog("$actor$ moved forwards.", map[string]string{
-			"$actor$": actor.Name,
+		log := NewLog("$source$ moved forwards.", map[string]string{
+			"$source$": actor.Name,
 		})
 		g.PushLog(log.Bind(log_ctx))
 	}
