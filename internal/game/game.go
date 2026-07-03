@@ -83,6 +83,7 @@ func NewGame() Game {
 	var state = State{
 		Actors:       []Actor{},
 		Players:      []Player{},
+		Positions:    []Position{},
 		Transactions: Queue[Transaction]{},
 		Modifiers:    []Modifier{},
 		Commands:     []Command{},
@@ -201,13 +202,13 @@ func (g *Game) GetTriggers() []Trigger {
 	return triggers
 }
 func (g *Game) GetPlayer(id uuid.UUID) (Player, bool) {
-	return g.State().FindPlayerByID(id)
+	return g.State().GetPlayer(id)
 }
 func (g *Game) GetActor(id uuid.UUID) (Actor, bool) {
-	return g.State().FindActorByID(id)
+	return g.State().GetActor(id)
 }
 func (g *Game) FindActors(where Filter[Actor], context Context) []Actor {
-	return g.State().FindActorsWhere(*g, where, context)
+	return g.State().FindActors(*g, where, context)
 }
 func (g *Game) GetActionableActors() []Actor {
 	return g.FindActors(CombineFilters(
@@ -216,15 +217,8 @@ func (g *Game) GetActionableActors() []Actor {
 		NonStunnedActors,
 	), NewContext())
 }
-func (g *Game) GetPosition(position_id uuid.UUID) (PlayerPosition, bool) {
-	for _, player := range g.State().Players {
-		pos, ok := player.GetPosition(position_id)
-		if ok {
-			return pos, ok
-		}
-	}
-
-	return PlayerPosition{}, false
+func (g *Game) GetPosition(position_id uuid.UUID) (Position, bool) {
+	return g.State().GetPosition(position_id)
 }
 func (g *Game) GetDistance(a uuid.UUID, b uuid.UUID) (int, bool) {
 	position_a, aok := g.GetPosition(a)
@@ -267,6 +261,26 @@ func (g *Game) resolve() {
 func (g *Game) AddPlayers(players ...Player) {
 	g.mutate(func(s *State) {
 		s.Players = append(s.Players, players...)
+		for _, p := range players {
+			s.Positions = append(s.Positions, Position{
+				ID:       uuid.New(),
+				ActorID:  uuid.Nil,
+				PlayerID: p.ID,
+				Rank:     0,
+			},
+				Position{
+					ID:       uuid.New(),
+					ActorID:  uuid.Nil,
+					PlayerID: p.ID,
+					Rank:     1,
+				},
+				Position{
+					ID:       uuid.New(),
+					ActorID:  uuid.Nil,
+					PlayerID: p.ID,
+					Rank:     2,
+				})
+		}
 	})
 }
 func (g *Game) AddActor(actor Actor) {
@@ -409,11 +423,7 @@ func (g *Game) SetPosition(actor_id uuid.UUID, position_id uuid.UUID) {
 	var evicted_id uuid.UUID
 	g.mutate(func(s *State) {
 		updated := false
-
-		s.UpdatePlayer(actor.PlayerID, func(player Player) Player {
-			evicted_id, updated = player.SetPosition(position_id, actor)
-			return player
-		})
+		evicted_id, updated = s.SetPosition(position_id, actor)
 
 		if !updated {
 			return
@@ -474,12 +484,16 @@ func (g *Game) PushToBack(actor_id uuid.UUID) {
 	}
 }
 func (g *Game) moveActorByRank(actor_id uuid.UUID, direction int) bool {
-	actor, player, position, ok := g.getActorRank(actor_id)
+	actor, ok := g.GetActor(actor_id)
+	if !ok {
+		return false
+	}
+	position, ok := g.state.GetPositionByActorID(actor_id)
 	if !ok {
 		return false
 	}
 
-	next, ok := nextPositionByRank(player.Positions, position.Rank, direction)
+	next, ok := nextPositionByRank(g.State().GetPositionsByPlayerID(actor.PlayerID), position.Rank, direction)
 	if !ok {
 		return false
 	}
@@ -503,27 +517,8 @@ func (g *Game) moveActorByRank(actor_id uuid.UUID, direction int) bool {
 	g.On(OnActorMove, log_ctx)
 	return true
 }
-func (g *Game) getActorRank(actor_id uuid.UUID) (Actor, Player, PlayerPosition, bool) {
-	state := g.State()
-	actor, ok := state.FindActorByID(actor_id)
-	if !ok || actor.PositionID == uuid.Nil {
-		return Actor{}, Player{}, PlayerPosition{}, false
-	}
-
-	player, ok := state.FindPlayerByID(actor.PlayerID)
-	if !ok {
-		return Actor{}, Player{}, PlayerPosition{}, false
-	}
-
-	position, ok := player.GetPosition(actor.PositionID)
-	if !ok {
-		return Actor{}, Player{}, PlayerPosition{}, false
-	}
-
-	return actor, player, position, true
-}
-func nextPositionByRank(positions []PlayerPosition, rank int, direction int) (PlayerPosition, bool) {
-	var next PlayerPosition
+func nextPositionByRank(positions []Position, rank int, direction int) (Position, bool) {
+	var next Position
 	found := false
 
 	for _, position := range positions {
@@ -630,7 +625,7 @@ func (g *Game) Validate() bool {
 	g.condensePositions()
 
 	for _, player := range g.State().Players {
-		open_positions := player.GetOpenPositions()
+		open_positions := g.State().GetOpenPositionIDs(player.ID)
 		alive_inactive := g.FindActors(CombineFilters(AliveActors, Allies, InactiveActors), MakeContextPlayer(player.ID))
 		size := min(len(open_positions), len(alive_inactive))
 		if size > 0 {
@@ -663,8 +658,8 @@ func (g *Game) condensePositions() bool {
 
 func (g *Game) nextActorBehindGap() (uuid.UUID, bool) {
 	for _, player := range g.State().Players {
-		positions := slices.Clone(player.Positions)
-		slices.SortStableFunc(positions, func(a, b PlayerPosition) int {
+		positions := g.State().GetPositionsByPlayerID(player.ID)
+		slices.SortStableFunc(positions, func(a, b Position) int {
 			return cmp.Compare(a.Rank, b.Rank)
 		})
 
@@ -790,6 +785,7 @@ type GameJSON struct {
 	Logs          []Bindable[Log]        `json:"logs"`
 	Modifiers     []Modifier             `json:"modifiers"`
 	Phase         GamePhase              `json:"phase"`
+	Positions     []Position             `json:"positions"`
 	PlayerID      uuid.UUID              `json:"player_ID"`
 	Players       []Player               `json:"players"`
 	Prompts       []Bindable[actionJSON] `json:"prompts"`
@@ -824,6 +820,7 @@ func (g Game) ToJSON() GameJSON {
 		Logs:          g.Logs,
 		Modifiers:     g.meta.modifiers,
 		Phase:         g.Phase,
+		Positions:     slices.Clone(g.State().Positions),
 		PlayerID:      uuid.Nil,
 		Players:       state.Players,
 		Prompts:       prompts,

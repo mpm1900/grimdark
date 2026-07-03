@@ -9,6 +9,7 @@ const INITIAL_GAME: Game = {
   logs: [],
   modifiers: [],
   phase: 'init',
+  positions: [],
   player_ID: '',
   players: [],
   prompts: [],

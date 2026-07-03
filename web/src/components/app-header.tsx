@@ -73,7 +73,7 @@ function AppHeader() {
           )}
         </div>
       </div>
-      <div className="absolute -top-1 left-1/2 -translate-x-1/2 bg-[url(/gothic/TitleHeroFrame.png)] bg-cover bg-no-repeat h-20 leading-15 w-40 text-center font-cinzel-dec font-bold text-foreground/60">
+      <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-[url(/gothic/TitleHeroFrame.png)] bg-cover bg-no-repeat h-24 leading-18 w-48 text-xl text-center font-cinzel-dec font-bold text-foreground/60">
         T<span className="font-cinzel">urn {turn}</span>
       </div>
       <div className="flex items-center gap-4 px-2">

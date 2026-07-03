@@ -5,6 +5,7 @@ import type { Bindable, ID, Phase, Status } from './core'
 import type { Effect, Modifier } from './effect'
 import type { Log } from './log'
 import type { Player } from './player'
+import type { Position } from './position'
 
 export type Game = {
   active_context: Context | null
@@ -13,6 +14,7 @@ export type Game = {
   logs: Bindable<Log>[]
   modifiers: Modifier[]
   phase: Phase
+  positions: Array<Position>
   player_ID: ID
   players: Player[]
   prompts: Bindable<Action>[]

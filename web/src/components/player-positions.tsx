@@ -15,6 +15,7 @@ function PlayerPositions({
 }: React.ComponentProps<'div'> & { player: Player; reverse?: boolean }) {
   const client = useSelector(clientsStore, (s) => s.me!)
   const status = useSelector(gameStore, (g) => g.status)
+  const positions = useSelector(gameStore, g => g.positions.filter(p => p.player_ID === player.ID))
   const ui = useSelector(uiStore, (ui) => ui)
   const hover_position = useSelector(uiStore, (s) => s.hover_position)
   return (
@@ -28,7 +29,7 @@ function PlayerPositions({
       style={props.style}
     >
       <PlatformParent reverse={reverse} className="flex-1">
-        {player.positions.map((position) => (
+        {positions.map((position) => (
           <Platform
             key={position.ID}
             variant={getVariant(ui, client.ID, position, status)}
@@ -42,7 +43,7 @@ function PlayerPositions({
           reverse && 'flex-row'
         )}
       >
-        {player.positions.map((position) => (
+        {positions.map((position) => (
           <PlayerPosition
             key={position.ID}
             hover_position={hover_position}

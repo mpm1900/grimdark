@@ -3,7 +3,8 @@ import { cn } from '#/lib/utils'
 import { ActorFrame } from '../actor-frame'
 import { AffinitiesTable } from '../affinities-table'
 import { GothicHighlightFrame } from '../gothic-ui/frame'
-import { StatsTable } from '../stats-table'
+import { OtherStatsTable, StatsTable } from '../stats-table'
+import { Marker, MarkerContent } from '../ui/marker'
 import { WeaponDetails } from '../weapon-details'
 import { PanelHeader } from './panel-header'
 
@@ -15,10 +16,16 @@ function ActorStatsPanel({
   return (
     <div className={cn('grid grid-cols-3 relative', className)} {...props}>
       <PanelHeader>{actor.name}'s Stats</PanelHeader>
-      <div className="font-serif text-foreground/60">
+      <div className="font-serif text-foreground/80">
         <ActorFrame actor={actor} className="-ml-1 -mt-1.5 -mr-px z-0" />
-        <div className="py-4 p-2">
+        <div className="py-4 p-2 hidden">
           {actor.weapon && <WeaponDetails weapon={actor.weapon} />}
+        </div>
+        <div className='px-1 pt-2'>
+          <Marker variant="separator">
+            <MarkerContent>Other stats</MarkerContent>
+          </Marker>
+          <OtherStatsTable actor={actor} />
         </div>
       </div>
       <GothicHighlightFrame className="-mx-3 -mt-px">

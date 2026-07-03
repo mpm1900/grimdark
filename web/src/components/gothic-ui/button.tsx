@@ -13,8 +13,8 @@ const gothicButtonVariants = cva(
     variants: {
       variant: {
         basic: cn(
-          'px-3 py-1 border-[4px] border-solid border-transparent bg-transparent text-foreground/80',
-          '[border-image-slice:18_fill] [border-image-repeat:repeat-infinite]',
+          'px-3 py-1 border-[6px] border-solid border-transparent bg-transparent text-foreground/80',
+          '[border-image-slice:16_fill] [border-image-repeat:repeat-infinite]',
           "[border-image-source:url('/gothic/ButtonFramedGray_Normal.png')]",
           "active:[border-image-source:url('/gothic/ButtonFramedGray_Pressed.png')] active:text-foreground/60",
           "disabled:[border-image-source:url('/gothic/ButtonFramedGray_Disabled.png')] disabled:pointer-events-none disabled:text-foreground/60",

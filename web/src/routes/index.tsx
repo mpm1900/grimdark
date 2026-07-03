@@ -8,11 +8,13 @@ import { GothicFrame } from '#/components/gothic-ui/frame'
 import { PlayerPositions } from '#/components/player-positions'
 import { PromptController } from '#/components/prompt-controller'
 import { DialogTrigger } from '#/components/ui/dialog'
+import { WeaponDetails, WeaponFrame } from '#/components/weapon-details'
 import { clientsStore } from '#/lib/stores/clients'
 import { gameStore } from '#/lib/stores/game'
 import { uiStore } from '#/lib/stores/ui'
 import { ClientOnly, createFileRoute } from '@tanstack/react-router'
 import { useSelector } from '@tanstack/react-store'
+import { HiLink } from "react-icons/hi";
 
 export const Route = createFileRoute('/')({ component: Home })
 
@@ -59,6 +61,13 @@ function Home() {
                 <ActorFrame actor={active_actor} className="-mt-1 -ml-0.5" />
               )}
             </GothicFrame>
+            <div className='relative h-full grid grid-cols-1 grid-rows-2'>
+              {active_actor?.weapon ? <WeaponFrame weapon={active_actor.weapon} /> : <GothicFrame></GothicFrame>}
+              {active_actor?.weapon ? <WeaponFrame weapon={active_actor.weapon} /> : <GothicFrame></GothicFrame>}
+              <div className='absolute inset-0 grid place-items-center'>
+                <HiLink className='rotate-136 size-6 fill-neutral-500' />
+              </div>
+            </div>
             <GothicFrame className="flex-row h-full max-w-1/3 gap-px bg-neutral-950 z-10">
               <div className="grid grid-cols-2 grid-rows-3">
                 {active_actor?.actions.map((action) => (

@@ -109,7 +109,8 @@ func SetupGame(g *game.Game, user game.User) {
 		return a.Name == "Monster"
 	}, game.NewContext())) == 0 {
 		opp := game.NewPlayer(uuid.New())
-		open_positions := opp.GetOpenPositions()
+		g.AddPlayers(opp)
+		open_positions := g.State().GetOpenPositions(opp.ID)
 		if len(open_positions) >= 3 {
 			newMonster := func() game.Actor {
 				opp_def := game.NewActorDef()
@@ -122,13 +123,12 @@ func SetupGame(g *game.Game, user game.User) {
 			opp1 := newMonster()
 			opp2 := newMonster()
 			opp3 := newMonster()
-			g.AddPlayers(opp)
 			g.AddActor(opp1)
 			g.AddActor(opp2)
 			g.AddActor(opp3)
-			g.SetPosition(opp1.ID, open_positions[0])
-			g.SetPosition(opp2.ID, open_positions[1])
-			g.SetPosition(opp3.ID, open_positions[2])
+			g.SetPosition(opp1.ID, open_positions[0].ID)
+			g.SetPosition(opp2.ID, open_positions[1].ID)
+			g.SetPosition(opp3.ID, open_positions[2].ID)
 		}
 	}
 

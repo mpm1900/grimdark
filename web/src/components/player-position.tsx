@@ -7,16 +7,20 @@ import type { Player } from '#/lib/game/player'
 import { clientsStore } from '#/lib/stores/clients'
 import { gameStore } from '#/lib/stores/game'
 import { cn } from '#/lib/utils'
+import { isIdNull } from '#/lib/game/core'
 import type { Actor } from '#/lib/game/actor'
+import type { Position } from '#/lib/game/position'
 
 function PlayerSprite({
   actor,
   className,
   hover_position,
+  position_ID,
   ...props
 }: React.ComponentProps<'div'> & {
   actor: Actor
   hover_position: string | null
+  position_ID: string
 }) {
   const client = useSelector(clientsStore, (s) => s.me)
   const status = useSelector(gameStore, (g) => g.status)
@@ -28,7 +32,7 @@ function PlayerSprite({
       className={cn(
         'relative z-10 px-8 py-2 flex justify-center',
         {
-          'opacity-50': hover_position !== actor.position_ID,
+          'opacity-50': hover_position !== position_ID,
           'opacity-100': active_actor === actor.ID,
         },
         className
@@ -72,11 +76,13 @@ function PlayerPosition({
   ...props
 }: React.ComponentProps<'div'> & {
   hover_position: string | null
-  position: Player['positions'][number]
+  position: Position
   reverse?: boolean
 }) {
   const actor = useSelector(gameStore, (g) =>
-    g.actors.find((a) => a.position_ID === position.ID)
+    isIdNull(position.actor_ID)
+      ? undefined
+      : g.actors.find((a) => a.ID === position.actor_ID)
   )
   return (
     <div
@@ -90,6 +96,7 @@ function PlayerPosition({
         <PlayerSprite
           actor={actor}
           hover_position={hover_position}
+          position_ID={position.ID}
           className={cn({
             '-scale-x-100': reverse,
           })}

@@ -157,11 +157,9 @@ func NewActor(playerID uuid.UUID, def ActorDef) Actor {
 		AffinityDamage:     map[Affinity]int{},
 		AffinityResistance: map[Affinity]int{},
 		AffinityImmunities: map[Affinity]float64{},
-		Stages: map[Stat]int{
-			EffectChance: 1,
-		},
-		AuxStats: map[Stat]float64{},
-		Stats:    maps.Clone(def.Stats),
+		Stages:             map[Stat]int{},
+		AuxStats:           map[Stat]float64{},
+		Stats:              maps.Clone(def.Stats),
 
 		Wounds:  0,
 		Augment: AugmentDefault,

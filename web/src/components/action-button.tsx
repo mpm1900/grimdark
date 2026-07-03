@@ -2,7 +2,7 @@ import type { Action } from '#/lib/game/action'
 import type { Actor } from '#/lib/game/actor'
 import { cn } from '#/lib/utils'
 import { MdKeyboardDoubleArrowRight } from 'react-icons/md'
-import { AffinityName, affinityVariants } from './affinity-name'
+import { AffinityIcon, affinityVariants } from './affinity-name'
 import { Button } from './ui/button'
 import {
   ItemActions,
@@ -42,7 +42,7 @@ function ActionButton({
     <GothicFramedButton
       {...props}
       variant="basic"
-      className="relative h-auto w-full min-w-0 justify-start overflow-hidden"
+      className="relative h-auto w-full min-w-0 justify-start overflow-hidden border-6"
       disabled={
         disabled ||
         action.is_disabled ||
@@ -63,8 +63,10 @@ function ActionButton({
         />
       )}
       {action.config.affinity && (
-        <ItemMedia>
-          <AffinityName affinity={action.config.affinity} />
+        <ItemMedia className='mr-3'>
+          <div className='absolute top-0 overflow-hidden size-12 left-0.5'>
+            <AffinityIcon affinity={action.config.affinity} className='size-12 absolute top-0 -left-4 opacity-50' />
+          </div>
         </ItemMedia>
       )}
       <ItemContent className="gap-0 py-0.5 min-w-0 overflow-hidden">

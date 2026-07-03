@@ -1,6 +1,7 @@
 package game
 
 import (
+	"cmp"
 	"slices"
 
 	"github.com/google/uuid"
@@ -11,6 +12,7 @@ type State struct {
 	Actors        []Actor
 	Commands      Queue[Command]
 	Modifiers     []Modifier
+	Positions     []Position
 	Players       []Player
 	Prompts       Queue[PromptCommand]
 	Transactions  Queue[Transaction]
@@ -19,9 +21,7 @@ type State struct {
 
 func (s *State) Clone() State {
 	players := slices.Clone(s.Players)
-	for i := range players {
-		players[i].Positions = slices.Clone(players[i].Positions)
-	}
+	positions := slices.Clone(s.Positions)
 
 	actors := make([]Actor, len(s.Actors))
 	for i, actor := range s.Actors {
@@ -65,6 +65,7 @@ func (s *State) Clone() State {
 		Actors:        actors,
 		Commands:      commands,
 		Modifiers:     modifiers,
+		Positions:     positions,
 		Players:       players,
 		Prompts:       prompts,
 		Transactions:  transactions,
@@ -72,7 +73,7 @@ func (s *State) Clone() State {
 	}
 }
 
-func (s State) FindPlayerByID(id uuid.UUID) (Player, bool) {
+func (s State) GetPlayer(id uuid.UUID) (Player, bool) {
 	if id == uuid.Nil {
 		return Player{}, false
 	}
@@ -85,7 +86,60 @@ func (s State) FindPlayerByID(id uuid.UUID) (Player, bool) {
 
 	return Player{}, false
 }
-func (s State) FindActorByID(id uuid.UUID) (Actor, bool) {
+func (s State) GetPosition(id uuid.UUID) (Position, bool) {
+	if id == uuid.Nil {
+		return Position{}, false
+	}
+
+	for _, p := range s.Positions {
+		if p.ID == id {
+			return p, true
+		}
+	}
+
+	return Position{}, false
+}
+func (s State) GetPositionByActorID(actor_id uuid.UUID) (Position, bool) {
+	for _, pos := range s.Positions {
+		if pos.ActorID == actor_id {
+			return pos, true
+		}
+	}
+
+	return Position{}, false
+}
+func (s State) GetPositionsByPlayerID(player_id uuid.UUID) []Position {
+	positions := []Position{}
+	for _, pos := range s.Positions {
+		if pos.PlayerID == player_id {
+			positions = append(positions, pos)
+		}
+	}
+	slices.SortStableFunc(positions, func(a, b Position) int {
+		return cmp.Compare(a.Rank, b.Rank)
+	})
+
+	return positions
+}
+func (s State) GetOpenPositions(player_ID uuid.UUID) []Position {
+	positions := []Position{}
+	for _, pos := range s.Positions {
+		if pos.PlayerID == player_ID && pos.ActorID == uuid.Nil {
+			positions = append(positions, pos)
+		}
+	}
+
+	return positions
+}
+func (s State) GetOpenPositionIDs(player_ID uuid.UUID) []uuid.UUID {
+	positions := []uuid.UUID{}
+	for _, pos := range s.GetOpenPositions(player_ID) {
+		positions = append(positions, pos.ID)
+	}
+
+	return positions
+}
+func (s State) GetActor(id uuid.UUID) (Actor, bool) {
 	if id == uuid.Nil {
 		return Actor{}, false
 	}
@@ -98,7 +152,7 @@ func (s State) FindActorByID(id uuid.UUID) (Actor, bool) {
 
 	return Actor{}, false
 }
-func (s State) FindActorsWhere(g Game, where Filter[Actor], context Context) []Actor {
+func (s State) FindActors(g Game, where Filter[Actor], context Context) []Actor {
 	actors := []Actor{}
 	for _, a := range s.Actors {
 		if where(g, a, context) {
@@ -115,6 +169,58 @@ func (s *State) UpdatePlayer(id uuid.UUID, updater func(Player) Player) {
 			s.Players[i] = updater(p)
 		}
 	}
+}
+func (s *State) UpdatePosition(id uuid.UUID, updater func(Position) Position) {
+	for i, p := range s.Positions {
+		if p.ID == id {
+			s.Positions[i] = updater(p)
+		}
+	}
+}
+func (s *State) UpdatePositionActor(position_id uuid.UUID, actor_id uuid.UUID) {
+	s.UpdatePosition(position_id, func(p Position) Position {
+		p.ActorID = actor_id
+		return p
+	})
+}
+func (s *State) UpdatePositionWhere(where func(Position) bool, updater func(Position) Position) {
+	for i, p := range s.Positions {
+		if where(p) {
+			s.Positions[i] = updater(p)
+		}
+	}
+}
+
+func (s *State) SetPosition(position_id uuid.UUID, actor Actor) (uuid.UUID, bool) {
+	var evicted_id uuid.UUID
+	updated := false
+
+	var current Position
+	if position_id != uuid.Nil {
+		var ok bool
+		current, ok = s.GetPosition(position_id)
+		if !ok || current.PlayerID != actor.PlayerID {
+			return evicted_id, false
+		}
+	}
+
+	for _, pos := range s.Positions {
+		if pos.ActorID == actor.ID && pos.ID != position_id {
+			s.UpdatePositionActor(pos.ID, uuid.Nil)
+			updated = true
+		}
+	}
+
+	if position_id == uuid.Nil {
+		return evicted_id, updated || actor.IsActive()
+	}
+
+	if current.ActorID != uuid.Nil && current.ActorID != actor.ID {
+		evicted_id = current.ActorID
+	}
+
+	s.UpdatePositionActor(position_id, actor.ID)
+	return evicted_id, true
 }
 func (s *State) UpdateActor(id uuid.UUID, updater func(Actor) Actor) {
 	for i, a := range s.Actors {

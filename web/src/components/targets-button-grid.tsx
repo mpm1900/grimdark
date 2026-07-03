@@ -57,6 +57,7 @@ function TargetsButtonGrid({
 }) {
   const players = useSelector(gameStore, (g) => g.players)
   const actors = useSelector(gameStore, (g) => g.actors)
+  const positions = useSelector(gameStore, g => g.positions)
   const turn = useSelector(gameStore, (g) => g.turn)
   const targets_options = getTargetsQuery(
     actor?.ID,
@@ -93,7 +94,7 @@ function TargetsButtonGrid({
       {targets_context.position_IDs.length > 0 ? (
         <div className="grid grid-cols-3 mt-3">
           {players
-            .flatMap((p) => p.positions.slice().reverse())
+            .flatMap((p) => positions.filter(pos => pos.player_ID === p.ID))
             .map((pos, i) => {
               const target = actors.find((t) => t.position_ID === pos.ID)
               return (

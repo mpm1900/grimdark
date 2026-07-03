@@ -41,10 +41,8 @@ function ActorFrame({
   className,
   ...props
 }: React.ComponentProps<'div'> & { actor: Actor }) {
-  const player = useSelector(gameStore, (g) =>
-    g.players.find((p) => p.ID === actor.player_ID)
-  )
-  const position = player?.positions.find((p) => p.ID === actor.position_ID)
+  const positions = useSelector(gameStore, (g) => g.positions)
+  const position = positions.find((p) => p.ID === actor.position_ID)
   return (
     <div className={cn('relative flex', className)} {...props}>
       <ActorPortrait actor={actor} position={position} />

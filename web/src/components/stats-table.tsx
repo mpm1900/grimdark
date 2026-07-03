@@ -118,6 +118,20 @@ function StatsTable({
         {ACCURACY_STATS.map((stat) => (
           <MultiplierStatRow key={stat} actor={actor} stat={stat} />
         ))}
+
+      </TableBody>
+    </Table>
+  )
+}
+
+function OtherStatsTable({
+  actor,
+  className,
+  ...props
+}: React.ComponentProps<typeof Table> & { actor: Actor }) {
+  return (
+    <Table className={cn('font-mono', className)} {...props}>
+      <TableBody>
         <MultiplierStatRow actor={actor} stat="effect-chance" />
         <MultiplierStatRow actor={actor} stat="critical-damage" />
         <OffsetStatRow actor={actor} stat="critical-chance" />
@@ -127,4 +141,4 @@ function StatsTable({
   )
 }
 
-export { StatsTable }
+export { StatsTable, OtherStatsTable }

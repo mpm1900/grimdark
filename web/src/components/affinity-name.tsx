@@ -2,6 +2,7 @@ import { AFFINITY_ICONS } from '#/icons/affinity'
 import type { Affinity } from '#/lib/game/core'
 import { cn } from '#/lib/utils'
 import { cva } from 'class-variance-authority'
+import type { IconType } from 'react-icons/lib'
 
 const affinityVariants = cva('capitalize', {
   variants: {
@@ -35,4 +36,19 @@ function AffinityName({
   )
 }
 
-export { AffinityName, affinityVariants }
+function AffinityIcon({
+  affinity,
+  className,
+  ...props
+}: React.ComponentProps<IconType> & {
+  affinity: Affinity
+}) {
+  const Icon = AFFINITY_ICONS[affinity]
+  if (!Icon) return null
+  return (
+    <Icon className={cn(affinityVariants({ affinity }), className)} {...props} />
+  )
+}
+
+
+export { AffinityName, AffinityIcon, affinityVariants }

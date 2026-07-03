@@ -6,6 +6,7 @@ import type { Player } from '#/lib/game/player'
 import type { Status } from '#/lib/game/core'
 import { ChevronRight } from 'lucide-react'
 import { FaArrowRight, FaChevronRight } from 'react-icons/fa6'
+import type { Position } from '#/lib/game/position'
 
 function PlatformParent({
   children,
@@ -53,7 +54,7 @@ const platformVariants = cva(
 function getVariant(
   store: Ui,
   client_ID: string,
-  position: Player['positions'][number],
+  position: Position,
   status: Status
 ): VariantProps<typeof platformVariants>['variant'] {
   if (store.source_actor === position.actor_ID) {

@@ -130,4 +130,21 @@ function WeaponDetails({ weapon }: { weapon: Weapon }) {
   )
 }
 
-export { WeaponDetails }
+function WeaponFrame({ weapon }: { weapon: Weapon }) {
+  const rarity = 'rare'
+  return (
+    <GothicFrame className='w-20'>
+      <div className={weaponWrapper({ rarity: rarity, className: 'h-full' })}>
+        <div className={weaponBody({ rarity: rarity, className: 'h-full overflow-hidden' })}>
+          <img
+            alt="weapon"
+            className="absolute top-0 left-1/2 -translate-x-1/2 fading-image"
+            src="/img/SwordIcon.png"
+          />
+        </div>
+      </div>
+    </GothicFrame>
+  )
+}
+
+export { WeaponDetails, WeaponFrame }

@@ -92,7 +92,7 @@ func (ac ActionConfig) GetDamageResult(source, target Actor, targets []Actor) Da
 	base := ac.GetBaseDamage(source, target, accuracy.Critical)
 	raw := base * affinity
 
-	if accuracy.Critical || true {
+	if accuracy.Critical {
 		raw = raw * ac.CritModifier * source.Stats[CriticalDamage]
 	}
 

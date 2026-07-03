@@ -61,8 +61,7 @@ function setDefaultActiveActor(game: Game) {
       return old
     }
 
-    const player = game.players.find((p) => p.ID === game.player_ID)
-    const position = player?.positions.find((p) => p.rank === 0)
+    const position = game.positions.find((p) => p.player_ID === game.player_ID && p.rank === 0)
     if (!position || isIdNull(position.actor_ID)) {
       return old
     }

@@ -80,8 +80,8 @@ export const STAT_LABELS: Record<Stat, string> = {
   speed: 'Speed',
   accuracy: 'Accuracy',
   evasion: 'Evasion',
-  'critical-chance': 'Crit. Chance',
-  'critical-damage': 'Crit. Damage',
+  'critical-chance': 'Critical Chance',
+  'critical-damage': 'Critical Damage',
   'effect-chance': 'Effect Chance',
   range: 'Range',
 }
