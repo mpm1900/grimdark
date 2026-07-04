@@ -19,7 +19,6 @@ export type Actor = {
   is_hidden: boolean
   is_insulated: boolean
   is_protected: boolean
-  is_staggered: boolean
   is_stunned: boolean
   level: number
   name: string

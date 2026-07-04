@@ -27,12 +27,12 @@ var Slash = game.Action{
 	Resolve: game.BasicAttack(game.AttackConfig{
 		OnSuccessResult: func(g game.Game, context game.Context, this *game.ActionContext, result game.DamageResult) {
 			game.AddResultEffects(
-				1, // 0.5,
+				0.5,
 				effects.StatDownTargets(game.Speed, 1),
 			)(g, context, this, result)
 			game.AddResultEffects(
-				1, // 0.5,
-				effects.StaggerTargets(),
+				0.5,
+				effects.StunTargets(),
 			)(g, context, this, result)
 			this.Push(game.PushSourceForwards().Bind(context))
 		},

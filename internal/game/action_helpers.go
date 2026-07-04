@@ -31,8 +31,6 @@ func AddResultEffects(chance float64, effects ...Effect) AttackEffectResult {
 			return
 		}
 
-		fmt.Println(result.Target.Name, result.Target.IsInsulated)
-
 		// insulated actors are immune to the secondary effects of actions
 		if result.Target.IsInsulated {
 			this.Push(PushLog(NewLog(

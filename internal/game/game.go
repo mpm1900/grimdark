@@ -403,6 +403,14 @@ func (g *Game) MutateActorWhere(where func(Actor) bool, updater func(Actor) Acto
 		s.UpdateActorWhere(where, updater)
 	})
 }
+func (g *Game) SetLastUsedAction(actor_id uuid.UUID, action_id uuid.UUID) {
+	g.mutate(func(s *State) {
+		s.UpdateActor(actor_id, func(a Actor) Actor {
+			a.meta.LastUsedActionID = action_id
+			return a
+		})
+	})
+}
 func (g *Game) SetPosition(actor_id uuid.UUID, position_id uuid.UUID) {
 	actor, ok := g.GetActor(actor_id)
 	if !ok {
@@ -710,6 +718,7 @@ func (g *Game) NextCommand() {
 	}
 
 	g.PushTransactions(cmd.Resolve(g))
+	g.SetLastUsedAction(cmd.Context.SourceID, cmd.Payload.ID)
 }
 func (g *Game) NextPrompt() {
 	cmd, err := g.state.Prompts.Dequeue()

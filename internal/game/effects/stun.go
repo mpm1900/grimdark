@@ -4,15 +4,15 @@ import (
 	"grimdark/internal/game"
 )
 
-func StaggerTargets() game.Effect {
+func StunTargets() game.Effect {
 	effect := game.EffectTargets(
 		game.EffectPriorityFlags,
 		func(g game.Game, a game.Actor, ctx game.Context) game.Actor {
-			a.IsStaggered = true
+			a.IsStunned = true
 			return a
 		},
 	)
-	effect.Name = "Staggered"
+	effect.Name = "Stunned"
 	effect.Duration = game.P(1)
 
 	return effect

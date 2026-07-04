@@ -48,13 +48,6 @@ func (a Action) CanResolve(g Game, context Context, this *ActionContext) bool {
 				})).Bind(context),
 			)
 		}
-		if source.IsStaggered {
-			this.Push(
-				PushLog(NewLog("$source$ was staggered.", map[string]string{
-					"$source$": this.Source.Name,
-				})).Bind(context),
-			)
-		}
 	}
 
 	context_valid := a.ValidateContext == nil || a.ValidateContext(g, context)

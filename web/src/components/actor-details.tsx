@@ -126,9 +126,6 @@ function ActorState({
             <ActorFlag actor={actor} flag="is_protected">
               Protected
             </ActorFlag>
-            <ActorFlag actor={actor} flag="is_staggered">
-              Staggered
-            </ActorFlag>
             <ActorFlag actor={actor} flag="is_stunned">
               Stunned
             </ActorFlag>

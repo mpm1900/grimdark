@@ -40,8 +40,9 @@ type ActorDef struct {
 }
 
 type ActorMeta struct {
-	Active_turns   int
-	Inactive_turns int
+	ActiveTurns      int
+	InactiveTurns    int
+	LastUsedActionID uuid.UUID
 }
 
 type Actor struct {
@@ -70,8 +71,10 @@ type Actor struct {
 	IsHidden    bool // cannot be targeted by single-target actions
 	IsInsulated bool // is immune from the secondary effects of attacking attacks (ie through AddResultEffects())
 	IsProtected bool // protected from actions that check accuracy
-	IsStaggered bool // cannot act, actions will fail
 	IsStunned   bool // staggered + and cannot queue commands (may not be needed)
+	// staging flags (not fully implemented)
+	IsCompelled bool // compelled actors must used the last used action (special actions exempt)
+	IsRooted    bool // rooted units cannot move or be moved.
 
 	meta ActorMeta
 }
@@ -104,7 +107,6 @@ type actorJSON struct {
 	IsHidden           bool                 `json:"is_hidden"`
 	IsInsulated        bool                 `json:"is_insulated"`
 	IsProtected        bool                 `json:"is_protected"`
-	IsStaggered        bool                 `json:"is_staggered"`
 	IsStunned          bool                 `json:"is_stunned"`
 }
 
@@ -172,12 +174,12 @@ func NewActor(playerID uuid.UUID, def ActorDef) Actor {
 		IsHidden:    false,
 		IsInsulated: false,
 		IsProtected: false,
-		IsStaggered: false,
 		IsStunned:   false,
 
 		meta: ActorMeta{
-			Active_turns:   0,
-			Inactive_turns: 0,
+			ActiveTurns:      0,
+			InactiveTurns:    0,
+			LastUsedActionID: uuid.Nil,
 		},
 	}
 }
@@ -214,7 +216,6 @@ func (a Actor) Clone() Actor {
 		IsHidden:    a.IsHidden,
 		IsInsulated: a.IsInsulated,
 		IsProtected: a.IsProtected,
-		IsStaggered: a.IsStaggered,
 		IsStunned:   a.IsStunned,
 
 		meta: a.meta,
@@ -281,19 +282,40 @@ func (a *Actor) ApplyDamage(damage float64, resolved Actor) {
 
 	a.IsAlive = resolved.Stats[Health] > a.Wounds
 }
+func (a *Actor) UpdateAction(action_id uuid.UUID, updater func(Action) Action) {
+	for i, action := range a.Actions {
+		if action.ID == action_id {
+			a.Actions[i] = updater(action)
+		}
+	}
+}
+func (a *Actor) UpdateActionConfig(action_id uuid.UUID, updater func(ActionConfig) ActionConfig) {
+	a.UpdateAction(action_id, func(action Action) Action {
+		action.Config = updater(action.Config)
+		return action
+	})
+}
+func (a *Actor) DisableAction(action_id uuid.UUID) {
+	a.UpdateAction(action_id, func(action Action) Action {
+		action.IsDisabled = true
+		return action
+	})
+}
 func (a *Actor) IncrementTurns() {
 	if a.IsActive() {
-		a.meta.Active_turns++
+		a.meta.ActiveTurns++
 	} else {
-		a.meta.Inactive_turns++
+		a.meta.InactiveTurns++
 	}
 }
 func (a *Actor) SetPosition(position_id uuid.UUID) {
 	a.PositionID = position_id
+	a.meta.LastUsedActionID = uuid.Nil
 	if position_id == uuid.Nil {
-		a.meta.Inactive_turns = 0
-	} else {
-		a.meta.Active_turns = 0
+		a.meta.InactiveTurns = 0
+	}
+	if a.PositionID == uuid.Nil {
+		a.meta.ActiveTurns = 0
 	}
 }
 
@@ -301,7 +323,7 @@ func (a Actor) IsActive() bool {
 	return a.PositionID != uuid.Nil
 }
 func (a Actor) CanAct() bool {
-	return !a.IsStaggered && !a.IsStunned
+	return !a.IsStunned
 }
 func (a Actor) GetAffinityDamage(affinity Affinity) int {
 	base := maps.Clone(a.AffinityDamage)
@@ -464,7 +486,6 @@ func (a Actor) ToJSON(g Game) actorJSON {
 		IsHidden:           a.IsHidden,
 		IsInsulated:        a.IsInsulated,
 		IsProtected:        a.IsProtected,
-		IsStaggered:        a.IsStaggered,
 		IsStunned:          a.IsStunned,
 	}
 }

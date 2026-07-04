@@ -47,10 +47,6 @@ type DamageResult struct {
 	Raw               float64
 }
 
-type StatusResult struct {
-	AccuracyResult
-}
-
 func (ac ActionConfig) GetBaseDamage(source, target Actor, useBaseStats bool) float64 {
 	adp_ratio := ac.Stat.GetRatio(source, target, useBaseStats) * ac.Power
 	level_mod := float64(source.Level*2)/5 + 2
