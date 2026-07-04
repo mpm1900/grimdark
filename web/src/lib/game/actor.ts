@@ -17,6 +17,7 @@ export type Actor = {
   is_active: boolean
   is_alive: boolean
   is_hidden: boolean
+  is_insulated: boolean
   is_protected: boolean
   is_staggered: boolean
   is_stunned: boolean

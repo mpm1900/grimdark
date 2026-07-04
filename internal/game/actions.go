@@ -1,0 +1,137 @@
+package game
+
+import (
+	"math/rand/v2"
+)
+
+func BasicAttack(config AttackConfig) ActionResolver {
+	return func(g *Game, context Context, this ActionContext) []Transaction {
+		targets := g.GetTargets(context)
+		success := true
+		hits := this.Action.Config.Hits
+		for hit := range hits {
+			// on multi-hit attack, break after the first miss
+			if !success {
+				break
+			}
+
+			for _, target := range targets {
+				result := this.Action.Config.GetDamageResult(this.Source, target, context, rand.Float64())
+				dmg_ctx := MakeContextFor(this.Source, target)
+
+				this.Push(DamageTargets(result.Damage).Bind(dmg_ctx))
+				MultiHitLogs(result, context, &this, hit)
+				PostDamageLogs(result, context, &this)
+
+				success = success && result.Success()
+				DamageSideEffects(g, context, result, &this, config)
+			}
+		}
+
+		if success && config.OnSuccess != nil {
+			config.OnSuccess(*g, context, &this)
+		}
+
+		if !success && config.OnFailure != nil {
+			config.OnFailure(*g, context, &this)
+		}
+
+		return this.Done()
+	}
+}
+
+func AddSourceEffects(config StatusConfig, chance float64, effects ...Effect) ActionResolver {
+	return func(g *Game, ctx Context, this ActionContext) []Transaction {
+		chance = chance * this.Source.Stats[EffectChance]
+		if !Chance(chance) {
+			if config.OnFailureResult != nil {
+				config.OnFailureResult(*g, ctx, &this, AccuracyResult{})
+			}
+			if config.OnFailure != nil {
+				config.OnFailure(*g, ctx, &this)
+			}
+
+			return this.Done()
+		}
+
+		_, immune := this.Source.AffinityImmunities[this.Action.Config.Affinity]
+		if immune {
+			this.Push(PushLog(NewLog(
+				"$target$ was immune to $aff$.",
+				map[string]string{
+					"$target$": this.Source.Name,
+					"$aff$":    string(this.Action.Config.Affinity),
+				},
+			)).Bind(ctx))
+
+			if config.OnFailureResult != nil {
+				config.OnFailureResult(*g, ctx, &this, AccuracyResult{})
+			}
+			if config.OnFailure != nil {
+				config.OnFailure(*g, ctx, &this)
+			}
+
+			return this.Done()
+		}
+
+		modifiers := make([]Modifier, len(effects))
+		for i, effect := range effects {
+			modifiers[i] = effect.Bind(ctx)
+		}
+		this.Push(AddModifiers(modifiers...).Bind(NewContext()))
+		if config.OnSuccessResult != nil {
+			config.OnSuccessResult(*g, ctx, &this, AccuracyResult{})
+		}
+		if config.OnSuccess != nil {
+			config.OnSuccess(*g, ctx, &this)
+		}
+		return this.Done()
+	}
+}
+
+func AddTargetsEffects(config StatusConfig, effects ...Effect) ActionResolver {
+	return func(g *Game, ctx Context, this ActionContext) []Transaction {
+		targets := g.GetTargets(ctx)
+		success := false
+		for _, target := range targets {
+			result := this.Action.Config.GetAccuracyResult(this.Source, target)
+			_, immune := target.AffinityImmunities[this.Action.Config.Affinity]
+			if immune {
+				this.Push(PushLog(NewLog(
+					"$target$ was immune to $aff$.",
+					map[string]string{
+						"$target$": target.Name,
+						"$aff$":    string(this.Action.Config.Affinity),
+					},
+				)).Bind(ctx))
+			}
+
+			result_success := result.Success() && !immune
+			success = success || result_success
+			if result_success {
+				modifiers := make([]Modifier, len(effects))
+				target_ctx := MakeModifierContext(this.Source, target)
+				for i, effect := range effects {
+					modifiers[i] = effect.Bind(target_ctx)
+				}
+				this.Push(AddModifiers(modifiers...).Bind(NewContext()))
+				if config.OnSuccessResult != nil {
+					config.OnSuccessResult(*g, ctx, &this, result)
+				}
+			}
+			if !result_success && config.OnFailureResult != nil {
+				config.OnFailureResult(*g, ctx, &this, result)
+			}
+		}
+
+		if success && config.OnSuccess != nil {
+			config.OnSuccess(*g, ctx, &this)
+		}
+
+		if !success && config.OnFailure != nil {
+			config.OnFailure(*g, ctx, &this)
+		}
+
+		return this.Done()
+	}
+}

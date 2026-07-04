@@ -182,6 +182,9 @@ func (c Context) HasTarget(target Actor) bool {
 
 	return slices.Contains(c.ActorIDs, target.ID)
 }
+func (c Context) GetTargetCount() int {
+	return len(c.ActorIDs) + len(c.PositionIDs)
+}
 
 func (g *Game) GetSource(context Context) (Actor, bool) {
 	return g.GetActor(context.SourceID)

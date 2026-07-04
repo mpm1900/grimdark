@@ -52,4 +52,31 @@ function GothicPopoverContent({
   )
 }
 
-export { GothicPopoverContent }
+function GothicMessage({
+  className,
+  children,
+  align = 'center',
+  sideOffset = 4,
+  ...props
+}: React.ComponentProps<typeof PopoverPrimitive.Content>) {
+  return (
+    <PopoverPrimitive.Portal>
+      <PopoverPrimitive.Content
+        data-slot="popover-content"
+        align={align}
+        sideOffset={sideOffset}
+        className={cn(
+          'relative isolate z-50 w-96 h-20 bg-black origin-(--radix-popover-content-transform-origin)',
+          'text-popover-foreground shadow-md outline-hidden data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95',
+          '[&>span]:z-0 [&>span]:translate-y-[-5px]',
+          className
+        )}
+        {...props}
+      >
+        <div className={cn('flex flex-col isolate')}>{children}</div>
+      </PopoverPrimitive.Content>
+    </PopoverPrimitive.Portal>
+  )
+}
+
+export { GothicPopoverContent, GothicMessage }

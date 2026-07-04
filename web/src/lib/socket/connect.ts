@@ -30,6 +30,52 @@ function getSocketUrl(instanceID: string): string {
   return `${protocol}://${hostname}:${port}/socket/${instanceID}/connect`
 }
 
+function getApiUrl(path: string): string {
+  const envUrl = import.meta.env.VITE_BACKEND_URL
+  if (envUrl) {
+    return `${envUrl.replace(/\/$/, '')}${path}`
+  }
+
+  // Same host as the site when /api is reverse-proxied.
+  if (typeof window !== 'undefined' && window.location.protocol === 'https:') {
+    return `${window.location.origin}${path}`
+  }
+
+  return `${window.location.protocol}//${window.location.hostname}:3005${path}`
+}
+
+async function isUnauthenticated(): Promise<boolean> {
+  try {
+    const response = await fetch(getApiUrl('/api/auth/me'), {
+      credentials: 'include',
+    })
+    return response.status === 401
+  } catch {
+    return false
+  }
+}
+
+function redirectToLogin() {
+  if (reconnectTimer) {
+    clearTimeout(reconnectTimer)
+    reconnectTimer = null
+  }
+
+  localStorage.removeItem(INSTANCE_ID_KEY)
+  socketStore.setState((s) => ({
+    ...s,
+    instanceID: null,
+    socket: null,
+    status: 'closed',
+    reconnectCount: 0,
+    isManualDisconnect: true,
+  }))
+
+  if (window.location.pathname !== '/login') {
+    window.location.assign('/login')
+  }
+}
+
 function clearSocketEventHandlers(socket: WebSocket) {
   socket.onopen = null
   socket.onclose = null
@@ -170,13 +216,18 @@ function connect(instanceID: string, onOpen?: () => void) {
     }))
   }
 
-  socket.onclose = (event) => {
+  socket.onclose = async (event) => {
     console.log(
       `WebSocket connection closed: code=${event.code}, reason=${event.reason}, wasClean=${event.wasClean}`
     )
     if (signal.aborted || !isCurrentSocket(socket)) return
 
     const { isManualDisconnect } = socketStore.state
+
+    if (!isManualDisconnect && (await isUnauthenticated())) {
+      redirectToLogin()
+      return
+    }
 
     socketStore.setState((s) => ({
       ...s,

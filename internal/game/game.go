@@ -217,18 +217,7 @@ func (g *Game) GetActionableActors() []Actor {
 		NonStunnedActors,
 	), NewContext())
 }
-func (g *Game) GetPosition(position_id uuid.UUID) (Position, bool) {
-	return g.State().GetPosition(position_id)
-}
-func (g *Game) GetDistance(a uuid.UUID, b uuid.UUID) (int, bool) {
-	position_a, aok := g.GetPosition(a)
-	position_b, bok := g.GetPosition(b)
-	if !aok || !bok {
-		return 0, false
-	}
 
-	return position_a.GetDistanceFrom(position_b), true
-}
 func (g *Game) IsReadyToRun() bool {
 	return len(g.State().Commands) == len(g.GetActionableActors())
 }
@@ -470,20 +459,20 @@ func (g *Game) SetPosition(actor_id uuid.UUID, position_id uuid.UUID) {
 	}
 }
 func (g *Game) PushForwards(actor_id uuid.UUID) {
-	g.moveActorByRank(actor_id, -1)
+	g.moveActor(actor_id, -1)
 }
 func (g *Game) PushToFront(actor_id uuid.UUID) {
-	for g.moveActorByRank(actor_id, -1) {
+	for g.moveActor(actor_id, -1) {
 	}
 }
 func (g *Game) PushBackwards(actor_id uuid.UUID) {
-	g.moveActorByRank(actor_id, 1)
+	g.moveActor(actor_id, 1)
 }
 func (g *Game) PushToBack(actor_id uuid.UUID) {
-	for g.moveActorByRank(actor_id, 1) {
+	for g.moveActor(actor_id, 1) {
 	}
 }
-func (g *Game) moveActorByRank(actor_id uuid.UUID, direction int) bool {
+func (g *Game) moveActor(actor_id uuid.UUID, direction int) bool {
 	actor, ok := g.GetActor(actor_id)
 	if !ok {
 		return false
@@ -493,7 +482,7 @@ func (g *Game) moveActorByRank(actor_id uuid.UUID, direction int) bool {
 		return false
 	}
 
-	next, ok := nextPositionByRank(g.State().GetPositionsByPlayerID(actor.PlayerID), position.Rank, direction)
+	next, ok := nextPositionByRank(actor.PlayerID, g.State().Positions, position.Rank, direction)
 	if !ok {
 		return false
 	}
@@ -517,23 +506,7 @@ func (g *Game) moveActorByRank(actor_id uuid.UUID, direction int) bool {
 	g.On(OnActorMove, log_ctx)
 	return true
 }
-func nextPositionByRank(positions []Position, rank int, direction int) (Position, bool) {
-	var next Position
-	found := false
 
-	for _, position := range positions {
-		if direction < 0 && position.Rank < rank && (!found || position.Rank > next.Rank) {
-			next = position
-			found = true
-		}
-		if direction > 0 && position.Rank > rank && (!found || position.Rank < next.Rank) {
-			next = position
-			found = true
-		}
-	}
-
-	return next, found
-}
 func (g *Game) DamageTargets(context Context, damage float64) {
 	for _, target := range g.GetTargets(context) {
 		g.MutateActor(target.ID, func(a Actor) Actor {
@@ -649,7 +622,7 @@ func (g *Game) condensePositions() bool {
 			return moved
 		}
 
-		if !g.moveActorByRank(actorID, -1) {
+		if !g.moveActor(actorID, -1) {
 			return moved
 		}
 		moved = true

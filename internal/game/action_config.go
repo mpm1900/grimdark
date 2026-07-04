@@ -23,6 +23,11 @@ type ActionConfig struct {
 	// - cost
 }
 
+/**
+ * notes about AccuracyResults
+ *  - actor.IsProtected is checked for every action that goes through accuracy checks
+ *    - source actions do not check accuracy and as a result do not check protected status
+ */
 type AccuracyResult struct {
 	Accuracy     float64
 	AccuracyRoll float64
@@ -40,6 +45,10 @@ type DamageResult struct {
 	Damage            float64
 	Random            float64
 	Raw               float64
+}
+
+type StatusResult struct {
+	AccuracyResult
 }
 
 func (ac ActionConfig) GetBaseDamage(source, target Actor, useBaseStats bool) float64 {
@@ -86,7 +95,11 @@ func (ar AccuracyResult) Success() bool {
 	return ar.Pass && !ar.Target.IsProtected
 }
 
-func (ac ActionConfig) GetDamageResult(source, target Actor, targets []Actor) DamageResult {
+const MULTI_TARGET_MODIFIER = 0.75
+const DAMAGE_RAND_MIN = 0.8
+const DAMAGE_RAND_MAX = 1.05
+
+func (ac ActionConfig) GetDamageResult(source, target Actor, context Context, random_roll float64) DamageResult {
 	accuracy := ac.GetAccuracyResult(source, target)
 	affinity, total_stage, base_stage := ac.Affinity.GetAffinityModifier(source, target)
 	base := ac.GetBaseDamage(source, target, accuracy.Critical)
@@ -96,15 +109,15 @@ func (ac ActionConfig) GetDamageResult(source, target Actor, targets []Actor) Da
 		raw = raw * ac.CritModifier * source.Stats[CriticalDamage]
 	}
 
-	if len(targets) > 1 {
-		raw = raw * 0.75
+	if context.GetTargetCount() > 1 {
+		raw = raw * MULTI_TARGET_MODIFIER
 	}
 
 	if !accuracy.Success() {
 		raw = 0.0
 	}
 
-	random := rand.Float64()*(1.05-0.8) + 0.8
+	random := random_roll*(DAMAGE_RAND_MAX-DAMAGE_RAND_MIN) + DAMAGE_RAND_MIN
 	damage := raw * random
 	if damage > target.GetRemainingHealth() {
 		damage = target.GetRemainingHealth()
