@@ -411,6 +411,15 @@ func (g *Game) SetLastUsedAction(actor_id uuid.UUID, action_id uuid.UUID) {
 		})
 	})
 }
+func (g *Game) SetCooldown(cmd Command) {
+	g.mutate(func(s *State) {
+		s.UpdateActor(cmd.Context.SourceID, func(a Actor) Actor {
+			fmt.Println(a.Name, cmd.Payload.Config.Name, cmd.Payload.Config.Cooldown)
+			a.SetActionCooldown(cmd.Payload.ID, cmd.Payload.Config.Cooldown)
+			return a
+		})
+	})
+}
 func (g *Game) SetPosition(actor_id uuid.UUID, position_id uuid.UUID) {
 	actor, ok := g.GetActor(actor_id)
 	if !ok {
@@ -555,10 +564,10 @@ func (g *Game) DamageTargets(context Context, damage float64) {
 		})
 	}
 }
-func (g *Game) IncrementActorTurns() {
+func (g *Game) ActorNextTurnEffects() {
 	for _, actor := range g.State().Actors {
 		g.MutateActor(actor.ID, func(a Actor) Actor {
-			a.IncrementTurns()
+			a.NextTurn()
 			return a
 		})
 	}
@@ -680,7 +689,7 @@ func (g *Game) NextPhase() {
 }
 func (g *Game) NextTurn() {
 	if g.Turn > 0 {
-		g.IncrementActorTurns()
+		g.ActorNextTurnEffects()
 	}
 	g.Turn++
 	g.Phase = PhaseMain
@@ -719,6 +728,7 @@ func (g *Game) NextCommand() {
 
 	g.PushTransactions(cmd.Resolve(g))
 	g.SetLastUsedAction(cmd.Context.SourceID, cmd.Payload.ID)
+	g.SetCooldown(cmd)
 }
 func (g *Game) NextPrompt() {
 	cmd, err := g.state.Prompts.Dequeue()

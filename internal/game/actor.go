@@ -39,10 +39,15 @@ type ActorDef struct {
 	Stats      map[Stat]float64
 }
 
+type ActionState struct {
+	Cooldown   int
+	IsDisabled bool
+}
 type ActorMeta struct {
 	ActiveTurns      int
 	InactiveTurns    int
 	LastUsedActionID uuid.UUID
+	ActionsState     map[uuid.UUID]ActionState
 }
 
 type Actor struct {
@@ -73,8 +78,7 @@ type Actor struct {
 	IsProtected bool // protected from actions that check accuracy
 	IsStunned   bool // staggered + and cannot queue commands (may not be needed)
 	// staging flags (not fully implemented)
-	IsCompelled bool // compelled actors must used the last used action (special actions exempt)
-	IsRooted    bool // rooted units cannot move or be moved.
+	IsRooted bool // rooted units cannot move or be moved.
 
 	meta ActorMeta
 }
@@ -180,6 +184,7 @@ func NewActor(playerID uuid.UUID, def ActorDef) Actor {
 			ActiveTurns:      0,
 			InactiveTurns:    0,
 			LastUsedActionID: uuid.Nil,
+			ActionsState:     map[uuid.UUID]ActionState{},
 		},
 	}
 }
@@ -282,30 +287,36 @@ func (a *Actor) ApplyDamage(damage float64, resolved Actor) {
 
 	a.IsAlive = resolved.Stats[Health] > a.Wounds
 }
-func (a *Actor) UpdateAction(action_id uuid.UUID, updater func(Action) Action) {
-	for i, action := range a.Actions {
-		if action.ID == action_id {
-			a.Actions[i] = updater(action)
-		}
+func (a *Actor) UpdateActionState(action_id uuid.UUID, updater func(ActionState) ActionState) {
+	state, ok := a.meta.ActionsState[action_id]
+	if !ok {
+		a.meta.ActionsState[action_id] = updater(ActionState{})
+	} else {
+		a.meta.ActionsState[action_id] = updater(state)
 	}
 }
-func (a *Actor) UpdateActionConfig(action_id uuid.UUID, updater func(ActionConfig) ActionConfig) {
-	a.UpdateAction(action_id, func(action Action) Action {
-		action.Config = updater(action.Config)
-		return action
+func (a *Actor) SetActionCooldown(action_id uuid.UUID, cooldown int) {
+	// +1 is for semantics, since cooldowns are decremented at turn end,
+	// a one-turn cooldown needs a value of 2.
+	a.UpdateActionState(action_id, func(s ActionState) ActionState {
+		s.Cooldown = cooldown + 1
+		return s
 	})
 }
-func (a *Actor) DisableAction(action_id uuid.UUID) {
-	a.UpdateAction(action_id, func(action Action) Action {
-		action.IsDisabled = true
-		return action
-	})
-}
-func (a *Actor) IncrementTurns() {
+func (a *Actor) NextTurn() {
 	if a.IsActive() {
 		a.meta.ActiveTurns++
 	} else {
 		a.meta.InactiveTurns++
+	}
+
+	for aid, state := range a.meta.ActionsState {
+		if state.Cooldown > 0 {
+			a.UpdateActionState(aid, func(s ActionState) ActionState {
+				s.Cooldown--
+				return s
+			})
+		}
 	}
 }
 func (a *Actor) SetPosition(position_id uuid.UUID) {

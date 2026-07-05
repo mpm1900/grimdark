@@ -16,22 +16,27 @@ type Action struct {
 	MapContext       func(g Game, ctx Context, this ActionContext) Context
 
 	IsActive      bool
-	IsDisabled    bool
 	DisabledCheck func(g Game, source Actor) bool
 }
 
 type actionJSON struct {
 	ID         uuid.UUID    `json:"ID"`
 	Config     ActionConfig `json:"config"`
+	Cooldown   int          `json:"cooldown"`
 	IsDisabled bool         `json:"is_disabled"`
 }
 
 func (a Action) Disabled(g Game, source Actor) bool {
-	if !a.IsDisabled && a.DisabledCheck != nil {
+	state, ok := source.meta.ActionsState[a.ID]
+	if ok && state.Cooldown > 0 {
+		return true
+	}
+
+	if !state.IsDisabled && a.DisabledCheck != nil {
 		return a.DisabledCheck(g, source)
 	}
 
-	return a.IsDisabled
+	return false
 }
 
 func (a Action) CanResolve(g Game, context Context, this *ActionContext) bool {
@@ -39,6 +44,10 @@ func (a Action) CanResolve(g Game, context Context, this *ActionContext) bool {
 	if !ok {
 		return false
 	}
+	context_valid := a.ValidateContext == nil || a.ValidateContext(g, context)
+	source_valid := source.IsAlive && source.IsActive() && source.CanAct()
+	action_valid := !a.Disabled(g, source)
+	valid := action_valid && context_valid && source_valid
 
 	if this != nil {
 		if source.IsStunned {
@@ -48,12 +57,22 @@ func (a Action) CanResolve(g Game, context Context, this *ActionContext) bool {
 				})).Bind(context),
 			)
 		}
+		if !action_valid {
+			this.Push(
+				PushLog(NewLog("$action$ as disabled.", map[string]string{
+					"$action$": a.Config.Name,
+				})).Bind(context),
+			)
+		} else if !valid {
+			this.Push(
+				PushLog(NewLog("$action$ failed.", map[string]string{
+					"$action$": a.Config.Name,
+				})).Bind(context),
+			)
+		}
 	}
 
-	context_valid := a.ValidateContext == nil || a.ValidateContext(g, context)
-	source_valid := source.IsAlive && source.IsActive() && source.CanAct()
-	action_valid := !a.Disabled(g, source)
-	return action_valid && context_valid && source_valid
+	return valid
 }
 
 func (a Action) Bind(context Context) Command {
@@ -87,6 +106,7 @@ func (c Command) Resolve(g *Game) []Transaction {
 	if c.Payload.MapContext != nil {
 		context = c.Payload.MapContext(*g, context, action_context)
 	}
+
 	g.SetActiveContext(context)
 
 	action_context.Push(
@@ -97,12 +117,6 @@ func (c Command) Resolve(g *Game) []Transaction {
 	)
 
 	if c.Payload.Resolve == nil || !c.Payload.CanResolve(*g, context, &action_context) {
-		action_context.Push(
-			PushLog(NewLog("$action$ failed.", map[string]string{
-				"$action$": c.Payload.Config.Name,
-			})).Bind(context),
-		)
-
 		return action_context.transactions
 	}
 
@@ -110,9 +124,11 @@ func (c Command) Resolve(g *Game) []Transaction {
 }
 
 func (a Action) ToJSON(g Game, source Actor) actionJSON {
+	state := source.meta.ActionsState[a.ID]
 	json := actionJSON{
 		ID:         a.ID,
 		Config:     a.Config,
+		Cooldown:   state.Cooldown,
 		IsDisabled: a.Disabled(g, source),
 	}
 

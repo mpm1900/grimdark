@@ -7,6 +7,7 @@ import (
 type ActionConfig struct {
 	Accuracy     *float64 `json:"accuracy"`
 	Affinity     Affinity `json:"affinity"`
+	Cooldown     int      `json:"cooldown"`
 	CritChance   float64  `json:"crit_chance"`
 	CritModifier float64  `json:"crit_modifier"`
 	Description  string   `json:"description"`

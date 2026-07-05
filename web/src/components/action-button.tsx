@@ -82,7 +82,10 @@ function ActionButton({
           {!action.config.power && (
             <span className="block truncate">
               {action.is_disabled && (
-                <span className="text-red-300/40">[Disabled] </span>
+                <span className="text-red-300/40 font-serif">
+                  [{action.cooldown > 0 ? `Cooldown:${action.cooldown}` : 'Disabled'}]
+                  {' '}
+                </span>
               )}
               {action.config.description}
             </span>
@@ -90,7 +93,10 @@ function ActionButton({
           {!!action.config.power && (
             <span className="font-cinzel text-white/50">
               {action.is_disabled && (
-                <span className="text-red-300/40">[Disabled] </span>
+                <span className="text-red-300/40 font-serif">
+                  [{action.cooldown > 0 ? `Cooldown ${action.cooldown}` : 'Disabled'}]
+                  {' '}
+                </span>
               )}
               <span className="mr-2 font-semibold">
                 <span className="font-serif font-normal text-foreground/70">
@@ -126,7 +132,7 @@ function ActionButton({
         <ItemActions className="relative flex flex-col gap-0 h-full items-end -mt-1 font-cinzel">
           <span
             className={cn(
-              'text-xl font-black font-cinzel-dec',
+              'text-xl leading-6 font-black font-cinzel-dec',
               affinityVariants({
                 affinity: action.config.affinity,
               })
