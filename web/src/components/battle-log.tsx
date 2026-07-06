@@ -27,6 +27,9 @@ function BattleLog({ className, ...props }: React.ComponentProps<'div'>) {
             key={log.ID}
             className="leading-4.5 text-sm truncate"
             ref={index === logs.length - 1 ? endRef : undefined}
+            style={{
+              paddingLeft: log.payload.type === 'message' ? log.payload.depth * 16 : 0
+            }}
           >
             {RenderLog(log)}
           </li>

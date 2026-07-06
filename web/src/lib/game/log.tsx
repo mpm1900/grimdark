@@ -8,6 +8,7 @@ import type { Game } from './game'
 import { Marker, MarkerContent } from '#/components/ui/marker'
 
 export type Log = {
+  depth: number
   template: string
   terms: Record<string, string>
   type: string

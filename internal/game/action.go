@@ -109,18 +109,20 @@ func (c Command) Resolve(g *Game) []Transaction {
 	}
 
 	g.SetActiveContext(context)
+	g.ResetLogDepth()
 
 	action_context.Push(
-		PushLog(NewLog("$source$ used $action$.", map[string]string{
+		PushLogDepth(NewLog("$source$ used $action$.", map[string]string{
 			"$source$": action_context.Source.Name,
 			"$action$": c.Payload.Config.Name,
-		})).Bind(context),
+		}), 0).Bind(context),
 	)
 
 	if c.Payload.Resolve == nil || !c.Payload.CanResolve(*g, context, &action_context) {
 		return action_context.transactions
 	}
 
+	g.IncLogDepth()
 	return c.Payload.Resolve(g, context, action_context)
 }
 

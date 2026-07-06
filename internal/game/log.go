@@ -6,6 +6,7 @@ import (
 )
 
 type Log struct {
+	Depth    int               `json:"depth"`
 	Template string            `json:"template"`
 	Terms    map[string]string `json:"terms"`
 	Type     string            `json:"type"`
@@ -17,6 +18,12 @@ func NewLog(template string, terms map[string]string) Log {
 		Terms:    terms,
 		Type:     "message",
 	}
+}
+func (g *Game) ResetLogDepth() {
+	g.meta.log_depth = 0
+}
+func (g *Game) IncLogDepth() {
+	g.meta.log_depth = g.meta.log_depth + 1
 }
 
 func (l Log) Bind(context Context) Bindable[Log] {

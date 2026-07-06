@@ -81,7 +81,15 @@ func AddModifiers(modifiers ...Modifier) Mutation {
 func PushLog(log Log) Mutation {
 	return Mutation{
 		delta: func(g *Game, ctx Context) []uuid.UUID {
-			g.PushLog(log.Bind(ctx))
+			g.PushLogMeta(log.Bind(ctx))
+			return []uuid.UUID{}
+		},
+	}
+}
+func PushLogDepth(log Log, rank int) Mutation {
+	return Mutation{
+		delta: func(g *Game, ctx Context) []uuid.UUID {
+			g.PushLogDepth(log.Bind(ctx), rank)
 			return []uuid.UUID{}
 		},
 	}
@@ -146,7 +154,7 @@ func SwapPositions(a, b Actor) Mutation {
 	return Mutation{
 		delta: func(g *Game, ctx Context) []uuid.UUID {
 			g.SetPosition(a.ID, b.PositionID)
-			g.PushLog(NewLog("$source$ swapped with $target$.", map[string]string{
+			g.PushLogMeta(NewLog("$source$ swapped with $target$.", map[string]string{
 				"$source$": a.Name,
 				"$target$": b.Name,
 			}).Bind(ctx))

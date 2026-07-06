@@ -36,6 +36,7 @@ func (ac *ActionContext) Done() []Transaction {
 
 type gamemeta struct {
 	applied_modifiers   map[uuid.UUID]map[uuid.UUID]struct{}
+	log_depth           int
 	modifier_immunities map[uuid.UUID]struct{}
 	modifiers           []Modifier
 }
@@ -143,9 +144,16 @@ func (g *Game) SetActiveContext(context Context) {
 		s.ActiveContext = &cloned
 	})
 }
+
 func (g *Game) PushLog(log Bindable[Log]) {
-	// fmt.Println(log.Payload.Resolve())
 	g.Logs = append(g.Logs, log)
+}
+func (g *Game) PushLogDepth(log Bindable[Log], rank int) {
+	log.Payload.Depth = rank
+	g.PushLog(log)
+}
+func (g *Game) PushLogMeta(log Bindable[Log]) {
+	g.PushLogDepth(log, g.meta.log_depth)
 }
 func (g *Game) AddModifierImmunityTag(tag uuid.UUID) {
 	g.meta.modifier_immunities[tag] = struct{}{}
@@ -452,12 +460,12 @@ func (g *Game) SetPosition(actor_id uuid.UUID, position_id uuid.UUID) {
 				log := NewLog("$source$ left the battle.", map[string]string{
 					"$source$": actor.Name,
 				})
-				g.PushLog(log.Bind(trigger_context))
+				g.PushLogMeta(log.Bind(trigger_context))
 			} else {
 				log := NewLog("$source$ died.", map[string]string{
 					"$source$": actor.Name,
 				})
-				g.PushLog(log.Bind(trigger_context))
+				g.PushLogMeta(log.Bind(trigger_context))
 			}
 			g.On(OnActorLeave, trigger_context)
 		}
@@ -465,7 +473,7 @@ func (g *Game) SetPosition(actor_id uuid.UUID, position_id uuid.UUID) {
 			log := NewLog("$source$ joined the battle.", map[string]string{
 				"$source$": actor.Name,
 			})
-			g.PushLog(log.Bind(trigger_context))
+			g.PushLogMeta(log.Bind(trigger_context))
 			g.On(OnActorEnter, trigger_context)
 		}
 
@@ -514,13 +522,13 @@ func (g *Game) moveActor(actor_id uuid.UUID, direction int) bool {
 		log := NewLog("$source$ moved backwards.", map[string]string{
 			"$source$": actor.Name,
 		})
-		g.PushLog(log.Bind(log_ctx))
+		g.PushLogMeta(log.Bind(log_ctx))
 	}
 	if direction < 0 {
 		log := NewLog("$source$ moved forwards.", map[string]string{
 			"$source$": actor.Name,
 		})
-		g.PushLog(log.Bind(log_ctx))
+		g.PushLogMeta(log.Bind(log_ctx))
 	}
 
 	return true
@@ -546,7 +554,7 @@ func (g *Game) DamageTargets(context Context, damage float64) {
 			log_ctx := MakeContextFor(a, a)
 
 			if target_damage > 0 {
-				g.PushLog(NewLog(
+				g.PushLogMeta(NewLog(
 					fmt.Sprintf("$target$ lost %d HP.", int(target_damage)),
 					map[string]string{
 						"$target$": a.Name,
@@ -555,7 +563,7 @@ func (g *Game) DamageTargets(context Context, damage float64) {
 			}
 
 			if target_damage < 0 {
-				g.PushLog(NewLog(
+				g.PushLogMeta(NewLog(
 					fmt.Sprintf("$target$ healed %d HP.", int(-target_damage)),
 					map[string]string{
 						"$target$": a.Name,
@@ -698,7 +706,7 @@ func (g *Game) NextTurn() {
 	g.Phase = PhaseMain
 	log := NewLog(fmt.Sprintf("Turn %d", g.Turn), map[string]string{})
 	log.Type = "turn"
-	g.PushLog(log.Bind(NewContext()))
+	g.PushLogMeta(log.Bind(NewContext()))
 }
 func (g *Game) EndPhase() {
 	g.DecrementModifiers()

@@ -32,7 +32,7 @@ func TrueGameFilter(g Game, context Context) bool {
 	return true
 }
 
-// context
+// context validators
 func ContextTargetLength(length int) GameFilter {
 	return func(g Game, ctx Context) bool {
 		targets := g.GetTargets(ctx)
@@ -109,7 +109,7 @@ func ActionRange(action_range int) Filter[Actor] {
 		}
 
 		distance := source_pos.GetDistanceFrom(target_pos)
-		return action_range + int(source.Stats[Range]) >= distance
+		return action_range+int(source.Stats[Range]) >= distance
 	}
 }
 
