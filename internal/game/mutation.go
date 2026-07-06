@@ -146,7 +146,10 @@ func SwapPositions(a, b Actor) Mutation {
 	return Mutation{
 		delta: func(g *Game, ctx Context) []uuid.UUID {
 			g.SetPosition(a.ID, b.PositionID)
-			g.SetPosition(b.ID, a.PositionID)
+			g.PushLog(NewLog("$source$ swapped with $target$.", map[string]string{
+				"$source$": a.Name,
+				"$target$": b.Name,
+			}).Bind(ctx))
 			return []uuid.UUID{a.ID, b.ID}
 		},
 	}

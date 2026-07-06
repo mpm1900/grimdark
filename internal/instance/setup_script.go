@@ -20,12 +20,12 @@ func SetupGame(g *game.Game, user game.User) {
 	})
 	effect.Triggers = []game.Trigger{
 		{
-			On:       game.OnDamageRecieve,
-			Validate: game.TriggerTargetMatchesModifierParent,
+			On:       game.OnActorMove,
+			Validate: game.TriggerSourceMatchesModifierParent,
 			Action: game.Action{
 				Resolve: func(g *game.Game, ctx game.Context, this game.ActionContext) []game.Transaction {
 					targets := g.GetTargets(ctx)
-					fmt.Println(game.OnDamageRecieve)
+					fmt.Println(game.OnActorMove)
 					for _, t := range targets {
 						fmt.Println(t.Name)
 					}

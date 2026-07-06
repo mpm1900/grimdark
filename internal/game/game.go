@@ -469,6 +469,10 @@ func (g *Game) SetPosition(actor_id uuid.UUID, position_id uuid.UUID) {
 			g.PushLog(log.Bind(trigger_context))
 			g.On(OnActorEnter, trigger_context)
 		}
+
+		if actor.PositionID != uuid.Nil && position_id != uuid.Nil {
+			g.On(OnActorMove, trigger_context)
+		}
 	})
 
 	if evicted_id != uuid.Nil {
@@ -520,7 +524,6 @@ func (g *Game) moveActor(actor_id uuid.UUID, direction int) bool {
 		g.PushLog(log.Bind(log_ctx))
 	}
 
-	g.On(OnActorMove, log_ctx)
 	return true
 }
 

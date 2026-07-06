@@ -12,8 +12,6 @@ import { GiWhirlpoolShuriken, GiWingedSword } from 'react-icons/gi'
 import { InstanceCombobox } from './instance-combobox'
 import { Button } from './ui/button'
 import { GothicFramedButton } from './gothic-ui/button'
-import { Popover, PopoverAnchor, PopoverContent } from './ui/popover'
-import { GothicMessage, GothicPopoverContent } from './gothic-ui/popover'
 import { ActiveContext } from './active-context'
 
 function AppHeader() {

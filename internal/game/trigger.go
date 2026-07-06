@@ -55,6 +55,7 @@ func (c TriggerCommand) Resolve(g *Game) []Transaction {
 
 	context := c.Context
 	context.EffectID = c.ParentContext.EffectID
+	context.ParentID = c.ParentContext.ParentID
 	if c.Payload.MapContext != nil {
 		context = c.Payload.MapContext(*g, context, action_context)
 	}
@@ -62,7 +63,7 @@ func (c TriggerCommand) Resolve(g *Game) []Transaction {
 
 	log := NewLog(fmt.Sprintf("$source$'s $action$ trigger (%s)", c.Payload.On), map[string]string{
 		"$source$": action_context.Source.Name,
-		"$action$": c.Payload.Config.Name,
+		"$action$": c.getName(*g),
 	}).Bind(context)
 	log.Payload.Type = "trigger"
 	g.PushLog(log)
@@ -77,4 +78,17 @@ func (c TriggerCommand) GetParent(g Game) Actor {
 	}
 
 	return g.GetSourceAction(c.ParentContext)
+}
+
+func (c TriggerCommand) getName(g Game) string {
+	for _, modifier := range g.GetModifiers() {
+		same_effect := modifier.Context.EffectID == c.ParentContext.EffectID
+		same_parent := modifier.Context.ParentID == c.ParentContext.ParentID
+		same_source := modifier.Context.SourceID == c.ParentContext.SourceID
+		if same_effect && same_parent && same_source && modifier.Payload.Name != "" {
+			return modifier.Payload.Name
+		}
+	}
+
+	return c.Payload.Config.Name
 }

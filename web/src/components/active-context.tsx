@@ -13,6 +13,7 @@ function ActiveContext({
   const actors = useSelector(gameStore, (g) => g.actors)
   const modifiers = useSelector(gameStore, (g) => g.modifiers)
   const source = actors.find((a) => a.ID === active_context?.source_ID)
+  const parent = actors.find((a) => a.ID === active_context?.parent_ID)
   const action = source?.actions.find((a) => a.ID === active_context?.action_ID)
   const modifier = modifiers.find(
     (m) => m.payload.ID === active_context?.effect_ID
@@ -29,7 +30,7 @@ function ActiveContext({
         )}
         {!!modifier && (
           <div>
-            {source?.name}'s {modifier.payload.name} trigger
+            {parent?.name}'s {modifier.payload.name} trigger
           </div>
         )}
       </GothicMessage>
