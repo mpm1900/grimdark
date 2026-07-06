@@ -20,9 +20,15 @@ function ActiveContext({
   )
   console.log(active_context)
   return (
-    <Popover open={!!active_context && !!source}>
+    <Popover
+      key={source?.ID ?? modifier?.ID}
+      open={!!active_context && (!!source || !!modifier)}
+    >
       <PopoverAnchor {...props} />
-      <GothicMessage side="bottom">
+      <GothicMessage
+        side="bottom"
+        className="text-center grid place-items-center"
+      >
         {!!action && (
           <div>
             {source?.name} used {action.config.name}

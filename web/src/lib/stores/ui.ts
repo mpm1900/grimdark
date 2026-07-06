@@ -2,6 +2,7 @@ import { Store } from '@tanstack/store'
 import type { Game } from '../game/game'
 import { isIdNull } from '../game/core'
 import type { Actor } from '../game/actor'
+import { gameStore } from './game'
 
 export type Ui = {
   active_actor: string | null
@@ -39,6 +40,20 @@ function setActiveActor(actor_id: string | null) {
   uiStore.setState((old) => ({
     ...old,
     active_actor: actor_id,
+  }))
+}
+function nextActiveActor(current: Actor) {
+  const game = gameStore.get()
+  const next = game.actors.find(
+    (a) =>
+      a.ID !== current.ID &&
+      a.player_ID === current.player_ID &&
+      !game.commands.find((c) => c.context.source_ID === a.ID)
+  )
+  if (!next) return
+  uiStore.setState((old) => ({
+    ...old,
+    active_actor: next.ID,
   }))
 }
 
@@ -93,6 +108,7 @@ function setDefaultActiveActor(game: Game) {
 export {
   uiStore,
   IsActorActive,
+  nextActiveActor,
   setActiveActor,
   setDefaultActiveActor,
   setRangePositions,

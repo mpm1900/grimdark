@@ -81,7 +81,7 @@ function GothicDialogHeader({
     <div
       data-slot="dialog-header"
       className={cn(
-        'absolute -top-8 left-1/2 z-10 flex h-12 w-[calc(100%-2rem)] -translate-x-1/2 flex-col items-center justify-center gap-1 px-16 pt-3.5 pb-2 text-center text-card-foreground',
+        'absolute -top-8 left-1/2 z-10 flex h-12 w-[calc(100%-8rem)] -translate-x-1/2 flex-col items-center justify-center gap-1 px-16 pt-3.5 pb-2 text-center text-card-foreground',
         'overflow-visible',
         className
       )}

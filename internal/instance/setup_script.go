@@ -2,7 +2,6 @@ package instance
 
 import (
 	"grimdark/internal/game"
-	"grimdark/internal/game/actions"
 	"grimdark/internal/game/effects"
 	"grimdark/internal/game/items"
 	"grimdark/internal/game/weapons"
@@ -75,7 +74,7 @@ func SetupGame(g *game.Game, user game.User) {
 	katie := game.NewActor(player.ID, katie_def)
 	katie.AuxStats[game.Speed] = 10
 	katie.Actions = []game.Action{
-		actions.SwordsDance,
+		//	actions.SwordsDance,
 	}
 	katie.Weapon = &weapons.SlashSword
 	katie.Item = game.P(items.TestItem())
@@ -90,9 +89,6 @@ func SetupGame(g *game.Game, user game.User) {
 		game.Arcane: {},
 	}
 	gabe := game.NewActor(player.ID, gabe_def)
-	gabe.Actions = []game.Action{
-		actions.SwordsDance,
-	}
 	gabe.Weapon = &weapons.SlashSword
 	gabe.Item = game.P(items.TestItem())
 	gabe.AffinityImmunities = map[game.Affinity]float64{

@@ -1,8 +1,10 @@
 import { ActionButton } from '#/components/action-button'
 import { ActionContextDialog } from '#/components/action-context-dialog'
+import { ActorAvatar } from '#/components/actor-avatar'
 import { ActorFrame } from '#/components/actor-frame'
 import { AppHeader } from '#/components/app-header'
 import { BattleLog } from '#/components/battle-log'
+import { TinyBadge } from '#/components/gothic-ui/badge'
 import { GothicCard } from '#/components/gothic-ui/card'
 import { GothicFrame } from '#/components/gothic-ui/frame'
 import { PlayerPositions } from '#/components/player-positions'
@@ -14,7 +16,7 @@ import { gameStore } from '#/lib/stores/game'
 import { uiStore } from '#/lib/stores/ui'
 import { ClientOnly, createFileRoute } from '@tanstack/react-router'
 import { useSelector } from '@tanstack/react-store'
-import { HiLink } from "react-icons/hi";
+import { HiLink } from 'react-icons/hi'
 
 export const Route = createFileRoute('/')({ component: Home })
 
@@ -55,20 +57,54 @@ function Home() {
             )}
           </div>
           <div className="bg-[url(/gothic/DecoratedLineHorizontal.png)] hidden h-7 bg-center bg-contain bg-repeat-x"></div>
-          <div className="h-48 flex items-start -z-10 bg-neutral-950 mt-12">
-            <GothicFrame className="relative flex flex-1 flex-col h-full bg-neutral-950">
+          <div className="h-48 relative flex items-start justify-center -z-10 bg-neutral-950 mt-12">
+            {active_actor && <ActorAvatar actor={active_actor} />}
+            <GothicFrame className="relative flex flex-1 flex-col h-full bg-neutral-950 hidden">
               {active_actor && (
                 <ActorFrame actor={active_actor} className="-mt-1 -ml-0.5" />
               )}
             </GothicFrame>
-            <div className='relative h-full grid grid-cols-1 grid-rows-2'>
-              {active_actor?.weapon ? <WeaponFrame weapon={active_actor.weapon} /> : <GothicFrame></GothicFrame>}
-              {active_actor?.weapon ? <WeaponFrame weapon={active_actor.weapon} /> : <GothicFrame></GothicFrame>}
-              <div className='absolute inset-0 grid place-items-center'>
-                <HiLink className='rotate-136 size-6 fill-neutral-500' />
+            <GothicCard className="h-full flex flex-row">
+              <div className="relative h-full grid grid-cols-1 grid-rows-3 w-13">
+                <TinyBadge
+                  variant="default"
+                  className="absolute z-10 px-1 -top-0.5 left-1/2 -translate-x-1/2 rounded-xs rounded-b-sm font-cinzel border-white/30 text-foreground/60"
+                >
+                  Items
+                </TinyBadge>
+                <GothicFrame></GothicFrame>
+                <GothicFrame></GothicFrame>
+                <GothicFrame></GothicFrame>
               </div>
-            </div>
-            <GothicFrame className="flex-row h-full max-w-1/3 gap-px bg-neutral-950 z-10">
+              <div className="relative h-full grid grid-cols-1 grid-rows-2">
+                <TinyBadge
+                  variant="default"
+                  className="absolute z-10 px-1 -top-0.5 left-1/2 -translate-x-1/2 rounded-xs rounded-b-sm font-cinzel border-white/30 text-foreground/60"
+                >
+                  Weapons
+                </TinyBadge>
+                {active_actor?.weapon ? (
+                  <WeaponFrame disabled={false} weapon={active_actor.weapon} />
+                ) : (
+                  <GothicFrame></GothicFrame>
+                )}
+                {active_actor?.weapon ? (
+                  <WeaponFrame disabled={true} weapon={active_actor.weapon} />
+                ) : (
+                  <GothicFrame></GothicFrame>
+                )}
+                <div className="pointer-events-none absolute inset-0 grid place-items-center">
+                  <HiLink className="rotate-136 size-6 fill-neutral-500" />
+                </div>
+              </div>
+            </GothicCard>
+            <GothicCard className="relative flex-row h-full max-w-1/3 bg-neutral-950 z-10">
+              <TinyBadge
+                variant="default"
+                className="absolute z-10 px-1 -top-1 left-1/2 -translate-x-1/2 rounded-xs rounded-b-sm font-cinzel border-white/30 text-foreground/60"
+              >
+                Actions
+              </TinyBadge>
               <div className="grid grid-cols-2 grid-rows-3">
                 {active_actor?.actions.map((action) => (
                   <ActionContextDialog
@@ -87,7 +123,7 @@ function Home() {
                   </ActionContextDialog>
                 ))}
               </div>
-            </GothicFrame>
+            </GothicCard>
             <GothicCard className="h-full min-w-0 max-w-1/4 flex-1 flex bg-neutral-950 p-0">
               <BattleLog />
             </GothicCard>

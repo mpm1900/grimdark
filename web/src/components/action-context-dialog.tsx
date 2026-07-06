@@ -20,6 +20,7 @@ import {
 } from './gothic-ui/dialog'
 import { STAT_LABELS } from '#/lib/game/core'
 import { TargetsButtonGrid } from './targets-button-grid'
+import { nextActiveActor } from '#/lib/stores/ui'
 
 function AttackDetails({ action }: { action: Action }) {
   return (
@@ -123,6 +124,7 @@ function ActionContextDialog({
                   context: context.value,
                 })
 
+                nextActiveActor(actor)
                 context.reset()
               }}
             >

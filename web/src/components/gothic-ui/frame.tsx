@@ -1,8 +1,14 @@
+import * as React from 'react'
+
 import { cn } from '#/lib/utils'
 
-function GothicFrame({ className, ...props }: React.ComponentProps<'div'>) {
+const GothicFrame = React.forwardRef<
+  HTMLDivElement,
+  React.ComponentProps<'div'>
+>(({ className, ...props }, ref) => {
   return (
     <div
+      ref={ref}
       data-slot="gothic-frame"
       className={cn(
         'flex flex-col p-1.5 text-foreground',
@@ -18,14 +24,16 @@ function GothicFrame({ className, ...props }: React.ComponentProps<'div'>) {
       {...props}
     />
   )
-}
+})
+GothicFrame.displayName = 'GothicFrame'
 
-function GothicShadowFrame({
-  className,
-  ...props
-}: React.ComponentProps<'div'>) {
+const GothicShadowFrame = React.forwardRef<
+  HTMLDivElement,
+  React.ComponentProps<'div'>
+>(({ className, ...props }, ref) => {
   return (
     <div
+      ref={ref}
       data-slot="gothic-frame"
       className={cn(
         'relative isolate flex flex-col p-2 text-foreground',
@@ -39,14 +47,16 @@ function GothicShadowFrame({
       {...props}
     />
   )
-}
+})
+GothicShadowFrame.displayName = 'GothicShadowFrame'
 
-function GothicHighlightFrame({
-  className,
-  ...props
-}: React.ComponentProps<'div'>) {
+const GothicHighlightFrame = React.forwardRef<
+  HTMLDivElement,
+  React.ComponentProps<'div'>
+>(({ className, ...props }, ref) => {
   return (
     <div
+      ref={ref}
       data-slot="gothic-highlight-frame"
       className={cn(
         'relative isolate flex flex-col p-4 px-6 text-foreground',
@@ -60,11 +70,16 @@ function GothicHighlightFrame({
       {...props}
     />
   )
-}
+})
+GothicHighlightFrame.displayName = 'GothicHighlightFrame'
 
-function GothicChatPanel({ className, ...props }: React.ComponentProps<'div'>) {
+const GothicChatPanel = React.forwardRef<
+  HTMLDivElement,
+  React.ComponentProps<'div'>
+>(({ className, ...props }, ref) => {
   return (
     <div
+      ref={ref}
       data-slot="gothic-chat-panel"
       className={cn(
         'relative isolate text-foreground p-1',
@@ -78,6 +93,7 @@ function GothicChatPanel({ className, ...props }: React.ComponentProps<'div'>) {
       {...props}
     />
   )
-}
+})
+GothicChatPanel.displayName = 'GothicChatPanel'
 
 export { GothicFrame, GothicShadowFrame, GothicHighlightFrame, GothicChatPanel }

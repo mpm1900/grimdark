@@ -66,14 +66,24 @@ function GothicMessage({
         align={align}
         sideOffset={sideOffset}
         className={cn(
-          'relative isolate z-50 w-96 h-20 bg-black origin-(--radix-popover-content-transform-origin)',
-          'text-popover-foreground shadow-md outline-hidden data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95',
+          ' z-50 relative isolate origin-(--radix-popover-content-transform-origin)',
+          'text-popover-foreground outline-hidden data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95',
           '[&>span]:z-0 [&>span]:translate-y-[-5px]',
+
           className
         )}
         {...props}
       >
-        <div className={cn('flex flex-col isolate')}>{children}</div>
+        <div className="absolute inset-2 shadow-[0px_8px_24px_5px_rgba(0,_0,_0,_0.4)]" />
+        <div
+          className={cn(
+            'bg-[url(/gothic/ContextFrame.png)] bg-contain bg-no-repeat bg-center',
+            'text-foreground/80 font-serif',
+            'relative isolate w-96 h-12 leading-12'
+          )}
+        >
+          {children}
+        </div>
       </PopoverPrimitive.Content>
     </PopoverPrimitive.Portal>
   )

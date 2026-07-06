@@ -1,5 +1,5 @@
 import type { Actor } from '#/lib/game/actor'
-import type { Position } from '#/lib/game/player'
+import type { Position } from '#/lib/game/position'
 import { cn } from '#/lib/utils'
 import { TinyBadge } from './gothic-ui/badge'
 
