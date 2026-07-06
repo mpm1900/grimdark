@@ -27,7 +27,7 @@ type actionJSON struct {
 }
 
 func (a Action) Disabled(g Game, source Actor) bool {
-	state, ok := source.meta.ActionsState[a.ID]
+	state, ok := source.ActionsState[a.ID]
 	if ok && state.Cooldown > 0 {
 		return true
 	}
@@ -124,7 +124,7 @@ func (c Command) Resolve(g *Game) []Transaction {
 }
 
 func (a Action) ToJSON(g Game, source Actor) actionJSON {
-	state := source.meta.ActionsState[a.ID]
+	state := source.ActionsState[a.ID]
 	json := actionJSON{
 		ID:         a.ID,
 		Config:     a.Config,

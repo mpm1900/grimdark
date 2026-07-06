@@ -17,7 +17,7 @@ var Slash = game.Action{
 		Accuracy:     game.P(0.90),
 		Power:        70,
 		Lifesteal:    0.12,
-		Hits:         4,
+		Hits:         1,
 		Cooldown:     1,
 		CritChance:   0,
 		CritModifier: 1.5,

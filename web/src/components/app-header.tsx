@@ -14,6 +14,7 @@ import { Button } from './ui/button'
 import { GothicFramedButton } from './gothic-ui/button'
 import { Popover, PopoverAnchor, PopoverContent } from './ui/popover'
 import { GothicMessage, GothicPopoverContent } from './gothic-ui/popover'
+import { ActiveContext } from './active-context'
 
 function AppHeader() {
   const { data: user } = useUser()
@@ -77,16 +78,13 @@ function AppHeader() {
         </div>
       </div>
 
-      <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-[url(/gothic/TitleHeroFrame.png)] bg-cover bg-no-repeat h-24 leading-18 w-48 text-xl text-center font-cinzel-dec font-bold text-foreground/60">
-        <Popover open={!!active_context}>
-          <PopoverAnchor>
-            <div>
-              T<span className="font-cinzel">urn {turn}</span>
-            </div>
-          </PopoverAnchor>
-          <GothicMessage side="bottom">poop</GothicMessage>
-        </Popover>
-      </div>
+      <ActiveContext asChild active_context={active_context}>
+        <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-[url(/gothic/TitleHeroFrame.png)] bg-cover bg-no-repeat h-24 leading-18 w-48 text-xl text-center font-cinzel-dec font-bold text-foreground/60">
+          <div>
+            T<span className="font-cinzel">urn {turn}</span>
+          </div>
+        </div>
+      </ActiveContext>
 
       <div className="flex items-center gap-4 px-2">
         <div className="font-mono text-sm flex items-center">

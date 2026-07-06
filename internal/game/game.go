@@ -406,7 +406,7 @@ func (g *Game) MutateActorWhere(where func(Actor) bool, updater func(Actor) Acto
 func (g *Game) SetLastUsedAction(actor_id uuid.UUID, action_id uuid.UUID) {
 	g.mutate(func(s *State) {
 		s.UpdateActor(actor_id, func(a Actor) Actor {
-			a.meta.LastUsedActionID = action_id
+			a.Meta.LastUsedActionID = action_id
 			return a
 		})
 	})

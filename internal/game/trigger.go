@@ -54,6 +54,7 @@ func (c TriggerCommand) Resolve(g *Game) []Transaction {
 	}
 
 	context := c.Context
+	context.EffectID = c.ParentContext.EffectID
 	if c.Payload.MapContext != nil {
 		context = c.Payload.MapContext(*g, context, action_context)
 	}

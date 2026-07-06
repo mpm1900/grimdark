@@ -47,7 +47,6 @@ type ActorMeta struct {
 	ActiveTurns      int
 	InactiveTurns    int
 	LastUsedActionID uuid.UUID
-	ActionsState     map[uuid.UUID]ActionState
 }
 
 type Actor struct {
@@ -77,10 +76,9 @@ type Actor struct {
 	IsInsulated bool // is immune from the secondary effects of attacking attacks (ie through AddResultEffects())
 	IsProtected bool // protected from actions that check accuracy
 	IsStunned   bool // staggered + and cannot queue commands (may not be needed)
-	// staging flags (not fully implemented)
-	IsRooted bool // rooted units cannot move or be moved.
 
-	meta ActorMeta
+	Meta         ActorMeta
+	ActionsState map[uuid.UUID]ActionState
 }
 
 type actorJSON struct {
@@ -180,11 +178,12 @@ func NewActor(playerID uuid.UUID, def ActorDef) Actor {
 		IsProtected: false,
 		IsStunned:   false,
 
-		meta: ActorMeta{
+		ActionsState: map[uuid.UUID]ActionState{},
+
+		Meta: ActorMeta{
 			ActiveTurns:      0,
 			InactiveTurns:    0,
 			LastUsedActionID: uuid.Nil,
-			ActionsState:     map[uuid.UUID]ActionState{},
 		},
 	}
 }
@@ -223,7 +222,9 @@ func (a Actor) Clone() Actor {
 		IsProtected: a.IsProtected,
 		IsStunned:   a.IsStunned,
 
-		meta: a.meta,
+		ActionsState: maps.Clone(a.ActionsState),
+
+		Meta: a.Meta,
 	}
 }
 
@@ -288,11 +289,11 @@ func (a *Actor) ApplyDamage(damage float64, resolved Actor) {
 	a.IsAlive = resolved.Stats[Health] > a.Wounds
 }
 func (a *Actor) UpdateActionState(action_id uuid.UUID, updater func(ActionState) ActionState) {
-	state, ok := a.meta.ActionsState[action_id]
+	state, ok := a.ActionsState[action_id]
 	if !ok {
-		a.meta.ActionsState[action_id] = updater(ActionState{})
+		a.ActionsState[action_id] = updater(ActionState{})
 	} else {
-		a.meta.ActionsState[action_id] = updater(state)
+		a.ActionsState[action_id] = updater(state)
 	}
 }
 func (a *Actor) SetActionCooldown(action_id uuid.UUID, cooldown int) {
@@ -305,12 +306,12 @@ func (a *Actor) SetActionCooldown(action_id uuid.UUID, cooldown int) {
 }
 func (a *Actor) NextTurn() {
 	if a.IsActive() {
-		a.meta.ActiveTurns++
+		a.Meta.ActiveTurns++
 	} else {
-		a.meta.InactiveTurns++
+		a.Meta.InactiveTurns++
 	}
 
-	for aid, state := range a.meta.ActionsState {
+	for aid, state := range a.ActionsState {
 		if state.Cooldown > 0 {
 			a.UpdateActionState(aid, func(s ActionState) ActionState {
 				s.Cooldown--
@@ -321,12 +322,12 @@ func (a *Actor) NextTurn() {
 }
 func (a *Actor) SetPosition(position_id uuid.UUID) {
 	a.PositionID = position_id
-	a.meta.LastUsedActionID = uuid.Nil
+	a.Meta.LastUsedActionID = uuid.Nil
 	if position_id == uuid.Nil {
-		a.meta.InactiveTurns = 0
+		a.Meta.InactiveTurns = 0
 	}
 	if a.PositionID == uuid.Nil {
-		a.meta.ActiveTurns = 0
+		a.Meta.ActiveTurns = 0
 	}
 }
 
@@ -380,7 +381,9 @@ func (a Actor) GetModifiers() []Modifier {
 	modifiers := []Modifier{}
 	for _, effect := range a.GetEffects() {
 		if effect.Ready() {
-			modifier := effect.Bind(MakeContextFrom(a))
+			context := MakeContextFrom(a)
+			context.EffectID = effect.ID
+			modifier := effect.Bind(context)
 			modifiers = append(modifiers, modifier)
 		}
 	}
@@ -415,7 +418,7 @@ func (a Actor) Targetable() bool {
 	return true
 }
 func (a Actor) GetMeta() ActorMeta {
-	return a.meta
+	return a.Meta
 }
 
 func (a Actor) ToJSON(g Game) actorJSON {
