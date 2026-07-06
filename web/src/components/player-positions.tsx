@@ -32,6 +32,7 @@ function PlayerPositions({
         {positions.map((position) => (
           <Platform
             key={position.ID}
+            rank={position.rank}
             variant={getVariant(ui, client.ID, position, status)}
             className="flex-1"
           />

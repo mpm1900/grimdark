@@ -11,11 +11,13 @@ import { getTargetsFromContext, NULL_CONTEXT } from '#/lib/game/context'
 import { useContext } from '#/hooks/use-context'
 import { validateContextQuery } from '#/lib/queries/validate-context'
 import { setHoverPosition } from '#/lib/stores/ui'
+import { clientsStore } from '#/lib/stores/clients'
 
 function TargetButton({
   is_done,
   is_selected,
   is_valid_target,
+  rank,
   target,
   disabled,
   onClick,
@@ -23,6 +25,7 @@ function TargetButton({
   is_done: boolean
   is_selected: boolean
   is_valid_target: boolean
+  rank: number | null
   target: Actor | undefined
   onClick: (actor: Actor, is_selected: boolean) => void
 }) {
@@ -31,6 +34,7 @@ function TargetButton({
     <GothicBigButton
       key={target.ID}
       variant={is_selected ? 'red' : 'basic'}
+      className='flex-col gap-0 p-0'
       disabled={
         !is_valid_target || disabled || (!is_selected ? is_done : false)
       }
@@ -38,7 +42,11 @@ function TargetButton({
       onMouseLeave={() => setHoverPosition(null)}
       onClick={() => onClick(target, !is_selected)}
     >
-      {target.name}
+      <div>
+        {rank !== null && <span>{rank + 1}. </span>}
+        {target.name}
+      </div>
+
     </GothicBigButton>
   )
 }
@@ -55,6 +63,7 @@ function TargetsButtonGrid({
   context: ReturnType<typeof useContext>
   disabled?: boolean
 }) {
+  const client = useSelector(clientsStore, s => s.me)
   const players = useSelector(gameStore, (g) => g.players)
   const actors = useSelector(gameStore, (g) => g.actors)
   const positions = useSelector(gameStore, g => g.positions)
@@ -94,7 +103,13 @@ function TargetsButtonGrid({
       {targets_context.position_IDs.length > 0 ? (
         <div className="grid grid-cols-3 mt-3">
           {players
-            .flatMap((p) => positions.filter(pos => pos.player_ID === p.ID))
+            .flatMap((p) => {
+              const new_pos = positions.filter(pos => pos.player_ID === p.ID)
+              if (p.ID === client?.ID) {
+                new_pos.reverse()
+              }
+              return new_pos
+            })
             .map((pos, i) => {
               const target = actors.find((t) => t.position_ID === pos.ID)
               return (
@@ -103,6 +118,7 @@ function TargetsButtonGrid({
                   is_done={selected.length === action.config.target_count}
                   is_selected={!!target && context.hasTarget(target)}
                   is_valid_target={!!targets.find((t) => t.ID === target?.ID)}
+                  rank={pos.rank}
                   target={target}
                   onClick={(t, selected) =>
                     selected ? context.addTarget(t) : context.removeTarget(t)
@@ -119,6 +135,7 @@ function TargetsButtonGrid({
               is_done={selected.length === action.config.target_count}
               is_selected={!!target && context.hasTarget(target)}
               is_valid_target={!!targets.find((t) => t.ID === target?.ID)}
+              rank={null}
               target={target}
               onClick={(t, selected) =>
                 selected ? context.addTarget(t) : context.removeTarget(t)

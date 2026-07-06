@@ -535,28 +535,29 @@ func (g *Game) DamageTargets(context Context, damage float64) {
 				return a
 			}
 
-			if damage > resolved.GetRemainingHealth() {
-				damage = resolved.GetRemainingHealth()
+			target_damage := damage
+			if target_damage > resolved.GetRemainingHealth() {
+				target_damage = resolved.GetRemainingHealth()
 			}
-			if damage < -a.Wounds {
-				damage = -a.Wounds
+			if target_damage < -a.Wounds {
+				target_damage = -a.Wounds
 			}
 
-			a.ApplyDamage(damage, resolved)
+			a.ApplyDamage(target_damage, resolved)
 			log_ctx := MakeContextFor(a, a)
 
-			if damage > 0 {
+			if target_damage > 0 {
 				g.PushLog(NewLog(
-					fmt.Sprintf("$target$ lost %d HP.", int(damage)),
+					fmt.Sprintf("$target$ lost %d HP.", int(target_damage)),
 					map[string]string{
 						"$target$": a.Name,
 					},
 				).Bind(log_ctx))
 			}
 
-			if damage < 0 {
+			if target_damage < 0 {
 				g.PushLog(NewLog(
-					fmt.Sprintf("$target$ healed %d HP.", int(-damage)),
+					fmt.Sprintf("$target$ healed %d HP.", int(-target_damage)),
 					map[string]string{
 						"$target$": a.Name,
 					},

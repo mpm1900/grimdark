@@ -10,14 +10,12 @@ import (
 type WeaponType string
 
 type Weapon struct {
-	ID          uuid.UUID
-	Actions     []Action
-	AuxStats    map[Stat]float64
-	Description string
-	Effects     []Effect
-	Hands       int
-	Name        string
-	WeaponType  WeaponType
+	Item
+	Actions    []Action
+	AuxStats   map[Stat]float64
+	Effects    []Effect
+	Hands      int
+	WeaponType WeaponType
 }
 
 type weaponJSON struct {
@@ -33,14 +31,12 @@ type weaponJSON struct {
 
 func (w Weapon) Clone() Weapon {
 	return Weapon{
-		ID:          w.ID,
-		Actions:     slices.Clone(w.Actions),
-		AuxStats:    maps.Clone(w.AuxStats),
-		Description: w.Description,
-		Effects:     slices.Clone(w.Effects),
-		Hands:       w.Hands,
-		Name:        w.Name,
-		WeaponType:  w.WeaponType,
+		Item:       w.Item,
+		Actions:    slices.Clone(w.Actions),
+		AuxStats:   maps.Clone(w.AuxStats),
+		Effects:    slices.Clone(w.Effects),
+		Hands:      w.Hands,
+		WeaponType: w.WeaponType,
 	}
 }
 

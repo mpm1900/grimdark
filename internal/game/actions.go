@@ -2,6 +2,8 @@ package game
 
 import (
 	"math/rand/v2"
+
+	"github.com/google/uuid"
 )
 
 func BasicAttack(config AttackConfig) ActionResolver {
@@ -9,6 +11,7 @@ func BasicAttack(config AttackConfig) ActionResolver {
 		targets := g.GetTargets(context)
 		success := true
 		hits := this.Action.Config.Hits
+		pending_damage := map[uuid.UUID]float64{}
 		for hit := range hits {
 			// on multi-hit attack, break after the first miss
 			if !success {
@@ -16,10 +19,11 @@ func BasicAttack(config AttackConfig) ActionResolver {
 			}
 
 			for _, target := range targets {
-				result := this.Action.Config.GetDamageResult(this.Source, target, context, rand.Float64())
+				result := this.Action.Config.GetDamageResult(this.Source, target, context, rand.Float64(), pending_damage[target.ID])
 				dmg_ctx := MakeContextFor(this.Source, target)
 
 				this.Push(DamageTargets(result.Damage).Bind(dmg_ctx))
+				pending_damage[target.ID] += result.Damage
 				MultiHitLogs(result, context, &this, hit)
 				PostDamageLogs(result, context, &this)
 

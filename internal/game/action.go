@@ -137,7 +137,7 @@ func (a Action) ToJSON(g Game, source Actor) actionJSON {
 		json.Config.Accuracy = &acc
 	}
 
-	json.Config.CritChance = GetCriticalChance(int(json.Config.CritChance) + source.Stages[CriticalChance])
+	json.Config.CritChance = GetCriticalChance(json.Config.CritStage + source.Stages[CriticalChance])
 	json.Config.CritModifier = json.Config.CritModifier * source.Stats[CriticalDamage]
 
 	return json

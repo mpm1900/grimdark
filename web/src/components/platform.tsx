@@ -96,17 +96,19 @@ function getVariant(
 function Platform({
   className,
   variant,
+  rank,
   ...props
-}: ComponentProps<'div'> & VariantProps<typeof platformVariants>) {
+}: ComponentProps<'div'> & VariantProps<typeof platformVariants> & { rank: number }) {
   return (
     <div className="relative flex-1 transform-3d" {...props}>
       <div
         className={platformVariants({
           variant,
           className:
-            'flex items-end relative overflow-hidden [&>svg]:opacity-50',
+            'relative overflow-hidden [&>svg]:opacity-50 grid place-items-center',
         })}
       >
+        <span className='text-7xl font-cinzel font-black'>{rank + 1}</span>
         {/*
         <FaChevronRight className="absolute top-0 bottom-0 -translate-x-1/2 size-full" />
         <FaChevronRight className="absolute top-0 bottom-0 -translate-x-1/3 size-full" />

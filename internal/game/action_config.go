@@ -8,6 +8,7 @@ type ActionConfig struct {
 	Accuracy     *float64 `json:"accuracy"`
 	Affinity     Affinity `json:"affinity"`
 	Cooldown     int      `json:"cooldown"`
+	CritStage    int      `json:"crit_stage"`
 	CritChance   float64  `json:"crit_chance"`
 	CritModifier float64  `json:"crit_modifier"`
 	Description  string   `json:"description"`
@@ -67,7 +68,7 @@ func (ac ActionConfig) GetAccuracy(source, target Actor, useBaseStats bool) floa
 func (ac ActionConfig) GetAccuracyResult(source, target Actor) AccuracyResult {
 	accuracy_roll := rand.Float64()
 	critical_roll := rand.Float64()
-	critical_stage := int(ac.CritChance) + source.Stages[CriticalChance]
+	critical_stage := ac.CritStage + source.Stages[CriticalChance]
 	critical_chance := GetCriticalChance(critical_stage)
 	critical := critical_chance > critical_roll
 
@@ -96,7 +97,7 @@ const MULTI_TARGET_MODIFIER = 0.75
 const DAMAGE_RAND_MIN = 0.8
 const DAMAGE_RAND_MAX = 1.05
 
-func (ac ActionConfig) GetDamageResult(source, target Actor, context Context, random_roll float64) DamageResult {
+func (ac ActionConfig) GetDamageResult(source, target Actor, context Context, random_roll float64, pending_damage float64) DamageResult {
 	accuracy := ac.GetAccuracyResult(source, target)
 	affinity, total_stage, base_stage := ac.Affinity.GetAffinityModifier(source, target)
 	base := ac.GetBaseDamage(source, target, accuracy.Critical)
@@ -116,8 +117,12 @@ func (ac ActionConfig) GetDamageResult(source, target Actor, context Context, ra
 
 	random := random_roll*(DAMAGE_RAND_MAX-DAMAGE_RAND_MIN) + DAMAGE_RAND_MIN
 	damage := raw * random
-	if damage > target.GetRemainingHealth() {
-		damage = target.GetRemainingHealth()
+	health := target.GetRemainingHealth() - pending_damage
+	if health < 0 {
+		health = 0
+	}
+	if damage > health {
+		damage = health
 	}
 
 	return DamageResult{
