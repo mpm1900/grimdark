@@ -56,6 +56,7 @@ type Actor struct {
 	PositionID uuid.UUID
 
 	Actions []Action
+	Item    *HeldItem
 	Weapon  *Weapon
 
 	AffinityDamage     map[Affinity]int
@@ -91,6 +92,7 @@ type actorJSON struct {
 	PositionID         *uuid.UUID           `json:"position_ID"`
 	Actions            []actionJSON         `json:"actions"`
 	Weapon             *weaponJSON          `json:"weapon"`
+	Item               *HeldItem            `json:"item"`
 	Effects            []Effect             `json:"effects"`
 	Affinities         []Affinity           `json:"affinities"`
 	AffinityDamage     map[Affinity]int     `json:"affinity_damage"`
@@ -159,6 +161,7 @@ func NewActor(playerID uuid.UUID, def ActorDef) Actor {
 
 		Actions: []Action{},
 		Weapon:  nil,
+		Item:    nil,
 
 		AffinityDamage:     map[Affinity]int{},
 		AffinityResistance: map[Affinity]int{},
@@ -202,6 +205,7 @@ func (a Actor) Clone() Actor {
 
 		Actions: slices.Clone(a.Actions),
 		Weapon:  weapon,
+		Item:    a.Item,
 
 		AffinityDamage:     maps.Clone(a.AffinityDamage),
 		AffinityResistance: maps.Clone(a.AffinityResistance),
@@ -375,6 +379,9 @@ func (a Actor) GetEffects() []Effect {
 	if a.Weapon != nil {
 		effects = append(effects, a.Weapon.Effects...)
 	}
+	if a.Item != nil {
+		effects = append(effects, a.Item.Effects...)
+	}
 	return effects
 }
 func (a Actor) GetModifiers() []Modifier {
@@ -482,6 +489,7 @@ func (a Actor) ToJSON(g Game) actorJSON {
 		PositionID:         NilifyUUID(a.PositionID),
 		Actions:            actions,
 		Weapon:             weapon,
+		Item:               a.Item,
 		Effects:            a.GetEffects(),
 		Affinities:         slices.Collect(maps.Keys(a.Affinities)),
 		AffinityDamage:     affinity_damage,

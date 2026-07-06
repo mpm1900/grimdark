@@ -127,6 +127,17 @@ func MutateTargets(updater Updater[Actor]) Mutation {
 		},
 	}
 }
+func ConsumeItem() Mutation {
+	return Mutation{
+		delta: func(g *Game, ctx Context) []uuid.UUID {
+			g.state.UpdateActor(ctx.ParentID, func(a Actor) Actor {
+				a.Item = nil
+				return a
+			})
+			return []uuid.UUID{ctx.ParentID}
+		},
+	}
+}
 func DamageTargets(damage float64) Mutation {
 	return Mutation{
 		delta: func(g *Game, context Context) []uuid.UUID {

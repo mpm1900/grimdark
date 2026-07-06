@@ -65,9 +65,13 @@ func (c TriggerCommand) Resolve(g *Game) []Transaction {
 	log := NewLog(fmt.Sprintf("$source$'s $action$ trigger (%s)", c.Payload.On), map[string]string{
 		"$source$": action_context.Source.Name,
 		"$action$": c.getName(*g),
-	}).Bind(context)
-	log.Payload.Type = "trigger"
-	g.PushLogDepth(log, 0)
+	})
+	log_context := context.Clone()
+	log_context.SourceID = action_context.Source.ID
+	log_context.PlayerID = action_context.Source.PlayerID
+	tx := log.Bind(log_context)
+	tx.Payload.Type = "trigger"
+	g.PushLogDepth(tx, 0)
 
 	g.IncLogDepth()
 	return c.Payload.Resolve(g, context, action_context)
