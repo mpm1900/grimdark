@@ -67,7 +67,6 @@ type Actor struct {
 	Stats              map[Stat]float64
 
 	Wounds  float64
-	Augment Augment
 	State   ActorState
 	Status  ActorStatus
 
@@ -101,7 +100,6 @@ type actorJSON struct {
 	UnmodifiedStats    map[Stat]int         `json:"unmodified_stats"`
 	ActiveModifiers    []uuid.UUID          `json:"active_modifiers"`
 	Wounds             int                  `json:"wounds"`
-	Augment            Augment              `json:"augment"`
 	State              ActorState           `json:"state"`
 	Status             ActorStatus          `json:"status"`
 	IsActive           bool                 `json:"is_active"`
@@ -168,7 +166,6 @@ func NewActor(playerID uuid.UUID, def ActorDef) Actor {
 		Stats:              maps.Clone(def.Stats),
 
 		Wounds:  0,
-		Augment: AugmentDefault,
 		State:   StateGrounded,
 		Status:  StatusNone,
 
@@ -212,7 +209,6 @@ func (a Actor) Clone() Actor {
 		Stats:              maps.Clone(a.Stats),
 
 		Wounds:  a.Wounds,
-		Augment: a.Augment,
 		State:   a.State,
 		Status:  a.Status,
 
@@ -231,7 +227,7 @@ func (a Actor) Clone() Actor {
 func mapBaseStat(actor Actor, stat Stat, stats map[Stat]float64, aux float64) float64 {
 	base := stats[stat]*2 + aux
 	ratio := float64(actor.Level) / 100
-	result := (base*ratio + 5) * actor.Augment.GetMultiplier(stat)
+	result := (base*ratio + 5)
 	if stat == Health {
 		result += float64(actor.Level)
 	}
@@ -492,7 +488,6 @@ func (a Actor) ToJSON(g Game) actorJSON {
 		UnmodifiedStats:    unmodified_stats,
 		ActiveModifiers:    active_modifiers,
 		Wounds:             int(a.Wounds),
-		Augment:            a.Augment,
 		State:              a.State,
 		Status:             a.Status,
 		IsActive:           a.IsActive(),

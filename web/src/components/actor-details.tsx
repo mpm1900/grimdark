@@ -47,15 +47,7 @@ function ActorCharacter({ actor }: { actor: Actor }) {
             </FieldContent>
           </Field>
         </div>
-        <div className="grid grid-cols-3 text-sm">
-          <Field className="gap-0">
-            <FieldLabel className="text-foreground/60 font-cinzel">
-              Augment
-            </FieldLabel>
-            <FieldContent className="capitalize text-foreground">
-              {actor.augment}
-            </FieldContent>
-          </Field>
+        <div className="grid grid-cols-2 text-sm">
           <Field className="gap-0 text-foreground">
             <FieldLabel className="text-foreground/60 font-cinzel">
               State
