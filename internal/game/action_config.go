@@ -44,6 +44,8 @@ type DamageResult struct {
 	Affinity          float64
 	AffinityStage     int
 	BaseAffinityStage int
+	BaseDamage        float64
+	Multipliers       float64
 	Damage            float64
 	Random            float64
 	Raw               float64
@@ -98,17 +100,21 @@ const DAMAGE_RAND_MIN = 0.8
 const DAMAGE_RAND_MAX = 1.05
 
 func (ac ActionConfig) GetDamageResult(source, target Actor, context Context, random_roll float64, pending_damage float64) DamageResult {
+	multipliers := 1.0
 	accuracy := ac.GetAccuracyResult(source, target)
 	affinity, total_stage, base_stage := ac.Affinity.GetAffinityModifier(source, target)
 	base := ac.GetBaseDamage(source, target, accuracy.Critical)
 	raw := base * affinity
+	multipliers *= affinity
 
 	if accuracy.Critical {
 		raw = raw * ac.CritModifier * source.Stats[CriticalDamage]
+		multipliers *= ac.CritModifier * source.Stats[CriticalDamage]
 	}
 
 	if context.GetTargetCount() > 1 {
 		raw = raw * MULTI_TARGET_MODIFIER
+		multipliers *= MULTI_TARGET_MODIFIER
 	}
 
 	if !accuracy.Success() {
@@ -130,6 +136,8 @@ func (ac ActionConfig) GetDamageResult(source, target Actor, context Context, ra
 		Affinity:          affinity,
 		AffinityStage:     total_stage,
 		BaseAffinityStage: base_stage,
+		BaseDamage:        base,
+		Multipliers:       multipliers,
 		Raw:               raw,
 		Random:            random,
 		Damage:            damage,

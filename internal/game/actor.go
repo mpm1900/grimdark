@@ -66,11 +66,12 @@ type Actor struct {
 	AuxStats           map[Stat]float64
 	Stats              map[Stat]float64
 
-	Wounds  float64
-	State   ActorState
-	Status  ActorStatus
+	Wounds float64
+	State  ActorState
+	Status ActorStatus
 
 	IsAlive     bool
+	IsBulwark   bool // stops collateral penetration
 	IsHidden    bool // cannot be targeted by single-target actions
 	IsInsulated bool // is immune from the secondary effects of attacking attacks (ie through AddResultEffects())
 	IsProtected bool // protected from actions that check accuracy
@@ -103,6 +104,7 @@ type actorJSON struct {
 	State              ActorState           `json:"state"`
 	Status             ActorStatus          `json:"status"`
 	IsActive           bool                 `json:"is_active"`
+	IsBulwark          bool                 `json:"is_bulwark"`
 	IsAlive            bool                 `json:"is_alive"`
 	IsHidden           bool                 `json:"is_hidden"`
 	IsInsulated        bool                 `json:"is_insulated"`
@@ -165,11 +167,12 @@ func NewActor(playerID uuid.UUID, def ActorDef) Actor {
 		AuxStats:           map[Stat]float64{},
 		Stats:              maps.Clone(def.Stats),
 
-		Wounds:  0,
-		State:   StateGrounded,
-		Status:  StatusNone,
+		Wounds: 0,
+		State:  StateGrounded,
+		Status: StatusNone,
 
 		IsAlive:     true,
+		IsBulwark:   false,
 		IsHidden:    false,
 		IsInsulated: false,
 		IsProtected: false,
@@ -208,11 +211,12 @@ func (a Actor) Clone() Actor {
 		AuxStats:           maps.Clone(a.AuxStats),
 		Stats:              maps.Clone(a.Stats),
 
-		Wounds:  a.Wounds,
-		State:   a.State,
-		Status:  a.Status,
+		Wounds: a.Wounds,
+		State:  a.State,
+		Status: a.Status,
 
 		IsAlive:     a.IsAlive,
+		IsBulwark:   a.IsBulwark,
 		IsHidden:    a.IsHidden,
 		IsInsulated: a.IsInsulated,
 		IsProtected: a.IsProtected,
@@ -491,6 +495,7 @@ func (a Actor) ToJSON(g Game) actorJSON {
 		State:              a.State,
 		Status:             a.Status,
 		IsActive:           a.IsActive(),
+		IsBulwark:          a.IsBulwark,
 		IsAlive:            a.IsAlive,
 		IsHidden:           a.IsHidden,
 		IsInsulated:        a.IsInsulated,

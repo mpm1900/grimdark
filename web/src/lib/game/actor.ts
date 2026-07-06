@@ -14,6 +14,7 @@ export type Actor = {
   effects: Array<Effect>
   faction: string
   is_active: boolean
+  is_bulwark: boolean
   is_alive: boolean
   is_hidden: boolean
   is_insulated: boolean

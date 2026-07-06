@@ -1,6 +1,10 @@
 package game
 
-import "github.com/google/uuid"
+import (
+	"slices"
+
+	"github.com/google/uuid"
+)
 
 type Position struct {
 	ID       uuid.UUID `json:"ID"`
@@ -31,14 +35,15 @@ func (g *Game) GetDistance(a uuid.UUID, b uuid.UUID) (int, bool) {
 	return position_a.GetDistanceFrom(position_b), true
 }
 
-func nextPositionByRank(player_ID uuid.UUID, positions []Position, rank int, direction int) (Position, bool) {
+func (g *Game) NextAllyPositionByRank(player_ID uuid.UUID, rank int, direction int) (Position, bool) {
 	var next Position
 	found := false
 
-	for _, position := range positions {
+	for _, position := range g.State().Positions {
 		if position.PlayerID != player_ID {
 			continue
 		}
+
 		if direction < 0 && position.Rank < rank && (!found || position.Rank > next.Rank) {
 			next = position
 			found = true
@@ -50,4 +55,34 @@ func nextPositionByRank(player_ID uuid.UUID, positions []Position, rank int, dir
 	}
 
 	return next, found
+}
+func (g *Game) GetEnemyPositionsByRank(player_ID uuid.UUID, rank int, direction int) []Position {
+	positions := []Position{}
+
+	// sort by rank so that if an early actor needs to stop the collateral, the front-most ones stop first
+	state_positions := g.State().Positions
+	slices.SortStableFunc(state_positions, func(a, b Position) int {
+		return a.Rank - b.Rank
+	})
+	for _, position := range state_positions {
+		if position.PlayerID == player_ID {
+			continue
+		}
+
+		if direction < 0 && position.Rank <= rank {
+			positions = append(positions, position)
+		}
+		if direction > 0 && position.Rank >= rank {
+			positions = append(positions, position)
+		}
+
+		target, ok := g.GetActor(position.ActorID)
+		if ok {
+			if target.IsBulwark {
+				break
+			}
+		}
+	}
+
+	return positions
 }

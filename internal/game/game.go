@@ -414,7 +414,6 @@ func (g *Game) SetLastUsedAction(actor_id uuid.UUID, action_id uuid.UUID) {
 func (g *Game) SetCooldown(cmd Command) {
 	g.mutate(func(s *State) {
 		s.UpdateActor(cmd.Context.SourceID, func(a Actor) Actor {
-			fmt.Println(a.Name, cmd.Payload.Config.Name, cmd.Payload.Config.Cooldown)
 			a.SetActionCooldown(cmd.Payload.ID, cmd.Payload.Config.Cooldown)
 			return a
 		})
@@ -503,7 +502,7 @@ func (g *Game) moveActor(actor_id uuid.UUID, direction int) bool {
 		return false
 	}
 
-	next, ok := nextPositionByRank(actor.PlayerID, g.State().Positions, position.Rank, direction)
+	next, ok := g.NextAllyPositionByRank(actor.PlayerID, position.Rank, direction)
 	if !ok {
 		return false
 	}

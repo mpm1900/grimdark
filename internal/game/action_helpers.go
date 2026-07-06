@@ -128,7 +128,6 @@ func PostDamageLogs(result DamageResult, context Context, this *ActionContext) {
 		}
 	}
 }
-
 func DamageSideEffects(g *Game, context Context, result DamageResult, this *ActionContext, config AttackConfig) {
 	trigger_context := MakeContextFor(this.Source, result.Target)
 	if result.Success() {
@@ -171,6 +170,27 @@ func CtxToAllOtherActiveTargets() func(g Game, ctx Context, this ActionContext) 
 	return func(g Game, ctx Context, this ActionContext) Context {
 		c := ctx.CloneWithTargets(g.FindActors(ActiveActors, ctx))
 		c.RemoveTarget(this.Source)
+		return c
+	}
+}
+func CtxTargetPreCollateral() func(g Game, ctx Context, this ActionContext) Context {
+	return func(g Game, ctx Context, this ActionContext) Context {
+		if len(ctx.PositionIDs) == 0 {
+			return ctx
+		}
+
+		target_position, ok := g.GetPosition(ctx.PositionIDs[0])
+		if !ok {
+			return ctx
+		}
+
+		c := ctx.Clone()
+		c.ClearTargets()
+		positions := g.GetEnemyPositionsByRank(ctx.PlayerID, target_position.Rank, -1)
+		for _, pos := range positions {
+			c.PositionIDs = append(c.PositionIDs, pos.ID)
+		}
+
 		return c
 	}
 }

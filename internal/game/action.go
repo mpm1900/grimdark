@@ -11,6 +11,7 @@ type Action struct {
 	Config ActionConfig
 
 	Resolve          ActionResolver
+	Validate         GameFilter
 	ValidateContext  GameFilter
 	TargetsPredicate Filter[Actor]
 	MapContext       func(g Game, ctx Context, this ActionContext) Context
@@ -44,10 +45,10 @@ func (a Action) CanResolve(g Game, context Context, this *ActionContext) bool {
 	if !ok {
 		return false
 	}
-	context_valid := a.ValidateContext == nil || a.ValidateContext(g, context)
+	runtime_valid := a.Validate == nil || a.Validate(g, context)
 	source_valid := source.IsAlive && source.IsActive() && source.CanAct()
 	action_valid := !a.Disabled(g, source)
-	valid := action_valid && context_valid && source_valid
+	valid := action_valid && runtime_valid && source_valid
 
 	if this != nil {
 		if source.IsStunned {
