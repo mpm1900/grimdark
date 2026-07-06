@@ -62,10 +62,10 @@ func AddSourceEffects(config StatusConfig, chance float64, effects ...Effect) Ac
 		if immune {
 			this.Push(PushLog(NewLog(
 				"$target$ was immune to $aff$.",
-				map[string]string{
-					"$target$": this.Source.Name,
-					"$aff$":    string(this.Action.Config.Affinity),
-				},
+				CombineTerms(
+					ActionTerms(this.Action),
+					TargetTerms(this.Source),
+				),
 			)).Bind(ctx))
 
 			if config.OnFailureResult != nil {
@@ -103,10 +103,10 @@ func AddTargetsEffects(config StatusConfig, effects ...Effect) ActionResolver {
 			if immune {
 				this.Push(PushLog(NewLog(
 					"$target$ was immune to $aff$.",
-					map[string]string{
-						"$target$": target.Name,
-						"$aff$":    string(this.Action.Config.Affinity),
-					},
+					CombineTerms(
+						ActionTerms(this.Action),
+						TargetTerms(result.Target),
+					),
 				)).Bind(ctx))
 			}
 

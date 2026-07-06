@@ -15,10 +15,7 @@ func StatChangeSourceOnSuccess(g *game.Game, this game.Effect, ctx game.Context)
 
 	g.PushLogMeta(game.NewLog(
 		"$source$ gained $effect$.",
-		map[string]string{
-			"$source$": source.Name,
-			"$effect$": this.Name,
-		},
+		game.EffectTermsSource(source, this),
 	).Bind(ctx))
 }
 func StatChangeTargetsOnSuccess(g *game.Game, this game.Effect, ctx game.Context) {
@@ -26,10 +23,7 @@ func StatChangeTargetsOnSuccess(g *game.Game, this game.Effect, ctx game.Context
 	for _, target := range targets {
 		g.PushLogMeta(game.NewLog(
 			"$target$ gained $effect$.",
-			map[string]string{
-				"$target$": target.Name,
-				"$effect$": this.Name,
-			},
+			game.EffectTermsTarget(target, this),
 		).Bind(ctx))
 	}
 }

@@ -457,22 +457,16 @@ func (g *Game) SetPosition(actor_id uuid.UUID, position_id uuid.UUID) {
 			})
 
 			if actor.IsAlive {
-				log := NewLog("$source$ left the battle.", map[string]string{
-					"$source$": actor.Name,
-				})
+				log := NewLog("$source$ left the battle.", SourceTerms(actor))
 				g.PushLogMeta(log.Bind(trigger_context))
 			} else {
-				log := NewLog("$source$ died.", map[string]string{
-					"$source$": actor.Name,
-				})
+				log := NewLog("$source$ died.", SourceTerms(actor))
 				g.PushLogMeta(log.Bind(trigger_context))
 			}
 			g.On(OnActorLeave, trigger_context)
 		}
 		if actor.PositionID == uuid.Nil {
-			log := NewLog("$source$ joined the battle.", map[string]string{
-				"$source$": actor.Name,
-			})
+			log := NewLog("$source$ joined the battle.", SourceTerms(actor))
 			g.PushLogMeta(log.Bind(trigger_context))
 			g.On(OnActorEnter, trigger_context)
 		}
@@ -519,15 +513,11 @@ func (g *Game) moveActor(actor_id uuid.UUID, direction int) bool {
 	log_ctx := MakeContextFrom(actor)
 	log_ctx.PositionIDs = []uuid.UUID{next.ID}
 	if direction > 0 {
-		log := NewLog("$source$ moved backwards.", map[string]string{
-			"$source$": actor.Name,
-		})
+		log := NewLog("$source$ moved backwards.", SourceTerms(actor))
 		g.PushLogMeta(log.Bind(log_ctx))
 	}
 	if direction < 0 {
-		log := NewLog("$source$ moved forwards.", map[string]string{
-			"$source$": actor.Name,
-		})
+		log := NewLog("$source$ moved forwards.", SourceTerms(actor))
 		g.PushLogMeta(log.Bind(log_ctx))
 	}
 
@@ -558,9 +548,7 @@ func (g *Game) DamageTargets(context Context, damage float64) {
 
 				g.PushLogMeta(NewLog(
 					fmt.Sprintf("$target$ lost %d%% HP.", int(ratio*100)),
-					map[string]string{
-						"$target$": a.Name,
-					},
+					TargetTerms(a),
 				).Bind(log_ctx))
 			}
 
@@ -568,9 +556,7 @@ func (g *Game) DamageTargets(context Context, damage float64) {
 				ratio := -target_damage / target.Stats[Health]
 				g.PushLogMeta(NewLog(
 					fmt.Sprintf("$target$ healed %d%% HP.", int(ratio*100)),
-					map[string]string{
-						"$target$": a.Name,
-					},
+					TargetTerms(a),
 				).Bind(log_ctx))
 			}
 

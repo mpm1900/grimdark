@@ -52,24 +52,12 @@ func (a Action) CanResolve(g Game, context Context, this *ActionContext) bool {
 
 	if this != nil {
 		if source.IsStunned {
-			this.Push(
-				PushLog(NewLog("$source$ was stunned.", map[string]string{
-					"$source$": this.Source.Name,
-				})).Bind(context),
-			)
+			this.Push(PushLog(NewLog("$source$ was stunned.", SourceTerms(source))).Bind(context))
 		}
 		if !action_valid {
-			this.Push(
-				PushLog(NewLog("$action$ as disabled.", map[string]string{
-					"$action$": a.Config.Name,
-				})).Bind(context),
-			)
+			this.Push(PushLog(NewLog("$action$ as disabled.", ActionTerms(a))).Bind(context))
 		} else if !valid {
-			this.Push(
-				PushLog(NewLog("$action$ failed.", map[string]string{
-					"$action$": a.Config.Name,
-				})).Bind(context),
-			)
+			this.Push(PushLog(NewLog("$action$ failed.", ActionTerms(a))).Bind(context))
 		}
 	}
 
@@ -111,12 +99,8 @@ func (c Command) Resolve(g *Game) []Transaction {
 	g.SetActiveContext(context)
 	g.ResetLogDepth()
 
-	action_context.Push(
-		PushLogDepth(NewLog("$source$ used $action$.", map[string]string{
-			"$source$": action_context.Source.Name,
-			"$action$": c.Payload.Config.Name,
-		}), 0).Bind(context),
-	)
+	log := NewLog("$source$ used $action$.", CommandTerms(action_context.Source, c))
+	action_context.Push(PushLogDepth(log, 0).Bind(context))
 
 	if c.Payload.Resolve == nil || !c.Payload.CanResolve(*g, context, &action_context) {
 		return action_context.transactions

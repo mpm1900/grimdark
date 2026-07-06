@@ -1,6 +1,7 @@
 package game
 
 import (
+	"maps"
 	"sort"
 	"strings"
 )
@@ -29,6 +30,9 @@ func (g *Game) IncLogDepth() {
 func (l Log) Bind(context Context) Bindable[Log] {
 	return bind(l, context)
 }
+func BasicLog(template string) Bindable[Log] {
+	return NewLog(template, map[string]string{}).Bind(NewContext())
+}
 
 func (l Log) Resolve() string {
 	if len(l.Terms) == 0 {
@@ -51,4 +55,49 @@ func (l Log) Resolve() string {
 	}
 
 	return strings.NewReplacer(parts...).Replace(l.Template)
+}
+
+func CombineTerms(terms ...map[string]string) map[string]string {
+	result := map[string]string{}
+	for _, set := range terms {
+		maps.Copy(result, set)
+	}
+	return result
+}
+func ETerms() map[string]string {
+	return map[string]string{}
+}
+func TargetTerms(target Actor) map[string]string {
+	return map[string]string{
+		"$target$": target.Name,
+	}
+}
+func SourceTerms(target Actor) map[string]string {
+	return map[string]string{
+		"$source$": target.Name,
+	}
+}
+func ActionTerms(action Action) map[string]string {
+	return map[string]string{
+		"$action$": action.Config.Name,
+		"$aff$":    string(action.Config.Affinity),
+	}
+}
+func CommandTerms(source Actor, cmd Command) map[string]string {
+	return map[string]string{
+		"$source$": source.Name,
+		"$action$": cmd.Payload.Config.Name,
+	}
+}
+func EffectTermsSource(source Actor, effect Effect) map[string]string {
+	return map[string]string{
+		"$source$": source.Name,
+		"$effect$": effect.Name,
+	}
+}
+func EffectTermsTarget(target Actor, effect Effect) map[string]string {
+	return map[string]string{
+		"$target$": target.Name,
+		"$effect$": effect.Name,
+	}
 }

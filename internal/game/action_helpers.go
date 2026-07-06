@@ -35,9 +35,7 @@ func AddResultEffects(chance float64, effects ...Effect) AttackEffectResult {
 		if result.Target.IsInsulated {
 			this.Push(PushLog(NewLog(
 				"$target$ was insulated from secondary effects.",
-				map[string]string{
-					"$target$": result.Target.Name,
-				},
+				TargetTerms(result.Target),
 			)).Bind(context))
 			return
 		}
@@ -47,10 +45,10 @@ func AddResultEffects(chance float64, effects ...Effect) AttackEffectResult {
 		if immune {
 			this.Push(PushLog(NewLog(
 				"$target$ was immune to $aff$.",
-				map[string]string{
-					"$target$": result.Target.Name,
-					"$aff$":    string(this.Action.Config.Affinity),
-				},
+				CombineTerms(
+					ActionTerms(this.Action),
+					TargetTerms(result.Target),
+				),
 			)).Bind(context))
 			return
 		}
@@ -79,20 +77,17 @@ func PostDamageLogs(result DamageResult, context Context, this *ActionContext) {
 	if result.Success() {
 		if result.BaseAffinityStage >= 2 {
 			this.Push(PushLog(NewLog(
-				"Super Effective!",
-				map[string]string{},
+				"Super Effective!", ETerms(),
 			)).Bind(context))
 		}
 		if result.BaseAffinityStage <= -2 {
 			this.Push(PushLog(NewLog(
-				"Not Very Effective...",
-				map[string]string{},
+				"Not Very Effective...", ETerms(),
 			)).Bind(context))
 		}
 		if result.Critical {
 			this.Push(PushLog(NewLog(
-				"Critical hit!",
-				map[string]string{},
+				"Critical hit!", ETerms(),
 			)).Bind(context))
 		}
 	}
@@ -102,28 +97,25 @@ func PostDamageLogs(result DamageResult, context Context, this *ActionContext) {
 		if immune {
 			this.Push(PushLog(NewLog(
 				"$target$ was immune to $aff$.",
-				map[string]string{
-					"$target$": result.Target.Name,
-					"$aff$":    string(this.Action.Config.Affinity),
-				},
+				CombineTerms(
+					ActionTerms(this.Action),
+					TargetTerms(result.Target),
+				),
 			)).Bind(context))
 		}
 		if result.Target.IsProtected {
 			this.Push(PushLog(NewLog(
 				"$target$ was protected.",
-				map[string]string{
-					"$target$": result.Target.Name,
-				},
+				TargetTerms(result.Target),
 			)).Bind(context))
 		}
 		if !result.AccuracyResult.Pass {
 			this.Push(PushLog(NewLog(
 				"$action$ missed $target$.",
-				map[string]string{
-					"$action$": this.Action.Config.Name,
-					"$source$": this.Source.Name,
-					"$target$": result.Target.Name,
-				},
+				CombineTerms(
+					ActionTerms(this.Action),
+					TargetTerms(result.Target),
+				),
 			)).Bind(context))
 		}
 	}
