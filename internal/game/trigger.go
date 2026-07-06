@@ -13,6 +13,7 @@ const (
 	OnCriticalHit   TriggerOn = "on-critical-hit"
 	OnMiss          TriggerOn = "on-miss"
 	OnModifierAdd   TriggerOn = "on-modifier-add"
+	OnItemConsume   TriggerOn = "on-item-consume"
 	OnTurnEnd       TriggerOn = "on-turn-end"
 )
 

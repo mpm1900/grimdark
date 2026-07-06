@@ -1,6 +1,7 @@
 import { Store } from '@tanstack/store'
 import type { Game } from '../game/game'
 import { isIdNull } from '../game/core'
+import type { Actor } from '../game/actor'
 
 export type Ui = {
   active_actor: string | null
@@ -19,6 +20,20 @@ const INITIAL_UI: Ui = {
 }
 
 const uiStore = new Store<Ui>(INITIAL_UI)
+
+function IsActorActive(ui: Ui, actor: Actor, status: string): boolean {
+  if (status === 'idle') {
+    if (actor.ID === ui.active_actor) return true
+    if (actor.ID === ui.hover_position) return true
+    if (ui.range_positions.includes(actor.position_ID ?? '')) return true
+  }
+  if (status === 'running') {
+    if (actor.ID === ui.source_actor) return true
+    if (ui.target_positions.includes(actor.position_ID ?? '')) return true
+  }
+
+  return false
+}
 
 function setActiveActor(actor_id: string | null) {
   uiStore.setState((old) => ({
@@ -61,7 +76,9 @@ function setDefaultActiveActor(game: Game) {
       return old
     }
 
-    const position = game.positions.find((p) => p.player_ID === game.player_ID && p.rank === 0)
+    const position = game.positions.find(
+      (p) => p.player_ID === game.player_ID && p.rank === 0
+    )
     if (!position || isIdNull(position.actor_ID)) {
       return old
     }
@@ -75,6 +92,7 @@ function setDefaultActiveActor(game: Game) {
 
 export {
   uiStore,
+  IsActorActive,
   setActiveActor,
   setDefaultActiveActor,
   setRangePositions,

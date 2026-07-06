@@ -18,6 +18,8 @@ import { GothicPopoverContent } from './gothic-ui/popover'
 import { ActorStatsPanel } from './panels/actor-stats'
 import { ActorPortrait } from './actor-portrait'
 import { clientsStore } from '#/lib/stores/clients'
+import { TbPackage, TbPackageOff } from 'react-icons/tb'
+import { IsActorActive, uiStore } from '#/lib/stores/ui'
 
 function StatMultBadge({ actor, stat }: { actor: Actor; stat: Stat }) {
   const stage = actor.stages[stat]
@@ -84,19 +86,34 @@ function ActorFrameSlim({
   ...props
 }: React.ComponentProps<'div'> & { actor: Actor }) {
   const client = useSelector(clientsStore, (s) => s.me)
+  const ui = useSelector(uiStore, (s) => s)
+  const status = useSelector(gameStore, (g) => g.status)
   return (
     <div className={cn('relative mt-4', className)} {...props}>
       <div className="flex flex-row justify-between items-end mb-1">
         <Popover>
           <PopoverTrigger
-            className="cursor-pointer -mr-1"
+            className="flex items-end gap-1 cursor-pointer -mr-1"
             onClick={(e) => {
               e.stopPropagation()
             }}
           >
-            <span className="text-sm font-bold font-cinzel-dec [text-shadow:2px_1px_0_var(--color-black)] text-foreground -mb-1 hover:underline">
+            <span
+              className={cn(
+                'text-sm font-bold font-cinzel-dec [text-shadow:2px_1px_0_var(--color-black)] -mb-1 hover:underline',
+                'text-foreground/40 hover:text-foreground',
+                {
+                  'text-foreground': IsActorActive(ui, actor, status),
+                }
+              )}
+            >
               {actor.name}
             </span>
+            {actor.item === null ? (
+              <TbPackageOff className="text-foreground/20" />
+            ) : (
+              <TbPackage className="text-foreground/60" />
+            )}
           </PopoverTrigger>
           <GothicPopoverContent
             className="w-auto"
@@ -108,13 +125,25 @@ function ActorFrameSlim({
           </GothicPopoverContent>
         </Popover>
 
-        <div className="flex gap-0"></div>
+        <div className="flex items-center gap-0">
+          {AFFINITIES.filter((a) => actor.affinities.includes(a)).map((a) => (
+            <AffinityName key={a} affinity={a} />
+          ))}
+        </div>
       </div>
-      <div className="relative">
+      <div
+        className={cn(
+          'relative',
+          'opacity-50 transition-opacity group-hover:opacity-100',
+          {
+            'opacity-100': IsActorActive(ui, actor, status),
+          }
+        )}
+      >
         <HealthBar
           actor={actor}
           type="value"
-          className="rounded-l-none -ml-px"
+          className={cn('rounded-l-none -ml-px')}
           hide_numbers={client?.ID !== actor.player_ID}
         />
         <div className="absolute -bottom-1.5 left-0 flex gap-0.5">

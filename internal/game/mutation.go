@@ -130,10 +130,11 @@ func MutateTargets(updater Updater[Actor]) Mutation {
 func ConsumeItem() Mutation {
 	return Mutation{
 		delta: func(g *Game, ctx Context) []uuid.UUID {
-			g.state.UpdateActor(ctx.ParentID, func(a Actor) Actor {
+			g.MutateActor(ctx.ParentID, func(a Actor) Actor {
 				a.Item = nil
 				return a
 			})
+			g.On(OnItemConsume, ctx)
 			return []uuid.UUID{ctx.ParentID}
 		},
 	}

@@ -554,8 +554,10 @@ func (g *Game) DamageTargets(context Context, damage float64) {
 			log_ctx := MakeContextFor(a, a)
 
 			if target_damage > 0 {
+				ratio := target_damage / target.Stats[Health]
+
 				g.PushLogMeta(NewLog(
-					fmt.Sprintf("$target$ lost %d HP.", int(target_damage)),
+					fmt.Sprintf("$target$ lost %d%% HP.", int(ratio*100)),
 					map[string]string{
 						"$target$": a.Name,
 					},
@@ -563,8 +565,9 @@ func (g *Game) DamageTargets(context Context, damage float64) {
 			}
 
 			if target_damage < 0 {
+				ratio := -target_damage / target.Stats[Health]
 				g.PushLogMeta(NewLog(
-					fmt.Sprintf("$target$ healed %d HP.", int(-target_damage)),
+					fmt.Sprintf("$target$ healed %d%% HP.", int(ratio*100)),
 					map[string]string{
 						"$target$": a.Name,
 					},

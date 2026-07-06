@@ -3,7 +3,6 @@ import { setActiveActor, uiStore } from '#/lib/stores/ui'
 import { useSelector } from '@tanstack/react-store'
 import { ActorFrameSlim } from './actor-frame'
 import { GothicFramedButton } from './gothic-ui/button'
-import type { Player } from '#/lib/game/player'
 import { clientsStore } from '#/lib/stores/clients'
 import { gameStore } from '#/lib/stores/game'
 import { cn } from '#/lib/utils'
@@ -89,7 +88,7 @@ function PlayerPosition({
       id={position.ID}
       data-position-id={position.ID}
       data-actor-id={position.actor_ID}
-      className={cn('relative flex-1 h-107 -mb-2', className)}
+      className={cn('relative flex-1 h-107 -mb-2 group', className)}
       {...props}
     >
       {actor && (
