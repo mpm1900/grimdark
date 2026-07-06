@@ -4,7 +4,6 @@ import (
 	"math/rand/v2"
 
 	"github.com/google/uuid"
-	"github.com/k0kubun/pp/v3"
 )
 
 func BasicAttack(config AttackConfig) ActionResolver {
@@ -21,7 +20,6 @@ func BasicAttack(config AttackConfig) ActionResolver {
 
 			for _, target := range targets {
 				result := this.Action.Config.GetDamageResult(this.Source, target, context, rand.Float64(), pending_damage[target.ID])
-				pp.Println(result.Multipliers)
 				dmg_ctx := MakeContextFor(this.Source, target)
 
 				this.Push(DamageTargets(result.Damage).Bind(dmg_ctx))
