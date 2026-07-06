@@ -29,5 +29,5 @@ var Blast = game.Action{
 	}),
 	MapContext:       game.CtxTargetPreCollateral(),
 	ValidateContext:  game.ContextTargetLength(1),
-	TargetsPredicate: game.CombineFilters(game.ActiveActors, game.NotSourceActor, game.PositionRank(2)),
+	TargetsPredicate: game.CombineFilters(game.ActiveActors, game.Enemies, game.PositionRank(2)),
 }

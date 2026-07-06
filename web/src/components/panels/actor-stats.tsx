@@ -33,7 +33,7 @@ function ActorStatsPanel({
           </Marker>
           <OtherStatsTable actor={actor} />
         </div>
-        <div className='px-1'>
+        <div className='px-1  max-w-72'>
 
           <Marker variant="separator">
             <MarkerContent>Active Effects</MarkerContent>

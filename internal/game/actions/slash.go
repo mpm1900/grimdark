@@ -24,6 +24,9 @@ var Slash = game.Action{
 		TargetCount:  1,
 		Range:        game.P(1),
 	},
+	LogTemplate: game.P(
+		"$source$ unleashed a flurry of slashes.",
+	),
 	IsActive: true,
 	Resolve: game.BasicAttack(game.AttackConfig{
 		OnSuccessResult: func(g game.Game, context game.Context, this *game.ActionContext, result game.DamageResult) {

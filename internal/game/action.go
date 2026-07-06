@@ -7,8 +7,9 @@ import (
 type ActionResolver func(g *Game, ctx Context, this ActionContext) []Transaction
 
 type Action struct {
-	ID     uuid.UUID
-	Config ActionConfig
+	ID          uuid.UUID
+	Config      ActionConfig
+	LogTemplate *string
 
 	Resolve          ActionResolver
 	Validate         GameFilter
@@ -99,8 +100,13 @@ func (c Command) Resolve(g *Game) []Transaction {
 	g.SetActiveContext(context)
 	g.ResetLogDepth()
 
-	log := NewLog("$source$ used $action$.", CommandTerms(action_context.Source, c))
-	action_context.Push(PushLogDepth(log, 0).Bind(context))
+	if c.Payload.LogTemplate == nil {
+		log := NewLog("$source$ used $action$.", CommandTerms(action_context.Source, c))
+		action_context.Push(PushLogDepth(log, 0).Bind(context))
+	} else {
+		log := NewLog(*c.Payload.LogTemplate, CommandTerms(action_context.Source, c))
+		action_context.Push(PushLogDepth(log, 0).Bind(context))
+	}
 
 	if c.Payload.Resolve == nil || !c.Payload.CanResolve(*g, context, &action_context) {
 		return action_context.transactions
