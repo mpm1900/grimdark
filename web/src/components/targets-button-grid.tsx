@@ -136,8 +136,8 @@ function TargetsButtonGrid({
         <Marker variant="separator" className="px-6">
           <MarkerContent>
             {validate_query.data
-              ? "This action doesn't have targets."
-              : 'No targets available.'}
+              ? "This action doesn't need targets"
+              : 'No targets available'}
           </MarkerContent>
         </Marker>
       )}
