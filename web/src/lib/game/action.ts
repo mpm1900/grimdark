@@ -3,6 +3,8 @@ import type { Affinity, ID, Stat } from './core'
 export type ActionConfig = {
   accuracy: number | null
   affinity: Affinity
+  cooldown: number
+  crit_stage: number
   crit_chance: number
   crit_modifier: number
   description: string

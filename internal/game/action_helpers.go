@@ -290,7 +290,7 @@ func MoveForwards() Action {
 		Subtype: ASForward,
 		Config: ActionConfig{
 			Name:        "Move Forwards",
-			Description: "User move forwards, displacing other actors back.",
+			Description: "User moves forwards, displacing other actors back.",
 			TargetCount: 0,
 		},
 		Resolve: func(g *Game, ctx Context, this ActionContext) []Transaction {
@@ -317,7 +317,7 @@ func MoveFront() Action {
 		Subtype: ASFront,
 		Config: ActionConfig{
 			Name:        "Move to Front",
-			Description: "User move the front of battle, displacing other actors back.",
+			Description: "User moves to the front (1st position), displacing other actors back.",
 			TargetCount: 0,
 		},
 		Resolve: func(g *Game, ctx Context, this ActionContext) []Transaction {
@@ -344,7 +344,7 @@ func MoveBackwards() Action {
 		Subtype: ASBack,
 		Config: ActionConfig{
 			Name:        "Move Backwards",
-			Description: "User move backwards, displacing other actors forward.",
+			Description: "User moves backwards, displacing other actors forward.",
 			TargetCount: 0,
 		},
 		Resolve: func(g *Game, ctx Context, this ActionContext) []Transaction {

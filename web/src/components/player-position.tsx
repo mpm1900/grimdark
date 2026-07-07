@@ -24,15 +24,22 @@ function PlayerSprite({
   const client = useSelector(clientsStore, (s) => s.me)
   const status = useSelector(gameStore, (g) => g.status)
   const commands = useSelector(gameStore, (g) => g.commands)
-  const active_actor = useSelector(uiStore, (s) => s.active_actor)
+  const ui = useSelector(uiStore, (s) => s)
   const actor_command = commands.find((c) => c.context.source_ID === actor?.ID)
+  const is_highlighted =
+    status === 'idle'
+      ? ui.active_actor === actor.ID || hover_position === position_ID
+      : status === 'running'
+        ? ui.source_actor === actor.ID ||
+          ui.target_positions.includes(position_ID)
+        : true
   return (
     <div
       className={cn(
         'relative z-10 px-8 py-2 flex justify-center',
         {
-          'opacity-50': hover_position !== position_ID,
-          'opacity-100': active_actor === actor.ID,
+          'opacity-50': !is_highlighted,
+          'opacity-100': is_highlighted,
         },
         className
       )}

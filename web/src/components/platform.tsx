@@ -2,10 +2,7 @@ import type { ComponentProps } from 'react'
 import { cn } from '#/lib/utils'
 import { cva, type VariantProps } from 'class-variance-authority'
 import type { Ui } from '#/lib/stores/ui'
-import type { Player } from '#/lib/game/player'
 import type { Status } from '#/lib/game/core'
-import { ChevronRight } from 'lucide-react'
-import { FaArrowRight, FaChevronRight } from 'react-icons/fa6'
 import type { Position } from '#/lib/game/position'
 
 function PlatformParent({
@@ -98,7 +95,8 @@ function Platform({
   variant,
   rank,
   ...props
-}: ComponentProps<'div'> & VariantProps<typeof platformVariants> & { rank: number }) {
+}: ComponentProps<'div'> &
+  VariantProps<typeof platformVariants> & { rank: number }) {
   return (
     <div className="relative flex-1 transform-3d" {...props}>
       <div
@@ -108,7 +106,7 @@ function Platform({
             'relative overflow-hidden [&>svg]:opacity-50 grid place-items-center',
         })}
       >
-        <span className='text-7xl font-cinzel font-black'>{rank + 1}</span>
+        <span className="text-7xl font-cinzel font-black">{rank + 1}</span>
         {/*
         <FaChevronRight className="absolute top-0 bottom-0 -translate-x-1/2 size-full" />
         <FaChevronRight className="absolute top-0 bottom-0 -translate-x-1/3 size-full" />

@@ -67,6 +67,8 @@ const (
 	PhaseCleanup GamePhase = "cleanup"
 )
 
+const maxLogCount = 30
+
 type Game struct {
 	state    State
 	resolved State
@@ -147,6 +149,9 @@ func (g *Game) SetActiveContext(context Context) {
 
 func (g *Game) PushLog(log Bindable[Log]) {
 	g.Logs = append(g.Logs, log)
+	if len(g.Logs) > maxLogCount {
+		g.Logs = slices.Clone(g.Logs[len(g.Logs)-maxLogCount:])
+	}
 }
 func (g *Game) PushLogDepth(log Bindable[Log], rank int) {
 	log.Payload.Depth = rank

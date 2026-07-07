@@ -22,8 +22,6 @@ type ActionConfig struct {
 	Stat         Stat     `json:"stat"`
 	StopOnMiss   bool     `json:"-"`
 	TargetCount  int      `json:"target_count"`
-	// TOOD
-	// - cost
 }
 
 /**

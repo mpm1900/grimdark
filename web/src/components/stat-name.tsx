@@ -55,10 +55,11 @@ function StatName({
 
 function StatIcon({
   stat,
+  className,
   ...props
 }: React.ComponentProps<IconType> & { stat: Stat }) {
   const Icon = STAT_ICONS[stat]
-  return <Icon {...props} />
+  return <Icon className={cn(statVariants({ stat }), className)} {...props} />
 }
 
 export { StatName, StatIcon, statVariants }
