@@ -18,7 +18,6 @@ function ActiveContext({
   const modifier = modifiers.find(
     (m) => m.payload.ID === active_context?.effect_ID
   )
-  console.log(active_context)
   return (
     <Popover
       key={source?.ID ?? modifier?.ID}

@@ -47,6 +47,7 @@ type ActorMeta struct {
 	ActiveTurns      int
 	InactiveTurns    int
 	LastUsedActionID uuid.UUID
+	Seen             bool
 }
 
 type Actor struct {
@@ -103,6 +104,7 @@ type actorJSON struct {
 	UnmodifiedStats    map[Stat]int         `json:"unmodified_stats"`
 	ActiveModifiers    []uuid.UUID          `json:"active_modifiers"`
 	Wounds             int                  `json:"wounds"`
+	Seen               bool                 `json:"-"`
 	State              ActorState           `json:"state"`
 	Status             ActorStatus          `json:"status"`
 	IsActive           bool                 `json:"is_active"`
@@ -187,6 +189,7 @@ func NewActor(playerID uuid.UUID, def ActorDef) Actor {
 			ActiveTurns:      0,
 			InactiveTurns:    0,
 			LastUsedActionID: uuid.Nil,
+			Seen:             false,
 		},
 	}
 }
@@ -325,14 +328,16 @@ func (a *Actor) NextTurn() {
 	}
 }
 func (a *Actor) SetPosition(position_id uuid.UUID) {
-	a.PositionID = position_id
-	a.Meta.LastUsedActionID = uuid.Nil
 	if position_id == uuid.Nil {
 		a.Meta.InactiveTurns = 0
+	} else {
+		a.Meta.Seen = true
 	}
 	if a.PositionID == uuid.Nil {
 		a.Meta.ActiveTurns = 0
 	}
+	a.PositionID = position_id
+	a.Meta.LastUsedActionID = uuid.Nil
 }
 
 func (a Actor) IsActive() bool {
@@ -500,6 +505,7 @@ func (a Actor) ToJSON(g Game) actorJSON {
 		UnmodifiedStats:    unmodified_stats,
 		ActiveModifiers:    active_modifiers,
 		Wounds:             int(a.Wounds),
+		Seen:               a.Meta.Seen,
 		State:              a.State,
 		Status:             a.Status,
 		IsActive:           a.IsActive(),

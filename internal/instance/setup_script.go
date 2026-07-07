@@ -31,6 +31,7 @@ func SetupOpponent(g *game.Game) {
 			g.AddActor(mnstr)
 			g.SetPosition(mnstr.ID, pos.ID)
 		}
+		g.AddActor(newMonster())
 	}
 }
 
@@ -94,6 +95,9 @@ func SetupGame(g *game.Game, user game.User) {
 	gabe.AffinityImmunities = map[game.Affinity]float64{
 		game.Kinetic: 0,
 	}
+	other_gabe := gabe.Clone()
+	other_gabe.ID = uuid.New()
+	other_gabe.Name = "Other"
 
 	if len(g.State().Players) == 0 {
 		g.AddPlayers(player)
@@ -102,4 +106,5 @@ func SetupGame(g *game.Game, user game.User) {
 	g.AddActor(max)
 	g.AddActor(katie)
 	g.AddActor(gabe)
+	g.AddActor(other_gabe)
 }

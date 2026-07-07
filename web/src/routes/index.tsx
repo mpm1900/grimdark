@@ -8,9 +8,10 @@ import { TinyBadge } from '#/components/gothic-ui/badge'
 import { GothicCard } from '#/components/gothic-ui/card'
 import { GothicFrame } from '#/components/gothic-ui/frame'
 import { PlayerPositions } from '#/components/player-positions'
+import { PlayerTeam } from '#/components/player-team'
 import { PromptController } from '#/components/prompt-controller'
 import { DialogTrigger } from '#/components/ui/dialog'
-import { WeaponDetails, WeaponFrame } from '#/components/weapon-details'
+import { WeaponFrame } from '#/components/weapon-details'
 import { clientsStore } from '#/lib/stores/clients'
 import { gameStore } from '#/lib/stores/game'
 import { uiStore } from '#/lib/stores/ui'
@@ -38,7 +39,11 @@ function Home() {
         <AppHeader />
 
         <div className="relative flex h-full min-h-0 flex-col overflow-hidden pt-12 z-20">
-          <div className="absolute inset-0 bottom-1/2 bg-neutral-900" />
+          <div className="absolute inset-0 bottom-1/2 bg-neutral-900 z-0" />
+          <div className="z-0 flex items-start justify-between p-2">
+            {client_player && <PlayerTeam player={client_player} />}
+            {other_player && <PlayerTeam player={other_player} />}
+          </div>
           <div className="flex-1" />
           <div className="flex shrink-0 px-3 z-10 -mb-1">
             {client_player && (
@@ -57,7 +62,7 @@ function Home() {
             )}
           </div>
           <div className="bg-[url(/gothic/DecoratedLineHorizontal.png)] hidden h-7 bg-center bg-contain bg-repeat-x"></div>
-          <div className="h-48 relative flex items-start justify-center -z-10 bg-neutral-950 mt-12">
+          <div className="h-48 relative flex items-start justify-center -z-10 mt-12">
             {active_actor && <ActorAvatar actor={active_actor} />}
             <GothicFrame className="relative flex flex-1 flex-col h-full bg-neutral-950 hidden">
               {active_actor && (

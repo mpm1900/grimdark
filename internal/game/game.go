@@ -218,6 +218,11 @@ func (g *Game) GetActor(id uuid.UUID) (Actor, bool) {
 func (g *Game) FindActors(where Filter[Actor], context Context) []Actor {
 	return g.State().FindActors(*g, where, context)
 }
+func (g *Game) GetActorsByPlayer(player_id uuid.UUID) []Actor {
+	return g.State().FindActors(*g, func(g Game, a Actor, ctx Context) bool {
+		return a.PlayerID == player_id
+	}, NewContext())
+}
 func (g *Game) GetActionableActors() []Actor {
 	return g.FindActors(CombineFilters(
 		ActiveActors,
@@ -259,12 +264,13 @@ func (g *Game) AddPlayers(players ...Player) {
 	g.mutate(func(s *State) {
 		s.Players = append(s.Players, players...)
 		for _, p := range players {
-			s.Positions = append(s.Positions, Position{
-				ID:       uuid.New(),
-				ActorID:  uuid.Nil,
-				PlayerID: p.ID,
-				Rank:     0,
-			},
+			s.Positions = append(s.Positions,
+				Position{
+					ID:       uuid.New(),
+					ActorID:  uuid.Nil,
+					PlayerID: p.ID,
+					Rank:     0,
+				},
 				Position{
 					ID:       uuid.New(),
 					ActorID:  uuid.Nil,
@@ -779,7 +785,7 @@ type GameJSON struct {
 	Phase         GamePhase              `json:"phase"`
 	Positions     []Position             `json:"positions"`
 	PlayerID      uuid.UUID              `json:"player_ID"`
-	Players       []Player               `json:"players"`
+	Players       []playerJSON           `json:"players"`
 	Prompts       []Bindable[actionJSON] `json:"prompts"`
 	Status        GameStatus             `json:"status"`
 	Turn          int                    `json:"turn"`
@@ -787,6 +793,11 @@ type GameJSON struct {
 
 func (g Game) ToJSON() GameJSON {
 	state := g.State()
+	players := make([]playerJSON, len(state.Players))
+	for i, player := range state.Players {
+		actors := g.GetActorsByPlayer(player.ID)
+		players[i] = player.ToJSON(len(actors))
+	}
 	actors := make([]actorJSON, len(state.Actors))
 	for i, actor := range state.Actors {
 		actors[i] = actor.ToJSON(g)
@@ -814,7 +825,7 @@ func (g Game) ToJSON() GameJSON {
 		Phase:         g.Phase,
 		Positions:     slices.Clone(g.State().Positions),
 		PlayerID:      uuid.Nil,
-		Players:       state.Players,
+		Players:       players,
 		Prompts:       prompts,
 		Status:        g.Status,
 		Turn:          g.Turn,
@@ -831,9 +842,13 @@ func (json *GameJSON) ForPlayer(player_ID uuid.UUID) {
 	commands = slices.DeleteFunc(commands, func(p Bindable[actionJSON]) bool {
 		return p.Context.PlayerID != player_ID
 	})
+	actors := slices.Clone(json.Actors)
+	actors = slices.DeleteFunc(actors, func(a actorJSON) bool {
+		return a.PlayerID != player_ID && !a.Seen
+	})
 	json.Prompts = prompts
 	json.Commands = commands
-
+	json.Actors = actors
 }
 
 // temp functions
