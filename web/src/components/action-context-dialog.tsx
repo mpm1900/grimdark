@@ -150,7 +150,7 @@ function ActionDetails({ action }: { action: Action }) {
       <div className="text-center text-white/50 p-4 italic">
         {action.config.description}
         {cooldown > 0 && (
-          <span className="text-white/80">{` ${pluralize(cooldown, 'Turn')} cooldown.`}</span>
+          <span className="text-white/80">{` ${cooldown} turn cooldown.`}</span>
         )}
       </div>
 
@@ -224,7 +224,7 @@ function ActionContextDialog({
           <GothicDialogTitle>{action.config.name}</GothicDialogTitle>
         </GothicDialogHeader>
 
-        <div className="overflow-hidden min-h-32">
+        <div className="overflow-hidden min-h-32 pt-1">
           <ActionDetails action={action} />
 
           <TargetsButtonGrid

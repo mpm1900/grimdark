@@ -435,10 +435,11 @@ func (g *Game) SetLastUsedAction(actor_id uuid.UUID, action_id uuid.UUID) {
 		})
 	})
 }
-func (g *Game) SetCooldown(cmd Command) {
+func (g *Game) SetCooldown(cmd Command, state ActionState) {
 	g.mutate(func(s *State) {
 		s.UpdateActor(cmd.Context.SourceID, func(a Actor) Actor {
-			a.SetActionCooldown(cmd.Payload.ID, cmd.Payload.Config.Cooldown)
+			cooldown := cmd.Payload.Config.Cooldown + state.CooldownBonus
+			a.SetActionCooldown(cmd.Payload.ID, cooldown)
 			return a
 		})
 	})
@@ -744,7 +745,15 @@ func (g *Game) NextCommand() {
 
 	g.PushTransactions(cmd.Resolve(g))
 	g.SetLastUsedAction(cmd.Context.SourceID, cmd.Payload.ID)
-	g.SetCooldown(cmd)
+
+	source, ok := g.GetSource(cmd.Context)
+	if !ok {
+		g.SetCooldown(cmd, ActionState{})
+		return
+	}
+
+	state := source.ActionsState[cmd.Payload.ID]
+	g.SetCooldown(cmd, state)
 }
 func (g *Game) NextPrompt() {
 	cmd, err := g.state.Prompts.Dequeue()

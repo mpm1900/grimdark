@@ -41,6 +41,7 @@ type ActorDef struct {
 
 type ActionState struct {
 	Cooldown      int
+	CooldownBonus int
 	IsDisabled    bool
 	PriorityBonus int
 	RangeBonus    int

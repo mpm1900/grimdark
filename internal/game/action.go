@@ -137,6 +137,7 @@ func (c Command) Resolve(g *Game) []Transaction {
 func (a Action) ToJSON(g Game, source Actor) actionJSON {
 	state := source.ActionsState[a.ID]
 	config := a.Config
+	config.Cooldown = config.Cooldown + state.CooldownBonus
 	config.Priority = config.Priority + state.PriorityBonus
 	if config.Range != nil {
 		config.Range = P(*config.Range + state.RangeBonus)
