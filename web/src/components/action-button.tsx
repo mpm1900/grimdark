@@ -26,6 +26,7 @@ import {
   TbSwitchHorizontal,
   TbSwitchVertical,
 } from 'react-icons/tb'
+import { DNumber } from './dnumber'
 
 function ActionButton({
   action,
@@ -120,23 +121,13 @@ function ActionButton({
                 </span>
                 {action.config.crit_chance && (
                   <span className="inline-flex items-baseline align-baseline">
-                    <span
-                      className={cn({
-                        'text-positive': actor.stats['critical-chance'] > 100,
-                        'text-negative': actor.stats['critical-chance'] < 100,
-                      })}
-                    >
+                    <DNumber value={actor.stats['critical-chance']} r={100}>
                       {(action.config.crit_chance * 100).toFixed(0)}%
-                    </span>
+                    </DNumber>
                     <MdKeyboardDoubleArrowRight className="self-center" />
-                    <span
-                      className={cn({
-                        'text-positive': actor.stats['critical-damage'] > 100,
-                        'text-negative': actor.stats['critical-damage'] < 100,
-                      })}
-                    >
+                    <DNumber value={actor.stats['critical-damage']} r={100}>
                       x{action.config.crit_modifier.toFixed(2)}
-                    </span>
+                    </DNumber>
                   </span>
                 )}
               </span>
@@ -157,14 +148,13 @@ function ActionButton({
             {action.config.power}
           </span>
           {action.config.accuracy && (
-            <span
-              className={cn('text-foreground/80 text-xs font-semibold', {
-                'text-positive/80': actor.stats['accuracy'] > 100,
-                'text-negative/80': actor.stats['accuracy'] < 100,
-              })}
+            <DNumber
+              value={actor.stats['accuracy']}
+              r={100}
+              className={cn('text-xs font-semibold')}
             >
               {Math.min(action.config.accuracy * 100, 100).toFixed(0)}%
-            </span>
+            </DNumber>
           )}
         </ItemActions>
       )}

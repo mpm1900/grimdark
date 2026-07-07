@@ -6,11 +6,11 @@ import {
   type Affinity,
 } from '#/lib/game/core'
 import { cn } from '#/lib/utils'
+import { DNumber } from './dnumber'
 
 function AffinityResistanceValue({
   actor,
   affinity,
-  className,
   ...props
 }: React.ComponentProps<'span'> & { actor: Actor; affinity: Affinity }) {
   const immunity = actor.affinity_immunities[affinity]
@@ -18,23 +18,20 @@ function AffinityResistanceValue({
   const unmodified = getBaseAffinityResistance(actor, affinity)
 
   return (
-    <span
-      className={cn({
-        'text-positive': value > unmodified,
-        'text-negative': value < unmodified,
-        'text-amber-400': immunity !== undefined,
-      })}
+    <DNumber
+      value={value}
+      r={unmodified}
+      perfect={immunity !== undefined}
       {...props}
     >
       {immunity !== undefined ? '∞' : value}
-    </span>
+    </DNumber>
   )
 }
 
 function AffinityDamageValue({
   actor,
   affinity,
-  className,
   ...props
 }: React.ComponentProps<'span'> & { actor: Actor; affinity: Affinity }) {
   const value = actor.affinity_damage[affinity] ?? 0
@@ -42,15 +39,9 @@ function AffinityDamageValue({
   if (value == 0) return null
 
   return (
-    <span
-      className={cn({
-        'text-positive': value > unmodified,
-        'text-negative': value < unmodified,
-      })}
-      {...props}
-    >
+    <DNumber value={value} r={unmodified} {...props}>
       {value}
-    </span>
+    </DNumber>
   )
 }
 
@@ -73,14 +64,9 @@ function AffinityResistanceMultiplier({
       className={cn(mult === 1 && !immunity && 'text-foreground/20', className)}
     >
       {immunity !== undefined ? (
-        <span
-          className={cn({
-            'text-positive': immunity > 0,
-            'text-amber-400': immunity <= 0,
-          })}
-        >
+        <DNumber value={immunity} perfect={immunity <= 0}>
           x{immunity.toFixed(2)}
-        </span>
+        </DNumber>
       ) : (
         <span>x{mult.toFixed(2)}</span>
       )}

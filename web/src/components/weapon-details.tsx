@@ -9,6 +9,7 @@ import { Separator } from './ui/separator'
 import { statVariants } from './stat-name'
 import { HoverCard, HoverCardTrigger } from './ui/hover-card'
 import { GothicHoverCardContent } from './gothic-ui/hover-card'
+import { DNumber } from './dnumber'
 
 function InlineAuxStats({
   aux_stats,
@@ -20,16 +21,10 @@ function InlineAuxStats({
   return (
     <span className={cn('flex gap-2', className)} {...props}>
       {entries(aux_stats).map(([stat, aux], i) => (
-        <span
-          key={i}
-          className={cn({
-            'text-positive': aux > 0,
-            'text-negative': aux < 0,
-          })}
-        >
+        <DNumber key={i} value={aux}>
           {sign(aux)}
           {Math.abs(aux)} {STAT_LABELS[stat]}
-        </span>
+        </DNumber>
       ))}
     </span>
   )

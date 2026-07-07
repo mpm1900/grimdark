@@ -23,6 +23,7 @@ import { GothicBadge } from './gothic-ui/badge'
 import { AffinityIcon } from './affinity-name'
 import { StatIcon } from './stat-name'
 import { cn } from '#/lib/utils'
+import { DNumber } from './dnumber'
 
 function formatNumber(value: number) {
   return Number.isInteger(value) ? value.toFixed(0) : value.toFixed(1)
@@ -75,7 +76,7 @@ function ActionDetailCard({
   )
 }
 
-function ActionDetails({ action }: { action: Action }) {
+function ActionDetails({ action, source }: { action: Action; source: Actor }) {
   const {
     accuracy,
     affinity,
@@ -124,7 +125,15 @@ function ActionDetails({ action }: { action: Action }) {
           {(accuracy !== null || has_power) && (
             <ActionDetailCard
               label="Accuracy"
-              value={accuracy === null ? 'Sure' : formatPercent(accuracy)}
+              value={
+                accuracy === null ? (
+                  '-'
+                ) : (
+                  <DNumber value={source.stats['accuracy']} r={100}>
+                    {formatPercent(accuracy)}
+                  </DNumber>
+                )
+              }
               className="opacity-90"
               valueClassName={'text-white/60'}
             />
@@ -147,10 +156,13 @@ function ActionDetails({ action }: { action: Action }) {
         </div>
       )}
 
-      <div className="text-center text-white/50 p-4 italic">
-        {action.config.description}
+      <div className=" text-foreground/50 p-4">
+        <span className="italic">{action.config.description}</span>
         {cooldown > 0 && (
-          <span className="text-white/80">{` ${cooldown} turn cooldown.`}</span>
+          <>
+            <br />
+            <span className="text-foreground/80">{` ${cooldown} turn cooldown.`}</span>
+          </>
         )}
       </div>
 
@@ -225,7 +237,7 @@ function ActionContextDialog({
         </GothicDialogHeader>
 
         <div className="overflow-hidden min-h-32 pt-1">
-          <ActionDetails action={action} />
+          <ActionDetails action={action} source={actor} />
 
           <TargetsButtonGrid
             actor={actor}

@@ -7,6 +7,7 @@ import {
   type Stat,
 } from '#/lib/game/core'
 import { cn, sign } from '#/lib/utils'
+import { DNumber } from './dnumber'
 import { StatName } from './stat-name'
 import { StatValue } from './stat-value'
 import { Table, TableBody, TableCell, TableRow } from './ui/table'
@@ -34,17 +35,12 @@ function MainStatRow({ actor, stat }: { actor: Actor; stat: Stat }) {
       </TableCell>
       <TableCell className="text-end">
         {stage != 0 && (
-          <span
-            className={cn(
-              {
-                'text-positive': stage > 0,
-                'text-negative': stage < 0,
-              },
-              mult === 1 && 'text-foreground/20'
-            )}
+          <DNumber
+            value={stage}
+            className={cn(mult === 1 && 'text-foreground/20')}
           >
             x{mult.toFixed(2)}
-          </span>
+          </DNumber>
         )}
       </TableCell>
     </TableRow>
@@ -88,15 +84,10 @@ function OffsetStatRow({ actor, stat }: { actor: Actor; stat: Stat }) {
       </TableCell>
       <TableCell className="text-end">
         {!!stage && (
-          <span
-            className={cn({
-              'text-positive': stage > 0,
-              'text-negative': stage < 0,
-            })}
-          >
+          <DNumber value={stage}>
             {sign(stage)}
             {Math.abs(stage)}
-          </span>
+          </DNumber>
         )}
       </TableCell>
       <TableCell className="text-end text-foreground/20">--</TableCell>
@@ -118,7 +109,6 @@ function StatsTable({
         {ACCURACY_STATS.map((stat) => (
           <MultiplierStatRow key={stat} actor={actor} stat={stat} />
         ))}
-
       </TableBody>
     </Table>
   )
@@ -135,7 +125,6 @@ function OtherStatsTable({
         <MultiplierStatRow actor={actor} stat="effect-chance" />
         <MultiplierStatRow actor={actor} stat="critical-damage" />
         <OffsetStatRow actor={actor} stat="critical-chance" />
-        <OffsetStatRow actor={actor} stat="range" />
       </TableBody>
     </Table>
   )

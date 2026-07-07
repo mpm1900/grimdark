@@ -752,7 +752,12 @@ func (g *Game) NextCommand() {
 		return
 	}
 
-	state := source.ActionsState[cmd.Payload.ID]
+	state, ok := source.ActionsState[cmd.Payload.ID]
+	if !ok {
+		g.SetCooldown(cmd, ActionState{})
+		return
+	}
+
 	g.SetCooldown(cmd, state)
 }
 func (g *Game) NextPrompt() {

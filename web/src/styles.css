@@ -77,9 +77,9 @@
   --sidebar-border: oklch(0.274 0.006 286.033);
   --sidebar-ring: oklch(0.442 0.017 285.786);
 
-  --positive2: oklch(79.2% 0.209 151.711);
   --positive: oklch(84.1% 0.238 128.85);
   --negative: oklch(70.4% 0.191 22.216);
+  --perfect: oklch(87.9% 0.169 91.605);
 
   --ally: oklch(90.5% 0.093 164.15);
   --enemy: oklch(83.7% 0.128 66.29);
@@ -142,6 +142,7 @@
 
   --color-positive: var(--positive);
   --color-negative: var(--negative);
+  --color-perfect: var(--perfect);
   --color-ally: var(--ally);
   --color-enemy: var(--enemy);
 

@@ -9,6 +9,7 @@ import { cn } from '#/lib/utils'
 import { isIdNull } from '#/lib/game/core'
 import type { Actor } from '#/lib/game/actor'
 import type { Position } from '#/lib/game/position'
+import { motion } from 'motion/react'
 
 function PlayerSprite({
   actor,
@@ -80,7 +81,7 @@ function PlayerPosition({
   position,
   reverse,
   ...props
-}: React.ComponentProps<'div'> & {
+}: React.ComponentProps<typeof motion.div> & {
   hover_position: string | null
   position: Position
   reverse?: boolean
@@ -91,7 +92,12 @@ function PlayerPosition({
       : g.actors.find((a) => a.ID === position.actor_ID)
   )
   return (
-    <div
+    <motion.div
+      layout="position"
+      initial={actor ? { opacity: 0, y: 16, scale: 0.96 } : false}
+      animate={{ opacity: 1, y: 0, scale: 1 }}
+      exit={actor ? { opacity: 0, y: 16, scale: 0.96 } : undefined}
+      transition={{ type: 'spring', stiffness: 260, damping: 28 }}
       id={position.ID}
       data-position-id={position.ID}
       data-actor-id={position.actor_ID}
@@ -117,7 +123,7 @@ function PlayerPosition({
           }}
         />
       )}
-    </div>
+    </motion.div>
   )
 }
 

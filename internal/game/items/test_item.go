@@ -15,10 +15,6 @@ func TestItem() game.HeldItem {
 		a.Stages[game.CriticalDamage] = a.Stages[game.CriticalDamage] - 1
 		a.AffinityResistance[game.Kinetic] += 1
 		a.Actions = []game.Action{actions.SwordsDance}
-		a.UpdateActionState(actions.Slash.ID, func(as game.ActionState) game.ActionState {
-			as.CooldownBonus = 2
-			return as
-		})
 		return a
 	})
 	effect.Triggers = []game.Trigger{

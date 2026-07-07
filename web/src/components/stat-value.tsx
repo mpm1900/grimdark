@@ -1,6 +1,6 @@
 import type { Actor } from '#/lib/game/actor'
 import type { Stat } from '#/lib/game/core'
-import { cn } from '#/lib/utils'
+import { DNumber } from './dnumber'
 
 function StatValue({
   actor,
@@ -17,18 +17,9 @@ function StatValue({
   const value = actor.stats[stat]
   const unmodified = actor.unmodified_stats[stat]
   return (
-    <span
-      {...props}
-      className={cn(
-        {
-          'text-positive': value > unmodified,
-          'text-negative': value < unmodified,
-        },
-        className
-      )}
-    >
+    <DNumber value={value} r={unmodified} {...props}>
       {children}
-    </span>
+    </DNumber>
   )
 }
 

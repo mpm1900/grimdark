@@ -6,6 +6,8 @@ import { setHoverPosition, uiStore } from '#/lib/stores/ui'
 import { clientsStore } from '#/lib/stores/clients'
 import { PlayerPosition } from './player-position'
 import { gameStore } from '#/lib/stores/game'
+import { AnimatePresence, LayoutGroup } from 'motion/react'
+import { isIdNull } from '#/lib/game/core'
 
 function PlayerPositions({
   player,
@@ -15,7 +17,9 @@ function PlayerPositions({
 }: React.ComponentProps<'div'> & { player: Player; reverse?: boolean }) {
   const client = useSelector(clientsStore, (s) => s.me!)
   const status = useSelector(gameStore, (g) => g.status)
-  const positions = useSelector(gameStore, g => g.positions.filter(p => p.player_ID === player.ID))
+  const positions = useSelector(gameStore, (g) =>
+    g.positions.filter((p) => p.player_ID === player.ID)
+  )
   const ui = useSelector(uiStore, (ui) => ui)
   const hover_position = useSelector(uiStore, (s) => s.hover_position)
   return (
@@ -44,16 +48,20 @@ function PlayerPositions({
           reverse && 'flex-row'
         )}
       >
-        {positions.map((position) => (
-          <PlayerPosition
-            key={position.ID}
-            hover_position={hover_position}
-            position={position}
-            reverse={reverse}
-            onMouseEnter={() => setHoverPosition(position.ID)}
-            onMouseLeave={() => setHoverPosition(null)}
-          />
-        ))}
+        <LayoutGroup id={`player-positions-${player.ID}`}>
+          <AnimatePresence initial={false}>
+            {positions.map((position) => (
+              <PlayerPosition
+                key={isIdNull(position.actor_ID) ? position.ID : position.actor_ID}
+                hover_position={hover_position}
+                position={position}
+                reverse={reverse}
+                onMouseEnter={() => setHoverPosition(position.ID)}
+                onMouseLeave={() => setHoverPosition(null)}
+              />
+            ))}
+          </AnimatePresence>
+        </LayoutGroup>
       </div>
     </div>
   )
