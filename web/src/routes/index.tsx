@@ -5,10 +5,6 @@ import { ActorFrame } from '#/components/actor-frame'
 import { AppHeader } from '#/components/app-header'
 import { BattleLog } from '#/components/battle-log'
 import { TinyBadge } from '#/components/gothic-ui/badge'
-import {
-  GothicBigButton,
-  GothicFramedButton,
-} from '#/components/gothic-ui/button'
 import { GothicCard } from '#/components/gothic-ui/card'
 import { GothicFrame } from '#/components/gothic-ui/frame'
 import { PlayerPositions } from '#/components/player-positions'
@@ -22,14 +18,6 @@ import { uiStore } from '#/lib/stores/ui'
 import { ClientOnly, createFileRoute } from '@tanstack/react-router'
 import { useSelector } from '@tanstack/react-store'
 import { HiLink } from 'react-icons/hi'
-import {
-  TbSwitchVertical,
-  TbSwitchHorizontal,
-  TbArrowBigRight,
-  TbArrowBigLeft,
-  TbArrowBigRightLines,
-} from 'react-icons/tb'
-
 export const Route = createFileRoute('/')({ component: Home })
 
 function Home() {
