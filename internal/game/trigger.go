@@ -10,6 +10,8 @@ const (
 	OnActorMove     TriggerOn = "on-actor-move"
 	OnDamageSend    TriggerOn = "on-damage-send"
 	OnDamageRecieve TriggerOn = "on-damage-recieve"
+	OnAttackSuccess TriggerOn = "on-attack-success"
+	OnAttackFailure TriggerOn = "on-attack-failure"
 	OnCriticalHit   TriggerOn = "on-critical-hit"
 	OnMiss          TriggerOn = "on-miss"
 	OnModifierAdd   TriggerOn = "on-modifier-add"

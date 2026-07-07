@@ -6,12 +6,13 @@ import (
 	"github.com/google/uuid"
 )
 
-func BasicAttack(config AttackConfig) ActionResolver {
+func MakeAttack(config AttackConfig) ActionResolver {
 	return func(g *Game, context Context, this ActionContext) []Transaction {
 		targets := g.GetTargets(context)
 		success := true
 		hits := this.Action.Config.Hits
 		pending_damage := map[uuid.UUID]float64{}
+
 		for hit := range hits {
 			if !success && this.Action.Config.StopOnMiss {
 				break
@@ -31,12 +32,29 @@ func BasicAttack(config AttackConfig) ActionResolver {
 			}
 		}
 
+		for _, target := range targets {
+			trigger_ctx := context.CloneWithTarget(target)
+			if pending_damage[target.ID] > 0 {
+				g.On(OnAttackSuccess, trigger_ctx)
+				if config.OnAttackSuccess != nil {
+					config.OnAttackSuccess(*g, trigger_ctx, &this)
+				}
+			} else {
+				g.On(OnAttackFailure, trigger_ctx)
+				if config.OnAttackFailure != nil {
+					config.OnAttackFailure(*g, trigger_ctx, &this)
+				}
+			}
+		}
+
 		if success && config.OnSuccess != nil {
 			config.OnSuccess(*g, context, &this)
 		}
-
 		if !success && config.OnFailure != nil {
 			config.OnFailure(*g, context, &this)
+		}
+		if config.OnFinally != nil {
+			config.OnFinally(*g, context, &this)
 		}
 
 		return this.Done()
@@ -81,6 +99,7 @@ func AddSourceEffects(config StatusConfig, chance float64, effects ...Effect) Ac
 		for i, effect := range effects {
 			modifiers[i] = effect.Bind(ctx)
 		}
+
 		this.Push(AddModifiers(modifiers...).Bind(NewContext()))
 		if config.OnSuccessResult != nil {
 			config.OnSuccessResult(*g, ctx, &this, AccuracyResult{})

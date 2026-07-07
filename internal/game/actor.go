@@ -40,9 +40,10 @@ type ActorDef struct {
 }
 
 type ActionState struct {
-	Cooldown   int
-	IsDisabled bool
-	Priority   int
+	Cooldown      int
+	IsDisabled    bool
+	PriorityBonus int
+	RangeBonus    int
 }
 
 type ActorMeta struct {
@@ -138,7 +139,6 @@ func NewActorDef() ActorDef {
 			CriticalChance: 1,
 			CriticalDamage: 1,
 			EffectChance:   1,
-			Range:          0,
 		},
 		Effects: []Effect{},
 	}

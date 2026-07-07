@@ -16,7 +16,6 @@ const (
 	CriticalChance Stat = "critical-chance"
 	CriticalDamage Stat = "critical-damage"
 	EffectChance   Stat = "effect-chance"
-	Range          Stat = "range"
 )
 
 var mappedStats map[Stat]struct{} = map[Stat]struct{}{

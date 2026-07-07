@@ -23,7 +23,7 @@ var Blast = game.Action{
 		CritModifier: 1.5,
 		TargetCount:  1,
 	},
-	Resolve: game.BasicAttack(game.AttackConfig{
+	Resolve: game.MakeAttack(game.AttackConfig{
 		OnSuccessResult: func(g game.Game, context game.Context, this *game.ActionContext, result game.DamageResult) {
 
 		},

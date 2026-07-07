@@ -354,9 +354,8 @@ func (g *Game) SortCommands() {
 
 			a_state := a_source.ActionsState[a.Payload.ID]
 			b_state := b_source.ActionsState[b.Payload.ID]
-			a_priority := a.Priority + a_state.Priority
-			b_priority := b.Priority + b_state.Priority
-			fmt.Println(b_state.Priority, a_state.Priority)
+			a_priority := a.Priority + a_state.PriorityBonus
+			b_priority := b.Priority + b_state.PriorityBonus
 			by_priority := cmp.Compare(b_priority, a_priority)
 			if by_priority != 0 {
 				return by_priority
@@ -732,7 +731,6 @@ func (g *Game) NextTrigger() {
 	g.PushTransactions(trig.Resolve(g))
 }
 func (g *Game) NextCommand() {
-	fmt.Println("next")
 	g.SortCommands()
 	cmd, err := g.state.Commands.Dequeue()
 	if err != nil {

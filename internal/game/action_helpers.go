@@ -14,8 +14,11 @@ type StatusEffectResult func(g Game, context Context, this *ActionContext, resul
 type AttackConfig struct {
 	OnSuccess       ActionEffect
 	OnFailure       ActionEffect
+	OnFinally       ActionEffect
 	OnSuccessResult AttackEffectResult
 	OnFailureResult AttackEffectResult
+	OnAttackSuccess ActionEffect
+	OnAttackFailure ActionEffect
 }
 
 type StatusConfig struct {

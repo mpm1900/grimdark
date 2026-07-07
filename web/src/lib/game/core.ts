@@ -30,7 +30,6 @@ export type Stat =
   | 'critical-chance'
   | 'critical-damage'
   | 'effect-chance'
-  | 'range'
 
 export type Phase = 'init' | 'start' | 'main' | 'end' | 'cleanup'
 
@@ -54,7 +53,6 @@ export const ALL_STATS: Stat[] = [
   'evasion',
   'critical-chance',
   'critical-damage',
-  'range',
 ]
 
 export const MAIN_STATS: Stat[] = [
@@ -83,7 +81,6 @@ export const STAT_LABELS: Record<Stat, string> = {
   'critical-chance': 'Critical Chance',
   'critical-damage': 'Critical Damage',
   'effect-chance': 'Effect Chance',
-  range: 'Range',
 }
 export const STAT_SLUGS: Record<Stat, string> = {
   health: 'Hp',
@@ -98,7 +95,6 @@ export const STAT_SLUGS: Record<Stat, string> = {
   'critical-chance': 'Crit.%',
   'critical-damage': 'Crit.Dmg',
   'effect-chance': 'Eff.%+',
-  range: 'range',
 }
 
 export const AFFINITIES: Affinity[] = [

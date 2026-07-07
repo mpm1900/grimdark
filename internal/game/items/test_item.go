@@ -15,9 +15,6 @@ func TestItem() game.HeldItem {
 		a.Stages[game.CriticalDamage] = a.Stages[game.CriticalDamage] - 1
 		a.AffinityResistance[game.Kinetic] += 1
 		a.Actions = []game.Action{actions.SwordsDance}
-		a.ActionsState[actions.Blast.ID] = game.ActionState{
-			Priority: 1,
-		}
 		return a
 	})
 	effect.Triggers = []game.Trigger{
