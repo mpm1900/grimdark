@@ -81,6 +81,9 @@
   --positive: oklch(84.1% 0.238 128.85);
   --negative: oklch(70.4% 0.191 22.216);
 
+  --ally: oklch(90.5% 0.093 164.15);
+  --enemy: oklch(83.7% 0.128 66.29);
+
   --melee: oklch(80.9% 0.105 251.813);
   --ranged: oklch(87.1% 0.15 154.449);
   --martial: oklch(91% 0.096 180.426);
@@ -139,6 +142,8 @@
 
   --color-positive: var(--positive);
   --color-negative: var(--negative);
+  --color-ally: var(--ally);
+  --color-enemy: var(--enemy);
 
   --color-melee: var(--melee);
   --color-ranged: var(--ranged);

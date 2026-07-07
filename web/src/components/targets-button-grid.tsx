@@ -12,8 +12,10 @@ import { useContext } from '#/hooks/use-context'
 import { validateContextQuery } from '#/lib/queries/validate-context'
 import { setHoverPosition } from '#/lib/stores/ui'
 import { clientsStore } from '#/lib/stores/clients'
+import { cn } from '#/lib/utils'
 
 function TargetButton({
+  client_ID,
   is_done,
   is_selected,
   is_valid_target,
@@ -22,6 +24,7 @@ function TargetButton({
   disabled,
   onClick,
 }: Omit<React.ComponentProps<typeof GothicBigButton>, 'onClick'> & {
+  client_ID: string
   is_done: boolean
   is_selected: boolean
   is_valid_target: boolean
@@ -34,7 +37,7 @@ function TargetButton({
     <GothicBigButton
       key={target.ID}
       variant={is_selected ? 'red' : 'basic'}
-      className='flex-col gap-0 p-0'
+      className="flex-col gap-0 p-0"
       disabled={
         !is_valid_target || disabled || (!is_selected ? is_done : false)
       }
@@ -42,11 +45,15 @@ function TargetButton({
       onMouseLeave={() => setHoverPosition(null)}
       onClick={() => onClick(target, !is_selected)}
     >
-      <div>
+      <div
+        className={cn({
+          'text-ally/60': !is_selected && client_ID === target.player_ID,
+          'text-enemy/60': !is_selected && client_ID !== target.player_ID,
+        })}
+      >
         {rank !== null && <span>{rank + 1}. </span>}
         {target.name}
       </div>
-
     </GothicBigButton>
   )
 }
@@ -63,10 +70,10 @@ function TargetsButtonGrid({
   context: ReturnType<typeof useContext>
   disabled?: boolean
 }) {
-  const client = useSelector(clientsStore, s => s.me)
+  const client = useSelector(clientsStore, (s) => s.me)
   const players = useSelector(gameStore, (g) => g.players)
   const actors = useSelector(gameStore, (g) => g.actors)
-  const positions = useSelector(gameStore, g => g.positions)
+  const positions = useSelector(gameStore, (g) => g.positions)
   const turn = useSelector(gameStore, (g) => g.turn)
   const targets_options = getTargetsQuery(
     actor?.ID,
@@ -84,6 +91,7 @@ function TargetsButtonGrid({
   const validate_query = useQuery(validate_options)
   const is_loading = targets_query.isFetching || validate_query.isFetching
 
+  if (!client) return null
   return (
     <div {...props}>
       {targets.length === 0 && !is_loading && (
@@ -104,7 +112,7 @@ function TargetsButtonGrid({
         <div className="grid grid-cols-3 mt-3">
           {players
             .flatMap((p) => {
-              const new_pos = positions.filter(pos => pos.player_ID === p.ID)
+              const new_pos = positions.filter((pos) => pos.player_ID === p.ID)
               if (p.ID === client?.ID) {
                 new_pos.reverse()
               }
@@ -115,6 +123,7 @@ function TargetsButtonGrid({
               return (
                 <TargetButton
                   key={i}
+                  client_ID={client.ID}
                   is_done={selected.length === action.config.target_count}
                   is_selected={!!target && context.hasTarget(target)}
                   is_valid_target={!!targets.find((t) => t.ID === target?.ID)}
@@ -132,6 +141,7 @@ function TargetsButtonGrid({
           {targets.map((target) => (
             <TargetButton
               key={target.ID}
+              client_ID={client.ID}
               is_done={selected.length === action.config.target_count}
               is_selected={!!target && context.hasTarget(target)}
               is_valid_target={!!targets.find((t) => t.ID === target?.ID)}

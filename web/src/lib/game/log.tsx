@@ -42,8 +42,8 @@ function RenderTerm({
             setHoverPosition(null)
           }}
           className={cn('hover:underline cursor-default', {
-            'text-emerald-200/60': source?.player_ID === client_ID,
-            'text-orange-300/60': source?.player_ID !== client_ID,
+            'text-ally/60': source?.player_ID === client_ID,
+            'text-enemy/60': source?.player_ID !== client_ID,
           })}
         >
           {terms[term_key]}
@@ -62,8 +62,8 @@ function RenderTerm({
             setHoverPosition(null)
           }}
           className={cn('hover:underline cursor-default', {
-            'text-emerald-200/60': target?.player_ID === client_ID,
-            'text-orange-300/60': target?.player_ID !== client_ID,
+            'text-ally/60': target?.player_ID === client_ID,
+            'text-enemy/60': target?.player_ID !== client_ID,
           })}
         >
           {terms[term_key]}
