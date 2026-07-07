@@ -196,7 +196,8 @@ func Retreat() Action {
 			Description: "User switches out for an ally.",
 			TargetCount: 1,
 		},
-		IsActive: true,
+		Type:    ATSystem,
+		Subtype: ASRetreat,
 		Resolve: func(g *Game, ctx Context, this ActionContext) []Transaction {
 			if len(ctx.ActorIDs) != 1 {
 				return this.Done()
@@ -233,6 +234,8 @@ func SwitchIn(n int) Action {
 			Description: fmt.Sprintf("Switch %s into battle.", noun),
 			TargetCount: n,
 		},
+		Type:    ATSystem,
+		Subtype: ASSwap,
 		Resolve: func(g *Game, ctx Context, this ActionContext) []Transaction {
 			if len(ctx.ActorIDs) != len(ctx.PositionIDs) {
 				return this.Done()
@@ -249,18 +252,22 @@ func SwitchIn(n int) Action {
 		},
 		TargetsPredicate: CombineFilters(Allies, InactiveActors, AliveActors),
 		ValidateContext:  ContextTargetLength(n),
+		ActiveCheck: func(source Actor) bool {
+			return false
+		},
 	}
 }
 
 func Swap() Action {
 	return Action{
-		ID: uuid.MustParse("019f20f2-0860-7149-a11e-fbc3df357824"),
+		ID:      uuid.MustParse("019f20f2-0860-7149-a11e-fbc3df357824"),
+		Type:    ATSystem,
+		Subtype: ASSwap,
 		Config: ActionConfig{
 			Name:        "Swap",
 			Description: "User switches places with target ally.",
 			TargetCount: 1,
 		},
-		IsActive: true,
 		Resolve: func(g *Game, ctx Context, this ActionContext) []Transaction {
 			targets := g.GetTargets(ctx)
 			for _, target := range targets {
@@ -273,11 +280,70 @@ func Swap() Action {
 		ValidateContext:  ContextTargetLength(1),
 	}
 }
+func MoveForwards() Action {
+	return Action{
+		ID:      uuid.MustParse("019f3ab7-eca5-7a8f-a5a9-214159374007"),
+		Type:    ATSystem,
+		Subtype: ASForward,
+		Config: ActionConfig{
+			Name:        "Move Forwards",
+			Description: "User move forwards, displacing other actors back.",
+			TargetCount: 0,
+		},
+		Resolve: func(g *Game, ctx Context, this ActionContext) []Transaction {
+			this.Push(PushSourceForwards().Bind(ctx))
+
+			return this.Done()
+		},
+		TargetsPredicate: NoneActors,
+		ValidateContext:  ContextTargetLength(0),
+	}
+}
+func MoveFront() Action {
+	return Action{
+		ID:      uuid.MustParse("019f3ab7-eca5-70fc-9483-f147b1dbdebb"),
+		Type:    ATSystem,
+		Subtype: ASFront,
+		Config: ActionConfig{
+			Name:        "Move to Front",
+			Description: "User move the front of battle, displacing other actors back.",
+			TargetCount: 0,
+		},
+		Resolve: func(g *Game, ctx Context, this ActionContext) []Transaction {
+			this.Push(PushSourceToFront().Bind(ctx))
+
+			return this.Done()
+		},
+		TargetsPredicate: NoneActors,
+		ValidateContext:  ContextTargetLength(0),
+	}
+}
+func MoveBackwards() Action {
+	return Action{
+		ID:      uuid.MustParse("019f3ab7-eca5-7ad4-a884-4ad97433a1e1"),
+		Type:    ATSystem,
+		Subtype: ASBack,
+		Config: ActionConfig{
+			Name:        "Move Backwards",
+			Description: "User move backwards, displacing other actors forward.",
+			TargetCount: 0,
+		},
+		Resolve: func(g *Game, ctx Context, this ActionContext) []Transaction {
+			this.Push(PushSourceBackwards().Bind(ctx))
+
+			return this.Done()
+		},
+		TargetsPredicate: NoneActors,
+		ValidateContext:  ContextTargetLength(0),
+	}
+}
 
 // global actions
 var GLOBAL_ACTIONS = []Action{
+	MoveForwards(),
+	MoveFront(),
+	MoveBackwards(),
 	Retreat(),
-	Swap(),
 	SwitchIn(1),
 	SwitchIn(2),
 	SwitchIn(3),

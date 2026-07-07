@@ -1,10 +1,14 @@
-import { ActionButton } from '#/components/action-button'
+import { ActionButton, SystemActionButton } from '#/components/action-button'
 import { ActionContextDialog } from '#/components/action-context-dialog'
 import { ActorAvatar } from '#/components/actor-avatar'
 import { ActorFrame } from '#/components/actor-frame'
 import { AppHeader } from '#/components/app-header'
 import { BattleLog } from '#/components/battle-log'
 import { TinyBadge } from '#/components/gothic-ui/badge'
+import {
+  GothicBigButton,
+  GothicFramedButton,
+} from '#/components/gothic-ui/button'
 import { GothicCard } from '#/components/gothic-ui/card'
 import { GothicFrame } from '#/components/gothic-ui/frame'
 import { PlayerPositions } from '#/components/player-positions'
@@ -18,6 +22,13 @@ import { uiStore } from '#/lib/stores/ui'
 import { ClientOnly, createFileRoute } from '@tanstack/react-router'
 import { useSelector } from '@tanstack/react-store'
 import { HiLink } from 'react-icons/hi'
+import {
+  TbSwitchVertical,
+  TbSwitchHorizontal,
+  TbArrowBigRight,
+  TbArrowBigLeft,
+  TbArrowBigRightLines,
+} from 'react-icons/tb'
 
 export const Route = createFileRoute('/')({ component: Home })
 
@@ -111,22 +122,44 @@ function Home() {
                 Actions
               </TinyBadge>
               <div className="grid grid-cols-2 grid-rows-3">
-                {active_actor?.actions.map((action) => (
-                  <ActionContextDialog
-                    key={action.ID}
-                    actor={active_actor}
-                    action={action}
-                    enabled={!action.is_disabled}
-                  >
-                    <DialogTrigger asChild>
-                      <ActionButton
-                        action={action}
-                        actor={active_actor}
-                        disabled={!!acitve_actor_command}
-                      />
-                    </DialogTrigger>
-                  </ActionContextDialog>
-                ))}
+                {active_actor?.actions
+                  .filter((a) => a.type === 'actor')
+                  .map((action) => (
+                    <ActionContextDialog
+                      key={action.ID}
+                      actor={active_actor}
+                      action={action}
+                      enabled={!action.is_disabled}
+                    >
+                      <DialogTrigger asChild>
+                        <ActionButton
+                          action={action}
+                          actor={active_actor}
+                          disabled={!!acitve_actor_command}
+                        />
+                      </DialogTrigger>
+                    </ActionContextDialog>
+                  ))}
+              </div>
+              <div className="flex flex-col justify-between">
+                {active_actor?.actions
+                  .filter((a) => a.type === 'system')
+                  .map((action) => (
+                    <ActionContextDialog
+                      key={action.ID}
+                      actor={active_actor}
+                      action={action}
+                      enabled={!action.is_disabled}
+                    >
+                      <DialogTrigger asChild>
+                        <SystemActionButton
+                          action={action}
+                          actor={active_actor}
+                          disabled={!!acitve_actor_command}
+                        />
+                      </DialogTrigger>
+                    </ActionContextDialog>
+                  ))}
               </div>
             </GothicCard>
             <GothicCard className="h-full min-w-0 max-w-1/4 flex-1 flex bg-neutral-950 p-0">

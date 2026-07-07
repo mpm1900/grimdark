@@ -409,8 +409,12 @@ func (a Actor) GetActions() []Action {
 	}
 
 	actions = append(actions, GLOBAL_ACTIONS...)
-	return slices.DeleteFunc(actions, func(a Action) bool {
-		return !a.IsActive
+	return slices.DeleteFunc(actions, func(action Action) bool {
+		if action.ActiveCheck == nil {
+			return false
+		}
+
+		return !action.ActiveCheck(a)
 	})
 }
 func (a Actor) GetActionByID(action_id uuid.UUID) (Action, bool) {

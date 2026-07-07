@@ -19,6 +19,13 @@ import { getTargetsQuery } from '#/lib/queries/get-targets'
 import { useQuery } from '@tanstack/react-query'
 import { NULL_CONTEXT } from '#/lib/game/context'
 import { setRangePositions } from '#/lib/stores/ui'
+import {
+  TbArrowBigLeft,
+  TbArrowBigRight,
+  TbArrowBigRightLines,
+  TbSwitchHorizontal,
+  TbSwitchVertical,
+} from 'react-icons/tb'
 
 function ActionButton({
   action,
@@ -63,9 +70,12 @@ function ActionButton({
         />
       )}
       {action.config.affinity && (
-        <ItemMedia className='mr-3'>
-          <div className='absolute top-0 overflow-hidden size-12 left-0.5'>
-            <AffinityIcon affinity={action.config.affinity} className='size-12 absolute top-0 -left-4 opacity-50' />
+        <ItemMedia className="mr-3">
+          <div className="absolute top-0 overflow-hidden size-12 left-0.5">
+            <AffinityIcon
+              affinity={action.config.affinity}
+              className="size-12 absolute top-0 -left-4 opacity-50"
+            />
           </div>
         </ItemMedia>
       )}
@@ -83,8 +93,11 @@ function ActionButton({
             <span className="block truncate">
               {action.is_disabled && (
                 <span className="text-red-300/40 font-serif">
-                  [{action.cooldown > 0 ? `Cooldown:${action.cooldown}` : 'Disabled'}]
-                  {' '}
+                  [
+                  {action.cooldown > 0
+                    ? `Cooldown:${action.cooldown}`
+                    : 'Disabled'}
+                  ]{' '}
                 </span>
               )}
               {action.config.description}
@@ -94,8 +107,11 @@ function ActionButton({
             <span className="font-cinzel text-white/50">
               {action.is_disabled && (
                 <span className="text-red-300/40 font-serif">
-                  [{action.cooldown > 0 ? `Cooldown ${action.cooldown}` : 'Disabled'}]
-                  {' '}
+                  [
+                  {action.cooldown > 0
+                    ? `Cooldown ${action.cooldown}`
+                    : 'Disabled'}
+                  ]{' '}
                 </span>
               )}
               <span className="mr-2 font-semibold">
@@ -156,4 +172,36 @@ function ActionButton({
   )
 }
 
-export { ActionButton }
+function SystemActionButton({
+  action,
+  actor,
+  disabled,
+  ...props
+}: React.ComponentProps<typeof GothicFramedButton> & {
+  action: Action
+  actor: Actor
+}) {
+  const status = useSelector(gameStore, (g) => g.status)
+  return (
+    <GothicFramedButton
+      disabled={
+        disabled ||
+        action.is_disabled ||
+        !actor.is_active ||
+        status === 'running'
+      }
+      className="flex-1 w-12 p-0 text-stone-400"
+      {...props}
+    >
+      {action.subtype === 'swap' && <TbSwitchHorizontal className="size-6" />}
+      {action.subtype === 'retreat' && <TbSwitchVertical className="size-6" />}
+      {action.subtype === 'back' && <TbArrowBigLeft className="size-6" />}
+      {action.subtype === 'forward' && <TbArrowBigRight className="size-6" />}
+      {action.subtype === 'front' && (
+        <TbArrowBigRightLines className="size-6" />
+      )}
+    </GothicFramedButton>
+  )
+}
+
+export { ActionButton, SystemActionButton }

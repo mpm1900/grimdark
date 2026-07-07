@@ -8,7 +8,9 @@ import (
 )
 
 var Slash = game.Action{
-	ID: uuid.MustParse("019f0aec-8b34-72cc-bbcc-36350e9fa6fb"),
+	ID:      uuid.MustParse("019f0aec-8b34-72cc-bbcc-36350e9fa6fb"),
+	Type:    game.ATActor,
+	Subtype: game.ASWeapon,
 	Config: game.ActionConfig{
 		Name:         "Slash",
 		Description:  "Slashes target and possibly applies Speed Down.",
@@ -27,7 +29,6 @@ var Slash = game.Action{
 	LogTemplate: game.P(
 		"$source$ unleashed a flurry of slashes.",
 	),
-	IsActive: true,
 	Resolve: game.BasicAttack(game.AttackConfig{
 		OnSuccessResult: func(g game.Game, context game.Context, this *game.ActionContext, result game.DamageResult) {
 			game.AddResultEffects(

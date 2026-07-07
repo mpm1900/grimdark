@@ -13,8 +13,7 @@ func BasicAttack(config AttackConfig) ActionResolver {
 		hits := this.Action.Config.Hits
 		pending_damage := map[uuid.UUID]float64{}
 		for hit := range hits {
-			// on multi-hit attack, break after the first miss
-			if !success {
+			if !success && this.Action.Config.StopOnMiss {
 				break
 			}
 

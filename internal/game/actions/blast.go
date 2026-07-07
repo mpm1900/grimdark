@@ -7,7 +7,9 @@ import (
 )
 
 var Blast = game.Action{
-	ID: uuid.MustParse("019f287e-fdf6-7fc4-87b0-0a0060efc424"),
+	ID:      uuid.MustParse("019f287e-fdf6-7fc4-87b0-0a0060efc424"),
+	Type:    game.ATActor,
+	Subtype: game.ASWeapon,
 	Config: game.ActionConfig{
 		Name:         "Blast",
 		Description:  "A blast of arcane energy.",
@@ -21,7 +23,6 @@ var Blast = game.Action{
 		CritModifier: 1.5,
 		TargetCount:  1,
 	},
-	IsActive: true,
 	Resolve: game.BasicAttack(game.AttackConfig{
 		OnSuccessResult: func(g game.Game, context game.Context, this *game.ActionContext, result game.DamageResult) {
 

@@ -6,8 +6,25 @@ import (
 
 type ActionResolver func(g *Game, ctx Context, this ActionContext) []Transaction
 
+type ActionType string
+type ActionSubtype string
+
+const (
+	ATSystem  ActionType    = "system"
+	ATActor   ActionType    = "actor"
+	ATItem    ActionType    = "item"
+	ASRetreat ActionSubtype = "retreat"
+	ASSwap    ActionSubtype = "swap"
+	ASBack    ActionSubtype = "back"
+	ASForward ActionSubtype = "forward"
+	ASFront   ActionSubtype = "front"
+	ASWeapon  ActionSubtype = "weapon"
+)
+
 type Action struct {
 	ID          uuid.UUID
+	Type        ActionType
+	Subtype     ActionSubtype
 	Config      ActionConfig
 	LogTemplate *string
 
@@ -16,16 +33,17 @@ type Action struct {
 	ValidateContext  GameFilter
 	TargetsPredicate Filter[Actor]
 	MapContext       func(g Game, ctx Context, this ActionContext) Context
-
-	IsActive      bool
-	DisabledCheck func(g Game, source Actor) bool
+	ActiveCheck      func(source Actor) bool
+	DisabledCheck    func(g Game, source Actor) bool
 }
 
 type actionJSON struct {
-	ID         uuid.UUID    `json:"ID"`
-	Config     ActionConfig `json:"config"`
-	Cooldown   int          `json:"cooldown"`
-	IsDisabled bool         `json:"is_disabled"`
+	ID         uuid.UUID     `json:"ID"`
+	Config     ActionConfig  `json:"config"`
+	Cooldown   int           `json:"cooldown"`
+	IsDisabled bool          `json:"is_disabled"`
+	Type       ActionType    `json:"type"`
+	Subtype    ActionSubtype `json:"subtype"`
 }
 
 func (a Action) Disabled(g Game, source Actor) bool {
@@ -123,6 +141,8 @@ func (a Action) ToJSON(g Game, source Actor) actionJSON {
 		Config:     a.Config,
 		Cooldown:   state.Cooldown,
 		IsDisabled: a.Disabled(g, source),
+		Type:       a.Type,
+		Subtype:    a.Subtype,
 	}
 
 	if json.Config.Accuracy != nil {

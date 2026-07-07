@@ -19,6 +19,8 @@ export type ActionConfig = {
 
 export type Action = {
   ID: ID
+  type: string
+  subtype: string
   config: ActionConfig
   cooldown: number
   is_disabled: boolean

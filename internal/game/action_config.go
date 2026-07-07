@@ -20,6 +20,7 @@ type ActionConfig struct {
 	Range        *int     `json:"range"`
 	Recoil       float64  `json:"recoil"`
 	Stat         Stat     `json:"stat"`
+	StopOnMiss   bool     `json:"-"`
 	TargetCount  int      `json:"target_count"`
 	// TOOD
 	// - cost

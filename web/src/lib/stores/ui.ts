@@ -48,6 +48,7 @@ function nextActiveActor(current: Actor) {
     (a) =>
       a.ID !== current.ID &&
       a.player_ID === current.player_ID &&
+      a.position_ID !== null &&
       !game.commands.find((c) => c.context.source_ID === a.ID)
   )
   if (!next) return
