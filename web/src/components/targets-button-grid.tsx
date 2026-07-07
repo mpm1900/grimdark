@@ -12,13 +12,46 @@ import { useContext } from '#/hooks/use-context'
 import { validateContextQuery } from '#/lib/queries/validate-context'
 import { setHoverPosition } from '#/lib/stores/ui'
 import { clientsStore } from '#/lib/stores/clients'
-import { cn } from '#/lib/utils'
+import { cva, type VariantProps } from 'class-variance-authority'
+
+const targetButtonVariants = cva('', {
+  variants: {
+    variant: {
+      disabled: 'text-foreground/40',
+      source:
+        'text-foreground/60 group-hover:text-foreground/70 group-active:text-foreground/60',
+      ally: 'text-ally/70 group-hover:text-ally/80 group-active:text-ally/60',
+      enemy:
+        'text-enemy/70 group-hover:text-enemy/80 group-active:text-enemy/60',
+      default: '',
+    },
+  },
+  defaultVariants: {
+    variant: 'default',
+  },
+})
+
+function getVariant(
+  is_selected: boolean,
+  is_player: boolean,
+  is_source: boolean,
+  is_disabled: boolean
+): VariantProps<typeof targetButtonVariants>['variant'] {
+  if (is_selected) return 'default'
+  if (is_source) return 'source'
+  if (is_disabled) return 'disabled'
+
+  if (is_player) return 'ally'
+  if (!is_player) return 'enemy'
+  return 'default'
+}
 
 function TargetButton({
   client_ID,
   is_done,
   is_selected,
   is_valid_target,
+  is_source,
   rank,
   target,
   disabled,
@@ -28,27 +61,32 @@ function TargetButton({
   is_done: boolean
   is_selected: boolean
   is_valid_target: boolean
+  is_source: boolean
   rank: number | null
   target: Actor | undefined
   onClick: (actor: Actor, is_selected: boolean) => void
 }) {
+  const is_disabled =
+    !is_valid_target || disabled || (!is_selected ? is_done : false)
   if (!target) return <div />
   return (
     <GothicBigButton
       key={target.ID}
       variant={is_selected ? 'red' : 'basic'}
-      className="flex-col gap-0 p-0"
-      disabled={
-        !is_valid_target || disabled || (!is_selected ? is_done : false)
-      }
+      className="flex-col gap-0 p-0 group"
+      disabled={is_disabled}
       onMouseEnter={() => setHoverPosition(target.position_ID)}
       onMouseLeave={() => setHoverPosition(null)}
       onClick={() => onClick(target, !is_selected)}
     >
       <div
-        className={cn({
-          'text-ally/60': !is_selected && client_ID === target.player_ID,
-          'text-enemy/60': !is_selected && client_ID !== target.player_ID,
+        className={targetButtonVariants({
+          variant: getVariant(
+            is_selected,
+            client_ID === target.player_ID,
+            is_source,
+            !!is_disabled
+          ),
         })}
       >
         {rank !== null && <span>{rank + 1}. </span>}
@@ -105,7 +143,9 @@ function TargetsButtonGrid({
       )}
       {targets.length > 0 && (
         <Marker variant="separator" className="px-16">
-          <MarkerContent>Select Targets</MarkerContent>
+          <MarkerContent>
+            Select Targets ({action.config.target_count})
+          </MarkerContent>
         </Marker>
       )}
       {targets_context.position_IDs.length > 0 ? (
@@ -127,6 +167,7 @@ function TargetsButtonGrid({
                   is_done={selected.length === action.config.target_count}
                   is_selected={!!target && context.hasTarget(target)}
                   is_valid_target={!!targets.find((t) => t.ID === target?.ID)}
+                  is_source={target?.ID === targets_context.source_ID}
                   rank={pos.rank}
                   target={target}
                   onClick={(t, selected) =>
@@ -145,6 +186,7 @@ function TargetsButtonGrid({
               is_done={selected.length === action.config.target_count}
               is_selected={!!target && context.hasTarget(target)}
               is_valid_target={!!targets.find((t) => t.ID === target?.ID)}
+              is_source={target?.ID === targets_context.source_ID}
               rank={null}
               target={target}
               onClick={(t, selected) =>

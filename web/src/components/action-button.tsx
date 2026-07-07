@@ -163,7 +163,7 @@ function ActionButton({
                 'text-negative/80': actor.stats['accuracy'] < 100,
               })}
             >
-              {Math.min(action.config.accuracy * 100, 100)}%
+              {Math.min(action.config.accuracy * 100, 100).toFixed(0)}%
             </span>
           )}
         </ItemActions>

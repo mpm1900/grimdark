@@ -64,7 +64,7 @@ func AddResultEffects(chance float64, effects ...Effect) AttackEffectResult {
 }
 
 func MultiHitLogs(result DamageResult, context Context, this *ActionContext, hit int) {
-	if this.Action.Config.Hits > 1 {
+	if result.Success() && this.Action.Config.Hits > 1 && this.Action.Config.StopOnMiss {
 		this.Push(PushLog(NewLog(
 			"Hits $hit$ time(s)!",
 			map[string]string{
@@ -295,6 +295,14 @@ func MoveForwards() Action {
 
 			return this.Done()
 		},
+		DisabledCheck: func(g Game, source Actor) bool {
+			pos, ok := g.GetPosition(source.PositionID)
+			if !ok {
+				return true
+			}
+
+			return pos.Rank == 0
+		},
 		TargetsPredicate: NoneActors,
 		ValidateContext:  ContextTargetLength(0),
 	}
@@ -314,6 +322,14 @@ func MoveFront() Action {
 
 			return this.Done()
 		},
+		DisabledCheck: func(g Game, source Actor) bool {
+			pos, ok := g.GetPosition(source.PositionID)
+			if !ok {
+				return true
+			}
+
+			return pos.Rank == 0
+		},
 		TargetsPredicate: NoneActors,
 		ValidateContext:  ContextTargetLength(0),
 	}
@@ -332,6 +348,14 @@ func MoveBackwards() Action {
 			this.Push(PushSourceBackwards().Bind(ctx))
 
 			return this.Done()
+		},
+		DisabledCheck: func(g Game, source Actor) bool {
+			pos, ok := g.GetPosition(source.PositionID)
+			if !ok {
+				return true
+			}
+
+			return pos.Rank == 2
 		},
 		TargetsPredicate: NoneActors,
 		ValidateContext:  ContextTargetLength(0),

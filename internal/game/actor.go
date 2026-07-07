@@ -42,7 +42,9 @@ type ActorDef struct {
 type ActionState struct {
 	Cooldown   int
 	IsDisabled bool
+	Priority   int
 }
+
 type ActorMeta struct {
 	ActiveTurns      int
 	InactiveTurns    int
@@ -60,6 +62,7 @@ type Actor struct {
 	Item    *HeldItem
 	Weapon  *Weapon
 
+	ActionsState       map[uuid.UUID]ActionState
 	AffinityDamage     map[Affinity]int
 	AffinityResistance map[Affinity]int
 	AffinityImmunities map[Affinity]float64
@@ -79,41 +82,40 @@ type Actor struct {
 	IsProtected bool // protected from actions that check accuracy
 	IsStunned   bool // staggered + and cannot queue commands (may not be needed)
 
-	Meta         ActorMeta
-	ActionsState map[uuid.UUID]ActionState
+	Meta ActorMeta
 }
 
 type actorJSON struct {
 	ID                 uuid.UUID            `json:"ID"`
-	Name               string               `json:"name"`
-	Race               ActorRace            `json:"race"`
-	Faction            ActorFaction         `json:"faction"`
-	Level              int                  `json:"level"`
-	PlayerID           uuid.UUID            `json:"player_ID"`
-	PositionID         *uuid.UUID           `json:"position_ID"`
 	Actions            []actionJSON         `json:"actions"`
-	Weapon             *weaponJSON          `json:"weapon"`
-	Item               *HeldItem            `json:"item"`
-	Effects            []Effect             `json:"effects"`
+	ActiveModifiers    []uuid.UUID          `json:"active_modifiers"`
 	Affinities         []Affinity           `json:"affinities"`
 	AffinityDamage     map[Affinity]int     `json:"affinity_damage"`
-	AffinityResistance map[Affinity]int     `json:"affinity_resistance"`
 	AffinityImmunities map[Affinity]float64 `json:"affinity_immunities"`
-	Stats              map[Stat]int         `json:"stats"`
-	Stages             map[Stat]int         `json:"stages"`
-	UnmodifiedStats    map[Stat]int         `json:"unmodified_stats"`
-	ActiveModifiers    []uuid.UUID          `json:"active_modifiers"`
-	Wounds             int                  `json:"wounds"`
-	Seen               bool                 `json:"-"`
-	State              ActorState           `json:"state"`
-	Status             ActorStatus          `json:"status"`
+	AffinityResistance map[Affinity]int     `json:"affinity_resistance"`
+	Effects            []Effect             `json:"effects"`
+	Faction            ActorFaction         `json:"faction"`
 	IsActive           bool                 `json:"is_active"`
-	IsBulwark          bool                 `json:"is_bulwark"`
 	IsAlive            bool                 `json:"is_alive"`
+	IsBulwark          bool                 `json:"is_bulwark"`
 	IsHidden           bool                 `json:"is_hidden"`
 	IsInsulated        bool                 `json:"is_insulated"`
 	IsProtected        bool                 `json:"is_protected"`
 	IsStunned          bool                 `json:"is_stunned"`
+	Item               *HeldItem            `json:"item"`
+	Level              int                  `json:"level"`
+	Name               string               `json:"name"`
+	PlayerID           uuid.UUID            `json:"player_ID"`
+	PositionID         *uuid.UUID           `json:"position_ID"`
+	Race               ActorRace            `json:"race"`
+	Seen               bool                 `json:"-"`
+	State              ActorState           `json:"state"`
+	Stats              map[Stat]int         `json:"stats"`
+	Stages             map[Stat]int         `json:"stages"`
+	Status             ActorStatus          `json:"status"`
+	UnmodifiedStats    map[Stat]int         `json:"unmodified_stats"`
+	Weapon             *weaponJSON          `json:"weapon"`
+	Wounds             int                  `json:"wounds"`
 }
 
 func NewActorDef() ActorDef {

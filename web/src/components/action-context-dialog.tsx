@@ -46,7 +46,7 @@ function AttackDetails({ action }: { action: Action }) {
           <Marker variant="separator">
             <MarkerContent>Accuracy</MarkerContent>
           </Marker>
-          {Math.min(action.config.accuracy * 100, 100)}%
+          {Math.min(action.config.accuracy * 100, 100).toFixed(0)}%
         </div>
       )}
       {action.config.range !== null && (

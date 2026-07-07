@@ -340,23 +340,29 @@ func (g *Game) SortCommands() {
 		})
 
 		slices.SortStableFunc(s.Commands, func(a, b Command) int {
-			if byPriority := cmp.Compare(b.Priority, a.Priority); byPriority != 0 {
-				return byPriority
-			}
-
-			aSource, aOK := g.GetSource(a.Context)
-			bSource, bOK := g.GetSource(b.Context)
-			if !aOK && !bOK {
+			a_source, a_ok := g.GetSource(a.Context)
+			b_source, b_ok := g.GetSource(b.Context)
+			if !a_ok && !b_ok {
 				return 0
 			}
-			if !aOK {
+			if !a_ok {
 				return 1
 			}
-			if !bOK {
+			if !b_ok {
 				return -1
 			}
 
-			return cmp.Compare(bSource.Stats[Speed], aSource.Stats[Speed])
+			a_state := a_source.ActionsState[a.Payload.ID]
+			b_state := b_source.ActionsState[b.Payload.ID]
+			a_priority := a.Priority + a_state.Priority
+			b_priority := b.Priority + b_state.Priority
+			fmt.Println(b_state.Priority, a_state.Priority)
+			by_priority := cmp.Compare(b_priority, a_priority)
+			if by_priority != 0 {
+				return by_priority
+			}
+
+			return cmp.Compare(b_source.Stats[Speed], a_source.Stats[Speed])
 		})
 	})
 }
@@ -726,6 +732,7 @@ func (g *Game) NextTrigger() {
 	g.PushTransactions(trig.Resolve(g))
 }
 func (g *Game) NextCommand() {
+	fmt.Println("next")
 	g.SortCommands()
 	cmd, err := g.state.Commands.Dequeue()
 	if err != nil {
