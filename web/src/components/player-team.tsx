@@ -18,11 +18,13 @@ function PlayerTeam({ player }: { player: Player }) {
         return (
           <GothicFrame
             key={i}
-            className={cn("size-9 grid place-items-center text-foreground/60 font-cinzel-dec font-semibold",
-              !!actor?.position_ID && 'bg-foreground/60 text-neutral-950'
+            className={cn(
+              'size-9 grid place-items-center text-foreground/60 font-cinzel-dec font-semibold',
+              !!actor?.position_ID && 'bg-foreground/60 text-neutral-950',
+              !!actor && !actor.is_alive && 'bg-red-500/20 text-foreground/60'
             )}
           >
-            {actor?.name[0] ?? '?'}
+            {!!actor && !actor.is_alive ? 'X' : (actor?.name[0] ?? '?')}
           </GothicFrame>
         )
       })}

@@ -23,6 +23,7 @@ function HealthBar({
     <GothicProgress
       {...props}
       className={cn('h-6 font-cinzel font-semibold rounded-xs', className)}
+      resetKey={actor.ID}
       value={ratio * 100}
     >
       {!hide_numbers && (

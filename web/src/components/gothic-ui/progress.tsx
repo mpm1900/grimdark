@@ -2,11 +2,14 @@ import * as React from 'react'
 import { Progress as ProgressPrimitive } from 'radix-ui'
 
 import { cn } from '#/lib/utils.ts'
+import { useSelector } from '@tanstack/react-store'
+import { gameStore } from '#/lib/stores/game'
 
 type GothicProgressProps = React.ComponentProps<
   typeof ProgressPrimitive.Root
 > & {
   indicator?: Partial<React.ComponentProps<typeof ProgressPrimitive.Indicator>>
+  resetKey?: React.Key
   track?: React.ComponentProps<'div'>
   frame?: React.ComponentProps<'div'>
 }
@@ -21,10 +24,17 @@ function GothicProgress({
     ...indicator
   } = {},
   track: { className: trackClassName, ...track } = {},
+  resetKey,
   value,
   ...props
 }: GothicProgressProps) {
+  const turn = useSelector(gameStore, (g) => g.turn)
   const clampedValue = Math.min(Math.max(value ?? 0, 0), 100)
+  const delta = React.useRef({ resetKey, turn, value: clampedValue })
+
+  if (delta.current.turn !== turn || delta.current.resetKey !== resetKey) {
+    delta.current = { resetKey, turn, value: clampedValue }
+  }
 
   return (
     <ProgressPrimitive.Root
@@ -45,9 +55,19 @@ function GothicProgress({
         {...track}
       >
         <ProgressPrimitive.Indicator
+          data-slot="progress-delta-indicator"
+          className={cn(
+            'absolute inset-0 h-full w-full bg-white/30 transition-[clip-path] duration-300 ease-out',
+            'm-px'
+          )}
+          style={{
+            clipPath: `inset(0 ${100 - delta.current.value}% 0 0)`,
+          }}
+        />
+        <ProgressPrimitive.Indicator
           data-slot="progress-indicator"
           className={cn(
-            'h-full w-full bg-[url("/gothic/HealthBarMini_Fill.png")] bg-[length:100%_100%] bg-center bg-no-repeat transition-[clip-path] duration-300 ease-out',
+            'absolute inset-0 h-full w-full bg-[url("/gothic/HealthBarMini_Fill.png")] bg-[length:100%_100%] bg-center bg-no-repeat transition-[clip-path] duration-300 ease-out',
             'm-px',
             indicatorClassName
           )}

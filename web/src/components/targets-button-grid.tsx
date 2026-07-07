@@ -114,8 +114,8 @@ function TargetsButtonGrid({
   const positions = useSelector(gameStore, (g) => g.positions)
   const turn = useSelector(gameStore, (g) => g.turn)
   const targets_options = getTargetsQuery(
-    actor?.ID,
-    actor?.player_ID,
+    context.value.source_ID ?? actor?.ID,
+    context.value.player_ID ?? actor?.player_ID,
     action.ID,
     [turn]
   )
