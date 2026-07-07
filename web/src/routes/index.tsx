@@ -73,7 +73,7 @@ function Home() {
               <div className="relative h-full grid grid-cols-1 grid-rows-3 w-13">
                 <TinyBadge
                   variant="default"
-                  className="absolute z-10 px-1 -top-0.5 left-1/2 -translate-x-1/2 rounded-xs rounded-b-sm font-cinzel border-white/30 text-foreground/60"
+                  className="absolute z-10 px-1 -top-1 left-1/2 -translate-x-1/2 rounded-xs rounded-b-sm font-cinzel border-white/30 text-foreground/60"
                 >
                   Items
                 </TinyBadge>
@@ -84,7 +84,7 @@ function Home() {
               <div className="relative h-full grid grid-cols-1 grid-rows-2">
                 <TinyBadge
                   variant="default"
-                  className="absolute z-10 px-1 -top-0.5 left-1/2 -translate-x-1/2 rounded-xs rounded-b-sm font-cinzel border-white/30 text-foreground/60"
+                  className="absolute z-10 px-1 -top-1 left-1/2 -translate-x-1/2 rounded-xs rounded-b-sm font-cinzel border-white/30 text-foreground/60"
                 >
                   Weapons
                 </TinyBadge>
@@ -130,6 +130,12 @@ function Home() {
               </div>
             </GothicCard>
             <GothicCard className="h-full min-w-0 max-w-1/4 flex-1 flex bg-neutral-950 p-0">
+              <TinyBadge
+                variant="default"
+                className="absolute z-10 px-1 -top-1 left-1/2 -translate-x-1/2 rounded-xs rounded-b-sm font-cinzel border-white/30 text-foreground/60"
+              >
+                Battle Log
+              </TinyBadge>
               <BattleLog />
             </GothicCard>
           </div>

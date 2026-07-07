@@ -2,6 +2,7 @@ import type { Player } from '#/lib/game/player'
 import { gameStore } from '#/lib/stores/game'
 import { useSelector } from '@tanstack/react-store'
 import { GothicFrame } from './gothic-ui/frame'
+import { cn } from '#/lib/utils'
 
 function PlayerTeam({ player }: { player: Player }) {
   const actors = useSelector(gameStore, (g) =>
@@ -17,9 +18,11 @@ function PlayerTeam({ player }: { player: Player }) {
         return (
           <GothicFrame
             key={i}
-            className="size-9 grid place-items-center font-cinzel-dec"
+            className={cn("size-9 grid place-items-center text-foreground/60 font-cinzel-dec font-semibold",
+              !!actor?.position_ID && 'bg-foreground/60 text-neutral-950'
+            )}
           >
-            {actor?.name[0]}
+            {actor?.name[0] ?? '?'}
           </GothicFrame>
         )
       })}

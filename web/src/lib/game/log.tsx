@@ -6,6 +6,7 @@ import { cn } from '../utils'
 import { getTargetsFromContext, type Context } from './context'
 import type { Game } from './game'
 import { Marker, MarkerContent } from '#/components/ui/marker'
+import { setHoverPosition } from '../stores/ui'
 
 export type Log = {
   depth: number
@@ -34,7 +35,13 @@ function RenderTerm({
       return (
         <span
           key={key}
-          className={cn({
+          onMouseEnter={() => {
+            setHoverPosition(source?.position_ID ?? null)
+          }}
+          onMouseLeave={() => {
+            setHoverPosition(null)
+          }}
+          className={cn('hover:underline cursor-default', {
             'text-emerald-200/60': source?.player_ID === client_ID,
             'text-orange-300/60': source?.player_ID !== client_ID,
           })}
@@ -48,7 +55,13 @@ function RenderTerm({
       return (
         <span
           key={key}
-          className={cn({
+          onMouseEnter={() => {
+            setHoverPosition(target.position_ID)
+          }}
+          onMouseLeave={() => {
+            setHoverPosition(null)
+          }}
+          className={cn('hover:underline cursor-default', {
             'text-emerald-200/60': target?.player_ID === client_ID,
             'text-orange-300/60': target?.player_ID !== client_ID,
           })}
@@ -104,14 +117,16 @@ export function RenderLog(log: Bindable<Log>): React.ReactNode {
             return [part]
           }
 
-          const term = RenderTerm({
-            context: log.context,
-            game,
-            key: `${log.ID}-${key}-${i}-${partIndex}`,
-            terms,
-            term_key: key,
-          })
-          return [part, term]
+          return [
+            part,
+            <RenderTerm
+              key={`${log.ID}-${key}-${i}-${partIndex}`}
+              context={log.context}
+              game={game}
+              terms={terms}
+              term_key={key}
+            />,
+          ]
         })
       )
     }
