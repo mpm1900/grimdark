@@ -7,7 +7,10 @@ import { clientsStore } from '#/lib/stores/clients'
 import { gameStore } from '#/lib/stores/game'
 import { ClientOnly, createFileRoute } from '@tanstack/react-router'
 import { useSelector } from '@tanstack/react-store'
-export const Route = createFileRoute('/')({ component: Home })
+
+export const Route = createFileRoute('/')({
+  component: Home,
+})
 
 function Home() {
   const game = useSelector(gameStore, (g) => g)

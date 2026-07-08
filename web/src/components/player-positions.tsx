@@ -33,7 +33,10 @@ function PlayerPositions({
       )}
       style={props.style}
     >
-      <PlatformParent reverse={reverse} className="flex-1 h-full">
+      <PlatformParent
+        reverse={reverse}
+        className="flex-1 h-full absolute inset-0 z-0 "
+      >
         {positions.map((position) => (
           <Platform
             key={position.ID}

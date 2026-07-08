@@ -18,22 +18,6 @@ interface RouterContext {
   }
 }
 
-const gothicPreloadImages = [
-  ...['Gray', 'Red'].flatMap((color) =>
-    ['Normal', 'Hovered', 'Pressed', 'Disabled'].map(
-      (state) => `/gothic/ButtonFramed${color}_${state}.png`
-    )
-  ),
-  ...['Gray', 'Green', 'Red'].flatMap((color) =>
-    ['Normal', 'Hovered', 'Pressed', 'Disabled'].map(
-      (state) => `/gothic/ButtonStandart${color}_${state}.png`
-    )
-  ),
-  ...['Normal', 'Hovered', 'Pressed', 'Disabled'].map(
-    (state) => `/gothic/SquareRedButtonExit_${state}.png`
-  ),
-]
-
 export const Route = createRootRouteWithContext<RouterContext>()({
   beforeLoad: async ({ context, location }) => {
     if (location.pathname === '/up') {
@@ -65,12 +49,6 @@ export const Route = createRootRouteWithContext<RouterContext>()({
         rel: 'stylesheet',
         href: app_css,
       },
-      ...gothicPreloadImages.map((href) => ({
-        rel: 'preload',
-        as: 'image',
-        type: 'image/png',
-        href,
-      })),
     ],
   }),
   shellComponent: RootDocument,
@@ -84,24 +62,10 @@ function RootDocument({ children }: { children: React.ReactNode }) {
         <HeadContent />
       </head>
       <body>
-        <GothicImagePreloader />
         <TooltipProvider>{children}</TooltipProvider>
         <Toaster position="bottom-center" />
         <Scripts />
       </body>
     </html>
-  )
-}
-
-function GothicImagePreloader() {
-  return (
-    <div
-      aria-hidden
-      className="pointer-events-none fixed size-0 overflow-hidden opacity-0"
-    >
-      {gothicPreloadImages.map((src) => (
-        <img key={src} src={src} alt="" width={1} height={1} />
-      ))}
-    </div>
   )
 }

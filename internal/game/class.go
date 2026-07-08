@@ -1,6 +1,7 @@
 package game
 
 import (
+	"encoding/json"
 	"maps"
 	"slices"
 
@@ -23,6 +24,23 @@ type Class struct {
 	Race       ActorRace
 	SpriteURL  string
 	Stats      map[Stat]float64
+}
+
+type classOptionsJSON struct {
+	Items   []Item       `json:"items"`
+	Weapons []weaponJSON `json:"weapons"`
+}
+type classJSON struct {
+	ID         uuid.UUID        `json:"ID"`
+	Actions    []actionJSON     `json:"actions"`
+	Affinities []Affinity       `json:"affinities"`
+	Effects    []Effect         `json:"effects"`
+	Faction    ActorFaction     `json:"faction"`
+	Name       string           `json:"name"`
+	Options    classOptionsJSON `json:"options"`
+	Race       ActorRace        `json:"race"`
+	SpriteURL  string           `json:"sprite_url"`
+	Stats      map[Stat]float64 `json:"stats"`
 }
 
 func NewClass() Class {
@@ -86,4 +104,34 @@ func (c Class) CloneForActor() Class {
 		SpriteURL:  c.SpriteURL,
 		Stats:      maps.Clone(c.Stats),
 	}
+}
+
+func (c Class) ToJSON() classJSON {
+	actions := make([]actionJSON, len(c.Actions))
+	for i, a := range c.Actions {
+		actions[i] = a.ToJSONStatic()
+	}
+	weapons := make([]weaponJSON, len(c.Options.Weapons))
+	for i, w := range c.Options.Weapons {
+		weapons[i] = w.ToJSONStatic()
+	}
+	return classJSON{
+		ID:         c.ID,
+		Actions:    actions,
+		Affinities: slices.Collect(maps.Keys(c.Affinities)),
+		Effects:    c.Effects,
+		Faction:    c.Faction,
+		Name:       c.Name,
+		Options: classOptionsJSON{
+			Weapons: weapons,
+			Items:   c.Options.Items,
+		},
+		Race:      c.Race,
+		SpriteURL: c.SpriteURL,
+		Stats:     c.Stats,
+	}
+}
+
+func (c Class) MarshalJSON() ([]byte, error) {
+	return json.Marshal(c.ToJSON())
 }

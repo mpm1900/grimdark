@@ -55,3 +55,21 @@ func (w Weapon) ToJSON(g Game, source Actor) weaponJSON {
 		WeaponType:  w.WeaponType,
 	}
 }
+
+func (w Weapon) ToJSONStatic() weaponJSON {
+	actions := make([]actionJSON, len(w.Actions))
+	for i, action := range w.Actions {
+		actions[i] = action.ToJSONStatic()
+	}
+
+	return weaponJSON{
+		ID:          w.ID,
+		Actions:     actions,
+		AuxStats:    w.AuxStats,
+		Description: w.Description,
+		Effects:     w.Effects,
+		Hands:       w.Hands,
+		Name:        w.Name,
+		WeaponType:  w.WeaponType,
+	}
+}

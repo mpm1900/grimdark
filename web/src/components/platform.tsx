@@ -14,7 +14,7 @@ function PlatformParent({
   return (
     <div
       className={cn(
-        'pointer-events-none absolute inset-0 z-0 gap-2 flex flex-row-reverse items-end',
+        'pointer-events-none gap-2 flex flex-row-reverse items-end',
         'perspective-near transform-3d',
         {
           'perspective-origin-[0_50%] flex-row': reverse,
@@ -98,7 +98,7 @@ function Platform({
 }: ComponentProps<'div'> &
   VariantProps<typeof platformVariants> & { rank: number }) {
   return (
-    <div className="relative flex-1 transform-3d" {...props}>
+    <div className={cn('relative flex-1 transform-3d', className)} {...props}>
       <div
         className={platformVariants({
           variant,

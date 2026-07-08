@@ -1,7 +1,7 @@
 import type { Action } from './action'
 import type { Affinity, ID, Stat } from './core'
 import type { Effect } from './effect'
-import type { HeldItem, Weapon } from './weapon'
+import type { Item, Weapon } from './weapon'
 
 export type Actor = {
   ID: ID
@@ -21,7 +21,7 @@ export type Actor = {
   is_player: boolean
   is_protected: boolean
   is_stunned: boolean
-  item: HeldItem | null
+  item: Item | null
   level: number
   name: string
   player_ID: ID

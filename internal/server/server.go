@@ -20,7 +20,8 @@ type Server struct {
 func NewServer(ctx context.Context, queries *db.Queries) *Server {
 	logger := slog.Default()
 
-	instancesHandler := NewInstancesHandler(ctx)
+	instances_handler := NewInstancesHandler(ctx)
+	gamedata_handler := NewGamedataHandler(ctx)
 
 	mux := http.NewServeMux()
 	api := http.NewServeMux()
@@ -35,10 +36,11 @@ func NewServer(ctx context.Context, queries *db.Queries) *Server {
 	api.HandleFunc("POST /auth/logout", auth.WithSession(handleLogout(ctx, queries), queries))
 	api.HandleFunc("GET  /auth/me", auth.WithSession(handleMe(), queries))
 
-	api.HandleFunc("GET /instances", instancesHandler.HandleGetGames)
+	api.HandleFunc("GET /instances", instances_handler.HandleGetGames)
+	api.HandleFunc("GET /actors", gamedata_handler.HandleGetActors)
 
 	mux.Handle("/api/", http.StripPrefix("/api", api))
-	mux.Handle("/socket/", http.StripPrefix("/socket", auth.WithSession(instancesHandler.ServeHTTP, queries)))
+	mux.Handle("/socket/", http.StripPrefix("/socket", auth.WithSession(instances_handler.ServeHTTP, queries)))
 
 	handler := http.Handler(mux)
 	handler = withCORS(handler)

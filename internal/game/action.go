@@ -158,3 +158,12 @@ func (a Action) ToJSON(g Game, source Actor) actionJSON {
 
 	return json
 }
+func (a Action) ToJSONStatic() actionJSON {
+	return actionJSON{
+		ID:         a.ID,
+		Config:     a.Config,
+		Cooldown:   0,
+		IsDisabled: false,
+		Tags:       a.Tags,
+	}
+}
