@@ -7,6 +7,11 @@ import (
 	"github.com/google/uuid"
 )
 
+type ClassOptions struct {
+	Items   []Item
+	Weapons []Weapon
+}
+
 type Class struct {
 	ID         uuid.UUID
 	Actions    []Action
@@ -14,6 +19,7 @@ type Class struct {
 	Effects    []Effect
 	Faction    ActorFaction
 	Name       string
+	Options    ClassOptions
 	Race       ActorRace
 	SpriteURL  string
 	Stats      map[Stat]float64
@@ -45,7 +51,30 @@ func NewClass() Class {
 	}
 }
 
+func (o ClassOptions) Clone() ClassOptions {
+	return ClassOptions{
+		Items:   slices.Clone(o.Items),
+		Weapons: slices.Clone(o.Weapons),
+	}
+}
+
 func (c Class) Clone() Class {
+	return Class{
+		ID:         c.ID,
+		Actions:    slices.Clone(c.Actions),
+		Affinities: maps.Clone(c.Affinities),
+		Effects:    slices.Clone(c.Effects),
+		Faction:    c.Faction,
+		Options:    c.Options.Clone(),
+		Name:       c.Name,
+		Race:       c.Race,
+		SpriteURL:  c.SpriteURL,
+		Stats:      maps.Clone(c.Stats),
+	}
+}
+
+// omit options to save on data
+func (c Class) CloneForActor() Class {
 	return Class{
 		ID:         c.ID,
 		Actions:    slices.Clone(c.Actions),

@@ -2,11 +2,16 @@ package actors
 
 import (
 	"grimdark/internal/game"
+	"grimdark/internal/game/items"
+	"grimdark/internal/game/weapons"
 )
 
-func NewSisterOfBattle() game.Class {
+var SisterOfBattle = newSisterOfBattle()
+
+func newSisterOfBattle() game.Class {
 	class := game.NewClass()
 	class.Name = "Adepta Sororitas"
+	class.SpriteURL = "/img/sis.png"
 	class.Affinities = map[game.Affinity]struct{}{
 		game.Fire:    {},
 		game.Kinetic: {},
@@ -26,7 +31,14 @@ func NewSisterOfBattle() game.Class {
 		game.EffectChance:   1,
 	}
 	class.Effects = []game.Effect{}
-	class.SpriteURL = "/img/sis.png"
+	class.Options = game.ClassOptions{
+		Items: []game.Item{
+			items.TestItem,
+		},
+		Weapons: []game.Weapon{
+			weapons.SlashSword,
+		},
+	}
 
 	return class
 }

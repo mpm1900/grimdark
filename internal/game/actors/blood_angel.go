@@ -1,10 +1,16 @@
 package actors
 
-import "grimdark/internal/game"
+import (
+	"grimdark/internal/game"
+	"grimdark/internal/game/weapons"
+)
 
-func NewBloodAngel() game.Class {
+var BloodAngel = newBloodAngel()
+
+func newBloodAngel() game.Class {
 	class := game.NewClass()
 	class.Name = "Blood Angel"
+	class.SpriteURL = "/img/spm2.png"
 	class.Affinities = map[game.Affinity]struct{}{
 		game.Arcane:  {},
 		game.Kinetic: {},
@@ -24,7 +30,12 @@ func NewBloodAngel() game.Class {
 		game.EffectChance:   1,
 	}
 	class.Effects = []game.Effect{}
-	class.SpriteURL = "/img/spm2.png"
+	class.Options = game.ClassOptions{
+		Items: []game.Item{},
+		Weapons: []game.Weapon{
+			weapons.SlashSword,
+		},
+	}
 
 	return class
 }

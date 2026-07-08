@@ -126,8 +126,7 @@ func (i *Instance) Run() {
 			i.BroadcastClients()
 
 			if !exists {
-				player := game.NewPlayer(client.ID)
-				player.User = *client.User
+				player := game.NewPlayer(*client.User)
 
 				i.Game.AddPlayers(player)
 				i.BroadcastGame()

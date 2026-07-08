@@ -90,25 +90,25 @@ function ActorFrameSlim({
   const status = useSelector(gameStore, (g) => g.status)
   return (
     <div className={cn('relative mt-4', className)} {...props}>
-      <div className="flex flex-row justify-between items-end mb-1">
+      <div className="flex flex-row justify-between items-end mb-1 min-w-0">
         <Popover>
           <PopoverTrigger
-            className="flex items-end gap-1 cursor-pointer -mr-1"
+            className="flex min-w-0 flex-1 items-end gap-1 cursor-pointer -mr-1"
             onClick={(e) => {
               e.stopPropagation()
             }}
           >
-            <span
+            <div
               className={cn(
                 'text-sm font-bold font-cinzel-dec [text-shadow:2px_1px_0_var(--color-black)] -mb-1 hover:underline',
-                'text-foreground/40 hover:text-foreground',
+                'text-foreground/40 hover:text-foreground truncate',
                 {
                   'text-foreground': IsActorActive(ui, actor, status),
                 }
               )}
             >
               {actor.name}
-            </span>
+            </div>
           </PopoverTrigger>
           <GothicPopoverContent
             className="w-auto"

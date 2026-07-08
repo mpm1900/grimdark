@@ -15,10 +15,10 @@ type playerJSON struct {
 	ActorCount int       `json:"actor_count"`
 }
 
-func NewPlayer(id uuid.UUID) Player {
+func NewPlayer(user User) Player {
 	return Player{
-		ID:   id,
-		User: User{},
+		ID:   user.ID,
+		User: user,
 	}
 }
 

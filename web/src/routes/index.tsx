@@ -34,7 +34,7 @@ function Home() {
                 player={client_player}
               />
             )}
-            <div className="w-1/12" />
+            <div className="w-1/24" />
             {other_player && (
               <PlayerPositions
                 className="flex-1 gap-1"

@@ -3,11 +3,14 @@ package actors
 import (
 	"grimdark/internal/game"
 	"grimdark/internal/game/effects"
+	"grimdark/internal/game/weapons"
 
 	"github.com/google/uuid"
 )
 
-func NewUltramarine() game.Class {
+var Ultramarine = newUltramarine()
+
+func newUltramarine() game.Class {
 	bypass := effects.StagesResetWhere(func(g game.Game, a game.Actor, ctx game.Context) bool {
 		active_context := g.State().ActiveContext
 		if active_context == nil {
@@ -24,6 +27,7 @@ func NewUltramarine() game.Class {
 
 	class := game.NewClass()
 	class.Name = "Ultramarine"
+	class.SpriteURL = "/img/spm.png"
 	class.Affinities = map[game.Affinity]struct{}{
 		game.Kinetic: {},
 	}
@@ -42,7 +46,12 @@ func NewUltramarine() game.Class {
 		game.EffectChance:   1,
 	}
 	class.Effects = []game.Effect{bypass, effects.Intimidate()}
-	class.SpriteURL = "/img/spm.png"
+	class.Options = game.ClassOptions{
+		Items: []game.Item{},
+		Weapons: []game.Weapon{
+			weapons.SlashSword,
+		},
+	}
 
 	return class
 }

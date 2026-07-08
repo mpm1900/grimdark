@@ -1,10 +1,16 @@
 package actors
 
-import "grimdark/internal/game"
+import (
+	"grimdark/internal/game"
+	"grimdark/internal/game/weapons"
+)
 
-func NewTechPriest() game.Class {
+var TechPriest = newTechPriest()
+
+func newTechPriest() game.Class {
 	class := game.NewClass()
 	class.Name = "Tech Priest"
+	class.SpriteURL = "/img/thp.png"
 	class.Affinities = map[game.Affinity]struct{}{
 		game.Kinetic:   {},
 		game.Lightning: {},
@@ -24,7 +30,12 @@ func NewTechPriest() game.Class {
 		game.EffectChance:   1,
 	}
 	class.Effects = []game.Effect{}
-	class.SpriteURL = "/img/thp.png"
+	class.Options = game.ClassOptions{
+		Items: []game.Item{},
+		Weapons: []game.Weapon{
+			weapons.SlashSword,
+		},
+	}
 
 	return class
 }

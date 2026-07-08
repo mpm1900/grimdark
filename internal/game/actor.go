@@ -115,18 +115,35 @@ type actorJSON struct {
 	Wounds             int                  `json:"wounds"`
 }
 
-func NewActor(class Class) Actor {
+func NewActor(class Class, config ActorConfig) Actor {
+	var weapon_l *Weapon
+	var weapon_r *Weapon
+	var item *Item
+
+	for _, w := range class.Options.Weapons {
+		if w.ID == config.WeaponL {
+			weapon_l = P(w.Clone())
+		}
+		if w.ID == config.WeaponR {
+			weapon_r = P(w.Clone())
+		}
+	}
+	for _, i := range class.Options.Items {
+		if slices.Contains(config.Items, i.ID) {
+			item = P(i.Clone())
+		}
+	}
 	return Actor{
 		ID:         uuid.New(),
-		Class:      class.Clone(),
+		Class:      class.CloneForActor(),
 		Name:       class.Name,
 		PlayerID:   uuid.Nil,
 		PositionID: uuid.Nil,
 		Level:      100,
 
-		WeaponL: nil,
-		WeaponR: nil,
-		Item:    nil,
+		WeaponL: weapon_l,
+		WeaponR: weapon_r,
+		Item:    item,
 
 		AffinityDamage:     map[Affinity]int{},
 		AffinityResistance: map[Affinity]int{},
@@ -170,7 +187,7 @@ func (a Actor) Clone() Actor {
 	}
 	return Actor{
 		ID:         a.ID,
-		Class:      a.Class.Clone(),
+		Class:      a.Class.CloneForActor(),
 		Name:       a.Name,
 		Level:      a.Level,
 		PlayerID:   a.PlayerID,
