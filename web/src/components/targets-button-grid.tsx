@@ -89,7 +89,6 @@ function TargetButton({
           ),
         })}
       >
-        {rank !== null && <span>{rank + 1}. </span>}
         {target.name}
       </div>
     </GothicBigButton>
