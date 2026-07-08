@@ -109,11 +109,6 @@ function ActorFrameSlim({
             >
               {actor.name}
             </span>
-            {actor.item === null ? (
-              <TbPackageOff className="text-foreground/20" />
-            ) : (
-              <TbPackage className="text-foreground/60" />
-            )}
           </PopoverTrigger>
           <GothicPopoverContent
             className="w-auto"

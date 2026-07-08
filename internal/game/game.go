@@ -307,7 +307,8 @@ func (g *Game) AddPlayers(players ...Player) {
 		}
 	})
 }
-func (g *Game) AddActor(actor Actor) {
+func (g *Game) AddActor(actor Actor, player_id uuid.UUID) {
+	actor.PlayerID = player_id
 	g.mutate(func(s *State) {
 		s.Actors = append(s.Actors, actor)
 	})

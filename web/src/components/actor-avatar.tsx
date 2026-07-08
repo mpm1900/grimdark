@@ -20,7 +20,7 @@ function ActorAvatar({ actor }: { actor: Actor }) {
             'bg-[url(/gothic/TitleFrameMainRaven_Gray.png)] bg-cover bg-left origin-center pl-22 pb-4 pt-6 -space-y-1.5'
           )}
         >
-          <div>{actor.name}</div>
+          <div className='truncate'>{actor.name}</div>
           <div className="text-xs text-foreground/40">{actor.level}</div>
           <div className="absolute -right-5 top-15 flex flex-col items-end gap-px pr-2 text-center capitalize font-cinzel">
             {applied_effects.map((effect) => (

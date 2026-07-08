@@ -7,7 +7,7 @@ import (
 	"github.com/google/uuid"
 )
 
-func TestItem() game.HeldItem {
+func TestItem() game.Item {
 	effect := game.EffectSource(game.EffectPriorityStages, func(g game.Game, a game.Actor, ctx game.Context) game.Actor {
 		a.Stages[game.Accuracy] = a.Stages[game.Accuracy] + 1
 		a.Stages[game.CriticalChance] = a.Stages[game.CriticalChance] + 1
@@ -49,13 +49,11 @@ func TestItem() game.HeldItem {
 	})
 	effect2.Name = "burned"
 
-	item := game.HeldItem{
-		Item: game.Item{
-			ID:          uuid.New(),
-			Name:        "test item",
-			Description: "a test item",
-		},
-		Effects: []game.Effect{effect, effect2},
+	item := game.Item{
+		ID:          uuid.New(),
+		Name:        "test item",
+		Description: "a test item",
+		Effects:     []game.Effect{effect, effect2},
 	}
 
 	return item

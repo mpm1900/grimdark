@@ -13,7 +13,6 @@ type Weapon struct {
 	Item
 	Actions    []Action
 	AuxStats   map[Stat]float64
-	Effects    []Effect
 	Hands      int
 	WeaponType WeaponType
 }
@@ -31,10 +30,9 @@ type weaponJSON struct {
 
 func (w Weapon) Clone() Weapon {
 	return Weapon{
-		Item:       w.Item,
+		Item:       w.Item.Clone(),
 		Actions:    slices.Clone(w.Actions),
 		AuxStats:   maps.Clone(w.AuxStats),
-		Effects:    slices.Clone(w.Effects),
 		Hands:      w.Hands,
 		WeaponType: w.WeaponType,
 	}

@@ -7,7 +7,7 @@ import (
 	"github.com/google/uuid"
 )
 
-func NewUltramarine() game.ActorDef {
+func NewUltramarine() game.Class {
 	bypass := effects.StagesResetWhere(func(g game.Game, a game.Actor, ctx game.Context) bool {
 		active_context := g.State().ActiveContext
 		if active_context == nil {
@@ -22,13 +22,27 @@ func NewUltramarine() game.ActorDef {
 	})
 	bypass.Name = "bypass effect"
 
-	def := game.NewActorDef()
-	def.Name = "Ultramarine"
-	def.Affinities = map[game.Affinity]struct{}{
+	class := game.NewClass()
+	class.Name = "Ultramarine"
+	class.Affinities = map[game.Affinity]struct{}{
 		game.Kinetic: {},
 	}
-	def.Effects = []game.Effect{bypass, effects.Intimidate()}
-	def.SpriteURL = "/img/spm.png"
+	class.Stats = map[game.Stat]float64{
+		game.Health:         100,
+		game.Speed:          61,
+		game.Melee:          134,
+		game.Ranged:         95,
+		game.Special:        60,
+		game.MartialDefense: 100,
+		game.SpecialDefense: 110,
+		game.Accuracy:       1,
+		game.Evasion:        1,
+		game.CriticalChance: 1,
+		game.CriticalDamage: 1,
+		game.EffectChance:   1,
+	}
+	class.Effects = []game.Effect{bypass, effects.Intimidate()}
+	class.SpriteURL = "/img/spm.png"
 
-	return def
+	return class
 }

@@ -29,17 +29,6 @@ const (
 	FactionImperium ActorFaction = "imperium"
 )
 
-type ActorDef struct {
-	ID         uuid.UUID
-	Affinities map[Affinity]struct{}
-	Effects    []Effect
-	Faction    ActorFaction
-	Name       string
-	Race       ActorRace
-	SpriteURL  string
-	Stats      map[Stat]float64
-}
-
 type ActionState struct {
 	Cooldown      int
 	CooldownBonus int
@@ -56,13 +45,14 @@ type ActorMeta struct {
 }
 
 type Actor struct {
-	ActorDef
+	ID         uuid.UUID
+	Class      Class
+	Name       string
 	Level      int
 	PlayerID   uuid.UUID
 	PositionID uuid.UUID
 
-	Actions []Action
-	Item    *HeldItem
+	Item    *Item
 	WeaponL *Weapon
 	WeaponR *Weapon
 
@@ -107,7 +97,7 @@ type actorJSON struct {
 	IsPlayer           bool                 `json:"is_player"`
 	IsProtected        bool                 `json:"is_protected"`
 	IsStunned          bool                 `json:"is_stunned"`
-	Item               *HeldItem            `json:"item"`
+	Item               *Item                `json:"item"`
 	Level              int                  `json:"level"`
 	Name               string               `json:"name"`
 	PlayerID           uuid.UUID            `json:"player_ID"`
@@ -125,52 +115,15 @@ type actorJSON struct {
 	Wounds             int                  `json:"wounds"`
 }
 
-func NewActorDef() ActorDef {
-	return ActorDef{
-		ID:         uuid.New(),
-		Name:       "",
-		Race:       RaceHuman,
-		Faction:    FactionImperium,
-		Affinities: map[Affinity]struct{}{},
-		Stats: map[Stat]float64{
-			Health:         100,
-			Speed:          100,
-			Melee:          100,
-			Ranged:         100,
-			Special:        100,
-			MartialDefense: 100,
-			SpecialDefense: 100,
-			Accuracy:       1,
-			Evasion:        1,
-			CriticalChance: 1,
-			CriticalDamage: 1,
-			EffectChance:   1,
-		},
-		Effects: []Effect{},
-	}
-}
-
-func (d ActorDef) Clone() ActorDef {
-	return ActorDef{
-		ID:         d.ID,
-		Affinities: maps.Clone(d.Affinities),
-		Effects:    slices.Clone(d.Effects),
-		Faction:    d.Faction,
-		Name:       d.Name,
-		Race:       d.Race,
-		SpriteURL:  d.SpriteURL,
-		Stats:      maps.Clone(d.Stats),
-	}
-}
-
-func NewActor(playerID uuid.UUID, def ActorDef) Actor {
+func NewActor(class Class) Actor {
 	return Actor{
-		ActorDef:   def.Clone(),
-		PlayerID:   playerID,
+		ID:         uuid.New(),
+		Class:      class.Clone(),
+		Name:       class.Name,
+		PlayerID:   uuid.Nil,
 		PositionID: uuid.Nil,
 		Level:      100,
 
-		Actions: []Action{},
 		WeaponL: nil,
 		WeaponR: nil,
 		Item:    nil,
@@ -180,7 +133,7 @@ func NewActor(playerID uuid.UUID, def ActorDef) Actor {
 		AffinityImmunities: map[Affinity]float64{},
 		Stages:             map[Stat]int{},
 		AuxStats:           map[Stat]float64{},
-		Stats:              maps.Clone(def.Stats),
+		Stats:              maps.Clone(class.Stats),
 
 		Wounds: 0,
 		State:  StateGrounded,
@@ -216,12 +169,13 @@ func (a Actor) Clone() Actor {
 		weapon_r = &clone
 	}
 	return Actor{
-		ActorDef:   a.ActorDef.Clone(),
+		ID:         a.ID,
+		Class:      a.Class.Clone(),
+		Name:       a.Name,
 		Level:      a.Level,
 		PlayerID:   a.PlayerID,
 		PositionID: a.PositionID,
 
-		Actions: slices.Clone(a.Actions),
 		WeaponL: weapon_l,
 		WeaponR: weapon_r,
 		Item:    a.Item,
@@ -370,7 +324,7 @@ func (a Actor) CanAct() bool {
 }
 func (a Actor) GetAffinityDamage(affinity Affinity) int {
 	base := maps.Clone(a.AffinityDamage)
-	for affinity := range a.Affinities {
+	for affinity := range a.Class.Affinities {
 		b, ok := base[affinity]
 		if !ok {
 			continue
@@ -402,7 +356,7 @@ func (a Actor) GetRemainingHealth() float64 {
 	return health - a.Wounds
 }
 func (a Actor) GetEffects() []Effect {
-	effects := slices.Clone(a.Effects)
+	effects := slices.Clone(a.Class.Effects)
 	if a.WeaponL != nil {
 		effects = append(effects, a.WeaponL.Effects...)
 	}
@@ -443,7 +397,7 @@ func (a Actor) GetActions() []Action {
 	}
 
 	addActions(GLOBAL_ACTIONS)
-	addActions(a.Actions)
+	addActions(a.Class.Actions)
 	if a.WeaponL != nil {
 		addActions(a.WeaponL.Actions)
 	}
@@ -505,7 +459,7 @@ func (a Actor) ToJSON(g Game) actorJSON {
 	}
 
 	affinity_damage := maps.Clone(a.AffinityDamage)
-	for affinity := range a.Affinities {
+	for affinity := range a.Class.Affinities {
 		base, ok := affinity_damage[affinity]
 		if !ok {
 			affinity_damage[affinity] = 1
@@ -534,8 +488,8 @@ func (a Actor) ToJSON(g Game) actorJSON {
 	return actorJSON{
 		ID:                 a.ID,
 		Name:               a.Name,
-		Faction:            a.Faction,
-		Race:               a.Race,
+		Faction:            a.Class.Faction,
+		Race:               a.Class.Race,
 		Level:              a.Level,
 		PlayerID:           a.PlayerID,
 		PositionID:         NilifyUUID(a.PositionID),
@@ -544,7 +498,7 @@ func (a Actor) ToJSON(g Game) actorJSON {
 		WeaponR:            weapon_r,
 		Item:               a.Item,
 		Effects:            a.GetEffects(),
-		Affinities:         slices.Collect(maps.Keys(a.Affinities)),
+		Affinities:         slices.Collect(maps.Keys(a.Class.Affinities)),
 		AffinityDamage:     affinity_damage,
 		AffinityResistance: affinity_resistance,
 		AffinityImmunities: a.AffinityImmunities,
@@ -554,7 +508,7 @@ func (a Actor) ToJSON(g Game) actorJSON {
 		ActiveModifiers:    active_modifiers,
 		Wounds:             int(a.Wounds),
 		Seen:               a.Meta.Seen,
-		SpriteURL:          a.ActorDef.SpriteURL,
+		SpriteURL:          a.Class.SpriteURL,
 		State:              a.State,
 		Status:             a.Status,
 		IsActive:           a.IsActive(),
