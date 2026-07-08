@@ -7,14 +7,16 @@ import { getAppliedEffects } from '#/lib/game/game'
 
 function ActorAvatar({ actor }: { actor: Actor }) {
   const game = useSelector(gameStore, (g) => g)
-  const applied_effects = getAppliedEffects(game, actor)
+  const applied_effects = getAppliedEffects(game, actor).sort(
+    (a, b) => b.name.length - a.name.length
+  )
   const position = game.positions.find((p) => p.actor_ID === actor.ID)
   return (
     <div className="relative h-48 w-52">
-      <div className="absolute -bottom-8 -right-2 bg-[url(/gothic/AvatarCircleFrame.png)] bg-contain bg-center size-52">
+      <div className="absolute -bottom-9 -right-1 bg-[url(/gothic/AvatarCircleFrame.png)] bg-contain bg-center size-52">
         <div
           className={cn(
-            'rounded-xs absolute -top-6 -left-12 right-2 h-18 font-cinzel-dec text-foreground/80 font-semibold',
+            'rounded-xs absolute -top-7 -left-12 right-1 h-18 font-cinzel-dec text-foreground/80 font-semibold',
             'bg-[url(/gothic/TitleFrameMainRaven_Gray.png)] bg-cover bg-left origin-center pl-22 pb-4 pt-6 -space-y-1.5'
           )}
         >
@@ -33,7 +35,7 @@ function ActorAvatar({ actor }: { actor: Actor }) {
           </div>
         </div>
         {position && (
-          <div className="absolute bottom-7 right-0 bg-[url('/gothic/MiniIconUIFrame_48.png')] bg-cover size-12 grid place-items-center text-3xl text-foreground/70 font-bold font-cinzel">
+          <div className="absolute bottom-7 -right-1 bg-[url('/gothic/MiniIconUIFrame_48.png')] bg-cover size-12 grid place-items-center text-3xl text-foreground/70 font-bold font-cinzel">
             {position.rank + 1}
           </div>
         )}

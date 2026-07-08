@@ -9,7 +9,7 @@ import { cn } from '#/lib/utils'
 import { isIdNull } from '#/lib/game/core'
 import type { Actor } from '#/lib/game/actor'
 import type { Position } from '#/lib/game/position'
-import { motion } from 'motion/react'
+import { AnimatePresence, motion } from 'motion/react'
 
 function PlayerSprite({
   actor,
@@ -32,12 +32,12 @@ function PlayerSprite({
       ? ui.active_actor === actor.ID || hover_position === position_ID
       : status === 'running'
         ? ui.source_actor === actor.ID ||
-          ui.target_positions.includes(position_ID)
+        ui.target_positions.includes(position_ID)
         : true
   return (
     <div
       className={cn(
-        'relative z-10 px-8 py-2 flex justify-center',
+        'relative z-10 px-2 py-2 flex w-full min-w-0 justify-center h-full max-h-70',
         {
           'opacity-50': !is_highlighted,
           'opacity-100': is_highlighted,
@@ -50,9 +50,9 @@ function PlayerSprite({
       {...props}
     >
       <img
-        src="/img/69_Asset_35.png"
+        src="/img/spm.png"
         className={cn(
-          'w-full max-w-30 relative z-10 pointer-events-none select-none',
+          'h-full w-full object-contain max-w-60 relative z-10 pointer-events-none select-none',
           !actor && 'opacity-0'
         )}
       />
@@ -94,35 +94,47 @@ function PlayerPosition({
   return (
     <motion.div
       layout="position"
-      initial={actor ? { opacity: 0, y: 16, scale: 0.96 } : false}
-      animate={{ opacity: 1, y: 0, scale: 1 }}
-      exit={actor ? { opacity: 0, y: 16, scale: 0.96 } : undefined}
+      initial={false}
       transition={{ type: 'spring', stiffness: 260, damping: 28 }}
       id={position.ID}
       data-position-id={position.ID}
       data-actor-id={position.actor_ID}
-      className={cn('relative flex-1 h-107 -mb-2 group', className)}
+      className={cn(
+        'relative flex-1 basis-0 min-w-0 -mb-2 group h-full flex flex-col justify-end',
+        className
+      )}
       {...props}
     >
-      {actor && (
-        <PlayerSprite
-          actor={actor}
-          hover_position={hover_position}
-          position_ID={position.ID}
-          className={cn({
-            '-scale-x-100': reverse,
-          })}
-        />
-      )}
-      {actor && (
-        <ActorFrameSlim
-          actor={actor}
-          className="relative z-40 px-2 cursor-pointer"
-          onClick={() => {
-            setActiveActor(actor.ID)
-          }}
-        />
-      )}
+      <AnimatePresence initial={false} mode="popLayout">
+        {actor && (
+          <motion.div
+            key={actor.ID}
+            layout
+            layoutId={`actor-${actor.ID}`}
+            initial={{ opacity: 0, y: 16, scale: 0.96 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 16, scale: 0.96 }}
+            transition={{ type: 'spring', stiffness: 260, damping: 28 }}
+            className="relative h-full w-full min-w-0 flex flex-col justify-end"
+          >
+            <PlayerSprite
+              actor={actor}
+              hover_position={hover_position}
+              position_ID={position.ID}
+              className={cn({
+                '-scale-x-100': reverse,
+              })}
+            />
+            <ActorFrameSlim
+              actor={actor}
+              className="relative z-40 px-2 cursor-pointer"
+              onClick={() => {
+                setActiveActor(actor.ID)
+              }}
+            />
+          </motion.div>
+        )}
+      </AnimatePresence>
     </motion.div>
   )
 }

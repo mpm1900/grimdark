@@ -40,7 +40,7 @@ function GothicProgress({
     <ProgressPrimitive.Root
       data-slot="progress"
       className={cn(
-        'relative w-full overflow-hidden bg-neutral-950 border-2 border-foreground/30 ring ring-black',
+        'relative w-full overflow-hidden bg-neutral-950 border-2 border-stone-700 ring ring-black',
         className
       )}
       value={value}

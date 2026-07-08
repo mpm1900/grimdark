@@ -78,6 +78,17 @@ func AddModifiers(modifiers ...Modifier) Mutation {
 		},
 	}
 }
+func RemoveModifier(modifier Modifier) Mutation {
+	return Mutation{
+		delta: func(g *Game, ctx Context) []uuid.UUID {
+			g.RemoveModifiers(func(g Game, m Modifier, ctx Context) bool {
+				return m.ID == modifier.ID
+			}, ctx)
+
+			return []uuid.UUID{modifier.Context.ParentID}
+		},
+	}
+}
 func PushLog(log Log) Mutation {
 	return Mutation{
 		delta: func(g *Game, ctx Context) []uuid.UUID {

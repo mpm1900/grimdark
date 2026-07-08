@@ -3,7 +3,6 @@ package items
 import (
 	"fmt"
 	"grimdark/internal/game"
-	"grimdark/internal/game/actions"
 
 	"github.com/google/uuid"
 )
@@ -14,18 +13,23 @@ func TestItem() game.HeldItem {
 		a.Stages[game.CriticalChance] = a.Stages[game.CriticalChance] + 1
 		a.Stages[game.CriticalDamage] = a.Stages[game.CriticalDamage] - 1
 		a.AffinityResistance[game.Kinetic] += 1
-		a.Actions = []game.Action{actions.SwordsDance}
 		return a
 	})
 	effect.Triggers = []game.Trigger{
 		{
-			On:       game.OnTurnEnd,
-			Validate: game.TriggerModifierParentIsActive,
+			On:       game.OnModifierAdd,
+			Validate: game.TriggerTargetMatchesModifierParent,
 			Action: game.Action{
 				Resolve: func(g *game.Game, ctx game.Context, this game.ActionContext) []game.Transaction {
 					targets := g.GetTargets(ctx)
-					// this.Push(game.ConsumeItem().Bind(ctx))
-					fmt.Println(game.OnTurnEnd)
+					mod, ok := g.GetModifier(ctx.ModifierID)
+					if ok {
+						fmt.Println(mod.Payload.Name, mod.ID, mod.Payload.ID)
+						// this.Push(game.RemoveModifier(mod).Bind(ctx))
+						// this.Push(game.ConsumeItem().Bind(ctx))
+
+					}
+					fmt.Println(game.OnModifierAdd)
 					for _, t := range targets {
 						fmt.Println(t.Name)
 					}

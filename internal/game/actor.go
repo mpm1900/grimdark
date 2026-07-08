@@ -62,7 +62,8 @@ type Actor struct {
 
 	Actions []Action
 	Item    *HeldItem
-	Weapon  *Weapon
+	WeaponL *Weapon
+	WeaponR *Weapon
 
 	ActionsState       map[uuid.UUID]ActionState
 	AffinityDamage     map[Affinity]int
@@ -116,7 +117,8 @@ type actorJSON struct {
 	Stages             map[Stat]int         `json:"stages"`
 	Status             ActorStatus          `json:"status"`
 	UnmodifiedStats    map[Stat]int         `json:"unmodified_stats"`
-	Weapon             *weaponJSON          `json:"weapon"`
+	WeaponL            *weaponJSON          `json:"weapon_l"`
+	WeaponR            *weaponJSON          `json:"weapon_r"`
 	Wounds             int                  `json:"wounds"`
 }
 
@@ -165,7 +167,8 @@ func NewActor(playerID uuid.UUID, def ActorDef) Actor {
 		Level:      100,
 
 		Actions: []Action{},
-		Weapon:  nil,
+		WeaponL: nil,
+		WeaponR: nil,
 		Item:    nil,
 
 		AffinityDamage:     map[Affinity]int{},
@@ -198,10 +201,15 @@ func NewActor(playerID uuid.UUID, def ActorDef) Actor {
 }
 
 func (a Actor) Clone() Actor {
-	var weapon *Weapon = nil
-	if a.Weapon != nil {
-		clone := a.Weapon.Clone()
-		weapon = &clone
+	var weapon_l *Weapon = nil
+	var weapon_r *Weapon = nil
+	if a.WeaponL != nil {
+		clone := a.WeaponL.Clone()
+		weapon_l = &clone
+	}
+	if a.WeaponR != nil {
+		clone := a.WeaponR.Clone()
+		weapon_r = &clone
 	}
 	return Actor{
 		ActorDef:   a.ActorDef.Clone(),
@@ -210,7 +218,8 @@ func (a Actor) Clone() Actor {
 		PositionID: a.PositionID,
 
 		Actions: slices.Clone(a.Actions),
-		Weapon:  weapon,
+		WeaponL: weapon_l,
+		WeaponR: weapon_r,
 		Item:    a.Item,
 
 		AffinityDamage:     maps.Clone(a.AffinityDamage),
@@ -252,8 +261,14 @@ func (a *Actor) getAux(stat Stat) float64 {
 	if !ok {
 		aux = 0
 	}
-	if a.Weapon != nil {
-		weapon_aux, ok := a.Weapon.AuxStats[stat]
+	if a.WeaponL != nil {
+		weapon_aux, ok := a.WeaponL.AuxStats[stat]
+		if ok {
+			aux += weapon_aux
+		}
+	}
+	if a.WeaponR != nil {
+		weapon_aux, ok := a.WeaponR.AuxStats[stat]
 		if ok {
 			aux += weapon_aux
 		}
@@ -384,8 +399,11 @@ func (a Actor) GetRemainingHealth() float64 {
 }
 func (a Actor) GetEffects() []Effect {
 	effects := slices.Clone(a.Effects)
-	if a.Weapon != nil {
-		effects = append(effects, a.Weapon.Effects...)
+	if a.WeaponL != nil {
+		effects = append(effects, a.WeaponL.Effects...)
+	}
+	if a.WeaponR != nil {
+		effects = append(effects, a.WeaponR.Effects...)
 	}
 	if a.Item != nil {
 		effects = append(effects, a.Item.Effects...)
@@ -406,18 +424,31 @@ func (a Actor) GetModifiers() []Modifier {
 	return modifiers
 }
 func (a Actor) GetActions() []Action {
-	actions := slices.Clone(a.Actions)
-	if a.Weapon != nil {
-		actions = append(actions, a.Weapon.Actions...)
+	actions := []Action{}
+	seen := map[uuid.UUID]struct{}{}
+
+	addActions := func(next []Action) {
+		for _, action := range next {
+			if _, ok := seen[action.ID]; ok {
+				continue
+			}
+
+			seen[action.ID] = struct{}{}
+			actions = append(actions, action)
+		}
 	}
 
-	actions = append(actions, GLOBAL_ACTIONS...)
-	return slices.DeleteFunc(actions, func(action Action) bool {
-		if action.ActiveCheck == nil {
-			return false
-		}
+	addActions(GLOBAL_ACTIONS)
+	addActions(a.Actions)
+	if a.WeaponL != nil {
+		addActions(a.WeaponL.Actions)
+	}
+	if a.WeaponR != nil {
+		addActions(a.WeaponR.Actions)
+	}
 
-		return !action.ActiveCheck(a)
+	return slices.DeleteFunc(actions, func(action Action) bool {
+		return action.ActiveCheck != nil && !action.ActiveCheck(a)
 	})
 }
 func (a Actor) GetActionByID(action_id uuid.UUID) (Action, bool) {
@@ -485,10 +516,15 @@ func (a Actor) ToJSON(g Game) actorJSON {
 		actions[i] = action.ToJSON(g, a)
 	}
 
-	var weapon *weaponJSON = nil
-	if a.Weapon != nil {
-		clone := a.Weapon.Clone().ToJSON(g, a)
-		weapon = &clone
+	var weapon_l *weaponJSON = nil
+	var weapon_r *weaponJSON = nil
+	if a.WeaponL != nil {
+		clone := a.WeaponL.ToJSON(g, a)
+		weapon_l = &clone
+	}
+	if a.WeaponR != nil {
+		clone := a.WeaponR.ToJSON(g, a)
+		weapon_r = &clone
 	}
 
 	return actorJSON{
@@ -500,7 +536,8 @@ func (a Actor) ToJSON(g Game) actorJSON {
 		PlayerID:           a.PlayerID,
 		PositionID:         NilifyUUID(a.PositionID),
 		Actions:            actions,
-		Weapon:             weapon,
+		WeaponL:            weapon_l,
+		WeaponR:            weapon_r,
 		Item:               a.Item,
 		Effects:            a.GetEffects(),
 		Affinities:         slices.Collect(maps.Keys(a.Affinities)),

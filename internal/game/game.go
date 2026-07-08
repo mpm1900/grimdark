@@ -206,6 +206,22 @@ func (g *Game) GetModifiers() []Modifier {
 
 	return modifiers
 }
+func (g *Game) GetModifier(id uuid.UUID) (Modifier, bool) {
+	for _, mod := range g.GetModifiers() {
+		if mod.ID == id {
+			return mod, true
+		}
+	}
+	return Modifier{}, false
+}
+func (g *Game) GetModifierByEffectID(effect_ID uuid.UUID) (Modifier, bool) {
+	for _, mod := range g.GetModifiers() {
+		if mod.Payload.ID == effect_ID {
+			return mod, true
+		}
+	}
+	return Modifier{}, false
+}
 func (g *Game) GetTriggers() []Trigger {
 	triggers := []Trigger{}
 	for _, mod := range g.GetModifiers() {
@@ -306,7 +322,10 @@ func (g *Game) AddModifiers(modifiers ...Modifier) {
 
 			if success {
 				s.Modifiers = append(s.Modifiers, mod)
-				g.On(OnModifierAdd, mod.Context)
+
+				trigger_context := mod.Context.Clone()
+				trigger_context.ModifierID = mod.ID
+				g.On(OnModifierAdd, trigger_context)
 				if mod.Payload.CheckSuccess != nil {
 					mod.Payload.CheckSuccess(g, mod.Payload, mod.Context)
 				}

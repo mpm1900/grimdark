@@ -13,11 +13,11 @@ var SlashSword = game.Weapon{
 		Name:        "Slash Sword",
 		Description: "A large sword, designed for slashing.",
 	},
-	Actions: []game.Action{actions.Slash, actions.Blast},
+	Actions: []game.Action{actions.Slash, actions.Blast, actions.SwordsDance},
 	AuxStats: map[game.Stat]float64{
 		game.Melee: 20,
 	},
 	Effects:    []game.Effect{},
-	Hands:      2,
+	Hands:      1,
 	WeaponType: "Sword",
 }

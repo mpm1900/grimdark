@@ -8,9 +8,10 @@ import (
 )
 
 type Context struct {
-	ActionID uuid.UUID
-	EffectID uuid.UUID
-	PlayerID uuid.UUID
+	ActionID   uuid.UUID
+	ModifierID uuid.UUID
+	EffectID   uuid.UUID
+	PlayerID   uuid.UUID
 
 	ParentID    uuid.UUID
 	SourceID    uuid.UUID
@@ -21,6 +22,7 @@ type Context struct {
 type contextJSON struct {
 	ActionID    *uuid.UUID  `json:"action_ID"`
 	EffectID    *uuid.UUID  `json:"effect_ID"`
+	ModifierID  *uuid.UUID  `json:"modifier_ID"`
 	PlayerID    *uuid.UUID  `json:"player_ID"`
 	ParentID    *uuid.UUID  `json:"parent_ID"`
 	SourceID    *uuid.UUID  `json:"source_ID"`
@@ -31,6 +33,7 @@ type contextJSON struct {
 func (c Context) MarshalJSON() ([]byte, error) {
 	return json.Marshal(contextJSON{
 		ActionID:    NilifyUUID(c.ActionID),
+		ModifierID:  NilifyUUID(c.ModifierID),
 		EffectID:    NilifyUUID(c.EffectID),
 		PlayerID:    NilifyUUID(c.PlayerID),
 		ParentID:    NilifyUUID(c.ParentID),
@@ -49,6 +52,9 @@ func (c *Context) UnmarshalJSON(data []byte) error {
 	*c = NewContext()
 	if payload.ActionID != nil {
 		c.ActionID = *payload.ActionID
+	}
+	if payload.ModifierID != nil {
+		c.ModifierID = *payload.ModifierID
 	}
 	if payload.EffectID != nil {
 		c.EffectID = *payload.EffectID
@@ -76,6 +82,7 @@ func NewContext() Context {
 	return Context{
 		ActionID:    uuid.Nil,
 		EffectID:    uuid.Nil,
+		ModifierID:  uuid.Nil,
 		PlayerID:    uuid.Nil,
 		ParentID:    uuid.Nil,
 		SourceID:    uuid.Nil,
@@ -88,6 +95,7 @@ func (c Context) Clone() Context {
 	return Context{
 		ActionID:    c.ActionID,
 		EffectID:    c.EffectID,
+		ModifierID:  c.ModifierID,
 		PlayerID:    c.PlayerID,
 		ParentID:    c.ParentID,
 		SourceID:    c.SourceID,

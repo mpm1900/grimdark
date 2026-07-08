@@ -1,33 +1,17 @@
-import { ActionButton, SystemActionButton } from '#/components/action-button'
-import { ActionContextDialog } from '#/components/action-context-dialog'
-import { ActorAvatar } from '#/components/actor-avatar'
-import { ActorFrame } from '#/components/actor-frame'
 import { AppHeader } from '#/components/app-header'
-import { BattleLog } from '#/components/battle-log'
-import { TinyBadge } from '#/components/gothic-ui/badge'
-import { GothicCard } from '#/components/gothic-ui/card'
-import { GothicFrame } from '#/components/gothic-ui/frame'
+import { BattlePanel } from '#/components/panels/battle'
 import { PlayerPositions } from '#/components/player-positions'
 import { PlayerTeam } from '#/components/player-team'
 import { PromptController } from '#/components/prompt-controller'
-import { DialogTrigger } from '#/components/ui/dialog'
-import { WeaponFrame } from '#/components/weapon-details'
 import { clientsStore } from '#/lib/stores/clients'
 import { gameStore } from '#/lib/stores/game'
-import { uiStore } from '#/lib/stores/ui'
 import { ClientOnly, createFileRoute } from '@tanstack/react-router'
 import { useSelector } from '@tanstack/react-store'
-import { HiLink } from 'react-icons/hi'
 export const Route = createFileRoute('/')({ component: Home })
 
 function Home() {
   const game = useSelector(gameStore, (g) => g)
   const client = useSelector(clientsStore, (s) => s.me)
-  const active_actor_id = useSelector(uiStore, (s) => s.active_actor)
-  const active_actor = game.actors.find((a) => a.ID === active_actor_id)
-  const acitve_actor_command = game.commands.find(
-    (c) => c.context.source_ID === active_actor?.ID
-  )
   const client_player = game.players.find((p) => p.user.id === client?.ID)
   const other_player = game.players.find((p) => p.user.id !== client?.ID)
 
@@ -43,8 +27,7 @@ function Home() {
             {client_player && <PlayerTeam player={client_player} />}
             {other_player && <PlayerTeam player={other_player} />}
           </div>
-          <div className="flex-1" />
-          <div className="flex shrink-0 px-3 z-10 -mb-1">
+          <div className="flex flex-1 h-full px-3 z-10 mb-56">
             {client_player && (
               <PlayerPositions
                 className="flex-1 gap-1"
@@ -60,106 +43,7 @@ function Home() {
               />
             )}
           </div>
-          <div className="bg-[url(/gothic/DecoratedLineHorizontal.png)] hidden h-7 bg-center bg-contain bg-repeat-x"></div>
-          <div className="h-48 relative flex items-start justify-center -z-10 mt-12">
-            {active_actor && <ActorAvatar actor={active_actor} />}
-            <GothicFrame className="relative flex flex-1 flex-col h-full bg-neutral-950 hidden">
-              {active_actor && (
-                <ActorFrame actor={active_actor} className="-mt-1 -ml-0.5" />
-              )}
-            </GothicFrame>
-            <GothicCard className="h-full flex flex-row">
-              <div className="relative h-full grid grid-cols-1 grid-rows-3 w-13">
-                <TinyBadge
-                  variant="default"
-                  className="absolute z-10 px-1 -top-1 left-1/2 -translate-x-1/2 rounded-xs rounded-b-sm font-cinzel border-white/30 text-foreground/60"
-                >
-                  Items
-                </TinyBadge>
-                <GothicFrame></GothicFrame>
-                <GothicFrame></GothicFrame>
-                <GothicFrame></GothicFrame>
-              </div>
-              <div className="relative h-full grid grid-cols-1 grid-rows-2">
-                <TinyBadge
-                  variant="default"
-                  className="absolute z-10 px-1 -top-1 left-1/2 -translate-x-1/2 rounded-xs rounded-b-sm font-cinzel border-white/30 text-foreground/60"
-                >
-                  Weapons
-                </TinyBadge>
-                {active_actor?.weapon ? (
-                  <WeaponFrame disabled={false} weapon={active_actor.weapon} />
-                ) : (
-                  <GothicFrame></GothicFrame>
-                )}
-                {active_actor?.weapon ? (
-                  <WeaponFrame disabled={true} weapon={active_actor.weapon} />
-                ) : (
-                  <GothicFrame></GothicFrame>
-                )}
-                <div className="pointer-events-none absolute inset-0 grid place-items-center">
-                  <HiLink className="rotate-136 size-6 fill-neutral-500" />
-                </div>
-              </div>
-            </GothicCard>
-            <GothicCard className="relative flex-row h-full max-w-1/3 bg-neutral-950 z-10">
-              <TinyBadge
-                variant="default"
-                className="absolute z-10 px-1 -top-1 left-1/2 -translate-x-1/2 rounded-xs rounded-b-sm font-cinzel border-white/30 text-foreground/60"
-              >
-                Actions
-              </TinyBadge>
-              <div className="grid grid-cols-2 grid-rows-3">
-                {active_actor?.actions
-                  .filter((a) => a.type === 'actor')
-                  .map((action) => (
-                    <ActionContextDialog
-                      key={action.ID}
-                      actor={active_actor}
-                      action={action}
-                      enabled={!action.is_disabled}
-                    >
-                      <DialogTrigger asChild>
-                        <ActionButton
-                          action={action}
-                          actor={active_actor}
-                          disabled={!!acitve_actor_command}
-                        />
-                      </DialogTrigger>
-                    </ActionContextDialog>
-                  ))}
-              </div>
-              <div className="flex flex-col justify-between">
-                {active_actor?.actions
-                  .filter((a) => a.type === 'system')
-                  .map((action) => (
-                    <ActionContextDialog
-                      key={action.ID}
-                      actor={active_actor}
-                      action={action}
-                      enabled={!action.is_disabled}
-                    >
-                      <DialogTrigger asChild>
-                        <SystemActionButton
-                          action={action}
-                          actor={active_actor}
-                          disabled={!!acitve_actor_command}
-                        />
-                      </DialogTrigger>
-                    </ActionContextDialog>
-                  ))}
-              </div>
-            </GothicCard>
-            <GothicCard className="h-full min-w-0 max-w-1/4 flex-1 flex bg-neutral-950 p-0">
-              <TinyBadge
-                variant="default"
-                className="absolute z-10 px-1 -top-1 left-1/2 -translate-x-1/2 rounded-xs rounded-b-sm font-cinzel border-white/30 text-foreground/60"
-              >
-                Battle Log
-              </TinyBadge>
-              <BattleLog />
-            </GothicCard>
-          </div>
+          <BattlePanel />
         </div>
       </div>
     </ClientOnly>

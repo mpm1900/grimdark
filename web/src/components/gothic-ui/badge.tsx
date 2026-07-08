@@ -56,7 +56,7 @@ const tinyBadgeVariants = cva(
   {
     variants: {
       variant: {
-        default: 'bg-neutral-950 text-foreground border',
+        default: 'bg-neutral-950 text-foreground/60 border',
         positive: 'bg-neutral-950 text-lime-200 border-lime-900/50',
         negative: 'bg-neutral-950 text-red-200 border-red-900/50',
 

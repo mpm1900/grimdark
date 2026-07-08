@@ -3,7 +3,8 @@ import type { Actor } from './actor'
 
 const ContextSchema = z.object({
   action_ID: z.string().nullable(),
-  effect_ID: z.string().nullable().optional(),
+  modifier_ID: z.string().nullable(),
+  effect_ID: z.string().nullable(),
   player_ID: z.string().nullable(),
 
   parent_ID: z.string().nullable(),
@@ -30,6 +31,7 @@ function getTargetsFromContext(actors: Actor[], context: Context): Actor[] {
 
 const NULL_CONTEXT: Context = {
   action_ID: null,
+  modifier_ID: null,
   effect_ID: null,
   parent_ID: null,
   source_ID: null,

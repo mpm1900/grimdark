@@ -1,6 +1,10 @@
 package game
 
-import "fmt"
+import (
+	"fmt"
+
+	"github.com/google/uuid"
+)
 
 type TriggerOn string
 
@@ -56,12 +60,18 @@ func (c TriggerCommand) Resolve(g *Game) []Transaction {
 		transactions: []Transaction{},
 	}
 
-	context := c.Context
-	context.EffectID = c.ParentContext.EffectID
+	context := c.Context.Clone()
+	if context.EffectID == uuid.Nil {
+		context.EffectID = c.ParentContext.EffectID
+	}
+	if context.ModifierID == uuid.Nil {
+		context.ModifierID = c.ParentContext.ModifierID
+	}
 	context.ParentID = c.ParentContext.ParentID
 	if c.Payload.MapContext != nil {
 		context = c.Payload.MapContext(*g, context, action_context)
 	}
+
 	g.SetActiveContext(context)
 	g.ResetLogDepth()
 

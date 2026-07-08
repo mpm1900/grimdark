@@ -25,7 +25,7 @@ function ActorStatsPanel({
       <div className="font-serif text-foreground/80">
         <ActorFrame actor={actor} className="-ml-1 -mt-1.5 -mr-px z-0" />
         <div className="py-4 p-2 hidden">
-          {actor.weapon && <WeaponDetails weapon={actor.weapon} />}
+          {actor.weapon_l && <WeaponDetails weapon={actor.weapon_l} />}
         </div>
         <div className='px-1 pt-2'>
           <Marker variant="separator">

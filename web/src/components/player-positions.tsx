@@ -7,7 +7,6 @@ import { clientsStore } from '#/lib/stores/clients'
 import { PlayerPosition } from './player-position'
 import { gameStore } from '#/lib/stores/game'
 import { AnimatePresence, LayoutGroup } from 'motion/react'
-import { isIdNull } from '#/lib/game/core'
 
 function PlayerPositions({
   player,
@@ -18,7 +17,9 @@ function PlayerPositions({
   const client = useSelector(clientsStore, (s) => s.me!)
   const status = useSelector(gameStore, (g) => g.status)
   const positions = useSelector(gameStore, (g) =>
-    g.positions.filter((p) => p.player_ID === player.ID)
+    g.positions
+      .filter((p) => p.player_ID === player.ID)
+      .sort((a, b) => a.rank - b.rank)
   )
   const ui = useSelector(uiStore, (ui) => ui)
   const hover_position = useSelector(uiStore, (s) => s.hover_position)
@@ -32,7 +33,7 @@ function PlayerPositions({
       )}
       style={props.style}
     >
-      <PlatformParent reverse={reverse} className="flex-1">
+      <PlatformParent reverse={reverse} className="flex-1 h-full">
         {positions.map((position) => (
           <Platform
             key={position.ID}
@@ -44,7 +45,7 @@ function PlayerPositions({
       </PlatformParent>
       <div
         className={cn(
-          'relative z-10 flex flex-1 flex-row-reverse items-end gap-1',
+          'relative z-10 flex flex-1 flex-row-reverse items-end gap-1 h-full',
           reverse && 'flex-row'
         )}
       >
@@ -52,7 +53,7 @@ function PlayerPositions({
           <AnimatePresence initial={false}>
             {positions.map((position) => (
               <PlayerPosition
-                key={isIdNull(position.actor_ID) ? position.ID : position.actor_ID}
+                key={position.ID}
                 hover_position={hover_position}
                 position={position}
                 reverse={reverse}

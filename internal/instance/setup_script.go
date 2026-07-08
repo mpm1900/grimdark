@@ -42,7 +42,7 @@ func SetupGame(g *game.Game, user game.User) {
 			return false
 		}
 
-		if active_context.SourceID == ctx.ParentID {
+		if active_context.ActionID != uuid.Nil && active_context.SourceID == ctx.ParentID {
 			return active_context.HasTarget(a)
 		}
 
@@ -63,7 +63,8 @@ func SetupGame(g *game.Game, user game.User) {
 	}
 	max := game.NewActor(player.ID, max_def)
 	max.Effects = []game.Effect{bypass, effects.Intimidate()}
-	max.Weapon = &weapons.SlashSword
+	max.WeaponL = &weapons.SlashSword
+	max.WeaponR = &weapons.SlashSword
 
 	katie_def := game.NewActorDef()
 	katie_def.Name = "Katie"
@@ -77,7 +78,7 @@ func SetupGame(g *game.Game, user game.User) {
 	katie.Actions = []game.Action{
 		//	actions.SwordsDance,
 	}
-	katie.Weapon = &weapons.SlashSword
+	katie.WeaponL = &weapons.SlashSword
 	katie.Item = game.P(items.TestItem())
 	katie.AffinityImmunities = map[game.Affinity]float64{
 		game.Kinetic: 0,
@@ -90,7 +91,7 @@ func SetupGame(g *game.Game, user game.User) {
 		game.Arcane: {},
 	}
 	gabe := game.NewActor(player.ID, gabe_def)
-	gabe.Weapon = &weapons.SlashSword
+	gabe.WeaponL = &weapons.SlashSword
 	gabe.Item = game.P(items.TestItem())
 	gabe.AffinityImmunities = map[game.Affinity]float64{
 		game.Kinetic: 0,

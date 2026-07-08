@@ -156,7 +156,7 @@ function ActionDetails({ action, source }: { action: Action; source: Actor }) {
         </div>
       )}
 
-      <div className=" text-foreground/50 p-4">
+      <div className=" text-foreground/50 p-4 pb-6 text-center">
         <span className="italic">{action.config.description}</span>
         {cooldown > 0 && (
           <>

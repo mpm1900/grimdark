@@ -31,6 +31,7 @@ export type Actor = {
   stats: Record<Stat, number>
   status: string
   unmodified_stats: Record<Stat, number>
-  weapon: Weapon | null
+  weapon_l: Weapon | null
+  weapon_r: Weapon | null
   wounds: number
 }

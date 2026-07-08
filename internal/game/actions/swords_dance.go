@@ -28,4 +28,10 @@ var SwordsDance = game.Action{
 	DisabledCheck: func(g game.Game, source game.Actor) bool {
 		return source.GetMeta().ActiveTurns > 0
 	},
+	ActiveCheck: func(source game.Actor) bool {
+		if source.WeaponL != nil && source.WeaponR != nil {
+			return source.WeaponL.ID == source.WeaponR.ID
+		}
+		return false
+	},
 }
