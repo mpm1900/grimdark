@@ -67,7 +67,7 @@ function ActionButton({
       {action.config.stat && (
         <StatIcon
           stat={action.config.stat}
-          className="size-15 absolute opacity-20 -right-6 bottom-0"
+          className="size-15 absolute opacity-20 -right-6 bottom-0 text-white"
         />
       )}
       {action.config.affinity && (
@@ -183,11 +183,11 @@ function SystemActionButton({
       className="flex-1 w-12 p-0 text-stone-400"
       {...props}
     >
-      {action.subtype === 'swap' && <TbSwitchHorizontal className="size-6" />}
-      {action.subtype === 'retreat' && <TbSwitchVertical className="size-6" />}
-      {action.subtype === 'back' && <TbArrowBigLeft className="size-6" />}
-      {action.subtype === 'forward' && <TbArrowBigRight className="size-6" />}
-      {action.subtype === 'front' && (
+      {action.tags.includes('swap') && <TbSwitchHorizontal className="size-6" />}
+      {action.tags.includes('retreat') && <TbSwitchVertical className="size-6" />}
+      {action.tags.includes('back') && <TbArrowBigLeft className="size-6" />}
+      {action.tags.includes('forward') && <TbArrowBigRight className="size-6" />}
+      {action.tags.includes('front') && (
         <TbArrowBigRightLines className="size-6" />
       )}
     </GothicFramedButton>

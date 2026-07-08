@@ -24,6 +24,7 @@ func SetupOpponent(g *game.Game) {
 			opp_def.Affinities = map[game.Affinity]struct{}{
 				game.Poison: {},
 			}
+			opp_def.SpriteURL = "/img/nec.png"
 			return game.NewActor(opp.ID, opp_def)
 		}
 		for _, pos := range open_positions {
@@ -61,6 +62,7 @@ func SetupGame(g *game.Game, user game.User) {
 	max_def.Affinities = map[game.Affinity]struct{}{
 		game.Fire: {},
 	}
+	max_def.SpriteURL = "/img/spm.png"
 	max := game.NewActor(player.ID, max_def)
 	max.Effects = []game.Effect{bypass, effects.Intimidate()}
 	max.WeaponL = &weapons.SlashSword
@@ -72,6 +74,7 @@ func SetupGame(g *game.Game, user game.User) {
 		game.Cryo:   {},
 		game.Arcane: {},
 	}
+	katie_def.SpriteURL = "/img/sis.png"
 
 	katie := game.NewActor(player.ID, katie_def)
 	katie.AuxStats[game.Speed] = 10
@@ -90,6 +93,7 @@ func SetupGame(g *game.Game, user game.User) {
 		game.Cryo:   {},
 		game.Arcane: {},
 	}
+	gabe_def.SpriteURL = "/img/thp.png"
 	gabe := game.NewActor(player.ID, gabe_def)
 	gabe.WeaponL = &weapons.SlashSword
 	gabe.Item = game.P(items.TestItem())
@@ -99,6 +103,7 @@ func SetupGame(g *game.Game, user game.User) {
 	other_gabe := gabe.Clone()
 	other_gabe.ID = uuid.New()
 	other_gabe.Name = "Other"
+	other_gabe.ActorDef.SpriteURL = "/img/spm2.png"
 
 	if len(g.State().Players) == 0 {
 		g.AddPlayers(player)

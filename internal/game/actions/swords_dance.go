@@ -8,9 +8,8 @@ import (
 )
 
 var SwordsDance = game.Action{
-	ID:      uuid.MustParse("019f0aee-7aae-7efc-b8e7-d514f3ad2b18"),
-	Type:    game.ATActor,
-	Subtype: game.ASWeapon,
+	ID:   uuid.MustParse("019f0aee-7aae-7efc-b8e7-d514f3ad2b18"),
+	Tags: []game.ActionTag{game.ATActor, game.ATWeapon},
 	Config: game.ActionConfig{
 		Name:        "Swords Dance",
 		Description: "Raises user's Melee and Speed.",

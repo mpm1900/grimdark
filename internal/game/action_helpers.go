@@ -199,8 +199,7 @@ func Retreat() Action {
 			Description: "User switches out for an ally.",
 			TargetCount: 1,
 		},
-		Type:    ATSystem,
-		Subtype: ASRetreat,
+		Tags: []ActionTag{ATSystem, ATRetreat},
 		Resolve: func(g *Game, ctx Context, this ActionContext) []Transaction {
 			if len(ctx.ActorIDs) != 1 {
 				return this.Done()
@@ -237,8 +236,7 @@ func SwitchIn(n int) Action {
 			Description: fmt.Sprintf("Switch %s into battle.", noun),
 			TargetCount: n,
 		},
-		Type:    ATSystem,
-		Subtype: ASSwap,
+		Tags: []ActionTag{ATSystem},
 		Resolve: func(g *Game, ctx Context, this ActionContext) []Transaction {
 			if len(ctx.ActorIDs) != len(ctx.PositionIDs) {
 				return this.Done()
@@ -263,9 +261,8 @@ func SwitchIn(n int) Action {
 
 func Swap() Action {
 	return Action{
-		ID:      uuid.MustParse("019f20f2-0860-7149-a11e-fbc3df357824"),
-		Type:    ATSystem,
-		Subtype: ASSwap,
+		ID:   uuid.MustParse("019f20f2-0860-7149-a11e-fbc3df357824"),
+		Tags: []ActionTag{ATSystem, ATSwap},
 		Config: ActionConfig{
 			Name:        "Swap",
 			Description: "User switches places with target ally.",
@@ -285,9 +282,8 @@ func Swap() Action {
 }
 func MoveForwards() Action {
 	return Action{
-		ID:      uuid.MustParse("019f3ab7-eca5-7a8f-a5a9-214159374007"),
-		Type:    ATSystem,
-		Subtype: ASForward,
+		ID:   uuid.MustParse("019f3ab7-eca5-7a8f-a5a9-214159374007"),
+		Tags: []ActionTag{ATSystem, ATForward},
 		Config: ActionConfig{
 			Name:        "Move Forwards",
 			Description: "User moves forwards, displacing other actors back.",
@@ -312,9 +308,8 @@ func MoveForwards() Action {
 }
 func MoveFront() Action {
 	return Action{
-		ID:      uuid.MustParse("019f3ab7-eca5-70fc-9483-f147b1dbdebb"),
-		Type:    ATSystem,
-		Subtype: ASFront,
+		ID:   uuid.MustParse("019f3ab7-eca5-70fc-9483-f147b1dbdebb"),
+		Tags: []ActionTag{ATSystem, ATFront},
 		Config: ActionConfig{
 			Name:        "Move to Front",
 			Description: "User moves to the front (1st position), displacing other actors back.",
@@ -339,9 +334,8 @@ func MoveFront() Action {
 }
 func MoveBackwards() Action {
 	return Action{
-		ID:      uuid.MustParse("019f3ab7-eca5-7ad4-a884-4ad97433a1e1"),
-		Type:    ATSystem,
-		Subtype: ASBack,
+		ID:   uuid.MustParse("019f3ab7-eca5-7ad4-a884-4ad97433a1e1"),
+		Tags: []ActionTag{ATSystem, ATBack},
 		Config: ActionConfig{
 			Name:        "Move Backwards",
 			Description: "User moves backwards, displacing other actors forward.",

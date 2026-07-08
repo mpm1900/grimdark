@@ -36,6 +36,7 @@ type ActorDef struct {
 	Faction    ActorFaction
 	Name       string
 	Race       ActorRace
+	SpriteURL  string
 	Stats      map[Stat]float64
 }
 
@@ -103,6 +104,7 @@ type actorJSON struct {
 	IsBulwark          bool                 `json:"is_bulwark"`
 	IsHidden           bool                 `json:"is_hidden"`
 	IsInsulated        bool                 `json:"is_insulated"`
+	IsPlayer           bool                 `json:"is_player"`
 	IsProtected        bool                 `json:"is_protected"`
 	IsStunned          bool                 `json:"is_stunned"`
 	Item               *HeldItem            `json:"item"`
@@ -112,6 +114,7 @@ type actorJSON struct {
 	PositionID         *uuid.UUID           `json:"position_ID"`
 	Race               ActorRace            `json:"race"`
 	Seen               bool                 `json:"-"`
+	SpriteURL          string               `json:"sprite_url"`
 	State              ActorState           `json:"state"`
 	Stats              map[Stat]int         `json:"stats"`
 	Stages             map[Stat]int         `json:"stages"`
@@ -155,6 +158,7 @@ func (d ActorDef) Clone() ActorDef {
 		Faction:    d.Faction,
 		Name:       d.Name,
 		Race:       d.Race,
+		SpriteURL:  d.SpriteURL,
 		Stats:      maps.Clone(d.Stats),
 	}
 }
@@ -550,6 +554,7 @@ func (a Actor) ToJSON(g Game) actorJSON {
 		ActiveModifiers:    active_modifiers,
 		Wounds:             int(a.Wounds),
 		Seen:               a.Meta.Seen,
+		SpriteURL:          a.ActorDef.SpriteURL,
 		State:              a.State,
 		Status:             a.Status,
 		IsActive:           a.IsActive(),

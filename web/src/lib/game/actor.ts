@@ -18,6 +18,7 @@ export type Actor = {
   is_alive: boolean
   is_hidden: boolean
   is_insulated: boolean
+  is_player: boolean
   is_protected: boolean
   is_stunned: boolean
   item: HeldItem | null
@@ -26,6 +27,7 @@ export type Actor = {
   player_ID: ID
   position_ID: ID | null
   race: string
+  sprite_url: string
   stages: Record<Stat, number>
   state: string
   stats: Record<Stat, number>

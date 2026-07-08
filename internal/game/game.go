@@ -885,10 +885,13 @@ func (json *GameJSON) ForPlayer(player_ID uuid.UUID) {
 	commands = slices.DeleteFunc(commands, func(p Bindable[actionJSON]) bool {
 		return p.Context.PlayerID != player_ID
 	})
-	actors := slices.Clone(json.Actors)
-	actors = slices.DeleteFunc(actors, func(a actorJSON) bool {
-		return a.PlayerID != player_ID && !a.Seen
-	})
+	actors := []actorJSON{}
+	for _, a := range json.Actors {
+		a.IsPlayer = a.PlayerID == player_ID
+		if a.IsPlayer || a.Seen {
+			actors = append(actors, a)
+		}
+	}
 	json.Prompts = prompts
 	json.Commands = commands
 	json.Actors = actors

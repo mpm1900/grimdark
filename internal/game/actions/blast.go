@@ -7,9 +7,8 @@ import (
 )
 
 var Blast = game.Action{
-	ID:      uuid.MustParse("019f287e-fdf6-7fc4-87b0-0a0060efc424"),
-	Type:    game.ATActor,
-	Subtype: game.ASWeapon,
+	ID:   uuid.MustParse("019f287e-fdf6-7fc4-87b0-0a0060efc424"),
+	Tags: []game.ActionTag{game.ATActor, game.ATWeapon},
 	Config: game.ActionConfig{
 		Name:         "Blast",
 		Description:  "A blast of arcane energy.",

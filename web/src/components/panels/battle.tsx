@@ -77,7 +77,7 @@ function BattlePanel() {
         </TinyBadge>
         <div className="grid grid-cols-2 grid-rows-3">
           {active_actor?.actions
-            .filter((a) => a.type === 'actor')
+            .filter((a) => a.tags.includes('actor'))
             .map((action) => (
               <ActionContextDialog
                 key={action.ID}
@@ -97,7 +97,7 @@ function BattlePanel() {
         </div>
         <div className="flex flex-col justify-between">
           {active_actor?.actions
-            .filter((a) => a.type === 'system')
+            .filter((a) => a.tags.includes('system'))
             .map((action) => (
               <ActionContextDialog
                 key={action.ID}

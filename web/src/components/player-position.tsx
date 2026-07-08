@@ -37,7 +37,7 @@ function PlayerSprite({
   return (
     <div
       className={cn(
-        'relative z-10 px-2 py-2 flex w-full min-w-0 justify-center h-full max-h-70',
+        'relative z-10 px-2 py-2 flex items-end w-full min-w-0 justify-center h-full max-h-70',
         {
           'opacity-50': !is_highlighted,
           'opacity-100': is_highlighted,
@@ -50,9 +50,9 @@ function PlayerSprite({
       {...props}
     >
       <img
-        src="/img/spm.png"
+        src={actor.sprite_url}
         className={cn(
-          'h-full w-full object-contain max-w-60 relative z-10 pointer-events-none select-none',
+          'h-full w-full object-contain object-bottom max-w-60 relative z-10 pointer-events-none select-none',
           !actor && 'opacity-0'
         )}
       />

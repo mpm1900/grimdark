@@ -8,9 +8,8 @@ import (
 )
 
 var Slash = game.Action{
-	ID:      uuid.MustParse("019f0aec-8b34-72cc-bbcc-36350e9fa6fb"),
-	Type:    game.ATActor,
-	Subtype: game.ASWeapon,
+	ID:   uuid.MustParse("019f0aec-8b34-72cc-bbcc-36350e9fa6fb"),
+	Tags: []game.ActionTag{game.ATActor, game.ATWeapon},
 	Config: game.ActionConfig{
 		Name:         "Slash",
 		Description:  "Slashes target and possibly applies Speed Down.",

@@ -1,5 +1,5 @@
 import type { Stat } from '#/lib/game/core'
-import { GiCrossedSwords, GiSpectreM4, GiSprint } from 'react-icons/gi'
+import { GiBookmarklet, GiCrossedSwords, GiSpectreM4, GiSprint } from 'react-icons/gi'
 import { TbShield } from 'react-icons/tb'
 import type { IconType } from 'react-icons/lib'
 
@@ -149,7 +149,7 @@ const SpecialDefense: IconType = (props) => {
 export const STAT_ICONS: Record<Stat, IconType> = {
   melee: GiCrossedSwords,
   ranged: GiSpectreM4,
-  special: SkullTome,
+  special: GiBookmarklet,
   speed: GiSprint,
   'martial-defense': MartialDefense,
   'special-defense': SpecialDefense,
