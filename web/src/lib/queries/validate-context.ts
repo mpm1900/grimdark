@@ -1,8 +1,8 @@
 import { queryOptions } from '@tanstack/react-query'
 import { contextToString, type Context } from '../game/context'
-import { subscribe } from '../socket/connect'
 import { clientsStore } from '../stores/clients'
 import { sendContextMessage } from '../stores/socket'
+import { subscribe } from '../socket/subscribe'
 
 async function validateContext(context: Context): Promise<boolean> {
   const client = clientsStore.get().me

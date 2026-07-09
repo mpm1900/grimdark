@@ -1,6 +1,14 @@
+import { getSocketUrl } from '#/utils/get-socket-url'
 import {
+  closeSocket,
+  closeSocketEmpty,
+  deleteSocket,
+  openSocket,
+  resetReconnect,
+  setSocket,
+  setSocketError,
   socketStore,
-  type SocketMessageSubscriber,
+  startReconnect,
   type SocketResponse,
 } from '../stores/socket'
 import {
@@ -9,236 +17,151 @@ import {
   MAX_RECONNECT_DELAY,
 } from './config'
 import { socket_reducer } from './reducer'
+import { messageSubscribers } from './subscribe'
+import {
+  clearSocketEventHandlers,
+  isCurrentSocket,
+  readSavedInstanceID,
+} from './utils'
 
-function getSocketUrl(instanceID: string): string {
-  const envUrl = import.meta.env.VITE_BACKEND_URL
-  if (envUrl) {
-    const protocol = envUrl.startsWith('https') ? 'wss' : 'ws'
-    const host = envUrl.replace(/^https?:\/\//, '')
-    return `${protocol}://${host}/socket/${instanceID}/connect`
-  }
-
-  // Same host as the site (e.g. Traefik routes /socket on 443). Avoid hard-coded :3005 on HTTPS.
-  if (typeof window !== 'undefined' && window.location.protocol === 'https:') {
-    return `wss://${window.location.host}/socket/${instanceID}/connect`
-  }
-
-  const protocol = window.location.protocol === 'https:' ? 'wss' : 'ws'
-  const hostname = window.location.hostname
-  const port = '3005'
-
-  return `${protocol}://${hostname}:${port}/socket/${instanceID}/connect`
-}
-
-function getApiUrl(path: string): string {
-  const envUrl = import.meta.env.VITE_BACKEND_URL
-  if (envUrl) {
-    return `${envUrl.replace(/\/$/, '')}${path}`
-  }
-
-  // Same host as the site when /api is reverse-proxied.
-  if (typeof window !== 'undefined' && window.location.protocol === 'https:') {
-    return `${window.location.origin}${path}`
-  }
-
-  return `${window.location.protocol}//${window.location.hostname}:3005${path}`
-}
-
-async function isUnauthenticated(): Promise<boolean> {
-  try {
-    const response = await fetch(getApiUrl('/api/auth/me'), {
-      credentials: 'include',
-    })
-    return response.status === 401
-  } catch {
-    return false
-  }
-}
-
-function redirectToLogin() {
-  if (reconnectTimer) {
-    clearTimeout(reconnectTimer)
-    reconnectTimer = null
-  }
-
-  localStorage.removeItem(INSTANCE_ID_KEY)
-  socketStore.setState((s) => ({
-    ...s,
-    instanceID: null,
-    socket: null,
-    status: 'closed',
-    reconnectCount: 0,
-    isManualDisconnect: true,
-  }))
-
-  if (window.location.pathname !== '/login') {
-    window.location.assign('/login')
-  }
-}
-
-function clearSocketEventHandlers(socket: WebSocket) {
-  socket.onopen = null
-  socket.onclose = null
-  socket.onerror = null
-  socket.onmessage = null
-}
-
-function isCurrentSocket(socket: WebSocket): boolean {
-  return socketStore.state.socket === socket
-}
-
-const messageSubscribers = new Set<SocketMessageSubscriber>()
 let connectionAbortController: AbortController | null = null
 let reconnectTimer: number | null = null
 
-function attemptReconnect() {
-  const { instanceID, reconnectCount, isManualDisconnect } = socketStore.state
-  if (!instanceID || isManualDisconnect) return
+function connect(
+  instanceID?: string,
+  onOpen?: () => void
+): Promise<SocketResponse> {
+  return new Promise<SocketResponse>((resolve, reject) => {
+    let settled = false
+    const finishResolve = (value: SocketResponse) => {
+      if (settled) return
+      settled = true
+      resolve(value)
+    }
+    const finishReject = (reason: unknown) => {
+      if (settled) return
+      settled = true
+      reject(reason instanceof Error ? reason : new Error(String(reason)))
+    }
+
+    if (connectionAbortController) {
+      connectionAbortController.abort()
+    }
+
+    connectionAbortController = new AbortController()
+    const signal = connectionAbortController.signal
+    signal.addEventListener(
+      'abort',
+      () => {
+        finishReject(new Error('Socket connect aborted'))
+      },
+      { once: true }
+    )
+
+    if (reconnectTimer) {
+      clearTimeout(reconnectTimer)
+      reconnectTimer = null
+    }
+
+    const previous = socketStore.state.socket
+    if (previous) {
+      clearSocketEventHandlers(previous)
+      if (
+        previous.readyState === WebSocket.CONNECTING ||
+        previous.readyState === WebSocket.OPEN
+      ) {
+        previous.close(1000, 'Switching instance')
+      }
+    }
+
+    const url = getSocketUrl(instanceID)
+    const socket = new WebSocket(url)
+    setSocket(socket)
+
+    socket.onopen = () => {
+      if (signal.aborted || !isCurrentSocket(socket)) {
+        socket.close(1000, 'Aborted')
+        return
+      }
+
+      openSocket()
+      resetReconnect(socket, signal)
+      onOpen?.()
+    }
+
+    socket.onmessage = (event) => {
+      if (signal.aborted || !isCurrentSocket(socket)) return
+      let message: SocketResponse | null = null
+
+      if (typeof event.data === 'string') {
+        try {
+          message = JSON.parse(event.data) as SocketResponse
+        } catch {
+          console.error('non-JSON payload')
+        }
+      }
+
+      if (message?.type === 'join-success') {
+        finishResolve(message)
+      }
+      socket_reducer(message)
+      for (const subscriber of messageSubscribers) {
+        try {
+          subscriber(event, message)
+        } catch (error) {
+          console.error('socket message subscriber error', error)
+        }
+      }
+    }
+
+    socket.onerror = (error) => {
+      finishReject(new Error('WebSocket error during connect'))
+      if (signal.aborted || !isCurrentSocket(socket)) return
+      console.error('WebSocket error:', error)
+      setSocketError()
+    }
+
+    socket.onclose = (event) => {
+      console.log(
+        `WebSocket connection closed: code=${event.code}, reason=${event.reason}, wasClean=${event.wasClean}`
+      )
+      if (signal.aborted || !isCurrentSocket(socket)) return
+      const should_reconnect = socketStore.state.status !== 'closing'
+      if (should_reconnect && !settled) {
+        finishReject(
+          new Error(
+            `WebSocket closed before join-success (code=${event.code}, reason=${event.reason || 'none'})`
+          )
+        )
+      }
+
+      deleteSocket()
+      if (should_reconnect) {
+        reconnect()
+      }
+    }
+  })
+}
+
+function reconnect() {
+  const { instance_ID, reconnect_count } = socketStore.state
 
   const delay = Math.min(
-    INITIAL_RECONNECT_DELAY * Math.pow(2, reconnectCount),
+    INITIAL_RECONNECT_DELAY * Math.pow(2, reconnect_count),
     MAX_RECONNECT_DELAY
   )
 
   console.log(
-    `Attempting to reconnect in ${delay}ms... (attempt ${reconnectCount + 1})`
+    `Attempting to reconnect in ${delay}ms... (attempt ${reconnect_count + 1})`
   )
 
-  socketStore.setState((s) => ({
-    ...s,
-    reconnectCount: s.reconnectCount + 1,
-    status: 'reconnecting',
-  }))
-
+  startReconnect()
   reconnectTimer = window.setTimeout(() => {
     reconnectTimer = null
-    connect(instanceID)
+    void connect(instance_ID ?? undefined).catch(() => {
+      // Reconnect loop is tracked in store state; ignore per-attempt promise rejection.
+    })
   }, delay)
-}
-
-function connect(instanceID: string, onOpen?: () => void) {
-  const store = socketStore.get()
-  if (!instanceID) return
-
-  // Cancel any existing connection attempts
-  if (connectionAbortController) {
-    connectionAbortController.abort()
-  }
-  connectionAbortController = new AbortController()
-  const signal = connectionAbortController.signal
-
-  if (reconnectTimer) {
-    clearTimeout(reconnectTimer)
-    reconnectTimer = null
-  }
-
-  const previous = store.socket
-  if (previous) {
-    clearSocketEventHandlers(previous)
-    if (
-      previous.readyState === WebSocket.CONNECTING ||
-      previous.readyState === WebSocket.OPEN
-    ) {
-      previous.close(1000, 'Switching instance')
-    }
-  }
-
-  localStorage.setItem(INSTANCE_ID_KEY, instanceID)
-  const url = getSocketUrl(instanceID)
-  const socket = new WebSocket(url)
-
-  socketStore.setState((s) => ({
-    ...s,
-    instanceID,
-    socket,
-    status: s.reconnectCount > 0 ? 'reconnecting' : 'connecting',
-    isManualDisconnect: false,
-  }))
-
-  socket.onopen = () => {
-    if (signal.aborted || !isCurrentSocket(socket)) {
-      socket.close(1000, 'Aborted')
-      return
-    }
-    console.log('WebSocket connection opened')
-    socketStore.setState((s) => ({
-      ...s,
-      status: 'open',
-    }))
-
-    // Only reset reconnect count after a stable connection (e.g., 5 seconds)
-    setTimeout(() => {
-      if (
-        !signal.aborted &&
-        socketStore.state.socket === socket &&
-        socketStore.state.status === 'open'
-      ) {
-        socketStore.setState((s) => ({
-          ...s,
-          reconnectCount: 0,
-        }))
-      }
-    }, 5000)
-
-    onOpen?.()
-  }
-
-  socket.onmessage = (event) => {
-    if (signal.aborted || !isCurrentSocket(socket)) return
-
-    let message: SocketResponse | null = null
-
-    if (typeof event.data === 'string') {
-      try {
-        message = JSON.parse(event.data) as SocketResponse
-      } catch {
-        console.error('non-JSON payload')
-      }
-    }
-
-    socket_reducer(message)
-
-    for (const subscriber of messageSubscribers) {
-      try {
-        subscriber(event, message)
-      } catch (error) {
-        console.error('socket message subscriber error', error)
-      }
-    }
-  }
-
-  socket.onerror = (error) => {
-    if (signal.aborted || !isCurrentSocket(socket)) return
-    console.error('WebSocket error:', error)
-    socketStore.setState((s) => ({
-      ...s,
-      status: 'error',
-    }))
-  }
-
-  socket.onclose = async (event) => {
-    console.log(
-      `WebSocket connection closed: code=${event.code}, reason=${event.reason}, wasClean=${event.wasClean}`
-    )
-    if (signal.aborted || !isCurrentSocket(socket)) return
-
-    const { isManualDisconnect } = socketStore.state
-
-    if (!isManualDisconnect && (await isUnauthenticated())) {
-      redirectToLogin()
-      return
-    }
-
-    socketStore.setState((s) => ({
-      ...s,
-      socket: null,
-      status: isManualDisconnect ? 'closed' : 'error',
-    }))
-
-    if (!isManualDisconnect) {
-      attemptReconnect()
-    }
-  }
 }
 
 function disconnect(code = 1000, reason = 'Manual disconnect') {
@@ -247,64 +170,25 @@ function disconnect(code = 1000, reason = 'Manual disconnect') {
     reconnectTimer = null
   }
 
-  const socket = socketStore.state.socket
-  if (!socket) {
-    socketStore.setState((s) => ({
-      ...s,
-      status: 'closed',
-      instanceID: null,
-      reconnectCount: 0,
-      isManualDisconnect: true,
-    }))
+  if (!socketStore.state.socket) {
+    closeSocketEmpty()
     if (typeof window !== 'undefined') {
       localStorage.removeItem(INSTANCE_ID_KEY)
     }
     return
   }
 
-  socketStore.setState((s) => ({
-    ...s,
-    status: 'closing',
-    isManualDisconnect: true,
-  }))
-
-  if (
-    socket.readyState === WebSocket.CONNECTING ||
-    socket.readyState === WebSocket.OPEN
-  ) {
-    socket.close(code, reason)
-  } else {
-    socketStore.setState((s) => ({
-      ...s,
-      socket: null,
-      status: 'closed',
-      instanceID: null,
-      reconnectCount: 0,
-    }))
-  }
-
+  closeSocket(code, reason)
   localStorage.removeItem(INSTANCE_ID_KEY)
-}
-
-function subscribe(subscriber: SocketMessageSubscriber) {
-  messageSubscribers.add(subscriber)
-  return () => {
-    messageSubscribers.delete(subscriber)
-  }
-}
-
-function readSavedInstanceID(): string | null {
-  if (typeof window === 'undefined') {
-    return null
-  }
-  return localStorage.getItem(INSTANCE_ID_KEY)
 }
 
 if (typeof window !== 'undefined') {
   const savedInstanceID = readSavedInstanceID()
   if (savedInstanceID) {
-    connect(savedInstanceID)
+    void connect(savedInstanceID).catch(() => {
+      // Initial auto-connect should not throw uncaught promise rejections.
+    })
   }
 }
 
-export { connect, disconnect, getSocketUrl, subscribe }
+export { connect, disconnect }

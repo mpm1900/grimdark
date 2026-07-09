@@ -1,4 +1,4 @@
-import { getApiBaseUrl } from '#/lib/server/get-api-base-url'
+import { getApiBaseUrl } from '#/utils/get-api-base-url'
 import { setResponseCookie } from '#/utils/set-cookie'
 import {
   mutationOptions,

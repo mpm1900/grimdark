@@ -15,19 +15,17 @@ type SocketStatus =
   | 'reconnecting'
 
 type SocketState = {
-  instanceID: string | null
+  instance_ID: string | null
   socket: WebSocket | null
   status: SocketStatus
-  reconnectCount: number
-  isManualDisconnect: boolean
+  reconnect_count: number
 }
 
 const socketStore = new Store<SocketState>({
-  instanceID: null,
+  instance_ID: null,
   socket: null,
   status: 'idle',
-  reconnectCount: 0,
-  isManualDisconnect: false,
+  reconnect_count: 0,
 })
 
 function sendSocketMessage(
@@ -47,5 +45,107 @@ function sendContextMessage(request: SocketRequest) {
   return sendSocketMessage(JSON.stringify(request))
 }
 
-export { sendContextMessage, sendSocketMessage, socketStore }
+function setSocket(socket: WebSocket) {
+  socketStore.setState((s) => ({
+    ...s,
+    socket,
+    status: s.reconnect_count > 0 ? 'reconnecting' : 'connecting',
+  }))
+}
+
+function openSocket() {
+  console.log('WebSocket connection opened')
+  socketStore.setState((s) => ({
+    ...s,
+    status: 'open',
+  }))
+}
+
+function closeSocketEmpty() {
+  socketStore.setState((s) => ({
+    ...s,
+    status: 'closed',
+    instance_ID: null,
+    reconnectCount: 0,
+  }))
+}
+
+function closeSocket(code: number, reason: string) {
+  socketStore.setState((s) => ({
+    ...s,
+    status: 'closing',
+  }))
+
+  if (
+    socketStore.state.socket?.readyState === WebSocket.CONNECTING ||
+    socketStore.state.socket?.readyState === WebSocket.OPEN
+  ) {
+    socketStore.state.socket.close(code, reason)
+    return
+  }
+
+  socketStore.setState((s) => ({
+    ...s,
+    socket: null,
+    status: 'closed',
+    instance_ID: null,
+    reconnectCount: 0,
+  }))
+}
+
+function deleteSocket() {
+  socketStore.setState((s) => ({
+    ...s,
+    socket: null,
+    status: s.status ? 'error' : 'closed',
+  }))
+}
+
+function startReconnect() {
+  socketStore.setState((s) => ({
+    ...s,
+    reconnectCount: s.reconnect_count + 1,
+    status: 'reconnecting',
+  }))
+}
+
+function resetReconnect(socket: WebSocket, signal: AbortSignal) {
+  setTimeout(() => {
+    socketStore.setState((s) => {
+      if (
+        !signal.aborted &&
+        socketStore.state.socket === socket &&
+        socketStore.state.status === 'open'
+      ) {
+        return {
+          ...s,
+          reconnect_count: 0,
+        }
+      }
+
+      return s
+    })
+  }, 5000)
+}
+
+function setSocketError() {
+  socketStore.setState((s) => ({
+    ...s,
+    status: 'error',
+  }))
+}
+
+export {
+  closeSocketEmpty,
+  closeSocket,
+  deleteSocket,
+  openSocket,
+  resetReconnect,
+  sendContextMessage,
+  sendSocketMessage,
+  socketStore,
+  startReconnect,
+  setSocket,
+  setSocketError,
+}
 export type { SocketMessageSubscriber, SocketResponse }

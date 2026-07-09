@@ -1,7 +1,10 @@
 package instance
 
 import (
+	"fmt"
 	"grimdark/internal/game"
+
+	"github.com/k0kubun/pp/v3"
 )
 
 func getTargets(instance *Instance, request Request) int {
@@ -33,6 +36,12 @@ func validateContext(instance *Instance, request Request) int {
 
 	valid := action.ValidateContext(instance.Game, request.Context)
 	instance.ValidateContextResponse(request.ClientID, request.Context, valid)
+	return none
+}
+
+func loadTeam(instance *Instance, request Request) int {
+	fmt.Println("loading team")
+	pp.Println(request.TeamConfig)
 	return none
 }
 func pushAction(instance *Instance, request Request) int {
@@ -86,6 +95,9 @@ func Reducer(instance *Instance, request Request) int {
 		return getTargets(instance, request)
 	case ValidateContext:
 		return validateContext(instance, request)
+
+	case LoadTeam:
+		return loadTeam(instance, request)
 	case PushAction:
 		return pushAction(instance, request)
 	case CancelAction:

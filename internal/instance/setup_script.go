@@ -16,7 +16,8 @@ func SetupPlayer(g *game.Game, config game.TeamConfig) {
 	for _, a_config := range config.Actors {
 		actor, ok := actors.HydrateActorConfig(a_config)
 		if ok {
-			g.AddActor(actor, player.ID)
+			actor.PlayerID = player.ID
+			g.AddActors(actor)
 		}
 	}
 }

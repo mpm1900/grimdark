@@ -1,4 +1,4 @@
-import { getApiBaseUrl } from '#/lib/server/get-api-base-url'
+import { getApiBaseUrl } from '#/utils/get-api-base-url'
 import { queryOptions } from '@tanstack/react-query'
 import { createServerFn } from '@tanstack/react-start'
 

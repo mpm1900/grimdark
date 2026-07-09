@@ -38,7 +38,7 @@ func NewInstance(ctx context.Context, id uuid.UUID, onEmpty func(uuid.UUID)) *In
 		Unregister:  make(chan *Client),
 		ReadRequest: make(chan Request),
 
-		Game: game.NewGame(),
+		Game: game.NewGame(id),
 		Tick: time.Second / 2,
 	}
 }

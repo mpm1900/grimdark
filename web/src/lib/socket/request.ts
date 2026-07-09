@@ -1,8 +1,10 @@
 import type { Context } from '../game/context'
 import type { Game } from '../game/game'
+import type { TeamConfig } from '../game/team'
 import type { Client } from '../stores/clients'
 
 type SocketRequestType =
+  | 'load-team'
   | 'push-action'
   | 'cancel-action'
   | 'run-game-actions'
@@ -14,6 +16,7 @@ type SocketRequest = {
   type: SocketRequestType
   client_ID: string
   context: Context
+  team_config?: TeamConfig
 }
 
 type SocketResponse = {

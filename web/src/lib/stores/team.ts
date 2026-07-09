@@ -1,7 +1,7 @@
 import { Store } from '@tanstack/store'
 import type { ActorConfig, TeamConfig } from '../game/team'
 
-export type TeamState = TeamConfig & {
+export type TeamState = Omit<TeamConfig, 'user'> & {
   active_actor: number
 }
 const INITIAL_TEAM: TeamState = {

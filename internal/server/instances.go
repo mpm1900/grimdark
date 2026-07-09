@@ -25,6 +25,7 @@ func NewInstancesHandler(ctx context.Context) *InstancesHandler {
 		instances: map[uuid.UUID]*instance.Instance{},
 	}
 
+	handler.mux.HandleFunc("GET /connect", handler.handleGameConnection(ctx))
 	handler.mux.HandleFunc("GET /{instanceID}/connect", handler.handleGameConnection(ctx))
 	return handler
 }
@@ -109,10 +110,15 @@ func (ih *InstancesHandler) handleGameConnection(ctx context.Context) http.Handl
 			return
 		}
 
-		instanceID, err := uuid.Parse(r.PathValue("instanceID"))
-		if err != nil {
-			w.WriteHeader(http.StatusBadRequest)
-			return
+		rawInstanceID := r.PathValue("instanceID")
+		instanceID := uuid.New()
+		if rawInstanceID != "" {
+			parsed, err := uuid.Parse(rawInstanceID)
+			if err != nil {
+				w.WriteHeader(http.StatusBadRequest)
+				return
+			}
+			instanceID = parsed
 		}
 
 		i := ih.GetOrCreateInstance(instanceID, ctx)

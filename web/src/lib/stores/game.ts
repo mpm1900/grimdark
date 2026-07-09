@@ -3,6 +3,7 @@ import type { Game } from '../game/game'
 import { setDefaultActiveActor, setSourceActor, setTargetPositions } from './ui'
 
 const INITIAL_GAME: Game = {
+  instance_ID: null,
   active_context: null,
   actors: [],
   commands: [],

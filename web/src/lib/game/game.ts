@@ -10,6 +10,7 @@ import type { Position } from './position'
 export type Game = {
   active_context: Context | null
   actors: Actor[]
+  instance_ID: ID | null
   commands: Bindable<Action>[]
   logs: Bindable<Log>[]
   modifiers: Modifier[]

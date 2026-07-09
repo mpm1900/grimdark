@@ -76,13 +76,14 @@ type Game struct {
 	gamestate gamestate
 	meta      gamemeta
 
-	Phase  GamePhase
-	Status GameStatus
-	Turn   int
-	Logs   []Bindable[Log]
+	InstanceID uuid.UUID
+	Phase      GamePhase
+	Status     GameStatus
+	Turn       int
+	Logs       []Bindable[Log]
 }
 
-func NewGame() Game {
+func NewGame(instanceID uuid.UUID) Game {
 	var state = State{
 		Actors:       []Actor{},
 		Players:      []Player{},
@@ -115,10 +116,11 @@ func NewGame() Game {
 		meta: gamemeta{
 			applied_modifiers: map[uuid.UUID]map[uuid.UUID]struct{}{},
 		},
-		Logs:   []Bindable[Log]{},
-		Phase:  PhaseInit,
-		Status: GameStatusIdle,
-		Turn:   0,
+		InstanceID: instanceID,
+		Logs:       []Bindable[Log]{},
+		Phase:      PhaseInit,
+		Status:     GameStatusIdle,
+		Turn:       0,
 	}
 }
 
@@ -146,7 +148,6 @@ func (g *Game) SetActiveContext(context Context) {
 		s.ActiveContext = &cloned
 	})
 }
-
 func (g *Game) PushLog(log Bindable[Log]) {
 	g.Logs = append(g.Logs, log)
 	if len(g.Logs) > maxLogCount {
@@ -307,10 +308,9 @@ func (g *Game) AddPlayers(players ...Player) {
 		}
 	})
 }
-func (g *Game) AddActor(actor Actor, player_id uuid.UUID) {
-	actor.PlayerID = player_id
+func (g *Game) AddActors(actors ...Actor) {
 	g.mutate(func(s *State) {
-		s.Actors = append(s.Actors, actor)
+		s.Actors = append(s.Actors, actors...)
 	})
 }
 func (g *Game) AddModifiers(modifiers ...Modifier) {
@@ -824,6 +824,7 @@ type GameJSON struct {
 	ActiveContext *Context               `json:"active_context"`
 	Actors        []actorJSON            `json:"actors"`
 	Commands      []Bindable[actionJSON] `json:"commands"`
+	InstanceID    uuid.UUID              `json:"instance_ID"`
 	Logs          []Bindable[Log]        `json:"logs"`
 	Modifiers     []Modifier             `json:"modifiers"`
 	Phase         GamePhase              `json:"phase"`
@@ -864,6 +865,7 @@ func (g Game) ToJSON() GameJSON {
 		ActiveContext: state.ActiveContext,
 		Actors:        actors,
 		Commands:      commands,
+		InstanceID:    g.InstanceID,
 		Logs:          g.Logs,
 		Modifiers:     g.meta.modifiers,
 		Phase:         g.Phase,

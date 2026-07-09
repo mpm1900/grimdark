@@ -1,5 +1,5 @@
 import { queryOptions } from '@tanstack/react-query'
-import { getApiBaseUrl } from '../server/get-api-base-url'
+import { getApiBaseUrl } from '#/utils/get-api-base-url'
 import { createServerFn } from '@tanstack/react-start'
 import type { ActorClass } from '../game/actor-class'
 

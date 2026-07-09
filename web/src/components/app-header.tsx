@@ -1,23 +1,18 @@
 import { NULL_CONTEXT } from '#/lib/game/context'
 import { useLogout } from '#/lib/mutations/logout'
 import { useUser } from '#/lib/queries/auth'
-import { connect } from '#/lib/socket/connect'
 import { clientsStore } from '#/lib/stores/clients'
 import { gameStore } from '#/lib/stores/game'
-import { sendContextMessage, socketStore } from '#/lib/stores/socket'
+import { sendContextMessage } from '#/lib/stores/socket'
 import { Link } from '@tanstack/react-router'
 import { useSelector } from '@tanstack/react-store'
-import { Globe, Loader2, TriangleAlert, Unplug } from 'lucide-react'
 import { GiWhirlpoolShuriken, GiWingedSword } from 'react-icons/gi'
-import { InstanceCombobox } from './instance-combobox'
 import { Button } from './ui/button'
 import { GothicFramedButton } from './gothic-ui/button'
 
 function AppHeader() {
   const { data: user } = useUser()
   const logout = useLogout()
-  const instanceID = useSelector(socketStore, (s) => s.instanceID)
-  const status = useSelector(socketStore, (s) => s.status)
   const client = useSelector(clientsStore, (c) => c.me)
   const game_status = useSelector(gameStore, (g) => g.status)
   const turn = useSelector(gameStore, (g) => g.turn)
@@ -28,25 +23,6 @@ function AppHeader() {
         <Link to="/" className="pl-2">
           <GiWingedSword />
         </Link>
-
-        {user && (
-          <InstanceCombobox
-            icon={
-              <>
-                {status === 'idle' && <Unplug />}
-                {(status === 'connecting' || status === 'reconnecting') && (
-                  <Loader2 className="animate-spin" />
-                )}
-                {status === 'open' && <Globe />}
-                {(status === 'closed' || status === 'error') && (
-                  <TriangleAlert className="text-destructive" />
-                )}
-              </>
-            }
-            value={instanceID}
-            onValueChange={(instanceID) => connect(instanceID)}
-          />
-        )}
 
         {client && turn > 0 && (
           <div className="flex gap-2">

@@ -9,15 +9,10 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as TeamRouteImport } from './routes/team'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as BattleGameIDRouteImport } from './routes/battle.$gameID'
 
-const TeamRoute = TeamRouteImport.update({
-  id: '/team',
-  path: '/team',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
   path: '/login',
@@ -28,46 +23,44 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const BattleGameIDRoute = BattleGameIDRouteImport.update({
+  id: '/battle/$gameID',
+  path: '/battle/$gameID',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/login': typeof LoginRoute
-  '/team': typeof TeamRoute
+  '/battle/$gameID': typeof BattleGameIDRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/login': typeof LoginRoute
-  '/team': typeof TeamRoute
+  '/battle/$gameID': typeof BattleGameIDRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/login': typeof LoginRoute
-  '/team': typeof TeamRoute
+  '/battle/$gameID': typeof BattleGameIDRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/login' | '/team'
+  fullPaths: '/' | '/login' | '/battle/$gameID'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/login' | '/team'
-  id: '__root__' | '/' | '/login' | '/team'
+  to: '/' | '/login' | '/battle/$gameID'
+  id: '__root__' | '/' | '/login' | '/battle/$gameID'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   LoginRoute: typeof LoginRoute
-  TeamRoute: typeof TeamRoute
+  BattleGameIDRoute: typeof BattleGameIDRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/team': {
-      id: '/team'
-      path: '/team'
-      fullPath: '/team'
-      preLoaderRoute: typeof TeamRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/login': {
       id: '/login'
       path: '/login'
@@ -82,13 +75,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/battle/$gameID': {
+      id: '/battle/$gameID'
+      path: '/battle/$gameID'
+      fullPath: '/battle/$gameID'
+      preLoaderRoute: typeof BattleGameIDRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   LoginRoute: LoginRoute,
-  TeamRoute: TeamRoute,
+  BattleGameIDRoute: BattleGameIDRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
