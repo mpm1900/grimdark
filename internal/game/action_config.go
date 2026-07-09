@@ -4,6 +4,9 @@ import (
 	"math/rand/v2"
 )
 
+const ActionPriorityRetreat = 5
+const ActionPriorityDefault = 0
+
 type ActionConfig struct {
 	Accuracy     *float64 `json:"accuracy"`
 	Affinity     Affinity `json:"affinity"`

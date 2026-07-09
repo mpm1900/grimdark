@@ -12,7 +12,6 @@ import { GiWhirlpoolShuriken, GiWingedSword } from 'react-icons/gi'
 import { InstanceCombobox } from './instance-combobox'
 import { Button } from './ui/button'
 import { GothicFramedButton } from './gothic-ui/button'
-import { ActiveContext } from './active-context'
 
 function AppHeader() {
   const { data: user } = useUser()
@@ -22,7 +21,7 @@ function AppHeader() {
   const client = useSelector(clientsStore, (c) => c.me)
   const game_status = useSelector(gameStore, (g) => g.status)
   const turn = useSelector(gameStore, (g) => g.turn)
-  const active_context = useSelector(gameStore, (g) => g.active_context)
+
   return (
     <header className="fixed flex justify-between p-1 z-30 w-full">
       <div className="flex items-center gap-2">
@@ -49,7 +48,7 @@ function AppHeader() {
           />
         )}
 
-        {client && (
+        {client && turn > 0 && (
           <div className="flex gap-2">
             <GothicFramedButton
               variant="red"
@@ -75,14 +74,6 @@ function AppHeader() {
           )}
         </div>
       </div>
-
-      <ActiveContext asChild active_context={active_context}>
-        <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-[url(/gothic/TitleHeroFrame.png)] bg-cover bg-no-repeat h-24 leading-18 w-48 text-xl text-center font-cinzel-dec font-bold text-foreground/60">
-          <div>
-            T<span className="font-cinzel">urn {turn}</span>
-          </div>
-        </div>
-      </ActiveContext>
 
       <div className="flex items-center gap-4 px-2">
         <div className="font-mono text-sm flex items-center">

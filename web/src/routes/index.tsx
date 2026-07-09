@@ -3,6 +3,7 @@ import { BattlePanel } from '#/components/panels/battle'
 import { PlayerPositions } from '#/components/player-positions'
 import { PlayerTeam } from '#/components/player-team'
 import { PromptController } from '#/components/prompt-controller'
+import { TurnContext } from '#/components/turn-context'
 import { clientsStore } from '#/lib/stores/clients'
 import { gameStore } from '#/lib/stores/game'
 import { ClientOnly, createFileRoute } from '@tanstack/react-router'
@@ -21,8 +22,9 @@ function Home() {
   return (
     <ClientOnly>
       <PromptController />
-      <div className="h-dvh overflow-hidden bg-center bg-cover">
+      <div className="h-dvh relative overflow-hidden bg-center bg-cover">
         <AppHeader />
+        <TurnContext />
 
         <div className="relative flex h-full min-h-0 flex-col overflow-hidden pt-12 z-20">
           <div className="absolute inset-0 bottom-1/2 bg-neutral-900 z-0" />

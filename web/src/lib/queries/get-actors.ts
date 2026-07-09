@@ -12,6 +12,7 @@ const getActors = createServerFn().handler(async () => {
 const actorsQuery = queryOptions({
   queryKey: ['get-actors'],
   queryFn: () => getActors(),
+  select: (data) => data.sort((a, b) => a.name.localeCompare(b.name)),
   staleTime: 60000,
   gcTime: 60000,
 })

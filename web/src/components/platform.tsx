@@ -91,6 +91,7 @@ function getVariant(
 }
 
 function Platform({
+  children,
   className,
   variant,
   rank,
@@ -106,16 +107,9 @@ function Platform({
             'relative overflow-hidden [&>svg]:opacity-50 grid place-items-center',
         })}
       >
-        <span className="text-7xl font-cinzel font-black">{rank + 1}</span>
-        {/*
-        <FaChevronRight className="absolute top-0 bottom-0 -translate-x-1/2 size-full" />
-        <FaChevronRight className="absolute top-0 bottom-0 -translate-x-1/3 size-full" />
-        <FaChevronRight className="absolute top-0 bottom-0 -translate-x-1/6 size-full" />
-        <FaChevronRight className="absolute top-0 bottom-0 translate-x-1/3 size-full" />
-        <FaChevronRight className="absolute top-0 bottom-0 translate-x-1/2 size-full" />
-        <FaChevronRight className="absolute top-0 bottom-0 translate-x-1/6 size-full" />
-        <FaChevronRight className="absolute top-0 bottom-0 size-full" />
-        */}
+        {children ?? (
+          <span className="text-7xl font-cinzel font-black">{rank + 1}</span>
+        )}
       </div>
     </div>
   )
