@@ -1,4 +1,3 @@
-
 import type { User } from '#/lib/queries/auth'
 import { getApiBaseUrl } from '#/lib/server/get-api-base-url'
 import { setResponseCookie } from '#/utils/set-cookie'
@@ -17,7 +16,7 @@ const requestSchema = z.object({
 })
 
 const signup = createServerFn({ method: 'POST' })
-  .inputValidator(requestSchema)
+  .validator(requestSchema)
   .handler(async ({ data }) => {
     const response = await fetch(`${getApiBaseUrl()}/api/auth/signup`, {
       method: 'POST',

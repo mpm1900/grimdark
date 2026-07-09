@@ -9,13 +9,7 @@ function isIdNull(id: ID | null | undefined): boolean {
 }
 
 export type Affinity =
-  | 'arcane'
-  | 'cryo'
-  | 'fire'
-  | 'kinetic'
-  | 'lightning'
-  | 'poison'
-  | 'psychic'
+  'arcane' | 'cryo' | 'fire' | 'kinetic' | 'lightning' | 'poison' | 'psychic'
 
 export type Stat =
   | 'health'
@@ -56,6 +50,15 @@ export const ALL_STATS: Stat[] = [
 ]
 
 export const MAIN_STATS: Stat[] = [
+  'melee',
+  'ranged',
+  'special',
+  'speed',
+  'martial-defense',
+  'special-defense',
+]
+export const CLASS_STATS: Stat[] = [
+  'health',
   'melee',
   'ranged',
   'special',

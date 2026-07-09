@@ -18,13 +18,11 @@ export type Log = {
 function RenderTerm({
   context,
   game,
-  key,
   terms,
   term_key,
 }: {
   context: Context
   game: Game
-  key: string
   terms: Record<string, string>
   term_key: string
 }) {
@@ -34,7 +32,6 @@ function RenderTerm({
       const source = game.actors.find((a) => a.ID === context.source_ID)
       return (
         <span
-          key={key}
           onMouseEnter={() => {
             setHoverPosition(source?.position_ID ?? null)
           }}
@@ -54,7 +51,6 @@ function RenderTerm({
       const target = targets[0]
       return (
         <span
-          key={key}
           onMouseEnter={() => {
             setHoverPosition(target.position_ID)
           }}
@@ -70,7 +66,7 @@ function RenderTerm({
         </span>
       )
     default:
-      return <span key={key}>{terms[term_key]}</span>
+      return <span>{terms[term_key]}</span>
   }
 }
 

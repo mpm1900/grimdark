@@ -95,4 +95,36 @@ function GothicProgress({
   )
 }
 
-export { GothicProgress }
+function Gauge({
+  children,
+  className,
+  indicator: { className: indicatorClassName, ...indicator } = {},
+  value,
+  ...props
+}: React.ComponentProps<typeof ProgressPrimitive.Root> & {
+  indicator?: Partial<React.ComponentProps<typeof ProgressPrimitive.Indicator>>
+}) {
+  return (
+    <ProgressPrimitive.Root
+      data-slot="progress"
+      className={cn(
+        'relative h-2 w-full overflow-hidden rounded-xs bg-foreground/20',
+        className
+      )}
+      {...props}
+    >
+      <ProgressPrimitive.Indicator
+        data-slot="progress-indicator"
+        className={cn(
+          'h-full w-full flex-1 bg-foreground transition-all',
+          indicatorClassName
+        )}
+        style={{ transform: `translateX(-${100 - (value || 0)}%)` }}
+        {...indicator}
+      />
+      {children}
+    </ProgressPrimitive.Root>
+  )
+}
+
+export { GothicProgress, Gauge }

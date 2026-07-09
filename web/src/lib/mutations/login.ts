@@ -15,7 +15,7 @@ const requestSchema = z.object({
 })
 
 const login = createServerFn({ method: 'POST' })
-  .inputValidator(requestSchema)
+  .validator(requestSchema)
   .handler(async ({ data }) => {
     const response = await fetch(`${getApiBaseUrl()}/api/auth/login`, {
       method: 'POST',
