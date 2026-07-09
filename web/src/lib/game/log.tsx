@@ -1,7 +1,7 @@
 import type React from 'react'
 import type { Bindable } from './core'
 import { gameStore } from '../stores/game'
-import { clientsStore } from '../stores/clients'
+import { lobbyStore } from '../stores/clients'
 import { cn } from '../utils'
 import { getTargetsFromContext, type Context } from './context'
 import type { Game } from './game'
@@ -26,7 +26,7 @@ function RenderTerm({
   terms: Record<string, string>
   term_key: string
 }) {
-  const client_ID = clientsStore.get().me?.ID
+  const client_ID = lobbyStore.state.client?.ID
   switch (term_key) {
     case '$source$':
       const source = game.actors.find((a) => a.ID === context.source_ID)

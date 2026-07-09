@@ -27,3 +27,13 @@ func HydrateActorConfig(config game.ActorConfig) (game.Actor, bool) {
 
 	return game.NewActor(class, config), true
 }
+
+func ApplyTeamConfig(g *game.Game, playerID uuid.UUID, config game.TeamConfig) {
+	for _, a_config := range config.Actors {
+		actor, ok := HydrateActorConfig(a_config)
+		if ok {
+			actor.PlayerID = playerID
+			g.AddActors(actor)
+		}
+	}
+}

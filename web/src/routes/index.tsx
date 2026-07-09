@@ -22,24 +22,18 @@ function RouteComponent() {
   function battle() {
     if (!user.data) return
 
-    mutation.mutate(
-      {
-        ...team,
-        user: user.data,
-      },
-      {
-        onSuccess: (message) => {
-          if (!message.game?.instance_ID) return
+    mutation.mutate(team, {
+      onSuccess: (message) => {
+        if (!message.game?.instance_ID) return
 
-          navigate({
-            to: '/battle/$gameID',
-            params: {
-              gameID: message.game?.instance_ID,
-            },
-          })
-        },
-      }
-    )
+        navigate({
+          to: '/battle/$gameID',
+          params: {
+            gameID: message.game?.instance_ID,
+          },
+        })
+      },
+    })
   }
 
   return (

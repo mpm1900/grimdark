@@ -17,8 +17,7 @@ import { Popover, PopoverTrigger } from './ui/popover'
 import { GothicPopoverContent } from './gothic-ui/popover'
 import { ActorStatsPanel } from './panels/actor-stats'
 import { ActorPortrait } from './actor-portrait'
-import { clientsStore } from '#/lib/stores/clients'
-import { TbPackage, TbPackageOff } from 'react-icons/tb'
+import { lobbyStore } from '#/lib/stores/clients'
 import { IsActorActive, uiStore } from '#/lib/stores/ui'
 
 function StatMultBadge({ actor, stat }: { actor: Actor; stat: Stat }) {
@@ -85,7 +84,7 @@ function ActorFrameSlim({
   className,
   ...props
 }: React.ComponentProps<'div'> & { actor: Actor }) {
-  const client = useSelector(clientsStore, (s) => s.me)
+  const client = useSelector(lobbyStore, (s) => s.client)
   const ui = useSelector(uiStore, (s) => s)
   const status = useSelector(gameStore, (g) => g.status)
   return (

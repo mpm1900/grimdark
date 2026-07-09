@@ -1,10 +1,10 @@
 import type { Context } from '../game/context'
 import type { Game } from '../game/game'
 import type { TeamConfig } from '../game/team'
-import type { Client } from '../stores/clients'
+import type { Lobby } from '../stores/clients'
 
 type SocketRequestType =
-  | 'load-team'
+  | 'post-connect'
   | 'push-action'
   | 'cancel-action'
   | 'run-game-actions'
@@ -20,9 +20,15 @@ type SocketRequest = {
 }
 
 type SocketResponse = {
-  type: 'game' | 'clients' | 'join-success' | 'validate-context' | 'target-IDs'
+  type:
+    | 'on-connect'
+    | 'post-connect'
+    | 'game'
+    | 'lobby'
+    | 'validate-context'
+    | 'target-IDs'
   game: Game | null
-  clients: Array<Client> | null
+  lobby: Lobby | null
   context: Context | null
   valid: boolean | null
 }

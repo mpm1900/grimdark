@@ -1,4 +1,3 @@
-import type { User } from '../queries/auth'
 import type { ID } from './core'
 
 export type ActorConfig = {
@@ -10,6 +9,5 @@ export type ActorConfig = {
 }
 
 export type TeamConfig = {
-  user: User
   actors: ActorConfig[]
 }

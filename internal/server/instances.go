@@ -122,15 +122,14 @@ func (ih *InstancesHandler) handleGameConnection(ctx context.Context) http.Handl
 		}
 
 		i := ih.GetOrCreateInstance(instanceID, ctx)
-
 		client := instance.NewClient(i)
 		client.AttachUser(&game.User{
 			ID:       user.ID,
 			Username: user.Username,
 			Email:    user.Email,
 		})
+
 		instance.SetupGame(&i.Game, *client.User)
-		i.RunGameActions()
 
 		if err := client.Connect(w, r); err != nil {
 			w.WriteHeader(http.StatusInternalServerError)

@@ -11,7 +11,7 @@ import { getTargetsFromContext, NULL_CONTEXT } from '#/lib/game/context'
 import { useContext } from '#/hooks/use-context'
 import { validateContextQuery } from '#/lib/queries/validate-context'
 import { setHoverPosition } from '#/lib/stores/ui'
-import { clientsStore } from '#/lib/stores/clients'
+import { lobbyStore } from '#/lib/stores/clients'
 import { cva, type VariantProps } from 'class-variance-authority'
 
 const targetButtonVariants = cva('', {
@@ -107,7 +107,7 @@ function TargetsButtonGrid({
   context: ReturnType<typeof useContext>
   disabled?: boolean
 }) {
-  const client = useSelector(clientsStore, (s) => s.me)
+  const client = useSelector(lobbyStore, (s) => s.client)
   const players = useSelector(gameStore, (g) => g.players)
   const actors = useSelector(gameStore, (g) => g.actors)
   const positions = useSelector(gameStore, (g) => g.positions)

@@ -11,6 +11,5 @@ type ActorConfig struct {
 }
 
 type TeamConfig struct {
-	User   User
 	Actors []ActorConfig
 }

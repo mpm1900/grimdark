@@ -7,46 +7,63 @@ import (
 type ResponseType string
 
 const (
-	ResponseTypeGame            = "game"
-	ResponseTypeClients         = "clients"
-	ResponseTypeJoinSuccess     = "join-success"
+	ResponseTypeOnConnect   = "on-connect"
+	ResponseTypePostConnect = "post-connect"
+
+	ResponseTypeGame    = "game"
+	ResponseTypeClients = "clients"
+
 	ResponseTypeValidateContext = "validate-context"
 	ResponseTypeTargetIDs       = "target-IDs"
-
-	ResponseTypeNewChat = "new-chat"
 )
 
 type Response struct {
-	Type    ResponseType   `json:"type"`
-	Game    *game.GameJSON `json:"game"`
-	Clients []*Client      `json:"clients"`
-	Valid   *bool          `json:"valid"`
-	Context *game.Context  `json:"context"`
+	Type  ResponseType   `json:"type"`
+	Game  *game.GameJSON `json:"game"`
+	Lobby *LobbyJSON     `json:"lobby"`
+
+	Valid   *bool         `json:"valid"`
+	Context *game.Context `json:"context"`
 }
 
 func NewGameMessage(client *Client, g game.GameJSON) Response {
 	g.ForPlayer(client.ID)
 	return Response{
-		Type:    ResponseTypeGame,
-		Game:    &g,
-		Clients: nil,
+		Type: ResponseTypeGame,
+		Game: &g,
 	}
 }
 
-func NewClientsMessage(clients []*Client) Response {
+func NewLobbyMessage(client *Client, lobby LobbyJSON) Response {
+	lobby.Client = client
 	return Response{
-		Type:    ResponseTypeClients,
-		Game:    nil,
-		Clients: clients,
+		Type:  ResponseTypeClients,
+		Game:  nil,
+		Lobby: &lobby,
 	}
 }
 
-func PostRegisterMessage(client *Client, g game.GameJSON) Response {
+func OnConnectMessage(client *Client) Response {
+	lobby := LobbyJSON{
+		Client:  client,
+		Clients: []*Client{},
+	}
+	return Response{
+		Type:  ResponseTypeOnConnect,
+		Game:  nil,
+		Lobby: &lobby,
+	}
+}
+func PostConnectMessage(client *Client, g game.GameJSON) Response {
 	g.ForPlayer(client.ID)
+	lobby := LobbyJSON{
+		Client:  client,
+		Clients: []*Client{},
+	}
 	return Response{
-		Type:    ResponseTypeJoinSuccess,
-		Game:    &g,
-		Clients: []*Client{client},
+		Type:  ResponseTypePostConnect,
+		Game:  &g,
+		Lobby: &lobby,
 	}
 }
 

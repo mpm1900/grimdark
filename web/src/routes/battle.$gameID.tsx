@@ -4,7 +4,7 @@ import { PlayerPositions } from '#/components/player-positions'
 import { PlayerTeam } from '#/components/player-team'
 import { PromptController } from '#/components/prompt-controller'
 import { TurnContext } from '#/components/turn-context'
-import { clientsStore } from '#/lib/stores/clients'
+import { lobbyStore } from '#/lib/stores/clients'
 import { gameStore } from '#/lib/stores/game'
 import { ClientOnly, createFileRoute } from '@tanstack/react-router'
 import { useSelector } from '@tanstack/react-store'
@@ -20,7 +20,7 @@ export const Route = createFileRoute('/battle/$gameID')({
 function RouteComponent() {
   const params = Route.useParams()
   const game = useSelector(gameStore, (g) => g)
-  const client = useSelector(clientsStore, (s) => s.me)
+  const client = useSelector(lobbyStore, (s) => s.client)
   const client_player = game.players.find((p) => p.user.id === client?.ID)
   const other_player = game.players.find((p) => p.user.id !== client?.ID)
 

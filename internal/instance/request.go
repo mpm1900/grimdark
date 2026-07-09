@@ -9,10 +9,11 @@ import (
 type RequestType = string
 
 const (
+	PostConnect RequestType = "post-connect"
+
 	PushAction    RequestType = "push-action"
 	CancelAction  RequestType = "cancel-action"
 	ResolvePrompt RequestType = "resolve-prompt"
-	LoadTeam      RequestType = "load-team"
 
 	RunGameActions RequestType = "run-game-actions" // TEMP
 

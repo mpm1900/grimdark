@@ -27,10 +27,7 @@ import {
 let connectionAbortController: AbortController | null = null
 let reconnectTimer: number | null = null
 
-function connect(
-  instanceID?: string,
-  onOpen?: () => void
-): Promise<SocketResponse> {
+function connect(instanceID?: string): Promise<SocketResponse> {
   return new Promise<SocketResponse>((resolve, reject) => {
     let settled = false
     const finishResolve = (value: SocketResponse) => {
@@ -86,7 +83,6 @@ function connect(
 
       openSocket()
       resetReconnect(socket, signal)
-      onOpen?.()
     }
 
     socket.onmessage = (event) => {
@@ -101,7 +97,7 @@ function connect(
         }
       }
 
-      if (message?.type === 'join-success') {
+      if (message?.type === 'on-connect') {
         finishResolve(message)
       }
       socket_reducer(message)
@@ -130,7 +126,7 @@ function connect(
       if (should_reconnect && !settled) {
         finishReject(
           new Error(
-            `WebSocket closed before join-success (code=${event.code}, reason=${event.reason || 'none'})`
+            `WebSocket closed before on-connect (code=${event.code}, reason=${event.reason || 'none'})`
           )
         )
       }

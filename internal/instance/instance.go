@@ -3,36 +3,34 @@ package instance
 import (
 	"context"
 	"grimdark/internal/game"
-	"maps"
-	"slices"
 	"time"
 
 	"github.com/google/uuid"
 )
 
 type Instance struct {
-	ID      uuid.UUID             `json:"ID"`
-	ctx     context.Context       `json:"-"`
-	Clients map[uuid.UUID]*Client `json:"clients,omitempty"`
-	Game    game.Game             `json:"game"`
-	Tick    time.Duration         `json:"-"`
-	onEmpty func(uuid.UUID)       `json:"-"`
+	ID      uuid.UUID
+	ctx     context.Context
+	Lobby   Lobby
+	Game    game.Game
+	Tick    time.Duration
+	onEmpty func(uuid.UUID)
 
-	Register    chan *Client `json:"-"`
-	Unregister  chan *Client `json:"-"`
-	ReadRequest chan Request `json:"-"`
+	Register    chan *Client
+	Unregister  chan *Client
+	ReadRequest chan Request
 }
 
 type InstanceJSON struct {
-	ID      uuid.UUID             `json:"ID"`
-	Clients map[uuid.UUID]*Client `json:"clients,omitempty"`
+	ID    uuid.UUID `json:"ID"`
+	Lobby LobbyJSON `json:"lobby"`
 }
 
 func NewInstance(ctx context.Context, id uuid.UUID, onEmpty func(uuid.UUID)) *Instance {
 	return &Instance{
 		ID:          id,
 		ctx:         ctx,
-		Clients:     make(map[uuid.UUID]*Client),
+		Lobby:       NewLobby(),
 		onEmpty:     onEmpty,
 		Register:    make(chan *Client),
 		Unregister:  make(chan *Client),
@@ -45,31 +43,31 @@ func NewInstance(ctx context.Context, id uuid.UUID, onEmpty func(uuid.UUID)) *In
 
 func (i Instance) ToJSON() InstanceJSON {
 	return InstanceJSON{
-		ID:      i.ID,
-		Clients: maps.Clone(i.Clients),
+		ID:    i.ID,
+		Lobby: i.Lobby.ToJSON(),
 	}
 }
 
 func (i *Instance) RegisterClient(client *Client) {
-	if existing, ok := i.Clients[client.ID]; ok && existing != client {
+	if existing, ok := i.Lobby.Clients[client.ID]; ok && existing != client {
 		existing.cancel()
 	}
-	i.Clients[client.ID] = client
+	i.Lobby.Clients[client.ID] = client
 }
 
 func (i *Instance) UnregisterClient(client *Client) bool {
-	existing, ok := i.Clients[client.ID]
+	existing, ok := i.Lobby.Clients[client.ID]
 	if !ok || existing != client {
 		return false
 	}
 
-	delete(i.Clients, client.ID)
+	delete(i.Lobby.Clients, client.ID)
 	return true
 }
 
 func (i *Instance) BroadcastGame() {
 	json := i.Game.ToJSON()
-	for _, client := range i.Clients {
+	for _, client := range i.Lobby.Clients {
 		if !client.TryWriteResponse(NewGameMessage(client, json)) {
 			// If we can't send, it's usually better to just log it for now
 			// rather than immediately unregistering, unless the client is truly dead.
@@ -78,13 +76,21 @@ func (i *Instance) BroadcastGame() {
 	}
 }
 
-func (i *Instance) PostRegister(client *Client) {
+func (i *Instance) OnConnectResponse(client *Client) {
+	client.TryWriteResponse(OnConnectMessage(client))
+}
+func (i *Instance) PostConnectResponse(clientID uuid.UUID) {
+	client, ok := i.Lobby.Clients[clientID]
+	if !ok {
+		return
+	}
+
 	json := i.Game.ToJSON()
-	client.TryWriteResponse(PostRegisterMessage(client, json))
+	client.TryWriteResponse(PostConnectMessage(client, json))
 }
 
 func (i *Instance) TargetIDsResponse(clientID uuid.UUID, context game.Context) {
-	client, ok := i.Clients[clientID]
+	client, ok := i.Lobby.Clients[clientID]
 	if !ok {
 		return
 	}
@@ -92,7 +98,7 @@ func (i *Instance) TargetIDsResponse(clientID uuid.UUID, context game.Context) {
 	client.TryWriteResponse(TargetIDsResponse(client, context))
 }
 func (i *Instance) ValidateContextResponse(clientID uuid.UUID, context game.Context, valid bool) {
-	client, ok := i.Clients[clientID]
+	client, ok := i.Lobby.Clients[clientID]
 	if !ok {
 		return
 	}
@@ -101,9 +107,8 @@ func (i *Instance) ValidateContextResponse(clientID uuid.UUID, context game.Cont
 }
 
 func (i *Instance) BroadcastClients() {
-	clients := slices.Collect(maps.Values(i.Clients))
-	for _, client := range i.Clients {
-		client.TryWriteResponse(NewClientsMessage(clients))
+	for _, client := range i.Lobby.Clients {
+		client.TryWriteResponse(NewLobbyMessage(client, i.Lobby.ToJSON()))
 	}
 }
 
@@ -127,19 +132,18 @@ func (i *Instance) Run() {
 
 			if !exists {
 				player := game.NewPlayer(*client.User)
-
 				i.Game.AddPlayers(player)
 				i.BroadcastGame()
 			}
 
-			i.PostRegister(client)
+			i.OnConnectResponse(client)
 		case client := <-i.Unregister:
 			removed := i.UnregisterClient(client)
 			if !removed {
 				continue
 			}
 
-			if len(i.Clients) == 0 {
+			if len(i.Lobby.Clients) == 0 {
 				if i.onEmpty != nil {
 					i.onEmpty(i.ID)
 				}

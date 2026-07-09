@@ -3,7 +3,7 @@ import { setActiveActor, uiStore } from '#/lib/stores/ui'
 import { useSelector } from '@tanstack/react-store'
 import { ActorFrameSlim } from './actor-frame'
 import { GothicFramedButton } from './gothic-ui/button'
-import { clientsStore } from '#/lib/stores/clients'
+import { lobbyStore } from '#/lib/stores/clients'
 import { gameStore } from '#/lib/stores/game'
 import { cn } from '#/lib/utils'
 import { isIdNull } from '#/lib/game/core'
@@ -22,7 +22,7 @@ function PlayerSprite({
   hover_position: string | null
   position_ID: string
 }) {
-  const client = useSelector(clientsStore, (s) => s.me)
+  const client = useSelector(lobbyStore, (s) => s.client)
   const status = useSelector(gameStore, (g) => g.status)
   const commands = useSelector(gameStore, (g) => g.commands)
   const ui = useSelector(uiStore, (s) => s)
@@ -32,7 +32,7 @@ function PlayerSprite({
       ? ui.active_actor === actor.ID || hover_position === position_ID
       : status === 'running'
         ? ui.source_actor === actor.ID ||
-        ui.target_positions.includes(position_ID)
+          ui.target_positions.includes(position_ID)
         : true
   return (
     <div

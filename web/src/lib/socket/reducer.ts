@@ -1,4 +1,4 @@
-import { clientsStore } from '../stores/clients'
+import { lobbyStore } from '../stores/clients'
 import { gameStore } from '../stores/game'
 import type { SocketResponse } from './request'
 
@@ -11,20 +11,18 @@ function socket_reducer(message: SocketResponse | null) {
       }
       return
     }
-    case 'clients': {
-      clientsStore.setState((c) => ({
+    case 'lobby': {
+      lobbyStore.setState((c) => ({
         ...c,
-        clients: message.clients!,
+        clients: message.lobby?.clients!,
       }))
       return
     }
-    case 'join-success': {
-      if (message.game) {
-        gameStore.setState(() => message.game!)
-      }
-      clientsStore.setState((c) => ({
+    case 'on-connect': {
+      console.log('on-connect', message)
+      lobbyStore.setState((c) => ({
         ...c,
-        me: message.clients![0],
+        client: message.lobby?.client!,
       }))
       return
     }

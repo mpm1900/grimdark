@@ -3,7 +3,7 @@ import { cn } from '#/lib/utils'
 import { useSelector } from '@tanstack/react-store'
 import { getVariant, Platform, PlatformParent } from './platform'
 import { setHoverPosition, uiStore } from '#/lib/stores/ui'
-import { clientsStore } from '#/lib/stores/clients'
+import { lobbyStore } from '#/lib/stores/clients'
 import { PlayerPosition } from './player-position'
 import { gameStore } from '#/lib/stores/game'
 import { AnimatePresence, LayoutGroup } from 'motion/react'
@@ -14,7 +14,7 @@ function PlayerPositions({
   reverse,
   ...props
 }: React.ComponentProps<'div'> & { player: Player; reverse?: boolean }) {
-  const client = useSelector(clientsStore, (s) => s.me!)
+  const client = useSelector(lobbyStore, (s) => s.client!)
   const status = useSelector(gameStore, (g) => g.status)
   const positions = useSelector(gameStore, (g) =>
     g.positions

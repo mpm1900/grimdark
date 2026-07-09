@@ -10,7 +10,7 @@ import { gameStore } from '#/lib/stores/game'
 import { useContext } from '#/hooks/use-context'
 import { validateContextQuery } from '#/lib/queries/validate-context'
 import { sendContextMessage } from '#/lib/stores/socket'
-import { clientsStore } from '#/lib/stores/clients'
+import { lobbyStore } from '#/lib/stores/clients'
 import { GothicFramedButton } from './gothic-ui/button'
 import {
   GothicDialogContent,
@@ -207,7 +207,7 @@ function ActionContextDialog({
   action: Action
   enabled?: boolean
 }>) {
-  const client = useSelector(clientsStore, (s) => s.me!)
+  const client = useSelector(lobbyStore, (s) => s.client!)
   const turn = useSelector(gameStore, (g) => g.turn)
   const targets_options = getTargetsQuery(
     actor.ID,

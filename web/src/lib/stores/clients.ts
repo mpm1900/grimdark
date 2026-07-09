@@ -4,15 +4,15 @@ type Client = {
   ID: string
 }
 
-type ClientStore = {
-  me: Client | null
+type Lobby = {
+  client: Client | null
   clients: Array<Client>
 }
 
-const clientsStore = new Store<ClientStore>({
-  me: null,
+const lobbyStore = new Store<Lobby>({
+  client: null,
   clients: [],
 })
 
-export { clientsStore }
-export type { Client, ClientStore }
+export { lobbyStore }
+export type { Client, Lobby }

@@ -1,7 +1,7 @@
 import { gameStore } from '#/lib/stores/game'
 import { useSelector } from '@tanstack/react-store'
 import { AlertDialog, AlertDialogFooter } from './ui/alert-dialog'
-import { clientsStore } from '#/lib/stores/clients'
+import { lobbyStore } from '#/lib/stores/clients'
 import { getTargetsQuery } from '#/lib/queries/get-targets'
 import { useQuery } from '@tanstack/react-query'
 import { NULL_CONTEXT } from '#/lib/game/context'
@@ -18,7 +18,7 @@ import { TargetsButtonGrid } from './targets-button-grid'
 
 function PromptController() {
   const prompt = useSelector(gameStore, (g) => g.prompts[0])
-  const client = useSelector(clientsStore, (s) => s.me!)
+  const client = useSelector(lobbyStore, (s) => s.client!)
   const turn = useSelector(gameStore, (g) => g.turn)
   const targets_options = getTargetsQuery(
     null,
@@ -66,7 +66,7 @@ function PromptController() {
               <TargetsButtonGrid
                 actor={null}
                 action={prompt.payload}
-                className='px-4'
+                className="px-4"
                 context={{
                   ...context,
                   value: resolved_context,

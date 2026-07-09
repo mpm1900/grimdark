@@ -1,7 +1,7 @@
 import { NULL_CONTEXT } from '#/lib/game/context'
 import { useLogout } from '#/lib/mutations/logout'
 import { useUser } from '#/lib/queries/auth'
-import { clientsStore } from '#/lib/stores/clients'
+import { lobbyStore } from '#/lib/stores/clients'
 import { gameStore } from '#/lib/stores/game'
 import { sendContextMessage } from '#/lib/stores/socket'
 import { Link } from '@tanstack/react-router'
@@ -13,7 +13,7 @@ import { GothicFramedButton } from './gothic-ui/button'
 function AppHeader() {
   const { data: user } = useUser()
   const logout = useLogout()
-  const client = useSelector(clientsStore, (c) => c.me)
+  const client = useSelector(lobbyStore, (c) => c.client)
   const game_status = useSelector(gameStore, (g) => g.status)
   const turn = useSelector(gameStore, (g) => g.turn)
 
@@ -24,7 +24,7 @@ function AppHeader() {
           <GiWingedSword />
         </Link>
 
-        {client && turn > 0 && (
+        {client && (
           <div className="flex gap-2">
             <GothicFramedButton
               variant="red"

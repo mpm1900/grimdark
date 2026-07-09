@@ -3,10 +3,19 @@ package instance
 import (
 	"fmt"
 	"grimdark/internal/game"
-
-	"github.com/k0kubun/pp/v3"
+	"grimdark/internal/game/actors"
 )
 
+func postConnect(instance *Instance, request Request) int {
+	fmt.Println("loading team")
+	if request.TeamConfig == nil {
+		return none
+	}
+
+	actors.ApplyTeamConfig(&instance.Game, request.ClientID, *request.TeamConfig)
+	instance.PostConnectResponse(request.ClientID)
+	return none
+}
 func getTargets(instance *Instance, request Request) int {
 	action, ok := instance.Game.FindAction(request.Context)
 	if !ok {
@@ -26,7 +35,6 @@ func getTargets(instance *Instance, request Request) int {
 	instance.TargetIDsResponse(request.ClientID, context)
 	return none
 }
-
 func validateContext(instance *Instance, request Request) int {
 	action, ok := instance.Game.FindAction(request.Context)
 	if !ok {
@@ -39,11 +47,6 @@ func validateContext(instance *Instance, request Request) int {
 	return none
 }
 
-func loadTeam(instance *Instance, request Request) int {
-	fmt.Println("loading team")
-	pp.Println(request.TeamConfig)
-	return none
-}
 func pushAction(instance *Instance, request Request) int {
 	actor, ok := instance.Game.GetSource(request.Context)
 	if !ok {
@@ -95,9 +98,9 @@ func Reducer(instance *Instance, request Request) int {
 		return getTargets(instance, request)
 	case ValidateContext:
 		return validateContext(instance, request)
+	case PostConnect:
+		return postConnect(instance, request)
 
-	case LoadTeam:
-		return loadTeam(instance, request)
 	case PushAction:
 		return pushAction(instance, request)
 	case CancelAction:

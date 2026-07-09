@@ -1,12 +1,12 @@
 import { queryOptions } from '@tanstack/react-query'
 import { contextToString, NULL_CONTEXT, type Context } from '../game/context'
-import { clientsStore } from '../stores/clients'
+import { lobbyStore } from '../stores/clients'
 import { sendContextMessage } from '../stores/socket'
 import type { ID } from '../game/core'
 import { subscribe } from '../socket/subscribe'
 
 async function getTargets(context: Context): Promise<Context> {
-  const client = clientsStore.get().me
+  const client = lobbyStore.state.client
 
   const promise: Promise<Context> = new Promise((resolve, reject) => {
     if (!client) {
