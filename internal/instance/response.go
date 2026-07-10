@@ -7,12 +7,16 @@ import (
 type ResponseType string
 
 const (
+	// system messages
 	ResponseTypeOnConnect   = "on-connect"
 	ResponseTypePostConnect = "post-connect"
+	ResponseTypeGameStart   = "game-start"
 
+	// updates
 	ResponseTypeGame    = "game"
 	ResponseTypeClients = "clients"
 
+	// request responses
 	ResponseTypeValidateContext = "validate-context"
 	ResponseTypeTargetIDs       = "target-IDs"
 )

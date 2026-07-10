@@ -23,6 +23,7 @@ type SocketResponse = {
   type:
     | 'on-connect'
     | 'post-connect'
+    | 'game-start'
     | 'game'
     | 'lobby'
     | 'validate-context'

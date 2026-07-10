@@ -3,9 +3,9 @@ import type { ActorConfig } from '#/lib/game/team'
 import { actorsQuery } from '#/lib/queries/get-actors'
 import { setActiveActor } from '#/lib/stores/team'
 import { cn } from '#/lib/utils'
-import { keys } from '#/utils/maps'
 import { useQuery } from '@tanstack/react-query'
 import { Gauge } from './gothic-ui/progress'
+import { StatIcon } from './stat-name'
 
 function ClassSprite({
   actor_class_id,
@@ -57,7 +57,7 @@ function TeamActor({
         <div className="absolute bottom-0 inset-x-0 text-center h-9 leading-9 mx-1">
           <div>
             {actor_class?.name ? (
-              <span className="text-foreground font-cinzel-dec font-semibold [text-shadow:1px_2px_0_var(--color-black)]">
+              <span className="text-foreground truncate font-cinzel-dec font-semibold [text-shadow:1px_2px_0_var(--color-black)]">
                 {actor_class.name}
               </span>
             ) : (
@@ -67,13 +67,21 @@ function TeamActor({
         </div>
       </div>
       {actor_class && (
-        <div className="mx-2 mt-4 h-40 space-y-1">
+        <div className="mx-2 mt-4 h-43 space-y-1">
           {CLASS_STATS.map((stat) => (
-            <Gauge key={stat} value={(actor_class.stats[stat] * 100) / 255} />
+            <div key={stat} className="flex items-center gap-2">
+              <StatIcon stat={stat} className="size-5" />
+              <Gauge
+                value={(actor_class.stats[stat] * 100) / 255}
+                className="h-5"
+              >
+                {actor_class.stats[stat]}
+              </Gauge>
+            </div>
           ))}
         </div>
       )}
-      {!actor_class && <div className="mx-2 mt-4 h-40">details here</div>}
+      {!actor_class && <div className="mx-2 mt-4 h-61">details here</div>}
     </div>
   )
 }

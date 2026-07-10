@@ -1,13 +1,11 @@
 package instance
 
 import (
-	"fmt"
 	"grimdark/internal/game"
 	"grimdark/internal/game/actors"
 )
 
 func postConnect(instance *Instance, request Request) int {
-	fmt.Println("loading team")
 	if request.TeamConfig == nil {
 		return none
 	}

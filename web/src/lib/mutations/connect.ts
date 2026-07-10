@@ -46,9 +46,8 @@ function useConnect() {
   return useMutation({
     mutationKey: ['connect'],
     mutationFn: async (team_config: TeamConfig) => {
-      const connect_message = await connect()
+      await connect()
       const message = await postConnect(team_config)
-      console.log('message', message)
       return message
     },
   })

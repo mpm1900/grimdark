@@ -4,6 +4,7 @@ import type {
   SocketRequest,
   SocketResponse,
 } from '../socket/request'
+import { lobbyStore } from './clients'
 
 type SocketStatus =
   | 'idle'
@@ -15,14 +16,12 @@ type SocketStatus =
   | 'reconnecting'
 
 type SocketState = {
-  instance_ID: string | null
   socket: WebSocket | null
   status: SocketStatus
   reconnect_count: number
 }
 
 const socketStore = new Store<SocketState>({
-  instance_ID: null,
   socket: null,
   status: 'idle',
   reconnect_count: 0,
@@ -54,7 +53,6 @@ function setSocket(socket: WebSocket) {
 }
 
 function openSocket() {
-  console.log('WebSocket connection opened')
   socketStore.setState((s) => ({
     ...s,
     status: 'open',
@@ -81,7 +79,6 @@ function closeSocket(code: number, reason: string) {
     socketStore.state.socket?.readyState === WebSocket.OPEN
   ) {
     socketStore.state.socket.close(code, reason)
-    return
   }
 
   socketStore.setState((s) => ({
@@ -90,6 +87,10 @@ function closeSocket(code: number, reason: string) {
     status: 'closed',
     instance_ID: null,
     reconnectCount: 0,
+  }))
+  lobbyStore.setState((l) => ({
+    ...l,
+    client: null,
   }))
 }
 

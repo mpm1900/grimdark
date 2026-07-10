@@ -7,8 +7,8 @@ import type { IconType } from 'react-icons/lib'
 const statVariants = cva('', {
   variants: {
     stat: {
-      health: '',
-      speed: '',
+      health: 'text-health',
+      speed: 'text-speed',
       melee: 'text-melee',
       ranged: 'text-ranged',
       special: 'text-special',

@@ -1,7 +1,14 @@
 import type { Stat } from '#/lib/game/core'
-import { GiBookmarklet, GiCrossedSwords, GiSpectreM4, GiSprint } from 'react-icons/gi'
+import {
+  GiBookmarklet,
+  GiCrossedSwords,
+  GiHealthNormal,
+  GiSpectreM4,
+  GiSprint,
+} from 'react-icons/gi'
 import { TbShield } from 'react-icons/tb'
 import type { IconType } from 'react-icons/lib'
+import { cn } from '#/lib/utils'
 
 const Pistol: IconType = (props) => {
   return (
@@ -131,22 +138,15 @@ const SkullTome: IconType = (props) => {
     </svg>
   )
 }
-const MartialDefense: IconType = (props) => {
-  return (
-    <span {...(props as any)}>
-      <TbShield className="h-full w-full" />
-    </span>
-  )
+const MartialDefense: IconType = ({ className, ...props }) => {
+  return <TbShield className={cn('h-full w-full', className)} {...props} />
 }
-const SpecialDefense: IconType = (props) => {
-  return (
-    <span {...(props as any)}>
-      <TbShield className="h-full w-full" />
-    </span>
-  )
+const SpecialDefense: IconType = ({ className, ...props }) => {
+  return <TbShield className={cn('h-full w-full', className)} {...props} />
 }
 
 export const STAT_ICONS: Record<Stat, IconType> = {
+  health: GiHealthNormal,
   melee: GiCrossedSwords,
   ranged: GiSpectreM4,
   special: GiBookmarklet,

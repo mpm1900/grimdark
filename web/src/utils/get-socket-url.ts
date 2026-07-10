@@ -1,4 +1,4 @@
-function getSocketUrl(instanceID?: string): string {
+function getSocketUrl(instanceID?: string | null): string {
   const envUrl = import.meta.env.VITE_BACKEND_URL
   const end = instanceID ? `${instanceID}/connect` : 'connect'
   if (envUrl) {

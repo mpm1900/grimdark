@@ -101,6 +101,25 @@ func (ih *InstancesHandler) HandleGetGames(w http.ResponseWriter, r *http.Reques
 		return
 	}
 }
+func (ih *InstancesHandler) HandleGetGame(w http.ResponseWriter, r *http.Request) {
+	instanceID, err := uuid.Parse(r.PathValue("instanceID"))
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+	instance, ok := ih.GetInstance(instanceID)
+	if !ok {
+		w.WriteHeader(http.StatusNotFound)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	err = json.NewEncoder(w).Encode(instance.ToJSON())
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+}
 
 func (ih *InstancesHandler) handleGameConnection(ctx context.Context) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {

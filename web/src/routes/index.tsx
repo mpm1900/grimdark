@@ -6,10 +6,15 @@ import { TeamPlatforms } from '#/components/team-platforms'
 import { useConnect } from '#/lib/mutations/connect'
 import { useUser } from '#/lib/queries/auth'
 import { teamStore } from '#/lib/stores/team'
-import { ClientOnly, createFileRoute } from '@tanstack/react-router'
+import { ClientOnly, createFileRoute, redirect } from '@tanstack/react-router'
 import { useSelector } from '@tanstack/react-store'
 
 export const Route = createFileRoute('/')({
+  beforeLoad: ({ context }) => {
+    if (!context.auth.user) {
+      throw redirect({ to: '/login' })
+    }
+  },
   component: RouteComponent,
 })
 
@@ -47,7 +52,10 @@ function RouteComponent() {
               <div className="font-cinzel text-3xl capitalize font-semibold">
                 ready your team
               </div>
-              <GothicFramedButton onClick={() => battle()}>
+              <GothicFramedButton
+                disabled={!!team.actors.find((a) => !a.class)}
+                onClick={() => battle()}
+              >
                 Battle!
               </GothicFramedButton>
             </div>

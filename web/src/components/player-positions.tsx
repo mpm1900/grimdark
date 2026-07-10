@@ -14,7 +14,7 @@ function PlayerPositions({
   reverse,
   ...props
 }: React.ComponentProps<'div'> & { player: Player; reverse?: boolean }) {
-  const client = useSelector(lobbyStore, (s) => s.client!)
+  const client = useSelector(lobbyStore, (s) => s.client)
   const status = useSelector(gameStore, (g) => g.status)
   const positions = useSelector(gameStore, (g) =>
     g.positions
@@ -23,6 +23,8 @@ function PlayerPositions({
   )
   const ui = useSelector(uiStore, (ui) => ui)
   const hover_position = useSelector(uiStore, (s) => s.hover_position)
+  if (!client) return null
+
   return (
     <div
       {...props}

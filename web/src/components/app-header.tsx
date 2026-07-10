@@ -41,6 +41,7 @@ function AppHeader() {
             </GothicFramedButton>
           </div>
         )}
+
         <div className="flex items-center">
           {game_status === 'running' && (
             <GiWhirlpoolShuriken className="animate-spin" />

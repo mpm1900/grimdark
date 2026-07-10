@@ -5,7 +5,7 @@ import { teamStore } from '#/lib/stores/team'
 function TeamPlatforms() {
   const team = useSelector(teamStore, (s) => s)
   return (
-    <PlatformParent className="absolute inset-0 bottom-1/5 z-0 perspective-origin-top">
+    <PlatformParent className="absolute inset-0 bottom-3/10 z-0 perspective-origin-top">
       {team.actors.map((_, i) => (
         <Platform
           key={i}

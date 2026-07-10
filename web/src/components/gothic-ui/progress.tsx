@@ -108,7 +108,7 @@ function Gauge({
     <ProgressPrimitive.Root
       data-slot="progress"
       className={cn(
-        'relative h-2 w-full overflow-hidden rounded-xs bg-foreground/20',
+        'relative h-2 w-full overflow-hidden rounded-xs bg-stone-500/40',
         className
       )}
       {...props}
@@ -116,13 +116,17 @@ function Gauge({
       <ProgressPrimitive.Indicator
         data-slot="progress-indicator"
         className={cn(
-          'h-full w-full flex-1 bg-foreground transition-all',
+          'h-full w-full flex-1 bg-foreground/80 transition-all',
           indicatorClassName
         )}
         style={{ transform: `translateX(-${100 - (value || 0)}%)` }}
         {...indicator}
       />
-      {children}
+      {children && (
+        <div className="pointer-events-none absolute text-stone-800 font-bold font-cinzel inset-0 z-10 flex items-center text-sm px-1">
+          {children}
+        </div>
+      )}
     </ProgressPrimitive.Root>
   )
 }

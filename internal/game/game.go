@@ -55,7 +55,6 @@ type GamePhase string
 
 const (
 	GameStatusIdle    GameStatus = "idle"
-	GameStatusInit    GameStatus = "init"
 	GameStatusRunning GameStatus = "running"
 	GameStatusWaiting GameStatus = "waiting"
 )
@@ -120,7 +119,7 @@ func NewGame(instanceID uuid.UUID) Game {
 		InstanceID: instanceID,
 		Logs:       []Bindable[Log]{},
 		Phase:      PhaseInit,
-		Status:     GameStatusInit,
+		Status:     GameStatusIdle,
 		Turn:       0,
 	}
 }

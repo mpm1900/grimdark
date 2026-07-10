@@ -4,17 +4,33 @@ import { PlayerPositions } from '#/components/player-positions'
 import { PlayerTeam } from '#/components/player-team'
 import { PromptController } from '#/components/prompt-controller'
 import { TurnContext } from '#/components/turn-context'
+import { getInstance } from '#/lib/queries/get-instance'
+import { disconnect } from '#/lib/socket/connect'
 import { lobbyStore } from '#/lib/stores/clients'
 import { gameStore } from '#/lib/stores/game'
-import { ClientOnly, createFileRoute } from '@tanstack/react-router'
+import { ClientOnly, createFileRoute, redirect } from '@tanstack/react-router'
 import { useSelector } from '@tanstack/react-store'
 import z from 'zod'
 
 export const Route = createFileRoute('/battle/$gameID')({
   component: RouteComponent,
   params: z.object({
-    gameID: z.string(),
+    gameID: z.uuid(),
   }),
+  loader: async ({ params }) => {
+    try {
+      await getInstance({ data: params.gameID })
+    } catch (e: any) {
+      if (e.status === 404) {
+        throw redirect({ to: '/' })
+      }
+
+      throw e
+    }
+  },
+  onLeave: () => {
+    disconnect(1000, 'Route: onLeave')
+  },
 })
 
 function RouteComponent() {

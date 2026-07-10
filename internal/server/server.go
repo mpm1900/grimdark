@@ -37,6 +37,7 @@ func NewServer(ctx context.Context, queries *db.Queries) *Server {
 	api.HandleFunc("GET  /auth/me", auth.WithSession(handleMe(), queries))
 
 	api.HandleFunc("GET /instances", instances_handler.HandleGetGames)
+	api.HandleFunc("GET /instances/{instanceID}", instances_handler.HandleGetGame)
 	api.HandleFunc("GET /actors", gamedata_handler.HandleGetActors)
 
 	mux.Handle("/api/", http.StripPrefix("/api", api))

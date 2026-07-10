@@ -7,6 +7,7 @@ function socket_reducer(message: SocketResponse | null) {
   switch (message.type) {
     case 'game': {
       if (message.game) {
+        console.log(message.game)
         gameStore.setState(() => message.game!)
       }
       return
@@ -19,7 +20,6 @@ function socket_reducer(message: SocketResponse | null) {
       return
     }
     case 'on-connect': {
-      console.log('on-connect', message)
       lobbyStore.setState((c) => ({
         ...c,
         client: message.lobby?.client!,

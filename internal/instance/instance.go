@@ -8,9 +8,18 @@ import (
 	"github.com/google/uuid"
 )
 
+type InstanceStatus string
+
+const (
+	InstanceStatusInit     InstanceStatus = "init"
+	InstanceStatusRunning  InstanceStatus = "running"
+	InstanceStatusComplete InstanceStatus = "complete"
+)
+
 type Instance struct {
 	ID      uuid.UUID
 	ctx     context.Context
+	Status  InstanceStatus
 	Lobby   Lobby
 	Game    game.Game
 	Tick    time.Duration
@@ -22,14 +31,16 @@ type Instance struct {
 }
 
 type InstanceJSON struct {
-	ID    uuid.UUID `json:"ID"`
-	Lobby LobbyJSON `json:"lobby"`
+	ID     uuid.UUID      `json:"ID"`
+	Status InstanceStatus `json:"status"`
+	Lobby  LobbyJSON      `json:"lobby"`
 }
 
 func NewInstance(ctx context.Context, id uuid.UUID, onEmpty func(uuid.UUID)) *Instance {
 	return &Instance{
 		ID:          id,
 		ctx:         ctx,
+		Status:      InstanceStatusInit,
 		Lobby:       NewLobby(),
 		onEmpty:     onEmpty,
 		Register:    make(chan *Client),

@@ -27,7 +27,7 @@ import {
 let connectionAbortController: AbortController | null = null
 let reconnectTimer: number | null = null
 
-function connect(instanceID?: string): Promise<SocketResponse> {
+function connect(instanceID?: string | null): Promise<SocketResponse> {
   return new Promise<SocketResponse>((resolve, reject) => {
     let settled = false
     const finishResolve = (value: SocketResponse) => {
@@ -140,7 +140,7 @@ function connect(instanceID?: string): Promise<SocketResponse> {
 }
 
 function reconnect() {
-  const { instance_ID, reconnect_count } = socketStore.state
+  const { reconnect_count } = socketStore.state
 
   const delay = Math.min(
     INITIAL_RECONNECT_DELAY * Math.pow(2, reconnect_count),
@@ -154,7 +154,8 @@ function reconnect() {
   startReconnect()
   reconnectTimer = window.setTimeout(() => {
     reconnectTimer = null
-    void connect(instance_ID ?? undefined).catch(() => {
+    const instance_ID = readSavedInstanceID()
+    void connect(instance_ID).catch(() => {
       // Reconnect loop is tracked in store state; ignore per-attempt promise rejection.
     })
   }, delay)
