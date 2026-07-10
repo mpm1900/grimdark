@@ -1,4 +1,4 @@
-import type { Actor } from '#/lib/game/actor'
+import { getHealthRatio, type Actor } from '#/lib/game/actor'
 import { cn } from '#/lib/utils'
 import { GothicProgress } from './gothic-ui/progress'
 import { Progress } from './ui/progress'
@@ -18,13 +18,13 @@ function HealthBar({
 }) {
   const health = actor.stats['health']
   const remaining = health - actor.wounds
-  const ratio = remaining / health
+  const ratio = getHealthRatio(actor)
   return (
     <GothicProgress
       {...props}
       className={cn('h-6 font-cinzel font-semibold rounded-xs', className)}
       resetKey={actor.ID}
-      value={ratio * 100}
+      value={ratio}
     >
       {!hide_numbers && (
         <div className="absolute inset-0 flex items-center justify-end pr-1 text-foreground/70 [text-shadow:1px_1px_0_var(--color-black)] text-sm">

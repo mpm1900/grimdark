@@ -4,7 +4,7 @@ import { Marker, MarkerContent } from './ui/marker'
 import { useSelector } from '@tanstack/react-store'
 import { gameStore } from '#/lib/stores/game'
 import { getTargetsQuery } from '#/lib/queries/get-targets'
-import type { Actor } from '#/lib/game/actor'
+import { getHealthRatio, type Actor } from '#/lib/game/actor'
 import type { Action } from '#/lib/game/action'
 import { useQuery } from '@tanstack/react-query'
 import { getTargetsFromContext, NULL_CONTEXT } from '#/lib/game/context'
@@ -13,8 +13,9 @@ import { validateContextQuery } from '#/lib/queries/validate-context'
 import { setHoverPosition } from '#/lib/stores/ui'
 import { lobbyStore } from '#/lib/stores/clients'
 import { cva, type VariantProps } from 'class-variance-authority'
+import { Gauge } from './gothic-ui/progress'
 
-const targetButtonVariants = cva('', {
+const targetButtonVariants = cva('text-xs', {
   variants: {
     variant: {
       disabled: 'text-foreground/40',
@@ -52,7 +53,6 @@ function TargetButton({
   is_selected,
   is_valid_target,
   is_source,
-  rank,
   target,
   disabled,
   onClick,
@@ -62,7 +62,6 @@ function TargetButton({
   is_selected: boolean
   is_valid_target: boolean
   is_source: boolean
-  rank: number | null
   target: Actor | undefined
   onClick: (actor: Actor, is_selected: boolean) => void
 }) {
@@ -73,24 +72,25 @@ function TargetButton({
     <GothicBigButton
       key={target.ID}
       variant={is_selected ? 'red' : 'basic'}
-      className="flex-col gap-0 p-0 group"
+      className={targetButtonVariants({
+        className: 'flex-col gap-0 p-0 group items-start',
+        variant: getVariant(
+          is_selected,
+          client_ID === target.player_ID,
+          is_source,
+          !!is_disabled
+        ),
+      })}
       disabled={is_disabled}
       onMouseEnter={() => setHoverPosition(target.position_ID)}
       onMouseLeave={() => setHoverPosition(null)}
       onClick={() => onClick(target, !is_selected)}
     >
-      <div
-        className={targetButtonVariants({
-          variant: getVariant(
-            is_selected,
-            client_ID === target.player_ID,
-            is_source,
-            !!is_disabled
-          ),
-        })}
-      >
-        {target.name}
-      </div>
+      <div>{target.name}</div>
+      <Gauge
+        value={getHealthRatio(target)}
+        indicator={{ className: 'bg-red-700/20' }}
+      />
     </GothicBigButton>
   )
 }
@@ -167,7 +167,6 @@ function TargetsButtonGrid({
                   is_selected={!!target && context.hasTarget(target)}
                   is_valid_target={!!targets.find((t) => t.ID === target?.ID)}
                   is_source={target?.ID === targets_context.source_ID}
-                  rank={pos.rank}
                   target={target}
                   onClick={(t, selected) =>
                     selected ? context.addTarget(t) : context.removeTarget(t)
@@ -186,7 +185,6 @@ function TargetsButtonGrid({
               is_selected={!!target && context.hasTarget(target)}
               is_valid_target={!!targets.find((t) => t.ID === target?.ID)}
               is_source={target?.ID === targets_context.source_ID}
-              rank={null}
               target={target}
               onClick={(t, selected) =>
                 selected ? context.addTarget(t) : context.removeTarget(t)

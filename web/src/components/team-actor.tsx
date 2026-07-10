@@ -26,7 +26,7 @@ function ClassSprite({
       )}
       {...props}
     >
-      <div className="relative flex h-full w-full min-w-0 max-h-80 items-end justify-center pb-8">
+      <div className="relative flex h-80 w-full min-w-0 items-end justify-center pb-8">
         <img
           src={actor_class?.sprite_url ?? '/gothic/CharSHRef.png'}
           className={cn(
@@ -75,16 +75,14 @@ function TeamActor({
         <ClassSprite actor_class_id={config?.class} index={index} />
         <div className="absolute bottom-0 inset-x-0 text-center h-9 leading-9 mx-1">
           <div>
-            {actor_class?.name && (
-              <span
-                className={cn(
-                  'text-foreground/60 truncate font-cinzel-dec font-semibold [text-shadow:1px_2px_0_var(--color-black)]',
-                  active_index === index && 'text-foreground'
-                )}
-              >
-                {config.name || actor_class.name}
-              </span>
-            )}
+            <span
+              className={cn(
+                'text-foreground/60 truncate font-cinzel-dec font-semibold [text-shadow:1px_2px_0_var(--color-black)]',
+                active_index === index && 'text-foreground'
+              )}
+            >
+              {config.name || actor_class?.name}
+            </span>
           </div>
         </div>
       </div>

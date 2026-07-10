@@ -37,3 +37,12 @@ export type Actor = {
   weapon_r: Weapon | null
   wounds: number
 }
+
+function getHealthRatio(actor: Actor): number {
+  const health = actor.stats['health']
+  const remaining = health - actor.wounds
+  const ratio = remaining / health
+  return ratio * 100
+}
+
+export { getHealthRatio }
