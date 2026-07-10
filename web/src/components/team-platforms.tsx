@@ -10,7 +10,13 @@ function TeamPlatforms() {
         <Platform
           key={i}
           rank={i}
-          variant={i === team.active_actor ? 'player-active' : 'player'}
+          variant={
+            i === team.active_actor
+              ? 'player-active'
+              : i === team.hover_actor
+                ? 'player-hover'
+                : 'player'
+          }
           className="flex-1"
         >
           {''}

@@ -1,18 +1,21 @@
 import { CLASS_STATS, type ID } from '#/lib/game/core'
 import type { ActorConfig } from '#/lib/game/team'
 import { actorsQuery } from '#/lib/queries/get-actors'
-import { setActiveActor } from '#/lib/stores/team'
+import { setActiveActor, setHoverActor, teamStore } from '#/lib/stores/team'
 import { cn } from '#/lib/utils'
 import { useQuery } from '@tanstack/react-query'
 import { Gauge } from './gothic-ui/progress'
 import { StatIcon } from './stat-name'
+import { useSelector } from '@tanstack/react-store'
 
 function ClassSprite({
+  index,
   actor_class_id,
   className,
   ...props
-}: React.ComponentProps<'div'> & { actor_class_id: ID | null }) {
+}: React.ComponentProps<'div'> & { actor_class_id: ID | null; index: number }) {
   const actors_query = useQuery(actorsQuery)
+  const active_index = useSelector(teamStore, (s) => s.active_actor)
   const actor_class = actors_query.data?.find((a) => a.ID === actor_class_id)
   return (
     <div
@@ -26,7 +29,10 @@ function ClassSprite({
         <img
           src={actor_class?.sprite_url ?? '/gothic/CharSHRef.png'}
           className={cn(
-            'pointer-events-none relative z-10 h-full w-full max-w-72 select-none object-contain object-bottom'
+            'pointer-events-none relative z-10 h-full w-full max-w-72 select-none object-contain object-bottom',
+            {
+              'opacity-60': active_index !== index,
+            }
           )}
         />
       </div>
@@ -50,10 +56,16 @@ function TeamActor({
         setActiveActor(index)
         onClick?.(e)
       }}
+      onMouseEnter={() => {
+        setHoverActor(index)
+      }}
+      onMouseLeave={() => {
+        setHoverActor(null)
+      }}
       {...props}
     >
       <div className="relative h-full">
-        <ClassSprite actor_class_id={config?.class} />
+        <ClassSprite actor_class_id={config?.class} index={index} />
         <div className="absolute bottom-0 inset-x-0 text-center h-9 leading-9 mx-1">
           <div>
             {actor_class?.name && (

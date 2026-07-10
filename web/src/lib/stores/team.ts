@@ -3,9 +3,11 @@ import type { ActorConfig, TeamConfig } from '../game/team'
 
 export type TeamState = TeamConfig & {
   active_actor: number
+  hover_actor: number | null
 }
 const INITIAL_TEAM: TeamState = {
   active_actor: 0,
+  hover_actor: null,
   actors: [
     {
       class: null,
@@ -47,6 +49,13 @@ function setActiveActor(active_actor: number) {
   }))
 }
 
+function setHoverActor(hover_actor: number | null) {
+  teamStore.setState((old) => ({
+    ...old,
+    hover_actor,
+  }))
+}
+
 function updateActor(
   index: number,
   updater: (actor: ActorConfig) => ActorConfig
@@ -57,4 +66,4 @@ function updateActor(
   }))
 }
 
-export { teamStore, setActiveActor, updateActor }
+export { teamStore, setActiveActor, setHoverActor, updateActor }
