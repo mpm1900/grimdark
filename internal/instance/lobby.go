@@ -41,8 +41,10 @@ func (l *Lobby) Clients() map[uuid.UUID]*Client {
 }
 func (l *Lobby) AddClient(client *Client) {
 	if len(l.Players) < 2 {
+		client.Role = ClientRolePlayer
 		l.Players[client.ID] = client
 	} else {
+		client.Role = ClientRoleSpectator
 		l.Spectators[client.ID] = client
 	}
 }

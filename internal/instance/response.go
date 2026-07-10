@@ -47,11 +47,8 @@ func NewLobbyMessage(client *Client, lobby LobbyJSON) Response {
 	}
 }
 
-func OnConnectMessage(client *Client) Response {
-	lobby := LobbyJSON{
-		Client:  client,
-		Players: []*Client{},
-	}
+func OnConnectMessage(client *Client, lobby LobbyJSON) Response {
+	lobby.Client = client
 	return Response{
 		Type:  ResponseTypeOnConnect,
 		Game:  nil,

@@ -15,14 +15,18 @@ function socket_reducer(message: SocketResponse | null) {
     case 'lobby': {
       lobbyStore.setState((c) => ({
         ...c,
-        clients: message.lobby?.clients!,
+        players: message.lobby?.players!,
+        spectators: message.lobby?.spectators!,
       }))
       return
     }
     case 'on-connect': {
+      console.log('on connect', message)
       lobbyStore.setState((c) => ({
         ...c,
         client: message.lobby?.client!,
+        players: message.lobby?.players!,
+        spectators: message.lobby?.spectators!,
       }))
       return
     }

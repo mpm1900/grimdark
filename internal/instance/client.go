@@ -40,9 +40,17 @@ var upgrader = websocket.Upgrader{
 	},
 }
 
+type ClientRole string
+
+const (
+	ClientRolePlayer    ClientRole = "player"
+	ClientRoleSpectator ClientRole = "spectator"
+)
+
 type Client struct {
 	ID       uuid.UUID          `json:"ID"`
 	User     *game.User         `json:"user,omitempty"`
+	Role     ClientRole         `json:"role"`
 	conn     *websocket.Conn    `json:"-"`
 	ctx      context.Context    `json:"-"`
 	cancel   context.CancelFunc `json:"-"`

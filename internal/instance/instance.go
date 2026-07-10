@@ -82,7 +82,7 @@ func (i *Instance) BroadcastGame() {
 }
 
 func (i *Instance) OnConnectResponse(client *Client) {
-	client.TryWriteResponse(OnConnectMessage(client))
+	client.TryWriteResponse(OnConnectMessage(client, i.Lobby.ToJSON()))
 }
 func (i *Instance) PostConnectResponse(client_id uuid.UUID) {
 	client, ok := i.Lobby.GetClient(client_id)
@@ -90,8 +90,7 @@ func (i *Instance) PostConnectResponse(client_id uuid.UUID) {
 		return
 	}
 
-	json := i.Game.ToJSON()
-	client.TryWriteResponse(PostConnectMessage(client, json))
+	client.TryWriteResponse(PostConnectMessage(client, i.Game.ToJSON()))
 }
 
 func (i *Instance) TargetIDsResponse(client_id uuid.UUID, context game.Context) {
