@@ -6,12 +6,12 @@ type Client = {
 
 type Lobby = {
   client: Client | null
-  clients: Array<Client>
+  players: Array<Client>
 }
 
 const lobbyStore = new Store<Lobby>({
   client: null,
-  clients: [],
+  players: [],
 })
 
 export { lobbyStore }

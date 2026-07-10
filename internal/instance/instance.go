@@ -60,25 +60,19 @@ func (i Instance) ToJSON() InstanceJSON {
 }
 
 func (i *Instance) RegisterClient(client *Client) {
-	if existing, ok := i.Lobby.Clients[client.ID]; ok && existing != client {
+	if existing, ok := i.Lobby.GetClient(client.ID); ok && existing != client {
 		existing.cancel()
 	}
-	i.Lobby.Clients[client.ID] = client
+	i.Lobby.AddClient(client)
 }
 
 func (i *Instance) UnregisterClient(client *Client) bool {
-	existing, ok := i.Lobby.Clients[client.ID]
-	if !ok || existing != client {
-		return false
-	}
-
-	delete(i.Lobby.Clients, client.ID)
-	return true
+	return i.Lobby.RemoveClient(client.ID)
 }
 
 func (i *Instance) BroadcastGame() {
 	json := i.Game.ToJSON()
-	for _, client := range i.Lobby.Clients {
+	for _, client := range i.Lobby.Clients() {
 		if !client.TryWriteResponse(NewGameMessage(client, json)) {
 			// If we can't send, it's usually better to just log it for now
 			// rather than immediately unregistering, unless the client is truly dead.
@@ -90,8 +84,8 @@ func (i *Instance) BroadcastGame() {
 func (i *Instance) OnConnectResponse(client *Client) {
 	client.TryWriteResponse(OnConnectMessage(client))
 }
-func (i *Instance) PostConnectResponse(clientID uuid.UUID) {
-	client, ok := i.Lobby.Clients[clientID]
+func (i *Instance) PostConnectResponse(client_id uuid.UUID) {
+	client, ok := i.Lobby.GetClient(client_id)
 	if !ok {
 		return
 	}
@@ -100,16 +94,16 @@ func (i *Instance) PostConnectResponse(clientID uuid.UUID) {
 	client.TryWriteResponse(PostConnectMessage(client, json))
 }
 
-func (i *Instance) TargetIDsResponse(clientID uuid.UUID, context game.Context) {
-	client, ok := i.Lobby.Clients[clientID]
+func (i *Instance) TargetIDsResponse(client_id uuid.UUID, context game.Context) {
+	client, ok := i.Lobby.GetClient(client_id)
 	if !ok {
 		return
 	}
 
 	client.TryWriteResponse(TargetIDsResponse(client, context))
 }
-func (i *Instance) ValidateContextResponse(clientID uuid.UUID, context game.Context, valid bool) {
-	client, ok := i.Lobby.Clients[clientID]
+func (i *Instance) ValidateContextResponse(client_id uuid.UUID, context game.Context, valid bool) {
+	client, ok := i.Lobby.GetClient(client_id)
 	if !ok {
 		return
 	}
@@ -118,7 +112,7 @@ func (i *Instance) ValidateContextResponse(clientID uuid.UUID, context game.Cont
 }
 
 func (i *Instance) BroadcastClients() {
-	for _, client := range i.Lobby.Clients {
+	for _, client := range i.Lobby.Clients() {
 		client.TryWriteResponse(NewLobbyMessage(client, i.Lobby.ToJSON()))
 	}
 }
@@ -154,7 +148,7 @@ func (i *Instance) Run() {
 				continue
 			}
 
-			if len(i.Lobby.Clients) == 0 {
+			if len(i.Lobby.Players) == 0 {
 				if i.onEmpty != nil {
 					i.onEmpty(i.ID)
 				}

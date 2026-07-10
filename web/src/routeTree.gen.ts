@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as AuthedRouteImport } from './routes/_authed'
 import { Route as AuthedIndexRouteImport } from './routes/_authed.index'
+import { Route as AuthedLobbyGameIDRouteImport } from './routes/_authed.lobby.$gameID'
 import { Route as AuthedBattleGameIDRouteImport } from './routes/_authed.battle.$gameID'
 
 const LoginRoute = LoginRouteImport.update({
@@ -28,6 +29,11 @@ const AuthedIndexRoute = AuthedIndexRouteImport.update({
   path: '/',
   getParentRoute: () => AuthedRoute,
 } as any)
+const AuthedLobbyGameIDRoute = AuthedLobbyGameIDRouteImport.update({
+  id: '/lobby/$gameID',
+  path: '/lobby/$gameID',
+  getParentRoute: () => AuthedRoute,
+} as any)
 const AuthedBattleGameIDRoute = AuthedBattleGameIDRouteImport.update({
   id: '/battle/$gameID',
   path: '/battle/$gameID',
@@ -38,11 +44,13 @@ export interface FileRoutesByFullPath {
   '/': typeof AuthedIndexRoute
   '/login': typeof LoginRoute
   '/battle/$gameID': typeof AuthedBattleGameIDRoute
+  '/lobby/$gameID': typeof AuthedLobbyGameIDRoute
 }
 export interface FileRoutesByTo {
   '/login': typeof LoginRoute
   '/': typeof AuthedIndexRoute
   '/battle/$gameID': typeof AuthedBattleGameIDRoute
+  '/lobby/$gameID': typeof AuthedLobbyGameIDRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -50,18 +58,20 @@ export interface FileRoutesById {
   '/login': typeof LoginRoute
   '/_authed/': typeof AuthedIndexRoute
   '/_authed/battle/$gameID': typeof AuthedBattleGameIDRoute
+  '/_authed/lobby/$gameID': typeof AuthedLobbyGameIDRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/login' | '/battle/$gameID'
+  fullPaths: '/' | '/login' | '/battle/$gameID' | '/lobby/$gameID'
   fileRoutesByTo: FileRoutesByTo
-  to: '/login' | '/' | '/battle/$gameID'
+  to: '/login' | '/' | '/battle/$gameID' | '/lobby/$gameID'
   id:
     | '__root__'
     | '/_authed'
     | '/login'
     | '/_authed/'
     | '/_authed/battle/$gameID'
+    | '/_authed/lobby/$gameID'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -92,6 +102,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthedIndexRouteImport
       parentRoute: typeof AuthedRoute
     }
+    '/_authed/lobby/$gameID': {
+      id: '/_authed/lobby/$gameID'
+      path: '/lobby/$gameID'
+      fullPath: '/lobby/$gameID'
+      preLoaderRoute: typeof AuthedLobbyGameIDRouteImport
+      parentRoute: typeof AuthedRoute
+    }
     '/_authed/battle/$gameID': {
       id: '/_authed/battle/$gameID'
       path: '/battle/$gameID'
@@ -105,11 +122,13 @@ declare module '@tanstack/react-router' {
 interface AuthedRouteChildren {
   AuthedIndexRoute: typeof AuthedIndexRoute
   AuthedBattleGameIDRoute: typeof AuthedBattleGameIDRoute
+  AuthedLobbyGameIDRoute: typeof AuthedLobbyGameIDRoute
 }
 
 const AuthedRouteChildren: AuthedRouteChildren = {
   AuthedIndexRoute: AuthedIndexRoute,
   AuthedBattleGameIDRoute: AuthedBattleGameIDRoute,
+  AuthedLobbyGameIDRoute: AuthedLobbyGameIDRoute,
 }
 
 const AuthedRouteWithChildren =

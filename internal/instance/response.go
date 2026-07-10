@@ -50,7 +50,7 @@ func NewLobbyMessage(client *Client, lobby LobbyJSON) Response {
 func OnConnectMessage(client *Client) Response {
 	lobby := LobbyJSON{
 		Client:  client,
-		Clients: []*Client{},
+		Players: []*Client{},
 	}
 	return Response{
 		Type:  ResponseTypeOnConnect,
@@ -62,7 +62,7 @@ func PostConnectMessage(client *Client, g game.GameJSON) Response {
 	g.ForPlayer(client.ID)
 	lobby := LobbyJSON{
 		Client:  client,
-		Clients: []*Client{},
+		Players: []*Client{},
 	}
 	return Response{
 		Type:  ResponseTypePostConnect,

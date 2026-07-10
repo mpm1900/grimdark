@@ -56,12 +56,10 @@ function TeamActor({
         <ClassSprite actor_class_id={config?.class} />
         <div className="absolute bottom-0 inset-x-0 text-center h-9 leading-9 mx-1">
           <div>
-            {actor_class?.name ? (
+            {actor_class?.name && (
               <span className="text-foreground truncate font-cinzel-dec font-semibold [text-shadow:1px_2px_0_var(--color-black)]">
                 {actor_class.name}
               </span>
-            ) : (
-              'Select a Class'
             )}
           </div>
         </div>
