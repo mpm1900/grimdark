@@ -1,11 +1,19 @@
 import { setResponseHeader } from '@tanstack/react-start/server'
+import type { AxiosResponse } from 'axios'
 
-function setResponseCookie(response: Response) {
-  const setCookies =
+function setResponseCookie(response: Pick<AxiosResponse, 'headers'>) {
+  const getSetCookie =
     (
-      response.headers as Headers & { getSetCookie?: () => string[] }
+      response.headers as {
+        getSetCookie?: () => string[]
+      }
     ).getSetCookie?.() ?? []
-  const setCookie = setCookies[0] ?? response.headers.get('set-cookie')
+  const headerCookie = response.headers['set-cookie']
+  const fallbackCookie = Array.isArray(headerCookie)
+    ? headerCookie[0]
+    : headerCookie
+  const setCookie = getSetCookie[0] ?? fallbackCookie
+
   if (setCookie && setCookie.length > 0) {
     setResponseHeader('set-cookie', setCookie)
   }

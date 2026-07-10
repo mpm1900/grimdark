@@ -7,7 +7,7 @@ import {
 import { createServerFn } from '@tanstack/react-start'
 import z from 'zod'
 import type { User } from '../queries/auth'
-import { getApiBaseUrl } from '#/utils/get-api-base-url'
+import { api } from '#/integrations/axios/instance'
 
 const requestSchema = z.object({
   email: z.string(),
@@ -17,19 +17,9 @@ const requestSchema = z.object({
 const login = createServerFn({ method: 'POST' })
   .validator(requestSchema)
   .handler(async ({ data }) => {
-    const response = await fetch(`${getApiBaseUrl()}/api/auth/login`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(data),
-    })
-
-    if (!response.ok) {
-      throw new Error(`Login failed with status ${response.status}`)
-    }
-
+    const response = await api.post<User>('/api/auth/login', data)
     setResponseCookie(response)
-
-    return (await response.json()) as User
+    return response.data
   })
 
 function useLogin() {

@@ -1,5 +1,5 @@
 import type { User } from '#/lib/queries/auth'
-import { getApiBaseUrl } from '#/utils/get-api-base-url'
+import { api } from '#/integrations/axios/instance'
 import { setResponseCookie } from '#/utils/set-cookie'
 import {
   mutationOptions,
@@ -18,19 +18,8 @@ const requestSchema = z.object({
 const signup = createServerFn({ method: 'POST' })
   .validator(requestSchema)
   .handler(async ({ data }) => {
-    const response = await fetch(`${getApiBaseUrl()}/api/auth/signup`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(data),
-    })
-
+    const response = await api.post<User>('/api/auth/signup', data)
     setResponseCookie(response)
-
-    if (!response.ok) {
-      throw new Error(`Signup failed with status ${response.status}`)
-    }
-
-    return (await response.json()) as User
   })
 
 function useSignup() {

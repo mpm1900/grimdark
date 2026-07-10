@@ -1,4 +1,4 @@
-import { getApiBaseUrl } from '#/utils/get-api-base-url'
+import { api } from '#/integrations/axios/instance'
 import { setResponseCookie } from '#/utils/set-cookie'
 import {
   mutationOptions,
@@ -7,19 +7,9 @@ import {
 } from '@tanstack/react-query'
 import { useRouter } from '@tanstack/react-router'
 import { createServerFn } from '@tanstack/react-start'
-import { getRequest } from '@tanstack/react-start/server'
 
 const logout = createServerFn({ method: 'POST' }).handler(async () => {
-  const request = getRequest()
-  const cookies = request?.headers.get('cookie') || ''
-
-  const response = await fetch(`${getApiBaseUrl()}/api/auth/logout`, {
-    method: 'POST',
-    headers: {
-      Cookie: cookies,
-    },
-  })
-
+  const response = await api.post('/api/auth/logout')
   setResponseCookie(response)
 })
 
