@@ -165,4 +165,54 @@ function GothicCloseButton({
   )
 }
 
-export { GothicFramedButton, GothicBigButton, GothicMiniButton, GothicCloseButton }
+const gothicHeroButtonVariants = cva(
+  cn(
+    'font-cinzel [text-shadow:2px_2px_0_var(--color-black)] text-sm font-bold select-none whitespace-nowrap tracking-wide',
+    'inline-flex shrink-0 items-center justify-center gap-2 outline-none'
+  ),
+  {
+    variants: {
+      variant: {
+        red: cn(
+          'min-h-16 px-30 py-8 border-0 bg-transparent text-foreground/80 text-lg',
+          'bg-center bg-no-repeat bg-contain',
+          "bg-[url('/gothic/MenuButtonRed_Normal.png')]",
+          "hover:bg-[url('/gothic/MenuButtonRed_Hovered.png')] hover:text-foreground",
+          "active:bg-[url('/gothic/MenuButtonRed_Pressed.png')] active:text-foreground/70",
+          "disabled:bg-[url('/gothic/MenuButtonRed_Disabled.png')] disabled:pointer-events-none disabled:text-foreground/55"
+        ),
+      },
+    },
+    defaultVariants: {
+      variant: 'red',
+    },
+  }
+)
+
+function GothicHeroButton({
+  className,
+  variant,
+  asChild = false,
+  ...props
+}: React.ComponentProps<'button'> &
+  VariantProps<typeof gothicHeroButtonVariants> & {
+    asChild?: boolean
+  }) {
+  const Comp = asChild ? Slot.Root : 'button'
+  return (
+    <Comp
+      data-slot="gothic-hero-button"
+      data-variant={variant}
+      className={cn(gothicHeroButtonVariants({ variant }), className)}
+      {...props}
+    />
+  )
+}
+
+export {
+  GothicFramedButton,
+  GothicBigButton,
+  GothicMiniButton,
+  GothicCloseButton,
+  GothicHeroButton,
+}

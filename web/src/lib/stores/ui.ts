@@ -88,10 +88,6 @@ function setTargetPositions(positions: string[]) {
 
 function setDefaultActiveActor(game: Game) {
   uiStore.setState((old) => {
-    if (old.active_actor) {
-      return old
-    }
-
     const position = game.positions.find(
       (p) => p.player_ID === game.player_ID && p.rank === 0
     )

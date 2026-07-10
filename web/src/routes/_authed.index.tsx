@@ -1,5 +1,5 @@
 import { AppHeader } from '#/components/app-header'
-import { GothicFramedButton } from '#/components/gothic-ui/button'
+import { GothicHeroButton } from '#/components/gothic-ui/button'
 import { TeamActor } from '#/components/team-actor'
 import { TeamActorConfig } from '#/components/team-actor-config'
 import { TeamPlatforms } from '#/components/team-platforms'
@@ -8,6 +8,7 @@ import { useUser } from '#/lib/queries/auth'
 import { teamStore } from '#/lib/stores/team'
 import { ClientOnly, createFileRoute } from '@tanstack/react-router'
 import { useSelector } from '@tanstack/react-store'
+import { LayoutGroup } from 'motion/react'
 
 export const Route = createFileRoute('/_authed/')({
   component: RouteComponent,
@@ -18,6 +19,10 @@ function RouteComponent() {
   const team = useSelector(teamStore, (s) => s)
   const navigate = Route.useNavigate()
   const mutation = useConnect()
+  const actor_order = [
+    team.active_actor,
+    ...team.actors.map((_, i) => i).filter((i) => i !== team.active_actor),
+  ]
 
   function battle() {
     if (!user.data) return
@@ -39,28 +44,32 @@ function RouteComponent() {
   return (
     <ClientOnly>
       <AppHeader />
-      <div className="relative flex flex-col h-full">
+      <div className="relative flex flex-col justify-center gap-6 h-full">
         <div className="absolute inset-0 bottom-1/2 bg-neutral-900 z-0" />
-        <div className="relative flex h-full">
+        <div className="flex gap-6 justify-around items-center z-10">
+          <div className="text-center font-cinzel text-3xl capitalize font-semibold">
+            ready your team!
+          </div>
+          <div className="grid place-items-center">
+            <GothicHeroButton
+              disabled={!!team.actors.find((a) => !a.class)}
+              onClick={() => battle()}
+            >
+              Battle!
+            </GothicHeroButton>
+          </div>
+        </div>
+        <div className="relative flex">
           <div className="flex-1 pl-10 flex flex-col justify-around pb-8 min-w-0">
-            <div className="flex gap-6 justify-around">
-              <div className="font-cinzel text-3xl capitalize font-semibold">
-                ready your team
-              </div>
-              <GothicFramedButton
-                disabled={!!team.actors.find((a) => !a.class)}
-                onClick={() => battle()}
-              >
-                Battle!
-              </GothicFramedButton>
-            </div>
             <div className="relative z-0 min-h-88">
               <TeamPlatforms />
-              <div className="h-full min-w-0 flex flex-row-reverse gap-2">
-                {team.actors.map((a, i) => (
-                  <TeamActor key={i} config={a} index={i} />
-                ))}
-              </div>
+              <LayoutGroup>
+                <div className="h-full min-w-0 flex flex-row-reverse gap-2">
+                  {actor_order.map((i) => (
+                    <TeamActor key={i} config={team.actors[i]} index={i} />
+                  ))}
+                </div>
+              </LayoutGroup>
             </div>
           </div>
           <TeamActorConfig />

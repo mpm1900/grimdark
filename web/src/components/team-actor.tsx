@@ -7,6 +7,7 @@ import { useQuery } from '@tanstack/react-query'
 import { Gauge } from './gothic-ui/progress'
 import { StatIcon } from './stat-name'
 import { useSelector } from '@tanstack/react-store'
+import { motion } from 'motion/react'
 
 function ClassSprite({
   index,
@@ -31,7 +32,7 @@ function ClassSprite({
           className={cn(
             'pointer-events-none relative z-10 h-full w-full max-w-72 select-none object-contain object-bottom',
             {
-              'opacity-60': active_index !== index,
+              'opacity-50': active_index !== index,
             }
           )}
         />
@@ -46,11 +47,17 @@ function TeamActor({
   className,
   onClick,
   ...props
-}: React.ComponentProps<'div'> & { config: ActorConfig; index: number }) {
+}: React.ComponentProps<typeof motion.div> & {
+  config: ActorConfig
+  index: number
+}) {
   const actors_query = useQuery(actorsQuery)
+  const active_index = useSelector(teamStore, (s) => s.active_actor)
   const actor_class = actors_query.data?.find((a) => a.ID === config.class)
   return (
-    <div
+    <motion.div
+      layout="position"
+      transition={{ type: 'spring', stiffness: 260, damping: 28 }}
       className={cn('relative flex flex-1 basis-0 min-w-0 flex-col')}
       onClick={(e) => {
         setActiveActor(index)
@@ -69,8 +76,13 @@ function TeamActor({
         <div className="absolute bottom-0 inset-x-0 text-center h-9 leading-9 mx-1">
           <div>
             {actor_class?.name && (
-              <span className="text-foreground truncate font-cinzel-dec font-semibold [text-shadow:1px_2px_0_var(--color-black)]">
-                {actor_class.name}
+              <span
+                className={cn(
+                  'text-foreground/60 truncate font-cinzel-dec font-semibold [text-shadow:1px_2px_0_var(--color-black)]',
+                  active_index === index && 'text-foreground'
+                )}
+              >
+                {config.name || actor_class.name}
               </span>
             )}
           </div>
@@ -89,7 +101,7 @@ function TeamActor({
           </div>
         ))}
       </div>
-    </div>
+    </motion.div>
   )
 }
 

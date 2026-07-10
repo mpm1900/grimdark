@@ -11,9 +11,8 @@ import {
   ComboboxTrigger,
   ComboboxValue,
 } from './ui/combobox'
-import { Button } from './ui/button'
 import type { ActorClass } from '#/lib/game/actor-class'
-import { ChevronsUpDown } from 'lucide-react'
+import { GothicBigButton } from './gothic-ui/button'
 
 function ActorCombobox({
   value,
@@ -38,7 +37,7 @@ function ActorCombobox({
     >
       <ComboboxTrigger
         render={
-          <Button variant="outline" className="justify-between">
+          <GothicBigButton variant="red">
             <ComboboxValue>
               {(value) =>
                 query.data?.find((a) => a.ID === value)?.name ?? (
@@ -46,8 +45,7 @@ function ActorCombobox({
                 )
               }
             </ComboboxValue>
-            <ChevronsUpDown />
-          </Button>
+          </GothicBigButton>
         }
       />
       <ComboboxContent>

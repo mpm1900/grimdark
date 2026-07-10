@@ -59,10 +59,10 @@ export const MAIN_STATS: Stat[] = [
 ]
 export const CLASS_STATS: Stat[] = [
   'health',
+  'speed',
   'melee',
   'ranged',
   'special',
-  'speed',
   'martial-defense',
   'special-defense',
 ]
