@@ -246,11 +246,12 @@ function ActionContextDialog({
             className="px-4"
           />
         </div>
-        <DialogFooter className="p-0 -mr-1 -mb-0.5">
+        <DialogFooter className="p-0 -mr-1 -mb-1">
           <DialogClose asChild>
             <GothicFramedButton
               variant="red"
               disabled={!validate_query.data || is_loading}
+              className="-mr-px"
               onClick={() => {
                 sendContextMessage({
                   type: 'push-action',

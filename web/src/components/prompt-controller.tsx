@@ -41,7 +41,6 @@ function PromptController() {
   const validate_options = validateContextQuery(resolved_context)
   validate_options.enabled = !!prompt
   const validate_query = useQuery(validate_options)
-  const is_loading = targets_query.isFetching || validate_query.isFetching
 
   return (
     <>
@@ -74,10 +73,10 @@ function PromptController() {
               />
             </>
           )}
-          <AlertDialogFooter className="p-0 -mr-1 -mb-0.5">
+          <AlertDialogFooter className="p-0 -mr-1 -mb-1">
             <GothicFramedButton
               variant="red"
-              disabled={!validate_query.data || is_loading}
+              disabled={!validate_query.data || validate_query.isLoading}
               onClick={() => {
                 sendContextMessage({
                   type: 'resolve-prompt',

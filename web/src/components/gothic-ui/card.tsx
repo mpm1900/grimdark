@@ -12,7 +12,7 @@ function GothicCard({
       data-slot="card"
       className={cn(
         'flex flex-col relative',
-        'border-[10px] border-solid border-transparent bg-gradient-to-b from-neutral-900 to-[oklch(10%_0_0)]',
+        'border-[10px] border-solid border-transparent bg-gradient-to-b from-neutral-900 to-neutral-950',
         'bg-clip-border',
         "[border-image-source:url('/gothic/SkillFrameVert_Dark.png')]",
         '[border-image-slice:22_fill]',

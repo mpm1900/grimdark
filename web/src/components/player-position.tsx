@@ -2,7 +2,7 @@ import { sendContextMessage } from '#/lib/stores/socket'
 import { setActiveActor, uiStore } from '#/lib/stores/ui'
 import { useSelector } from '@tanstack/react-store'
 import { ActorFrameSlim } from './actor-frame'
-import { GothicFramedButton } from './gothic-ui/button'
+import { GothicBigButton } from './gothic-ui/button'
 import { lobbyStore } from '#/lib/stores/clients'
 import { gameStore } from '#/lib/stores/game'
 import { cn } from '#/lib/utils'
@@ -58,7 +58,9 @@ function PlayerSprite({
       />
       {!!actor_command && status === 'idle' && (
         <div className="absolute inset-0 grid place-items-center z-20">
-          <GothicFramedButton
+          <GothicBigButton
+            className="p-0 min-h-9"
+            variant="red"
             onClick={() => {
               sendContextMessage({
                 type: 'cancel-action',
@@ -68,7 +70,7 @@ function PlayerSprite({
             }}
           >
             Cancel Action
-          </GothicFramedButton>
+          </GothicBigButton>
         </div>
       )}
     </div>

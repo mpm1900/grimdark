@@ -1,5 +1,8 @@
 import { AppHeader } from '#/components/app-header'
-import { GothicHeroButton } from '#/components/gothic-ui/button'
+import {
+  GothicBigButton,
+  GothicHeroButton,
+} from '#/components/gothic-ui/button'
 import { TeamActor } from '#/components/team-actor'
 import { TeamActorConfig } from '#/components/team-actor-config'
 import { TeamPlatforms } from '#/components/team-platforms'
@@ -19,10 +22,7 @@ function RouteComponent() {
   const team = useSelector(teamStore, (s) => s)
   const navigate = Route.useNavigate()
   const mutation = useConnect()
-  const actor_order = [
-    team.active_actor,
-    ...team.actors.map((_, i) => i).filter((i) => i !== team.active_actor),
-  ]
+  const actor_order = [...team.actors.map((_, i) => i)]
 
   function battle() {
     if (!user.data) return
@@ -32,7 +32,7 @@ function RouteComponent() {
         if (!message.game?.instance_ID) return
 
         navigate({
-          to: '/battle/$gameID',
+          to: '/lobby/$gameID',
           params: {
             gameID: message.game?.instance_ID,
           },
@@ -51,12 +51,14 @@ function RouteComponent() {
             ready your team!
           </div>
           <div className="grid place-items-center">
-            <GothicHeroButton
+            <GothicBigButton
+              variant="red"
+              className="text-xl"
               disabled={!!team.actors.find((a) => !a.class)}
               onClick={() => battle()}
             >
               Battle!
-            </GothicHeroButton>
+            </GothicBigButton>
           </div>
         </div>
         <div className="relative flex">

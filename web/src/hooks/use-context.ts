@@ -33,6 +33,7 @@ function useContext(
   }, [targets_context.source_ID])
 
   return {
+    targets_context,
     value,
     set,
     addTarget: (target: Actor) => {

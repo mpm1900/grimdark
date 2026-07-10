@@ -7,25 +7,25 @@ import { cva, type VariantProps } from 'class-variance-authority'
 const gothicButtonVariants = cva(
   cn(
     'font-cinzel [text-shadow:0_1px_0_var(--color-black)] text-sm font-bold select-none whitespace-nowrap',
-    'inline-flex shrink-0 items-center justify-center gap-2 outline-none ring-1 ring-black'
+    'inline-flex shrink-0 items-center justify-center gap-2 outline-none',
+    'px-3 py-1 border-[6px] border-solid border-transparent bg-transparent text-foreground/80',
+    'disabled:text-white/40'
   ),
   {
     variants: {
       variant: {
         basic: cn(
-          'px-3 py-1 border-[6px] border-solid border-transparent bg-transparent text-foreground/80',
-          '[border-image-slice:16_fill] [border-image-repeat:repeat-infinite]',
+          '[border-image-slice:20_fill] [border-image-repeat:repeat-infinite]',
           "[border-image-source:url('/gothic/ButtonFramedGray_Normal.png')]",
           "active:[border-image-source:url('/gothic/ButtonFramedGray_Pressed.png')] active:text-foreground/60",
-          "disabled:[border-image-source:url('/gothic/ButtonFramedGray_Disabled.png')] disabled:pointer-events-none disabled:text-foreground/60",
+          "disabled:[border-image-source:url('/gothic/ButtonFramedGray_Disabled.png')] disabled:pointer-events-none",
           "hover:[border-image-source:url('/gothic/ButtonFramedGray_Hovered.png')] hover:text-foreground"
         ),
         red: cn(
-          'px-3 py-1 border-[4px] border-solid border-transparent bg-transparent text-foreground/80',
-          '[border-image-slice:18_fill] [border-image-repeat:repeat-infinite]',
+          '[border-image-slice:20_fill] [border-image-repeat:repeat-infinite]',
           "[border-image-source:url('/gothic/ButtonFramedRed_Normal.png')]",
           "active:[border-image-source:url('/gothic/ButtonFramedRed_Pressed.png')] active:text-foreground/60",
-          "disabled:[border-image-source:url('/gothic/ButtonFramedRed_Disabled.png')] disabled:pointer-events-none disabled:text-foreground/60",
+          "disabled:[border-image-source:url('/gothic/ButtonFramedRed_Disabled.png')] disabled:pointer-events-none",
           "hover:[border-image-source:url('/gothic/ButtonFramedRed_Hovered.png')] hover:text-foreground"
         ),
       },

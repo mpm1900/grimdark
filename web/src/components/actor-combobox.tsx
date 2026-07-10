@@ -37,7 +37,7 @@ function ActorCombobox({
     >
       <ComboboxTrigger
         render={
-          <GothicBigButton variant="red">
+          <GothicBigButton>
             <ComboboxValue>
               {(value) =>
                 query.data?.find((a) => a.ID === value)?.name ?? (
