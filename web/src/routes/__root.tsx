@@ -7,9 +7,9 @@ import {
 import app_css from '../styles.css?url'
 import type { QueryClient } from '@tanstack/react-query'
 import { userQuery, type User } from '#/lib/queries/auth'
-import { Login } from './login'
 import { Toaster } from '#/components/ui/sonner'
 import { TooltipProvider } from '#/components/ui/tooltip'
+import { PageError } from '#/components/page-error'
 
 interface RouterContext {
   queryClient: QueryClient
@@ -52,7 +52,7 @@ export const Route = createRootRouteWithContext<RouterContext>()({
     ],
   }),
   shellComponent: RootDocument,
-  errorComponent: Login,
+  errorComponent: PageError,
 })
 
 function RootDocument({ children }: { children: React.ReactNode }) {

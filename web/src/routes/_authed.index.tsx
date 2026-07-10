@@ -6,15 +6,10 @@ import { TeamPlatforms } from '#/components/team-platforms'
 import { useConnect } from '#/lib/mutations/connect'
 import { useUser } from '#/lib/queries/auth'
 import { teamStore } from '#/lib/stores/team'
-import { ClientOnly, createFileRoute, redirect } from '@tanstack/react-router'
+import { ClientOnly, createFileRoute } from '@tanstack/react-router'
 import { useSelector } from '@tanstack/react-store'
 
-export const Route = createFileRoute('/')({
-  beforeLoad: ({ context }) => {
-    if (!context.auth.user) {
-      throw redirect({ to: '/login' })
-    }
-  },
+export const Route = createFileRoute('/_authed/')({
   component: RouteComponent,
 })
 

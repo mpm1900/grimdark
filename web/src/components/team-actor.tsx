@@ -66,22 +66,19 @@ function TeamActor({
           </div>
         </div>
       </div>
-      {actor_class && (
-        <div className="mx-2 mt-4 h-43 space-y-1">
-          {CLASS_STATS.map((stat) => (
-            <div key={stat} className="flex items-center gap-2">
-              <StatIcon stat={stat} className="size-5" />
-              <Gauge
-                value={(actor_class.stats[stat] * 100) / 255}
-                className="h-5"
-              >
-                {actor_class.stats[stat]}
-              </Gauge>
-            </div>
-          ))}
-        </div>
-      )}
-      {!actor_class && <div className="mx-2 mt-4 h-61">details here</div>}
+      <div className="mx-2 mt-4 h-43 space-y-1">
+        {CLASS_STATS.map((stat) => (
+          <div key={stat} className="flex items-center gap-2">
+            <StatIcon stat={stat} className="size-5" />
+            <Gauge
+              value={((actor_class?.stats[stat] ?? 0) * 100) / 255}
+              className="h-5"
+            >
+              {actor_class?.stats[stat]}
+            </Gauge>
+          </div>
+        ))}
+      </div>
     </div>
   )
 }

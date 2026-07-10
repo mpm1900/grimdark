@@ -1,7 +1,7 @@
-import { getApiBaseUrl } from '#/utils/get-api-base-url'
+import { api } from '#/integrations/axios/instance'
 import { queryOptions, useQuery } from '@tanstack/react-query'
 import { createServerFn } from '@tanstack/react-start'
-import { getRequest } from '@tanstack/react-start/server'
+import axios from 'axios'
 
 export type User = {
   id: string
@@ -11,22 +11,20 @@ export type User = {
 }
 
 const getUser = createServerFn().handler(async () => {
-  const request = getRequest()
-  const cookies = request?.headers.get('cookie') || ''
+  try {
+    const response = await api.get<User>(`/api/auth/me`)
+    return response.data
+  } catch (error: unknown) {
+    const status = axios.isAxiosError(error)
+      ? error.response?.status
+      : (error as { status?: number } | null)?.status
 
-  const response = await fetch(`${getApiBaseUrl()}/api/auth/me`, {
-    method: 'GET',
-    headers: {
-      'Content-Type': 'application/json',
-      Cookie: cookies,
-    },
-  })
+    if (status === 401) {
+      return null
+    }
 
-  if (!response.ok) {
-    return null
+    throw error
   }
-
-  return (await response.json()) as User
 })
 
 export const userQuery = queryOptions({

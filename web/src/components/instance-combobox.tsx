@@ -1,4 +1,4 @@
-import { instancesQuery } from '#/lib/queries/instances'
+import { instancesQuery } from '#/lib/queries/get-instances'
 import { cn } from '#/lib/utils'
 import { useQuery } from '@tanstack/react-query'
 import type { ReactNode } from 'react'

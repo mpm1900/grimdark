@@ -90,6 +90,11 @@ func (ih *InstancesHandler) GetAllInstances() []instance.InstanceJSON {
 }
 
 func (ih *InstancesHandler) HandleGetGames(w http.ResponseWriter, r *http.Request) {
+	_, ok := auth.AuthenticatedUserFromContext(r.Context())
+	if !ok {
+		w.WriteHeader(http.StatusUnauthorized)
+		return
+	}
 	games := ih.GetAllInstances()
 	if len(games) == 0 {
 		games = make([]instance.InstanceJSON, 0)
@@ -102,6 +107,12 @@ func (ih *InstancesHandler) HandleGetGames(w http.ResponseWriter, r *http.Reques
 	}
 }
 func (ih *InstancesHandler) HandleGetGame(w http.ResponseWriter, r *http.Request) {
+	_, ok := auth.AuthenticatedUserFromContext(r.Context())
+	if !ok {
+		w.WriteHeader(http.StatusUnauthorized)
+		return
+	}
+
 	instanceID, err := uuid.Parse(r.PathValue("instanceID"))
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)

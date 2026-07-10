@@ -12,20 +12,16 @@ import { ClientOnly, createFileRoute, redirect } from '@tanstack/react-router'
 import { useSelector } from '@tanstack/react-store'
 import z from 'zod'
 
-export const Route = createFileRoute('/battle/$gameID')({
+export const Route = createFileRoute('/_authed/battle/$gameID')({
   component: RouteComponent,
+  preload: false,
   params: z.object({
     gameID: z.uuid(),
   }),
   loader: async ({ params }) => {
-    try {
-      await getInstance({ data: params.gameID })
-    } catch (e: any) {
-      if (e.status === 404) {
-        throw redirect({ to: '/' })
-      }
-
-      throw e
+    const instance = await getInstance({ data: params.gameID })
+    if (!instance) {
+      throw redirect({ to: '/' })
     }
   },
   onLeave: () => {
@@ -34,7 +30,6 @@ export const Route = createFileRoute('/battle/$gameID')({
 })
 
 function RouteComponent() {
-  const params = Route.useParams()
   const game = useSelector(gameStore, (g) => g)
   const client = useSelector(lobbyStore, (s) => s.client)
   const client_player = game.players.find((p) => p.user.id === client?.ID)

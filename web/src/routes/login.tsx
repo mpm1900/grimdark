@@ -28,7 +28,7 @@ export const Route = createFileRoute('/login')({
   component: Login,
 })
 
-export function Login() {
+function Login() {
   const signup = useSignup()
   const login = useLogin()
   const navigate = Route.useNavigate()
