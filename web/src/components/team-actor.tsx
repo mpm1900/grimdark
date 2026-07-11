@@ -1,4 +1,4 @@
-import { CLASS_STATS, type ID } from '#/lib/game/core'
+import { AFFINITIES, CLASS_STATS, type ID } from '#/lib/game/core'
 import type { ActorConfig } from '#/lib/game/team'
 import { actorsQuery } from '#/lib/queries/get-actors'
 import { setActiveActor, setHoverActor, teamStore } from '#/lib/stores/team'
@@ -8,6 +8,7 @@ import { Gauge } from './gothic-ui/progress'
 import { StatIcon } from './stat-name'
 import { useSelector } from '@tanstack/react-store'
 import { motion } from 'motion/react'
+import { AffinityName } from './affinity-name'
 
 function ClassSprite({
   index,
@@ -26,7 +27,7 @@ function ClassSprite({
       )}
       {...props}
     >
-      <div className="relative flex h-80 w-full min-w-0 items-end justify-center pb-8">
+      <div className="relative flex h-80 w-full min-w-0 items-end justify-center pb-13">
         <img
           src={actor_class?.sprite_url ?? '/gothic/CharSHRef.png'}
           className={cn(
@@ -73,7 +74,14 @@ function TeamActor({
     >
       <div className="relative h-full">
         <ClassSprite actor_class_id={config?.class} index={index} />
-        <div className="absolute bottom-0 inset-x-0 text-center h-9 leading-9 mx-1">
+        <div className="absolute bottom-0 inset-x-0 text-center h-12 leading-9 mx-1">
+          <div className="flex gap-1 justify-center">
+            {AFFINITIES.filter((a) => actor_class?.affinities.includes(a)).map(
+              (a) => (
+                <AffinityName key={a} affinity={a} />
+              )
+            )}
+          </div>
           <div>
             <span
               className={cn(

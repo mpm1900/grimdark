@@ -17,7 +17,9 @@ func ready(instance *Instance, request Request) {
 	instance.Lobby.SetReady(request.ClientID)
 	instance.BroadcastLobby()
 	if instance.Lobby.Ready() {
+		instance.Status = InstanceStatusRunning
 		instance.BroadcastGameStart()
+		instance.RunGameActions()
 	}
 }
 func getTargets(instance *Instance, request Request) {

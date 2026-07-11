@@ -230,4 +230,4 @@ function WeaponFrameExt({
   )
 }
 
-export { WeaponDetails, WeaponFrame, WeaponFrameExt }
+export { WeaponDetails, WeaponFrame, WeaponFrameExt, weaponIcon }

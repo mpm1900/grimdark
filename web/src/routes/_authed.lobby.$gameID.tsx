@@ -16,12 +16,7 @@ import { disconnect } from '#/lib/socket/connect'
 import { lobbyStore } from '#/lib/stores/clients'
 import { gameStore } from '#/lib/stores/game'
 import { sendContextMessage } from '#/lib/stores/socket'
-import {
-  ClientOnly,
-  createFileRoute,
-  Link,
-  redirect,
-} from '@tanstack/react-router'
+import { ClientOnly, createFileRoute, redirect } from '@tanstack/react-router'
 import { useSelector } from '@tanstack/react-store'
 import { useEffect } from 'react'
 import z from 'zod'

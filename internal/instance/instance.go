@@ -56,8 +56,9 @@ func NewInstance(ctx context.Context, id uuid.UUID, onEmpty func(uuid.UUID)) *In
 
 func (i Instance) ToJSON() InstanceJSON {
 	return InstanceJSON{
-		ID:    i.ID,
-		Lobby: i.Lobby.ToJSON(),
+		ID:     i.ID,
+		Lobby:  i.Lobby.ToJSON(),
+		Status: i.Status,
 	}
 }
 

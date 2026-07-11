@@ -24,7 +24,7 @@ export const Route = createFileRoute('/_authed/battle/$gameID')({
     if (!instance) {
       throw redirect({ to: '/' })
     }
-    if (Object.values(instance.lobby.ready).every((r) => !!r)) return
+    if (instance.status === 'running') return
     throw redirect({ to: '/lobby/$gameID', params })
   },
   onLeave: () => {
