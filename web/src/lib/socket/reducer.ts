@@ -5,6 +5,16 @@ import type { SocketResponse } from './request'
 function socket_reducer(message: SocketResponse | null) {
   if (!message?.type) return
   switch (message.type) {
+    case 'game-start': {
+      gameStore.setState((g) => ({ ...g, ready: true }))
+      return
+    }
+    case 'post-connect': {
+      if (message.game) {
+        gameStore.setState(() => message.game!)
+      }
+      return
+    }
     case 'game': {
       if (message.game) {
         gameStore.setState(() => message.game!)
@@ -16,6 +26,7 @@ function socket_reducer(message: SocketResponse | null) {
         ...c,
         players: message.lobby?.players!,
         spectators: message.lobby?.spectators!,
+        ready: message.lobby?.ready!,
       }))
       return
     }

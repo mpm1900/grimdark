@@ -5,20 +5,26 @@ import (
 	"grimdark/internal/game/actors"
 )
 
-func postConnect(instance *Instance, request Request) int {
+func postConnect(instance *Instance, request Request) {
 	if request.TeamConfig == nil {
-		return none
+		return
 	}
 
 	actors.ApplyTeamConfig(&instance.Game, request.ClientID, *request.TeamConfig)
 	instance.PostConnectResponse(request.ClientID)
-	return none
 }
-func getTargets(instance *Instance, request Request) int {
+func ready(instance *Instance, request Request) {
+	instance.Lobby.SetReady(request.ClientID)
+	instance.BroadcastLobby()
+	if instance.Lobby.Ready() {
+		instance.BroadcastGameStart()
+	}
+}
+func getTargets(instance *Instance, request Request) {
 	action, ok := instance.Game.FindAction(request.Context)
 	if !ok {
 		instance.TargetIDsResponse(request.ClientID, request.Context)
-		return none
+		return
 	}
 
 	context := request.Context.Clone()
@@ -31,37 +37,35 @@ func getTargets(instance *Instance, request Request) int {
 	}
 
 	instance.TargetIDsResponse(request.ClientID, context)
-	return none
 }
-func validateContext(instance *Instance, request Request) int {
+func validateContext(instance *Instance, request Request) {
 	action, ok := instance.Game.FindAction(request.Context)
 	if !ok {
 		instance.ValidateContextResponse(request.ClientID, request.Context, false)
-		return none
+		return
 	}
 
 	valid := action.ValidateContext(instance.Game, request.Context)
 	instance.ValidateContextResponse(request.ClientID, request.Context, valid)
-	return none
 }
 
-func pushAction(instance *Instance, request Request) int {
+func pushAction(instance *Instance, request Request) {
 	actor, ok := instance.Game.GetSource(request.Context)
 	if !ok {
-		return none
+		return
 	}
 
 	action, ok := actor.GetActionByID(request.Context.ActionID)
 	if !ok {
-		return none
+		return
 	}
 
 	instance.Game.PushCommand(action.Bind(request.Context))
 	// instance.RunGameActions()
 
-	return state
+	instance.BroadcastGame()
 }
-func cancelAction(instance *Instance, request Request) int {
+func cancelAction(instance *Instance, request Request) {
 	instance.Game.DeleteCommandWhere(func(cmd game.Command) bool {
 		if cmd.Context.PlayerID == request.ClientID {
 			return cmd.Payload.ID == request.Context.ActionID
@@ -70,44 +74,54 @@ func cancelAction(instance *Instance, request Request) int {
 		return false
 	})
 
-	return state
+	instance.BroadcastGame()
 }
-func resolvePrompt(instance *Instance, request Request) int {
+func resolvePrompt(instance *Instance, request Request) {
 	instance.Game.UpdatePromptCommand(request.Context)
 	if instance.Game.PromptsReady() {
 		instance.RunGameActions()
 	}
 
-	return state
+	instance.BroadcastGame()
 }
-func runGameActions(instance *Instance) int {
+func runGameActions(instance *Instance) {
 	// TestGame(&instance.Game)
 	if instance.Game.Status == game.GameStatusRunning {
-		return none
+		return
 	}
 
 	instance.RunGameActions()
-	return state
 }
 
-func Reducer(instance *Instance, request Request) int {
+func Reducer(instance *Instance, request Request) {
 	switch request.Type {
-	case GetTargets:
-		return getTargets(instance, request)
-	case ValidateContext:
-		return validateContext(instance, request)
 	case PostConnect:
-		return postConnect(instance, request)
+		postConnect(instance, request)
+		return
+	case Ready:
+		ready(instance, request)
+		return
+
+	case GetTargets:
+		getTargets(instance, request)
+		return
+	case ValidateContext:
+		validateContext(instance, request)
+		return
 
 	case PushAction:
-		return pushAction(instance, request)
+		pushAction(instance, request)
+		return
 	case CancelAction:
-		return cancelAction(instance, request)
+		cancelAction(instance, request)
+		return
 	case ResolvePrompt:
-		return resolvePrompt(instance, request)
+		resolvePrompt(instance, request)
+		return
 	case RunGameActions:
-		return runGameActions(instance)
+		runGameActions(instance)
+		return
 	default:
-		return none
+		return
 	}
 }

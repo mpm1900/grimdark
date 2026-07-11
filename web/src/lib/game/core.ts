@@ -50,18 +50,18 @@ export const ALL_STATS: Stat[] = [
 ]
 
 export const MAIN_STATS: Stat[] = [
-  'melee',
-  'ranged',
-  'special',
   'speed',
+  'ranged',
+  'melee',
+  'special',
   'martial-defense',
   'special-defense',
 ]
 export const CLASS_STATS: Stat[] = [
   'health',
   'speed',
-  'melee',
   'ranged',
+  'melee',
   'special',
   'martial-defense',
   'special-defense',

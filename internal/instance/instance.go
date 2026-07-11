@@ -110,17 +110,16 @@ func (i *Instance) ValidateContextResponse(client_id uuid.UUID, context game.Con
 	client.TryWriteResponse(ValidateContextMessage(client, context, valid))
 }
 
-func (i *Instance) BroadcastClients() {
+func (i *Instance) BroadcastLobby() {
 	for _, client := range i.Lobby.Clients() {
 		client.TryWriteResponse(NewLobbyMessage(client, i.Lobby.ToJSON()))
 	}
 }
-
-const (
-	state = iota
-	clients
-	none
-)
+func (i *Instance) BroadcastGameStart() {
+	for _, client := range i.Lobby.Clients() {
+		client.TryWriteResponse(GameStartMessage(client))
+	}
+}
 
 func (i *Instance) Run() {
 	for {
@@ -132,7 +131,7 @@ func (i *Instance) Run() {
 			}
 
 			i.RegisterClient(client)
-			i.BroadcastClients()
+			i.BroadcastLobby()
 
 			if !exists {
 				player := game.NewPlayer(*client.User)
@@ -154,15 +153,9 @@ func (i *Instance) Run() {
 				return
 			}
 
-			i.BroadcastClients()
+			i.BroadcastLobby()
 		case request := <-i.ReadRequest:
-			switch Reducer(i, request) {
-			case state:
-				i.BroadcastGame()
-			case clients:
-				i.BroadcastClients()
-			case none:
-			}
+			Reducer(i, request)
 		}
 	}
 }

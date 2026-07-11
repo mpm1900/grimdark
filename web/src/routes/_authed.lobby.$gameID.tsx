@@ -1,12 +1,28 @@
 import { AppHeader } from '#/components/app-header'
+import { GothicFramedButton } from '#/components/gothic-ui/button'
+import { GothicCard, GothicCardContent } from '#/components/gothic-ui/card'
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '#/components/ui/table'
+import { NULL_CONTEXT } from '#/lib/game/context'
 import { getInstance } from '#/lib/queries/get-instance'
 import { disconnect } from '#/lib/socket/connect'
+import { lobbyStore } from '#/lib/stores/clients'
+import { gameStore } from '#/lib/stores/game'
+import { sendContextMessage } from '#/lib/stores/socket'
 import {
   ClientOnly,
   createFileRoute,
   Link,
   redirect,
 } from '@tanstack/react-router'
+import { useSelector } from '@tanstack/react-store'
+import { useEffect } from 'react'
 import z from 'zod'
 
 export const Route = createFileRoute('/_authed/lobby/$gameID')({
@@ -30,16 +46,55 @@ export const Route = createFileRoute('/_authed/lobby/$gameID')({
 
 function RouteComponent() {
   const params = Route.useParams()
+  const lobby = useSelector(lobbyStore)
+  const ready = useSelector(gameStore, (g) => g.ready)
+  const navigate = Route.useNavigate()
+  useEffect(() => {
+    if (ready) {
+      navigate({
+        to: '/battle/$gameID',
+        params,
+      })
+    }
+  }, [ready])
   return (
     <ClientOnly>
       <AppHeader />
-      <div className="relative flex flex-col justify-center gap-6 h-full">
-        <div className="absolute inset-0 bottom-1/2 bg-neutral-900 z-0" />
-        <div className="relative z-10">
-          <Link to="/battle/$gameID" params={params}>
-            To battle
-          </Link>
-        </div>
+      <div className="absolute inset-0 bottom-1/2 bg-neutral-900 z-0" />
+      <div className="flex min-h-svh w-full items-center justify-center p-6 md:p-10">
+        <GothicCard className="relative z-10">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead colSpan={2}>Players</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {lobby.players.map((player) => (
+                <TableRow key={player.ID}>
+                  <TableCell>{player.user.email}</TableCell>
+                  <TableCell>
+                    {player.ID === lobby.client?.ID ? (
+                      <GothicFramedButton
+                        onClick={() => {
+                          sendContextMessage({
+                            type: 'ready',
+                            client_ID: lobby.client?.ID!,
+                            context: NULL_CONTEXT,
+                          })
+                        }}
+                      >
+                        Ready: {String(!!lobby.ready[player.ID])}
+                      </GothicFramedButton>
+                    ) : (
+                      <div>{String(!!lobby.ready[player.ID])}</div>
+                    )}
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </GothicCard>
       </div>
     </ClientOnly>
   )

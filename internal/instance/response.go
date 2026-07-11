@@ -2,6 +2,8 @@ package instance
 
 import (
 	"grimdark/internal/game"
+
+	"github.com/google/uuid"
 )
 
 type ResponseType string
@@ -13,8 +15,8 @@ const (
 	ResponseTypeGameStart   = "game-start"
 
 	// updates
-	ResponseTypeGame    = "game"
-	ResponseTypeClients = "clients"
+	ResponseTypeGame  = "game"
+	ResponseTypeLobby = "lobby"
 
 	// request responses
 	ResponseTypeValidateContext = "validate-context"
@@ -41,7 +43,7 @@ func NewGameMessage(client *Client, g game.GameJSON) Response {
 func NewLobbyMessage(client *Client, lobby LobbyJSON) Response {
 	lobby.Client = client
 	return Response{
-		Type:  ResponseTypeClients,
+		Type:  ResponseTypeLobby,
 		Game:  nil,
 		Lobby: &lobby,
 	}
@@ -58,13 +60,20 @@ func OnConnectMessage(client *Client, lobby LobbyJSON) Response {
 func PostConnectMessage(client *Client, g game.GameJSON) Response {
 	g.ForPlayer(client.ID)
 	lobby := LobbyJSON{
-		Client:  client,
-		Players: []*Client{},
+		Client:     client,
+		Players:    []*Client{},
+		Spectators: []*Client{},
+		Ready:      map[uuid.UUID]bool{},
 	}
 	return Response{
 		Type:  ResponseTypePostConnect,
 		Game:  &g,
 		Lobby: &lobby,
+	}
+}
+func GameStartMessage(client *Client) Response {
+	return Response{
+		Type: ResponseTypeGameStart,
 	}
 }
 

@@ -19,6 +19,7 @@ export type Game = {
   player_ID: ID
   players: Player[]
   prompts: Bindable<Action>[]
+  ready: boolean
   status: Status
   turn: number
 }

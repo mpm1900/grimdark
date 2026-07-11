@@ -23,8 +23,13 @@ export const Route = createFileRoute('/_authed/battle/$gameID')({
     if (!instance) {
       throw redirect({ to: '/' })
     }
+    console.log(instance.lobby.ready)
+    if (Object.values(instance.lobby.ready).every((r) => !!r)) return
+    throw redirect({ to: '/lobby/$gameID', params })
   },
   onLeave: () => {
+    const next_path = window.location.pathname
+    if (next_path.startsWith('/lobby/')) return
     disconnect(1000, 'Route: onLeave')
   },
 })
@@ -43,7 +48,6 @@ function RouteComponent() {
         <TurnContext />
 
         <div className="relative flex h-full min-h-0 flex-col overflow-hidden pt-12 z-20">
-          <div className="absolute inset-0 bottom-1/2 bg-neutral-900 z-0" />
           <div className="z-0 flex items-start justify-between p-2">
             {client_player && <PlayerTeam player={client_player} />}
             {other_player && <PlayerTeam player={other_player} />}

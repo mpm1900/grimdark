@@ -10,6 +10,7 @@ type RequestType = string
 
 const (
 	PostConnect RequestType = "post-connect"
+	Ready       RequestType = "ready"
 
 	PushAction    RequestType = "push-action"
 	CancelAction  RequestType = "cancel-action"

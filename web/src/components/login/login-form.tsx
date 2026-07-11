@@ -6,7 +6,6 @@ import { useForm } from '@tanstack/react-form'
 import { authSchema } from '#/lib/auth/auth-schema'
 import { toast } from 'sonner'
 import { cn } from '#/lib/utils'
-import { Button } from '../ui/button'
 import { GothicFramedButton } from '../gothic-ui/button'
 import { Marker, MarkerContent } from '../ui/marker'
 

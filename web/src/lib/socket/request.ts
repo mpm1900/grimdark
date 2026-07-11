@@ -5,6 +5,7 @@ import type { Lobby } from '../stores/clients'
 
 type SocketRequestType =
   | 'post-connect'
+  | 'ready'
   | 'push-action'
   | 'cancel-action'
   | 'run-game-actions'

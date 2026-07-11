@@ -62,6 +62,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
         <HeadContent />
       </head>
       <body>
+        <div className="absolute inset-0 bottom-1/2 bg-neutral-900 z-0" />
         <TooltipProvider>{children}</TooltipProvider>
         <Toaster position="bottom-center" />
         <Scripts />

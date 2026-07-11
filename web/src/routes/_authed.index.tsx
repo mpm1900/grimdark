@@ -45,7 +45,6 @@ function RouteComponent() {
     <ClientOnly>
       <AppHeader />
       <div className="relative flex flex-col justify-center gap-6 h-full">
-        <div className="absolute inset-0 bottom-1/2 bg-neutral-900 z-0" />
         <div className="flex gap-6 justify-around items-center z-10">
           <div className="text-center font-cinzel text-3xl capitalize font-semibold">
             ready your team!

@@ -14,6 +14,7 @@ const INITIAL_GAME: Game = {
   player_ID: '',
   players: [],
   prompts: [],
+  ready: false,
   status: 'idle',
   turn: 0,
 }

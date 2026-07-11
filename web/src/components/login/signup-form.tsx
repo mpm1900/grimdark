@@ -6,7 +6,6 @@ import { authSchema } from '#/lib/auth/auth-schema'
 import { toast } from 'sonner'
 import { useSignup } from '#/lib/mutations/signup'
 import { cn } from '#/lib/utils'
-import { Button } from '../ui/button'
 import { GothicFramedButton } from '../gothic-ui/button'
 import { Marker, MarkerContent } from '../ui/marker'
 

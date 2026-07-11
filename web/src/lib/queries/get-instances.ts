@@ -1,10 +1,7 @@
 import { api } from '#/integrations/axios/instance'
 import { queryOptions } from '@tanstack/react-query'
 import { createServerFn } from '@tanstack/react-start'
-
-export type Instance = {
-  ID: string
-}
+import type { Instance } from '../game/instance'
 
 const getInstances = createServerFn().handler(async () => {
   const response = await api.get<Instance[]>(`/api/instances`)
