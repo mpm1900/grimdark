@@ -23,7 +23,6 @@ export const Route = createFileRoute('/_authed/battle/$gameID')({
     if (!instance) {
       throw redirect({ to: '/' })
     }
-    console.log(instance.lobby.ready)
     if (Object.values(instance.lobby.ready).every((r) => !!r)) return
     throw redirect({ to: '/lobby/$gameID', params })
   },

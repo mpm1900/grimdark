@@ -1,6 +1,6 @@
 import { AppHeader } from '#/components/app-header'
 import { GothicFramedButton } from '#/components/gothic-ui/button'
-import { GothicCard, GothicCardContent } from '#/components/gothic-ui/card'
+import { GothicCard } from '#/components/gothic-ui/card'
 import {
   Table,
   TableBody,
