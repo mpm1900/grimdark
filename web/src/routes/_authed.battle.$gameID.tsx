@@ -4,6 +4,7 @@ import { PlayerPositions } from '#/components/player-positions'
 import { PlayerTeam } from '#/components/player-team'
 import { PromptController } from '#/components/prompt-controller'
 import { TurnContext } from '#/components/turn-context'
+import { useReconnect } from '#/hooks/use-reconnect'
 import { getInstance } from '#/lib/queries/get-instance'
 import { disconnect } from '#/lib/socket/connect'
 import { lobbyStore } from '#/lib/stores/clients'
@@ -34,10 +35,12 @@ export const Route = createFileRoute('/_authed/battle/$gameID')({
 })
 
 function RouteComponent() {
+  const params = Route.useParams()
   const game = useSelector(gameStore, (g) => g)
   const client = useSelector(lobbyStore, (s) => s.client)
   const client_player = game.players.find((p) => p.user.id === client?.ID)
   const other_player = game.players.find((p) => p.user.id !== client?.ID)
+  useReconnect(params.gameID)
 
   return (
     <ClientOnly>

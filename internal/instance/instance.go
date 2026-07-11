@@ -37,11 +37,10 @@ type InstanceJSON struct {
 }
 
 func NewInstance(ctx context.Context, id uuid.UUID, onEmpty func(uuid.UUID)) *Instance {
-	return &Instance{
+	i := &Instance{
 		ID:          id,
 		ctx:         ctx,
 		Status:      InstanceStatusInit,
-		Lobby:       NewLobby(),
 		onEmpty:     onEmpty,
 		Register:    make(chan *Client),
 		Unregister:  make(chan *Client),
@@ -50,6 +49,9 @@ func NewInstance(ctx context.Context, id uuid.UUID, onEmpty func(uuid.UUID)) *In
 		Game: game.NewGame(id),
 		Tick: time.Second / 2,
 	}
+
+	i.Lobby = NewLobby(i)
+	return i
 }
 
 func (i Instance) ToJSON() InstanceJSON {
@@ -140,6 +142,9 @@ func (i *Instance) Run() {
 			}
 
 			i.OnConnectResponse(client)
+			if exists {
+				i.PostConnectResponse(client.ID)
+			}
 		case client := <-i.Unregister:
 			removed := i.UnregisterClient(client)
 			if !removed {
@@ -150,7 +155,7 @@ func (i *Instance) Run() {
 				if i.onEmpty != nil {
 					i.onEmpty(i.ID)
 				}
-				return
+				continue
 			}
 
 			i.BroadcastLobby()

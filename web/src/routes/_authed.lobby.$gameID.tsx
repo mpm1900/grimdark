@@ -9,6 +9,7 @@ import {
   TableHeader,
   TableRow,
 } from '#/components/ui/table'
+import { useReconnect } from '#/hooks/use-reconnect'
 import { NULL_CONTEXT } from '#/lib/game/context'
 import { getInstance } from '#/lib/queries/get-instance'
 import { disconnect } from '#/lib/socket/connect'
@@ -36,6 +37,8 @@ export const Route = createFileRoute('/_authed/lobby/$gameID')({
     if (!instance) {
       throw redirect({ to: '/' })
     }
+    if (Object.values(instance.lobby.ready).some((r) => !r)) return
+    throw redirect({ to: '/battle/$gameID', params })
   },
   onLeave: () => {
     const next_path = window.location.pathname
@@ -49,6 +52,7 @@ function RouteComponent() {
   const lobby = useSelector(lobbyStore)
   const ready = useSelector(gameStore, (g) => g.ready)
   const navigate = Route.useNavigate()
+  useReconnect(params.gameID)
   useEffect(() => {
     if (ready) {
       navigate({

@@ -180,8 +180,6 @@ func (ih *InstancesHandler) handleGameConnection(ctx context.Context) http.Handl
 			Email:    user.Email,
 		})
 
-		instance.SetupGame(&i.Game, *client.User)
-
 		if err := client.Connect(w, r); err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
 			return

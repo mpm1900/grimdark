@@ -7,6 +7,7 @@ import (
 )
 
 type Lobby struct {
+	instance   *Instance
 	Players    map[uuid.UUID]*Client
 	Spectators map[uuid.UUID]*Client
 	ready      map[uuid.UUID]bool
@@ -19,8 +20,9 @@ type LobbyJSON struct {
 	Ready      map[uuid.UUID]bool `json:"ready"`
 }
 
-func NewLobby() Lobby {
+func NewLobby(instance *Instance) Lobby {
 	return Lobby{
+		instance:   instance,
 		Players:    make(map[uuid.UUID]*Client),
 		Spectators: make(map[uuid.UUID]*Client),
 		ready:      make(map[uuid.UUID]bool),
@@ -73,8 +75,10 @@ func (l *Lobby) Ready() bool {
 func (l *Lobby) AddClient(client *Client) {
 	if len(l.Players) < 2 {
 		client.Role = ClientRolePlayer
-		l.ready[client.ID] = false
 		l.Players[client.ID] = client
+		if l.instance.Status == InstanceStatusInit {
+			l.ready[client.ID] = false
+		}
 	} else {
 		client.Role = ClientRoleSpectator
 		l.Spectators[client.ID] = client

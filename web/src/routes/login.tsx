@@ -20,11 +20,9 @@ function Login() {
   return (
     <div className="flex min-h-svh w-full items-center justify-center p-6 md:p-10">
       <div className="w-full max-w-sm space-y-2">
-        <a className="flex items-center justify-center gap-2 self-center font-medium p-4 mb-9">
-          <div className="text-foreground/60 flex size-16 items-center justify-center rounded-md">
-            <GiWingedSword className="size-16" />
-          </div>
-        </a>
+        <div className="relative text-foreground/60 flex mb-12 items-center justify-center rounded-md z-20">
+          <GiWingedSword className="size-16" />
+        </div>
 
         <Tabs defaultValue="login" className="flex flex-col gap-6">
           <GothicCard>

@@ -16,6 +16,7 @@ function AppHeader() {
   const client = useSelector(lobbyStore, (c) => c.client)
   const game_status = useSelector(gameStore, (g) => g.status)
   const ready = useSelector(gameStore, (g) => g.ready)
+  const turn = useSelector(gameStore, (g) => g.turn)
 
   return (
     <header className="fixed flex justify-between p-1 z-30 w-full">
@@ -24,7 +25,7 @@ function AppHeader() {
           <GiWingedSword />
         </Link>
 
-        {client && ready && (
+        {client && (ready || turn > 0) && (
           <div className="flex gap-2">
             <GothicFramedButton
               variant="red"
