@@ -64,7 +64,7 @@ func NewServer(ctx context.Context, queries *db.Queries) *Server {
 }
 
 func withCORS(next http.Handler) http.Handler {
-	originPolicy := security.NewOriginPolicyFromEnv()
+	origin_policy := security.NewOriginPolicyFromEnv()
 
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		origin := strings.TrimSpace(r.Header.Get("Origin"))
@@ -73,11 +73,11 @@ func withCORS(next http.Handler) http.Handler {
 			return
 		}
 
-		requestHost := strings.TrimSpace(r.Header.Get("X-Forwarded-Host"))
-		if requestHost == "" {
-			requestHost = r.Host
+		request_host := strings.TrimSpace(r.Header.Get("X-Forwarded-Host"))
+		if request_host == "" {
+			request_host = r.Host
 		}
-		if !originPolicy.IsAllowedRequest(origin, requestHost) {
+		if !origin_policy.IsAllowedRequest(origin, request_host) {
 			http.Error(w, "origin not allowed", http.StatusForbidden)
 			return
 		}

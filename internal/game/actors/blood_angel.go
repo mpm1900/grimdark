@@ -25,8 +25,10 @@ func newBloodAngel() game.Class {
 		game.SpecialDefense: 80,
 		game.Accuracy:       1,
 		game.Evasion:        1,
+
 		game.CriticalChance: 1,
 		game.CriticalDamage: 1,
+		game.DamageReflect:  0,
 		game.EffectChance:   1,
 	}
 	class.Effects = []game.Effect{}

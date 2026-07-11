@@ -164,13 +164,13 @@ func (ih *InstancesHandler) handleGameConnection(ctx context.Context) http.Handl
 			return
 		}
 
-		instanceID, err := uuid.Parse(r.PathValue("instanceID"))
+		instance_ID, err := uuid.Parse(r.PathValue("instanceID"))
 		if err != nil {
 			w.WriteHeader(http.StatusBadRequest)
 			return
 		}
 
-		i := ih.GetOrCreateInstance(instanceID, ctx)
+		i := ih.GetOrCreateInstance(instance_ID, ctx)
 		client := instance.NewClient(i)
 		client.AttachUser(&game.User{
 			ID:       user.ID,

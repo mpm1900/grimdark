@@ -60,14 +60,14 @@ type Actor struct {
 	AffinityDamage     map[Affinity]int
 	AffinityResistance map[Affinity]int
 	AffinityImmunities map[Affinity]float64
-	UnmodifiedStats    map[Stat]float64
+	OffsetStats        map[Stat]float64
 	Stages             map[Stat]int
-	AuxStats           map[Stat]float64
 	Stats              map[Stat]float64
+	UnmodifiedStats    map[Stat]float64
 
-	Wounds float64
 	State  ActorState
 	Status ActorStatus
+	Wounds float64
 
 	IsAlive     bool
 	IsBulwark   bool // stops collateral penetration
@@ -149,7 +149,7 @@ func NewActor(class Class, config ActorConfig) Actor {
 		AffinityResistance: map[Affinity]int{},
 		AffinityImmunities: map[Affinity]float64{},
 		Stages:             map[Stat]int{},
-		AuxStats:           map[Stat]float64{},
+		OffsetStats:        map[Stat]float64{},
 		Stats:              maps.Clone(class.Stats),
 
 		Wounds: 0,
@@ -202,7 +202,7 @@ func (a Actor) Clone() Actor {
 		AffinityImmunities: maps.Clone(a.AffinityImmunities),
 		UnmodifiedStats:    maps.Clone(a.UnmodifiedStats),
 		Stages:             maps.Clone(a.Stages),
-		AuxStats:           maps.Clone(a.AuxStats),
+		OffsetStats:        maps.Clone(a.OffsetStats),
 		Stats:              maps.Clone(a.Stats),
 
 		Wounds: a.Wounds,
@@ -222,17 +222,18 @@ func (a Actor) Clone() Actor {
 	}
 }
 
-func mapBaseStat(actor Actor, stat Stat, stats map[Stat]float64, aux float64) float64 {
+// mappers
+func (a *Actor) mapBaseStat(stat Stat, stats map[Stat]float64, aux float64) float64 {
 	base := stats[stat]*2 + aux
-	ratio := float64(actor.Level) / 100
+	ratio := float64(a.Level) / 100
 	result := (base*ratio + 5)
 	if stat == Health {
-		result += float64(actor.Level)
+		result += float64(a.Level)
 	}
 	return result
 }
-func (a *Actor) getAux(stat Stat) float64 {
-	aux, ok := a.AuxStats[stat]
+func (a *Actor) getStatOffset(stat Stat) float64 {
+	aux, ok := a.OffsetStats[stat]
 	if !ok {
 		aux = 0
 	}
@@ -259,8 +260,8 @@ func (a *Actor) mapBaseStats() {
 			continue
 		}
 
-		a.Stats[stat] = mapBaseStat(*a, stat, a.Stats, a.getAux(stat))
-		a.UnmodifiedStats[stat] = mapBaseStat(*a, stat, a.UnmodifiedStats, 0)
+		a.Stats[stat] = a.mapBaseStat(stat, a.Stats, a.getStatOffset(stat))
+		a.UnmodifiedStats[stat] = a.mapBaseStat(stat, a.UnmodifiedStats, 0)
 	}
 }
 func (a *Actor) mapStagedStats() {
@@ -280,6 +281,7 @@ func (a *Actor) mapStagedStats() {
 	a.Stats[EffectChance] = effect_chance
 }
 
+// mutators
 func (a *Actor) ApplyDamage(damage float64, resolved Actor) {
 	a.Wounds = a.Wounds + damage
 	if a.Wounds < 0 {
@@ -323,6 +325,7 @@ func (a *Actor) NextTurn() {
 func (a *Actor) SetPosition(position_id uuid.UUID) {
 	if position_id == uuid.Nil {
 		a.Meta.InactiveTurns = 0
+		a.Meta.LastUsedActionID = uuid.Nil
 	} else {
 		a.Meta.Seen = true
 	}
@@ -330,9 +333,10 @@ func (a *Actor) SetPosition(position_id uuid.UUID) {
 		a.Meta.ActiveTurns = 0
 	}
 	a.PositionID = position_id
-	a.Meta.LastUsedActionID = uuid.Nil
+
 }
 
+// getters
 func (a Actor) IsActive() bool {
 	return a.PositionID != uuid.Nil
 }
@@ -442,10 +446,8 @@ func (a Actor) Targetable() bool {
 
 	return true
 }
-func (a Actor) GetMeta() ActorMeta {
-	return a.Meta
-}
 
+// json
 func (a Actor) ToJSON(g Game) actorJSON {
 	stats := make(map[Stat]int, len(a.Stats))
 	unmodified_stats := make(map[Stat]int, len(a.UnmodifiedStats))

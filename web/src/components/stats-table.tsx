@@ -50,6 +50,8 @@ function MultiplierStatRow({ actor, stat }: { actor: Actor; stat: Stat }) {
   const stage = actor.stages[stat]
   const mod = 3
   const mult = mapStage(stage, mod, 1)
+  console.log(stat, stage, mult, actor.stats[stat])
+
   return (
     <TableRow>
       <TableCell className="capitalize font-cinzel" colSpan={2}>
@@ -67,7 +69,7 @@ function MultiplierStatRow({ actor, stat }: { actor: Actor; stat: Stat }) {
         <StatValue
           actor={actor}
           stat={stat}
-          className={cn(actor.stats[stat] === 100 && 'text-foreground/20')}
+          className={cn(mult == 1 && 'text-foreground/20!')}
         >
           x{mult.toFixed(2)}
         </StatValue>
@@ -122,9 +124,10 @@ function OtherStatsTable({
   return (
     <Table className={cn('font-mono', className)} {...props}>
       <TableBody>
-        <MultiplierStatRow actor={actor} stat="effect-chance" />
         <MultiplierStatRow actor={actor} stat="critical-damage" />
         <OffsetStatRow actor={actor} stat="critical-chance" />
+        <OffsetStatRow actor={actor} stat="damage-reflect" />
+        <MultiplierStatRow actor={actor} stat="effect-chance" />
       </TableBody>
     </Table>
   )

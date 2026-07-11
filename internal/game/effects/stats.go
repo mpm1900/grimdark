@@ -109,8 +109,8 @@ func StagesResetWhere(where game.Filter[game.Actor]) game.Effect {
 
 func AuxResetWhere(where game.Filter[game.Actor]) game.Effect {
 	effect := game.EffectActorsWhere(game.EffectPriorityAuxOverwrite, where, func(g game.Game, a game.Actor, ctx game.Context) game.Actor {
-		for stat, _ := range a.AuxStats {
-			a.AuxStats[stat] = 0
+		for stat, _ := range a.OffsetStats {
+			a.OffsetStats[stat] = 0
 		}
 
 		return a

@@ -5,7 +5,6 @@ import { DNumber } from './dnumber'
 function StatValue({
   actor,
   stat,
-  className,
   children,
   map,
   ...props

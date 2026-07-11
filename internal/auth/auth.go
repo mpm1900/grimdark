@@ -55,30 +55,30 @@ func WithSession(next http.HandlerFunc, queries *db.Queries) http.HandlerFunc {
 			return
 		}
 
-		sessionID, err := uuid.Parse(cookie.Value)
+		session_ID, err := uuid.Parse(cookie.Value)
 		if err != nil {
 			w.WriteHeader(http.StatusUnauthorized)
 			return
 		}
 
-		user, err := queries.GetUserBySessionID(r.Context(), sessionID)
+		user, err := queries.GetUserBySessionID(r.Context(), session_ID)
 		if err != nil {
 			w.WriteHeader(http.StatusUnauthorized)
 			return
 		}
 
-		ctxWithUser := WithAuthenticatedUser(r.Context(), user)
-		ctxWithUser = context.WithValue(ctxWithUser, "user", user)
-		next(w, r.Clone(ctxWithUser))
+		user_ctx := WithAuthenticatedUser(r.Context(), user)
+		user_ctx = context.WithValue(user_ctx, "user", user)
+		next(w, r.Clone(user_ctx))
 	}
 }
 
 func CreateSession(ctx context.Context, queries *db.Queries, userID uuid.UUID) (*http.Cookie, error) {
-	expiresAt := time.Now().Add(SESSION_DURATION)
+	expires_at := time.Now().Add(SESSION_DURATION)
 	session, err := queries.CreateSession(ctx, db.CreateSessionParams{
 		UserID: userID,
 		ExpiresAt: pgtype.Timestamptz{
-			Time:  expiresAt,
+			Time:  expires_at,
 			Valid: true,
 		},
 	})
@@ -86,7 +86,7 @@ func CreateSession(ctx context.Context, queries *db.Queries, userID uuid.UUID) (
 		return nil, err
 	}
 
-	return makeSessionCookie(session.ID.String(), expiresAt), nil
+	return makeSessionCookie(session.ID.String(), expires_at), nil
 }
 
 func ClearSessionCookie() *http.Cookie {

@@ -15,9 +15,11 @@ const (
 	Evasion        Stat = "evasion"
 	CriticalChance Stat = "critical-chance"
 	CriticalDamage Stat = "critical-damage"
+	DamageReflect  Stat = "damage-reflect"
 	EffectChance   Stat = "effect-chance"
 )
 
+// mapped stats are piped through the funciton that factors in level and other factors
 var mappedStats map[Stat]struct{} = map[Stat]struct{}{
 	Health:         {},
 	Speed:          {},
@@ -28,14 +30,17 @@ var mappedStats map[Stat]struct{} = map[Stat]struct{}{
 	SpecialDefense: {},
 }
 
+// percent stats are x100 before sent to clients
 var percentStats map[Stat]struct{} = map[Stat]struct{}{
 	Accuracy:       {},
 	Evasion:        {},
 	CriticalChance: {},
 	CriticalDamage: {},
+	DamageReflect:  {},
 	EffectChance:   {},
 }
 
+// gets the "opposite" stat
 var statDefenses map[Stat]Stat = map[Stat]Stat{
 	Melee:    MartialDefense,
 	Ranged:   MartialDefense,
@@ -53,11 +58,11 @@ func (s Stat) GetDefense() Stat {
 	return defense
 }
 
-func (s Stat) GetRatio(source, target Actor, useBaseStats bool) float64 {
+func (s Stat) GetRatio(source, target Actor, is_unmodified bool) float64 {
 	source_value := source.Stats[s]
 	target_value := target.Stats[s.GetDefense()]
 
-	if useBaseStats {
+	if is_unmodified {
 		base := target.UnmodifiedStats[s.GetDefense()]
 		if target_value > base {
 			target_value = base
