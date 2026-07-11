@@ -32,7 +32,7 @@ export const Route = createFileRoute('/_authed/lobby/$gameID')({
     if (!instance) {
       throw redirect({ to: '/' })
     }
-    if (Object.values(instance.lobby.ready).some((r) => !r)) return
+    if (instance.status === 'init') return
     throw redirect({ to: '/battle/$gameID', params })
   },
   onLeave: () => {

@@ -184,7 +184,9 @@ func (i *Instance) RunGameActions() {
 	i.BroadcastGame()
 
 	defer func() {
-		i.Game.Status = game.GameStatusIdle
+		if i.Game.Status == game.GameStatusRunning {
+			i.Game.Status = game.GameStatusIdle
+		}
 		i.BroadcastGame()
 	}()
 

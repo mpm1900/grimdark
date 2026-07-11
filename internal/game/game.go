@@ -394,6 +394,7 @@ func (g *Game) PushPromptCommand(command PromptCommand) {
 	g.mutate(func(s *State) {
 		s.Prompts = append(s.Prompts, command)
 	})
+	g.Status = GameStatusWaiting
 }
 func (g *Game) UpdatePromptCommand(context Context) {
 	g.mutate(func(s *State) {
@@ -665,6 +666,9 @@ func (g *Game) Validate() bool {
 		}
 	}
 
+	if !valid {
+		g.Status = GameStatusWaiting
+	}
 	return valid
 }
 
@@ -795,11 +799,6 @@ func (g *Game) Next() bool {
 		return true
 	}
 
-	if len(g.state.Triggers) > 0 {
-		g.NextTrigger()
-		return true
-	}
-
 	if len(g.state.Prompts) > 0 {
 		if g.PromptsReady() {
 			g.NextPrompt()
@@ -810,6 +809,11 @@ func (g *Game) Next() bool {
 
 	if !g.Validate() {
 		return false
+	}
+
+	if len(g.state.Triggers) > 0 {
+		g.NextTrigger()
+		return true
 	}
 
 	if len(g.state.Commands) > 0 {
