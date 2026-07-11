@@ -36,7 +36,7 @@ var Slash = game.Action{
 			)(g, context, this, result)
 			game.AddResultEffects(
 				0.5,
-				effects.StunTargets(),
+				effects.StunTargets,
 			)(g, context, this, result)
 			this.Push(game.PushSourceForwards().Bind(context))
 		},

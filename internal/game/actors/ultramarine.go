@@ -53,6 +53,7 @@ func newUltramarine() game.Class {
 		Weapons: []game.Weapon{
 			weapons.SlashSword,
 			weapons.BigSword,
+			weapons.Pistol,
 		},
 	}
 

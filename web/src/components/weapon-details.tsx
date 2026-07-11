@@ -74,6 +74,7 @@ const weaponIcon = cva('absolute top-1 h-auto block', {
     weapon_type: {
       sword: 'size-24 top-4 rotate-135',
       'big-sword': 'size-9 top-2',
+      pistol: 'size-14 left-1/2 top-4',
     },
   },
   defaultVariants: {
@@ -106,9 +107,6 @@ function WeaponDetails({ weapon }: { weapon: Weapon }) {
               Common {weapon.hands}-handed {weapon.weapon_type}
             </span>
           </div>
-        </div>
-        <div className="px-3">
-          <Separator />
         </div>
         <div className="text-foreground/80 italic text-xs px-6 py-2">
           {weapon.description}

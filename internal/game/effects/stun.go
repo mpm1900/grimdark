@@ -4,7 +4,9 @@ import (
 	"grimdark/internal/game"
 )
 
-func StunTargets() game.Effect {
+var StunTargets = stunTargets()
+
+func stunTargets() game.Effect {
 	effect := game.EffectTargets(
 		game.EffectPriorityFlags,
 		func(g game.Game, a game.Actor, ctx game.Context) game.Actor {
