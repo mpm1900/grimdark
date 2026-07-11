@@ -19,5 +19,5 @@ var SlashSword = game.Weapon{
 		game.Melee: 20,
 	},
 	Hands:      1,
-	WeaponType: "Sword",
+	WeaponType: game.WeaponTypeSword,
 }

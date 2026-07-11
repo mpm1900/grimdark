@@ -19,5 +19,5 @@ var BigSword = game.Weapon{
 		game.Melee: 20,
 	},
 	Hands:      2,
-	WeaponType: "Sword",
+	WeaponType: game.WeaponTypeBigSword,
 }

@@ -3,7 +3,7 @@ import { ActorAvatar } from '../actor-avatar'
 import { TinyBadge } from '../gothic-ui/badge'
 import { GothicCard } from '../gothic-ui/card'
 import { GothicFrame } from '../gothic-ui/frame'
-import { WeaponFrame } from '../weapon-details'
+import { WeaponFrame, WeaponFrameExt } from '../weapon-details'
 import { ActionContextDialog } from '../action-context-dialog'
 import { DialogTrigger } from '../ui/dialog'
 import { ActionButton, SystemActionButton } from '../action-button'
@@ -44,10 +44,10 @@ function BattlePanel() {
             <GothicFrame></GothicFrame>
             <GothicFrame></GothicFrame>
           </div>
-          <div className="relative h-full grid grid-cols-1 grid-rows-2">
+          <div className="relative h-full grid grid-cols-1 grid-rows-2 overflow-hidden">
             <TinyBadge
               variant="default"
-              className="absolute z-10 px-1 -top-1 left-1/2 -translate-x-1/2 rounded-xs rounded-b-sm font-cinzel border-white/30 text-foreground/60"
+              className="absolute z-20 px-1 -top-1 left-1/2 -translate-x-1/2 rounded-xs rounded-b-sm font-cinzel border-white/30 text-foreground/60"
             >
               Weapons
             </TinyBadge>
@@ -57,15 +57,15 @@ function BattlePanel() {
               <GothicFrame></GothicFrame>
             )}
             {main_weapon?.hands == 2 ? (
-              <WeaponFrame disabled={true} weapon={main_weapon} />
+              <WeaponFrameExt weapon={main_weapon} disabled />
             ) : secondary_weapon ? (
               <WeaponFrame disabled={false} weapon={secondary_weapon} />
             ) : (
               <GothicFrame></GothicFrame>
             )}
             {main_weapon?.hands == 2 && (
-              <div className="pointer-events-none absolute inset-0 grid place-items-center">
-                <HiLink className="rotate-136 size-6 fill-neutral-500" />
+              <div className="pointer-events-none absolute inset-0 grid place-items-center z-20">
+                <HiLink className="rotate-136 size-6 fill-foreground/60" />
               </div>
             )}
           </div>

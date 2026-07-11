@@ -11,6 +11,9 @@ import {
   ComboboxValue,
 } from './ui/combobox'
 import { GothicFramedButton } from './gothic-ui/button'
+import { HoverCard, HoverCardTrigger } from './ui/hover-card'
+import { GothicHoverCardContent } from './gothic-ui/hover-card'
+import { WeaponDetails } from './weapon-details'
 
 function WeaponCombobox({
   disabled,
@@ -53,13 +56,19 @@ function WeaponCombobox({
         <ComboboxEmpty>No weapons found.</ComboboxEmpty>
         <ComboboxList>
           {(weapon: Weapon) => (
-            <ComboboxItem
-              key={weapon.ID}
-              value={weapon.ID}
-              disabled={weapon.hands > 1 && !!other}
-            >
-              {weapon.name}
-            </ComboboxItem>
+            <HoverCard key={weapon.ID}>
+              <HoverCardTrigger asChild>
+                <ComboboxItem
+                  value={weapon.ID}
+                  disabled={weapon.hands > 1 && !!other}
+                >
+                  {weapon.name}
+                </ComboboxItem>
+              </HoverCardTrigger>
+              <GothicHoverCardContent sideOffset={0} side="left">
+                <WeaponDetails weapon={weapon} />
+              </GothicHoverCardContent>
+            </HoverCard>
           )}
         </ComboboxList>
       </ComboboxContent>

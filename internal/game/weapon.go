@@ -9,6 +9,11 @@ import (
 
 type WeaponType string
 
+const (
+	WeaponTypeSword    WeaponType = "sword"
+	WeaponTypeBigSword WeaponType = "big-sword"
+)
+
 type Weapon struct {
 	Item
 	Actions    []Action

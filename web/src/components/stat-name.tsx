@@ -19,11 +19,11 @@ const statVariants = cva('', {
       'critical-chance': '',
       'critical-damage': '',
       'effect-chance': '',
-      range: '',
+      'damage-reflect': '',
     },
   },
   defaultVariants: {
-    stat: 'health',
+    stat: 'accuracy',
   },
 })
 

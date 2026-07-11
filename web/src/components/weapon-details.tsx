@@ -10,6 +10,7 @@ import { statVariants } from './stat-name'
 import { HoverCard, HoverCardTrigger } from './ui/hover-card'
 import { GothicHoverCardContent } from './gothic-ui/hover-card'
 import { DNumber } from './dnumber'
+import { WEAPON_ICONS } from '#/icons/weapons'
 
 function InlineAuxStats({
   aux_stats,
@@ -30,7 +31,7 @@ function InlineAuxStats({
   )
 }
 
-const weaponWrapper = cva('p-px font-serif', {
+const weaponWrapper = cva('relative p-0.5 font-serif', {
   variants: {
     rarity: {
       common: 'bg-gradient-to-b from-foreground/60 to-foreground/0',
@@ -64,20 +65,40 @@ const weaponTitle = cva('font-cinzel font-semibold block text-md', {
   },
 })
 
+const weaponIcon = cva('absolute top-1 h-auto block', {
+  variants: {
+    rarity: {
+      common: 'text-foreground/50',
+      rare: 'text-emerald-300/50',
+    },
+    weapon_type: {
+      sword: 'size-24 top-4 rotate-135',
+      'big-sword': 'size-9 top-2',
+    },
+  },
+  defaultVariants: {
+    rarity: 'common',
+    weapon_type: 'sword',
+  },
+})
+
 function WeaponDetails({ weapon }: { weapon: Weapon }) {
   const rarity = 'rare'
+  const Icon = WEAPON_ICONS[weapon.weapon_type]
   return (
     <div className={weaponWrapper({ rarity: rarity })}>
       <div className={weaponBody({ rarity: rarity })}>
         <div className="p-2">
-          <div className="absolute z-0 bottom-0 -right-3 -top-4 overflow-hidden">
-            <img
-              alt="weapon"
-              className="right-0 fading-image"
-              src="/img/SwordIcon.png"
+          <div className="absolute z-10 bottom-0 left-2/3 right-0 top-2 overflow-hidden">
+            <Icon
+              className={weaponIcon({
+                rarity,
+                weapon_type: weapon.weapon_type,
+                className: 'left-1/2 -translate-x-1/2 fading-image z-30',
+              })}
             />
           </div>
-          <div>
+          <div className="pr-6">
             <span className={weaponTitle({ rarity: rarity })}>
               {weapon.name}
             </span>
@@ -133,29 +154,42 @@ function WeaponFrame({
   weapon: Weapon
 }) {
   const rarity = 'rare'
+  const Icon = WEAPON_ICONS[weapon.weapon_type]
   return (
     <HoverCard>
       <HoverCardTrigger asChild>
-        <GothicFrame className={cn('w-20', disabled && 'pointer-events-none')}>
+        <GothicFrame
+          className={cn(
+            'relative w-20 overflow-visible',
+            weapon.hands === 2 && 'z-10',
+            disabled && 'pointer-events-none'
+          )}
+        >
           <div
             className={weaponWrapper({ rarity: rarity, className: 'h-full' })}
           >
             <div
               className={weaponBody({
                 rarity: rarity,
-                className: 'h-full overflow-hidden relative',
+                className: cn(
+                  'h-full relative',
+                  weapon.hands === 2 ? 'overflow-visible' : 'overflow-hidden'
+                ),
               })}
             >
-              <img
-                alt="weapon"
-                className="absolute top-0 left-1/2 -translate-x-1/2 fading-image"
-                src="/img/SwordIcon.png"
+              <Icon
+                className={weaponIcon({
+                  rarity,
+                  weapon_type: weapon.weapon_type,
+                  className: 'left-1/2 -translate-x-1/2',
+                })}
               />
               {disabled && (
                 <div className="absolute inset-0 bg-neutral-300/30" />
               )}
             </div>
           </div>
+          <GothicFrame className="pointer-events-none absolute inset-0 z-10 bg-transparent [border-image-slice:22]" />
         </GothicFrame>
       </HoverCardTrigger>
       <GothicHoverCardContent sideOffset={0}>
@@ -165,4 +199,37 @@ function WeaponFrame({
   )
 }
 
-export { WeaponDetails, WeaponFrame }
+function WeaponFrameExt({
+  disabled,
+  weapon,
+}: {
+  disabled: boolean
+  weapon: Weapon
+}) {
+  const rarity = 'rare'
+  return (
+    <GothicFrame
+      className={cn(
+        'relative w-20 overflow-visible',
+        disabled && 'pointer-events-none'
+      )}
+    >
+      <div className={weaponWrapper({ rarity: rarity, className: 'h-full' })}>
+        <div
+          className={weaponBody({
+            rarity: rarity,
+            className: cn(
+              'h-full relative',
+              weapon.hands === 2 ? 'overflow-visible' : 'overflow-hidden'
+            ),
+          })}
+        >
+          {disabled && <div className="absolute inset-0 bg-neutral-300/30" />}
+        </div>
+      </div>
+      <GothicFrame className="pointer-events-none absolute inset-0 z-20 bg-transparent [border-image-slice:22]" />
+    </GothicFrame>
+  )
+}
+
+export { WeaponDetails, WeaponFrame, WeaponFrameExt }

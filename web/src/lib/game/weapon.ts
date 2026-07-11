@@ -1,5 +1,5 @@
 import type { Action } from './action'
-import type { ID, Stat } from './core'
+import type { ID, Stat, WeaponType } from './core'
 import type { Effect } from './effect'
 
 export type Item = {
@@ -13,5 +13,5 @@ export type Weapon = Item & {
   actions: Action[]
   aux_stats: Partial<Record<Stat, number>>
   hands: number
-  weapon_type: string
+  weapon_type: WeaponType
 }
