@@ -26,7 +26,7 @@ func newUltramarine() game.Class {
 	bypass.Name = "bypass effect"
 
 	class := game.NewClass()
-	class.Name = "Ultramarine"
+	class.Name = "Storm Warden"
 	class.SpriteURL = "/img/spm.png"
 	class.Affinities = map[game.Affinity]struct{}{
 		game.Kinetic: {},

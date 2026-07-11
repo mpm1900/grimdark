@@ -179,13 +179,4 @@ function disconnect(code = 1000, reason = 'Manual disconnect') {
   localStorage.removeItem(INSTANCE_ID_KEY)
 }
 
-if (typeof window !== 'undefined') {
-  const savedInstanceID = readSavedInstanceID()
-  if (savedInstanceID) {
-    void connect(savedInstanceID).catch(() => {
-      // Initial auto-connect should not throw uncaught promise rejections.
-    })
-  }
-}
-
 export { connect, disconnect }

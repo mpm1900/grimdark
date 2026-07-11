@@ -1,11 +1,10 @@
 import { AppHeader } from '#/components/app-header'
-import {
-  GothicBigButton,
-  GothicHeroButton,
-} from '#/components/gothic-ui/button'
+import { GothicBigButton } from '#/components/gothic-ui/button'
+import { InstanceCombobox } from '#/components/instance-combobox'
 import { TeamActor } from '#/components/team-actor'
 import { TeamActorConfig } from '#/components/team-actor-config'
 import { TeamPlatforms } from '#/components/team-platforms'
+import type { ID } from '#/lib/game/core'
 import { useConnect } from '#/lib/mutations/connect'
 import { useUser } from '#/lib/queries/auth'
 import { teamStore } from '#/lib/stores/team'
@@ -24,21 +23,27 @@ function RouteComponent() {
   const mutation = useConnect()
   const actor_order = [...team.actors.map((_, i) => i)]
 
-  function battle() {
+  function battle(instance_ID?: ID) {
     if (!user.data) return
 
-    mutation.mutate(team, {
-      onSuccess: (message) => {
-        if (!message.game?.instance_ID) return
-
-        navigate({
-          to: '/lobby/$gameID',
-          params: {
-            gameID: message.game?.instance_ID,
-          },
-        })
+    mutation.mutate(
+      {
+        ...team,
+        instance_ID,
       },
-    })
+      {
+        onSuccess: (message) => {
+          if (!message.game?.instance_ID) return
+
+          navigate({
+            to: '/lobby/$gameID',
+            params: {
+              gameID: message.game?.instance_ID,
+            },
+          })
+        },
+      }
+    )
   }
 
   return (
@@ -49,7 +54,7 @@ function RouteComponent() {
           <div className="text-center font-cinzel text-3xl capitalize font-semibold">
             ready your team!
           </div>
-          <div className="grid place-items-center">
+          <div className="flex gap-2">
             <GothicBigButton
               variant="red"
               className="text-xl"
@@ -58,6 +63,21 @@ function RouteComponent() {
             >
               Battle!
             </GothicBigButton>
+            <InstanceCombobox
+              value={null}
+              onValueChange={(i) => {
+                battle(i)
+              }}
+              render={
+                <GothicBigButton
+                  variant="red"
+                  className="text-xl"
+                  disabled={!!team.actors.find((a) => !a.class)}
+                >
+                  Join
+                </GothicBigButton>
+              }
+            />
           </div>
         </div>
         <div className="relative flex">

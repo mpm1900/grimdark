@@ -9,6 +9,7 @@ import {
 import { NULL_CONTEXT } from '../game/context'
 import { lobbyStore } from '../stores/clients'
 import { subscribe } from '../socket/subscribe'
+import type { ID } from '../game/core'
 
 async function postConnect(team_config: TeamConfig): Promise<SocketResponse> {
   const client = lobbyStore.state.client
@@ -45,8 +46,8 @@ async function postConnect(team_config: TeamConfig): Promise<SocketResponse> {
 function useConnect() {
   return useMutation({
     mutationKey: ['connect'],
-    mutationFn: async (team_config: TeamConfig) => {
-      await connect()
+    mutationFn: async (team_config: TeamConfig & { instance_ID?: ID }) => {
+      await connect(team_config.instance_ID)
       const message = await postConnect(team_config)
       return message
     },

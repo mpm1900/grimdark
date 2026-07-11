@@ -18,11 +18,10 @@ import {
 const CREATE_INSTANCE_VALUE = '__create_instance__'
 
 function InstanceCombobox({
-  icon,
   value = null,
   onValueChange,
-}: {
-  icon: ReactNode
+  ...props
+}: Omit<React.ComponentProps<typeof ComboboxTrigger>, 'value'> & {
   value: string | undefined | null
   onValueChange: (value: string) => void
 }) {
@@ -60,10 +59,10 @@ function InstanceCombobox({
               'text-destructive': !value,
             })}
           >
-            {icon}
             <ComboboxValue placeholder="NOT CONNECTED" />
           </Button>
         }
+        {...props}
       />
       <ComboboxContent>
         <ComboboxInput showTrigger={false} placeholder="Search" />
