@@ -127,7 +127,7 @@ function BattlePanel() {
         </GothicCard>
       )}
       {active_actor && !active_actor.is_player && (
-        <GothicCard className="h-full w-1/3">
+        <GothicCard className="h-full w-1/3 z-10">
           <ActorLore actor={active_actor} className="" />
         </GothicCard>
       )}
