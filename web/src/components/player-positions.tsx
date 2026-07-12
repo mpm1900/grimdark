@@ -29,7 +29,7 @@ function PlayerPositions({
     <div
       {...props}
       className={cn(
-        'relative z-0 flex flex-row-reverse items-end',
+        'relative z-0 flex flex-row-reverse items-end max-w-1/2',
         reverse && 'flex-row',
         className
       )}

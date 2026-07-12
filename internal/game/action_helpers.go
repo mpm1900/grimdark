@@ -142,6 +142,11 @@ func DamageSideEffects(g *Game, context Context, result DamageResult, this *Acti
 			this.Push(DamageTargets(result.Damage * this.Action.Config.Lifesteal * -1.0).Bind(lifesteal_ctx))
 		}
 
+		if result.Target.Stats[DamageReflect] > 0 {
+			reflect_ctx := MakeContextFor(result.Target, this.Source)
+			this.Push(DamageTargets(result.Damage * result.Target.Stats[DamageReflect]).Bind(reflect_ctx))
+		}
+
 		if config.OnSuccessResult != nil {
 			config.OnSuccessResult(*g, context, this, result)
 		}

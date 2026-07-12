@@ -27,7 +27,6 @@ function BattlePanel() {
   const main_weapon = weapons[0]
   const secondary_weapon = weapons[1]
 
-  if (!active_actor) return null
   return (
     <div className="h-48 absolute bottom-0 left-0 right-0 flex items-start justify-center z-10">
       {active_actor && <ActorAvatar actor={active_actor} />}

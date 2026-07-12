@@ -6,9 +6,10 @@ import { gameStore } from '#/lib/stores/game'
 import { sendContextMessage } from '#/lib/stores/socket'
 import { Link } from '@tanstack/react-router'
 import { useSelector } from '@tanstack/react-store'
-import { GiWhirlpoolShuriken, GiWingedSword } from 'react-icons/gi'
+import { GiWingedSword } from 'react-icons/gi'
 import { Button } from './ui/button'
 import { GothicFramedButton } from './gothic-ui/button'
+import { Loader } from 'lucide-react'
 
 function AppHeader() {
   const { data: user } = useUser()
@@ -43,17 +44,18 @@ function AppHeader() {
           </div>
         )}
 
+        <div>
+          <span className="slice-loader" />
+        </div>
+
         <div className="flex items-center">
-          {game_status === 'running' && (
-            <GiWhirlpoolShuriken className="animate-spin" />
-          )}
-          {game_status === 'waiting' && (
-            <GiWhirlpoolShuriken className="animate-spin" />
+          {(game_status === 'running' || game_status === 'waiting') && (
+            <Loader className="animate-spin size-4" />
           )}
         </div>
       </div>
 
-      <div className="flex items-center gap-4 px-2">
+      <div className="flex items-center gap-4">
         <div className="font-mono text-sm flex items-center">
           {user && (
             <div className="flex items-center gap-2">

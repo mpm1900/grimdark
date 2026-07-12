@@ -20,14 +20,14 @@ func MakeAttack(config AttackConfig) ActionResolver {
 
 			for _, target := range targets {
 				result := this.Action.Config.GetDamageResult(this.Source, target, context, rand.Float64(), pending_damage[target.ID])
+				success = success && result.Success()
 				dmg_ctx := MakeContextFor(this.Source, target)
 
 				this.Push(DamageTargets(result.Damage).Bind(dmg_ctx))
 				pending_damage[target.ID] += result.Damage
+
 				MultiHitLogs(result, context, &this, hit)
 				PostDamageLogs(result, context, &this)
-
-				success = success && result.Success()
 				DamageSideEffects(g, context, result, &this, config)
 			}
 		}

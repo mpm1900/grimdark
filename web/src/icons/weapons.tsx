@@ -63,7 +63,7 @@ const Sword: IconType = (props) => {
 }
 
 export const WEAPON_ICONS: Record<WeaponType, IconType> = {
-  'big-sword': BigSword,
+  'big-sword': Sword,
   pistol: Pistol,
   sword: GiKatana,
 }

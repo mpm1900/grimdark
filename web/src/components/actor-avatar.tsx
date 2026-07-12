@@ -13,14 +13,22 @@ function ActorAvatar({ actor }: { actor: Actor }) {
   const position = game.positions.find((p) => p.actor_ID === actor.ID)
   return (
     <div className="relative h-48 w-52">
+      <div className="absolute size-42 left-6 mt-13 rounded-full overflow-hidden bg-gradient-to-b from-emerald-950/0 to-emerald-950">
+        <div
+          className={cn(
+            'absolute w-56 h-56 -left-6 top-0 bg-no-repeat bg-cover bg-top'
+          )}
+          style={{ backgroundImage: `url(${actor.sprite_url})` }}
+        />
+      </div>
       <div className="absolute -bottom-9 -right-1 bg-[url(/gothic/AvatarCircleFrame.png)] bg-contain bg-center size-52">
         <div
           className={cn(
-            'rounded-xs absolute -top-7 -left-12 right-1 h-18 font-cinzel-dec text-foreground/80 font-semibold',
+            'rounded-xs absolute z-10 -top-7 -left-12 right-1 h-18 font-cinzel-dec text-foreground/80 font-semibold',
             'bg-[url(/gothic/TitleFrameMainRaven_Gray.png)] bg-cover bg-left origin-center pl-22 pb-4 pt-6 -space-y-1.5'
           )}
         >
-          <div className='truncate'>{actor.name}</div>
+          <div className="truncate">{actor.name}</div>
           <div className="text-xs text-foreground/40">{actor.level}</div>
           <div className="absolute -right-5 top-15 flex flex-col items-end gap-px pr-2 text-center capitalize font-cinzel">
             {applied_effects.map((effect) => (
