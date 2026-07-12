@@ -333,7 +333,6 @@ func (a *Actor) SetPosition(position_id uuid.UUID) {
 		a.Meta.ActiveTurns = 0
 	}
 	a.PositionID = position_id
-
 }
 
 // getters

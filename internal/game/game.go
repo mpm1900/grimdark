@@ -729,9 +729,7 @@ func (g *Game) NextPhase() {
 	}
 }
 func (g *Game) NextTurn() {
-	if g.Turn > 0 {
-		g.ActorNextTurnEffects()
-	}
+	g.ActorNextTurnEffects()
 	g.Turn++
 	g.Phase = PhaseMain
 	log := NewLog(fmt.Sprintf("Turn %d", g.Turn), map[string]string{})
