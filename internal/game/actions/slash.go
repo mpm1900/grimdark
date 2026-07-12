@@ -36,8 +36,11 @@ var Slash = game.Action{
 			)(g, context, this, result)
 			game.AddResultEffects(
 				0.5,
-				effects.StunTargets,
+				effects.StaggerTargets,
 			)(g, context, this, result)
+
+			stun_ctx := context.CloneWithTarget(this.Source)
+			this.Push(game.AddModifiers(effects.StunTargets.Bind(stun_ctx)).Bind(stun_ctx))
 			this.Push(game.PushSourceForwards().Bind(context))
 		},
 	}),

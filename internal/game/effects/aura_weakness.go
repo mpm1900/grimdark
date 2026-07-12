@@ -35,7 +35,7 @@ func auraOfWeakness() game.Effect {
 					}
 				}
 				mutation := game.AddModifiers(effect.Bind(ctx))
-				this.Push(mutation.Bind(game.NewContext()))
+				this.Push(mutation.Bind(ctx))
 				return this.Done()
 			},
 		},

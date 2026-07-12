@@ -94,7 +94,9 @@ function BattlePanel() {
                     <ActionButton
                       action={action}
                       actor={active_actor}
-                      disabled={!!acitve_actor_command}
+                      disabled={
+                        !!acitve_actor_command || active_actor.is_stunned
+                      }
                     />
                   </DialogTrigger>
                 </ActionContextDialog>
@@ -114,7 +116,9 @@ function BattlePanel() {
                     <SystemActionButton
                       action={action}
                       actor={active_actor}
-                      disabled={!!acitve_actor_command}
+                      disabled={
+                        !!acitve_actor_command || active_actor.is_stunned
+                      }
                     />
                   </DialogTrigger>
                 </ActionContextDialog>
