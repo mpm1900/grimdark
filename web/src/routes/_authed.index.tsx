@@ -11,6 +11,7 @@ import { teamStore } from '#/lib/stores/team'
 import { ClientOnly, createFileRoute } from '@tanstack/react-router'
 import { useSelector } from '@tanstack/react-store'
 import { LayoutGroup } from 'motion/react'
+import { useEffect } from 'react'
 
 export const Route = createFileRoute('/_authed/')({
   component: RouteComponent,
@@ -25,6 +26,7 @@ function RouteComponent() {
 
   function battle(instance_ID?: ID) {
     if (!user.data) return
+    localStorage.setItem('saved-actors', JSON.stringify(team.actors))
 
     mutation.mutate(
       {
@@ -45,6 +47,17 @@ function RouteComponent() {
       }
     )
   }
+
+  useEffect(() => {
+    const json = localStorage.getItem('saved-actors')
+    const saved = json && JSON.parse(json)
+    if (saved) {
+      teamStore.setState((s) => ({
+        ...s,
+        actors: saved,
+      }))
+    }
+  }, [])
 
   return (
     <ClientOnly>
