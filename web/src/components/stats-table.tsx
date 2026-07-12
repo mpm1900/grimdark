@@ -50,7 +50,6 @@ function MultiplierStatRow({ actor, stat }: { actor: Actor; stat: Stat }) {
   const stage = actor.stages[stat]
   const mod = 3
   const mult = mapStage(stage, mod, 1)
-  console.log(stat, stage, mult, actor.stats[stat])
 
   return (
     <TableRow>
