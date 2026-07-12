@@ -196,6 +196,13 @@ func EffectActorsActive(priority int, updater Updater[Actor]) Effect {
 		updater,
 	)
 }
+func EffectActorsActiveOther(priority int, updater Updater[Actor]) Effect {
+	return EffectActorsWhere(
+		priority,
+		CombineFilters(ActiveActors, AliveActors, NotSourceActor),
+		updater,
+	)
+}
 func EffectAllies(priority int, updater Updater[Actor]) Effect {
 	return EffectActorsWhere(
 		priority,

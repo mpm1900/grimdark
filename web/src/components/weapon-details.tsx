@@ -115,7 +115,7 @@ function WeaponDetails({ weapon }: { weapon: Weapon }) {
             <span className="text-foreground/40 block font-cinzel font-semibold">
               Actions
             </span>
-            <span className="pl-4 space-x-2">
+            <span className="space-x-2">
               {weapon.actions.map((a) => (
                 <span
                   key={a.ID}
@@ -131,11 +131,13 @@ function WeaponDetails({ weapon }: { weapon: Weapon }) {
               Effects
             </span>
             {weapon.effects.length > 0 && (
-              <span className="pl-4">
-                {weapon.effects.map((e) => e.name).join(', ')}
+              <span className="space-x-2">
+                {weapon.effects.map((e) => (
+                  <span key={e.ID}>{e.name}</span>
+                ))}
               </span>
             )}
-            <InlineAuxStats className="pl-4" aux_stats={weapon.aux_stats} />
+            <InlineAuxStats aux_stats={weapon.aux_stats} />
           </ItemDescription>
         </GothicShadowFrame>
       </div>

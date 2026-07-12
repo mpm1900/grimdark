@@ -3,6 +3,7 @@ package weapons
 import (
 	"grimdark/internal/game"
 	"grimdark/internal/game/actions"
+	"grimdark/internal/game/effects"
 
 	"github.com/google/uuid"
 )
@@ -12,7 +13,7 @@ var Pistol = game.Weapon{
 		ID:          uuid.MustParse("019f5319-dffb-7d06-b6f3-af8dca62bffd"),
 		Name:        "Pistol",
 		Description: "A bolter pistol. Pew pew.",
-		Effects:     []game.Effect{},
+		Effects:     []game.Effect{effects.AuraOfWeakness},
 	},
 	Actions: []game.Action{actions.Slash, actions.Blast, actions.SwordsDance},
 	AuxStats: map[game.Stat]float64{

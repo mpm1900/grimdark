@@ -47,7 +47,7 @@ func newUltramarine() game.Class {
 		game.DamageReflect:  0,
 		game.EffectChance:   1,
 	}
-	class.Effects = []game.Effect{bypass, effects.Intimidate()}
+	class.Effects = []game.Effect{bypass}
 	class.Options = game.ClassOptions{
 		Items: []game.Item{},
 		Weapons: []game.Weapon{

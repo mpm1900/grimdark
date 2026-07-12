@@ -486,6 +486,8 @@ func (g *Game) SetPosition(actor_id uuid.UUID, position_id uuid.UUID) {
 		})
 
 		trigger_context := MakeContextFor(actor)
+
+		//leave
 		if position_id == uuid.Nil {
 			s.Commands = slices.DeleteFunc(s.Commands, func(cmd Command) bool {
 				return cmd.Context.ParentID == actor.ID
@@ -503,12 +505,15 @@ func (g *Game) SetPosition(actor_id uuid.UUID, position_id uuid.UUID) {
 			}
 			g.On(OnActorLeave, trigger_context)
 		}
+
+		//join
 		if actor.PositionID == uuid.Nil {
 			log := NewLog("$source$ joined the battle.", SourceTerms(actor))
 			g.PushLogMeta(log.Bind(trigger_context))
 			g.On(OnActorEnter, trigger_context)
 		}
 
+		//move
 		if actor.PositionID != uuid.Nil && position_id != uuid.Nil {
 			g.On(OnActorMove, trigger_context)
 		}

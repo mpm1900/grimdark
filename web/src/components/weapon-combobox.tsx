@@ -40,32 +40,39 @@ function WeaponCombobox({
       }
       disabled={disabled}
     >
-      <ComboboxTrigger
-        render={
-          <GothicFramedButton className="justify-between">
-            <ComboboxValue>
-              {weapon ? (
-                <div className="flex items-center gap-2">
-                  <div className="flex size-6 shrink-0 items-center justify-center overflow-hidden">
-                    {Icon && (
-                      <Icon
-                        className={weaponIcon({
-                          rarity: 'common',
-                          weapon_type: weapon.weapon_type,
-                          className: 'static max-h-5 max-w-5',
-                        })}
-                      />
-                    )}
-                  </div>
-                  <div className="truncate">{weapon.name}</div>
-                </div>
-              ) : (
-                <span className="text-foreground/60">Select Weapon</span>
-              )}
-            </ComboboxValue>
-          </GothicFramedButton>
-        }
-      />
+      <HoverCard open={!weapon ? false : undefined}>
+        <HoverCardTrigger asChild>
+          <ComboboxTrigger
+            render={
+              <GothicFramedButton className="justify-between">
+                <ComboboxValue>
+                  {weapon ? (
+                    <div className="flex items-center gap-2">
+                      <div className="flex size-6 shrink-0 items-center justify-center overflow-hidden">
+                        {Icon && (
+                          <Icon
+                            className={weaponIcon({
+                              rarity: 'common',
+                              weapon_type: weapon.weapon_type,
+                              className: 'static max-h-5 max-w-5',
+                            })}
+                          />
+                        )}
+                      </div>
+                      <div className="truncate">{weapon.name}</div>
+                    </div>
+                  ) : (
+                    <span className="text-foreground/60">Select Weapon</span>
+                  )}
+                </ComboboxValue>
+              </GothicFramedButton>
+            }
+          />
+        </HoverCardTrigger>
+        <GothicHoverCardContent sideOffset={0} side="left">
+          {weapon && <WeaponDetails weapon={weapon} />}
+        </GothicHoverCardContent>
+      </HoverCard>
       <ComboboxContent>
         <ComboboxInput showTrigger={false} placeholder="Search" />
         <ComboboxEmpty>No weapons found.</ComboboxEmpty>

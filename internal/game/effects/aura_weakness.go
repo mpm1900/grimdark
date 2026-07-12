@@ -4,9 +4,9 @@ import (
 	"grimdark/internal/game"
 )
 
-var Intimidate = intimidate()
+var AuraOfWeakness = auraOfWeakness()
 
-func intimidate() game.Effect {
+func auraOfWeakness() game.Effect {
 	effect := game.EffectSource(game.EffectPriorityTriggers, func(g game.Game, a game.Actor, ctx game.Context) game.Actor {
 		return a
 	})
@@ -15,21 +15,20 @@ func intimidate() game.Effect {
 		Validate: game.TriggerSourceMatchesModifierParent,
 		Action: game.Action{
 			Config: game.ActionConfig{
-				Name: "Intimidate",
+				Name: "Aura of Weakness",
 			},
 			Resolve: func(g *game.Game, ctx game.Context, this game.ActionContext) []game.Transaction {
-				other_actors := g.FindActors(game.CombineFilters(game.ActiveActors, game.NotSourceActor), ctx)
-				for _, target := range other_actors {
-					target_ctx := game.MakeModifierContext(this.Source, target)
-					mutation := game.AddModifiers(StatDownTargets(game.Special, 1).Bind(target_ctx))
-					this.Push(mutation.Bind(game.NewContext()))
-				}
-
+				effect := game.EffectActorsActiveOther(game.EffectPriorityPostStagesStats, func(g game.Game, a game.Actor, ctx game.Context) game.Actor {
+					a.Stats[game.Melee] = a.Stats[game.Melee] * 0.75
+					return a
+				})
+				mutation := game.AddModifiers(effect.Bind(ctx))
+				this.Push(mutation.Bind(game.NewContext()))
 				return this.Done()
 			},
 		},
 	})
 
-	effect.Name = "Intimidate"
+	effect.Name = "Aura of Weakness"
 	return effect
 }

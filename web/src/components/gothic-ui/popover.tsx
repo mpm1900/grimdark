@@ -20,7 +20,11 @@ function GothicPopoverContent({
         className={cn(
           'relative isolate z-50 w-72 origin-(--radix-popover-content-transform-origin)',
           'text-popover-foreground shadow-md outline-hidden data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95',
-          '[&>span]:z-0 [&>span]:translate-y-[-5px]',
+          '[&>span]:z-0',
+          'data-[side=top]:[&>span]:mb-1.5',
+          'data-[side=bottom]:[&>span]:mt-1.5',
+          'data-[side=left]:[&>span]:mr-1.5',
+          'data-[side=right]:[&>span]:ml-1.5',
           className
         )}
         {...props}
@@ -45,7 +49,7 @@ function GothicPopoverContent({
         <PopoverPrimitive.Arrow
           height={20}
           width={47}
-          className="block fill-transparent bg-[url('/gothic/PopoverArrow.png')] bg-contain bg-center bg-no-repeat bottom-3"
+          className="block fill-transparent bg-[url('/gothic/PopoverArrow.png')] bg-contain bg-center bg-no-repeat"
         />
       </PopoverPrimitive.Content>
     </PopoverPrimitive.Portal>
