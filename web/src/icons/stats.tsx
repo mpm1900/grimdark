@@ -145,7 +145,7 @@ const SpecialDefense: IconType = ({ className, ...props }) => {
   return <TbShield className={cn('h-full w-full', className)} {...props} />
 }
 
-export const STAT_ICONS: Record<Stat, IconType> = {
+export const STAT_ICONS: Partial<Record<Stat, IconType>> = {
   health: GiHealthNormal,
   melee: GiCrossedSwords,
   ranged: GiSpectreM4,

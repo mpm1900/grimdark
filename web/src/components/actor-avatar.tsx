@@ -13,7 +13,7 @@ function ActorAvatar({ actor }: { actor: Actor }) {
   const position = game.positions.find((p) => p.actor_ID === actor.ID)
   return (
     <div className="relative h-48 w-52">
-      <div className="absolute size-42 left-6 mt-13 rounded-full overflow-hidden bg-gradient-to-b from-emerald-950/0 to-emerald-950">
+      <div className="absolute size-42 left-6 mt-13 rounded-full overflow-hidden bg-linear-to-b from-emerald-950/0 to-emerald-950">
         <div
           className={cn(
             'absolute w-56 h-56 -left-6 top-0 bg-no-repeat bg-cover bg-top'

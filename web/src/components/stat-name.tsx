@@ -59,6 +59,7 @@ function StatIcon({
   ...props
 }: React.ComponentProps<IconType> & { stat: Stat }) {
   const Icon = STAT_ICONS[stat]
+  if (!Icon) return null
   return <Icon className={cn(statVariants({ stat }), className)} {...props} />
 }
 

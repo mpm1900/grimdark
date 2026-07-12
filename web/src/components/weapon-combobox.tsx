@@ -52,7 +52,7 @@ function WeaponCombobox({
                         className={weaponIcon({
                           rarity: 'common',
                           weapon_type: weapon.weapon_type,
-                          className: '!static max-h-5 max-w-5',
+                          className: 'max-h-5 max-w-5',
                         })}
                       />
                     )}

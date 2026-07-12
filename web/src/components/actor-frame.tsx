@@ -47,8 +47,8 @@ function ActorFrame({
   return (
     <div className={cn('relative flex', className)} {...props}>
       <ActorPortrait actor={actor} position={position} />
-      <div className="relative flex-1 flex flex-col -ml-1 mt-[7px] pr-1 bg-[url('/gothic/DialogFlag_stone_shadow.png')] bg-[length:100%_100%] bg-center bg-no-repeat">
-        <div className="h-1 bg-gradient-to-b from-white/40 to-neutral-800/60 border -mr-1 border-black mb-1" />
+      <div className="relative flex-1 flex flex-col -ml-1 mt-2 pr-1 bg-[url('/gothic/DialogFlag_stone_shadow.png')] bg-[length:100%_100%] bg-center bg-no-repeat">
+        <div className="h-1 bg-linear-to-b from-white/40 to-neutral-800/60 border -mr-1 border-black mb-1" />
         <div className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-24 overflow-hidden">
           <div className="absolute left-1/2 h-full w-[calc(100%+5rem)] -translate-x-1/2 opacity-70" />
         </div>
