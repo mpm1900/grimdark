@@ -187,6 +187,17 @@ body {
     background-color: var(--background);
     color: var(--foreground);
   }
+
+  input[data-slot='input']:-webkit-autofill,
+  input[data-slot='input']:-webkit-autofill:hover,
+  input[data-slot='input']:-webkit-autofill:focus,
+  input[data-slot='input']:-webkit-autofill:active {
+    box-shadow: 0 0 0 1000px rgb(41 37 36) inset !important;
+    -webkit-box-shadow: 0 0 0 1000px rgb(41 37 36) inset !important;
+    -webkit-text-fill-color: var(--foreground) !important;
+    caret-color: var(--foreground) !important;
+    transition: background-color 9999s ease-in-out 0s;
+  }
 }
 
 .fading-image {

@@ -2,7 +2,7 @@ service: grimdark-api
 image: snaxmm/grimdark-api
 
 proxy:
-  host: shinobi-showdown.duckdns.org
+  host: snaxgames.app
   app_port: 3005
   path_prefixes:
     - /api
@@ -45,7 +45,7 @@ env:
     POSTGRES_SSLMODE: disable
     PORT: "3005"
     GO_ENV: production
-    ALLOWED_ORIGINS: https://shinobi-showdown.duckdns.org
+    ALLOWED_ORIGINS: https://snaxgames.app
     SESSION_COOKIE_SECURE: "true"
     SESSION_COOKIE_SAMESITE: "lax"
   secret:

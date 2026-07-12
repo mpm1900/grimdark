@@ -11,7 +11,7 @@ builder:
   context: web
   dockerfile: web/Dockerfile
   args:
-    VITE_BACKEND_URL: https://shinobi-showdown.duckdns.org
+    VITE_BACKEND_URL: https://snaxgames.app
 
 servers:
   web:
@@ -19,5 +19,5 @@ servers:
 
 proxy:
   ssl: true
-  host: shinobi-showdown.duckdns.org
+  host: snaxgames.app
   app_port: 3000

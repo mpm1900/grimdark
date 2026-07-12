@@ -18,10 +18,10 @@ export const Route = createFileRoute('/login')({
 
 function Login() {
   return (
-    <div className="flex min-h-svh w-full items-center justify-center p-6 md:p-10">
+    <div className="flex min-h-svh w-full items-start justify-center overflow-y-auto px-4 py-8 sm:px-6 md:p-10 [@media(min-height:760px)]:items-center">
       <div className="w-full max-w-sm space-y-2">
-        <div className="relative text-foreground/60 flex mb-12 items-center justify-center rounded-md z-20">
-          <GiWingedSword className="size-16" />
+        <div className="relative text-foreground/60 flex mb-8 items-center justify-center rounded-md z-20 md:mb-12">
+          <GiWingedSword className="size-12 md:size-16" />
         </div>
 
         <Tabs defaultValue="login" className="flex flex-col gap-6">
