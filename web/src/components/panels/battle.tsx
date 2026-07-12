@@ -31,11 +31,11 @@ function BattlePanel() {
     <div className="h-48 absolute bottom-0 left-0 right-0 flex items-start justify-center z-10">
       {active_actor && <ActorAvatar actor={active_actor} />}
       {active_actor?.is_player && (
-        <GothicCard className="h-full flex flex-row">
+        <GothicCard className="h-full flex flex-row z-10">
           <div className="relative h-full grid grid-cols-1 grid-rows-3 w-13">
             <TinyBadge
               variant="default"
-              className="absolute z-10 px-1 -top-1 left-1/2 -translate-x-1/2 rounded-xs rounded-b-sm font-cinzel border-white/30 text-foreground/60"
+              className="absolute z-10 px-1 -top-1.5 border-t-0 left-1/2 -translate-x-1/2 rounded-xs rounded-b-sm font-cinzel border-white/30 text-foreground/60"
             >
               Items
             </TinyBadge>
@@ -43,30 +43,32 @@ function BattlePanel() {
             <GothicFrame></GothicFrame>
             <GothicFrame></GothicFrame>
           </div>
-          <div className="relative h-full grid grid-cols-1 grid-rows-2 overflow-hidden">
+          <div className="relative">
             <TinyBadge
               variant="default"
-              className="absolute z-20 px-1 -top-1 left-1/2 -translate-x-1/2 rounded-xs rounded-b-sm font-cinzel border-white/30 text-foreground/60"
+              className="absolute z-20 px-1 -top-1.5 border-t-0 left-1/2 -translate-x-1/2 rounded-xs rounded-b-sm font-cinzel border-white/30 text-foreground/60"
             >
               Weapons
             </TinyBadge>
-            {main_weapon ? (
-              <WeaponFrame disabled={false} weapon={main_weapon} />
-            ) : (
-              <GothicFrame></GothicFrame>
-            )}
-            {main_weapon?.hands == 2 ? (
-              <WeaponFrameExt weapon={main_weapon} disabled />
-            ) : secondary_weapon ? (
-              <WeaponFrame disabled={false} weapon={secondary_weapon} />
-            ) : (
-              <GothicFrame></GothicFrame>
-            )}
-            {main_weapon?.hands == 2 && (
-              <div className="pointer-events-none absolute inset-0 grid place-items-center z-20">
-                <HiLink className="rotate-136 size-6 fill-foreground/60" />
-              </div>
-            )}
+            <div className="relative h-full grid grid-cols-1 grid-rows-2 overflow-hidden">
+              {main_weapon ? (
+                <WeaponFrame disabled={false} weapon={main_weapon} />
+              ) : (
+                <GothicFrame></GothicFrame>
+              )}
+              {main_weapon?.hands == 2 ? (
+                <WeaponFrameExt weapon={main_weapon} disabled />
+              ) : secondary_weapon ? (
+                <WeaponFrame disabled={false} weapon={secondary_weapon} />
+              ) : (
+                <GothicFrame></GothicFrame>
+              )}
+              {main_weapon?.hands == 2 && (
+                <div className="pointer-events-none absolute inset-0 grid place-items-center z-20">
+                  <HiLink className="rotate-136 size-6 fill-foreground/60" />
+                </div>
+              )}
+            </div>
           </div>
         </GothicCard>
       )}
@@ -74,7 +76,7 @@ function BattlePanel() {
         <GothicCard className="relative flex-row h-full max-w-1/3 bg-neutral-950 z-10">
           <TinyBadge
             variant="default"
-            className="absolute z-10 px-1 -top-1 left-1/2 -translate-x-1/2 rounded-xs rounded-b-sm font-cinzel border-white/30 text-foreground/60"
+            className="absolute z-10 px-1 -top-1.5 border-t-0 left-1/2 -translate-x-1/2 rounded-xs rounded-b-sm font-cinzel border-white/30 text-foreground/60"
           >
             Actions
           </TinyBadge>
@@ -128,7 +130,7 @@ function BattlePanel() {
       <GothicCard className="h-full min-w-0 max-w-1/4 flex-1 flex bg-neutral-950 p-0">
         <TinyBadge
           variant="default"
-          className="absolute z-10 px-1 -top-1 left-1/2 -translate-x-1/2 rounded-xs rounded-b-sm font-cinzel border-white/30 text-foreground/60"
+          className="absolute z-10 px-1 -top-1.5 border-t-0 left-1/2 -translate-x-1/2 rounded-xs rounded-b-sm font-cinzel border-white/30 text-foreground/60"
         >
           Battle Log
         </TinyBadge>
