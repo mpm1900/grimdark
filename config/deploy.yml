@@ -1,0 +1,23 @@
+service: grimdark
+image: snaxmm/grimdark-web
+
+registry:
+  username: snaxmm
+  password:
+    - KAMAL_REGISTRY_PASSWORD
+
+builder:
+  arch: amd64
+  context: web
+  dockerfile: web/Dockerfile
+  args:
+    VITE_BACKEND_URL: https://shinobi-showdown.duckdns.org
+
+servers:
+  web:
+    - 143.244.147.133
+
+proxy:
+  ssl: true
+  host: shinobi-showdown.duckdns.org
+  app_port: 3000

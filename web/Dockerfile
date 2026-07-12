@@ -22,10 +22,8 @@ FROM oven/bun:latest
 
 WORKDIR /app
 
-# Copy the build output and necessary files
-COPY --from=builder /app/dist ./dist
-COPY --from=builder /app/node_modules ./node_modules
-COPY --from=builder /app/package.json ./package.json
+# Copy the Nitro build output.
+COPY --from=builder /app/.output ./.output
 
 # Expose the port
 EXPOSE 3000
@@ -34,10 +32,7 @@ EXPOSE 3000
 HEALTHCHECK --interval=10s --timeout=5s --start-period=40s --retries=5 \
   CMD bun -e "fetch('http://127.0.0.1:3000/up').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"
 
-# TanStack Start's built server is fetch-only (SSR). srvx serves Vite client assets from
-# dist/client, then forwards to the handler. --dir + --static must be set this way so paths
-# resolve to /app/dist/client (not relative to dist/server/).
 ENV NODE_ENV=production
 ENV HOST=0.0.0.0
 ENV PORT=3000
-CMD ["bun", "node_modules/srvx/bin/srvx.mjs", "--prod", "--host", "0.0.0.0", "--dir", "/app", "--static", "dist/client", "--entry", "dist/server/server.js"]
+CMD ["bun", ".output/server/index.mjs"]

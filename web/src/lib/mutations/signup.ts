@@ -10,6 +10,7 @@ import { createServerFn } from '@tanstack/react-start'
 import z from 'zod'
 
 const requestSchema = z.object({
+  username: z.string(),
   email: z.string(),
   password: z.string(),
   secret: z.string(),

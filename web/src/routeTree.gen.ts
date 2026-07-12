@@ -9,12 +9,18 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as UpRouteImport } from './routes/up'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as AuthedRouteImport } from './routes/_authed'
 import { Route as AuthedIndexRouteImport } from './routes/_authed.index'
 import { Route as AuthedLobbyGameIDRouteImport } from './routes/_authed.lobby.$gameID'
 import { Route as AuthedBattleGameIDRouteImport } from './routes/_authed.battle.$gameID'
 
+const UpRoute = UpRouteImport.update({
+  id: '/up',
+  path: '/up',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
   path: '/login',
@@ -43,11 +49,13 @@ const AuthedBattleGameIDRoute = AuthedBattleGameIDRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof AuthedIndexRoute
   '/login': typeof LoginRoute
+  '/up': typeof UpRoute
   '/battle/$gameID': typeof AuthedBattleGameIDRoute
   '/lobby/$gameID': typeof AuthedLobbyGameIDRoute
 }
 export interface FileRoutesByTo {
   '/login': typeof LoginRoute
+  '/up': typeof UpRoute
   '/': typeof AuthedIndexRoute
   '/battle/$gameID': typeof AuthedBattleGameIDRoute
   '/lobby/$gameID': typeof AuthedLobbyGameIDRoute
@@ -56,19 +64,21 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/_authed': typeof AuthedRouteWithChildren
   '/login': typeof LoginRoute
+  '/up': typeof UpRoute
   '/_authed/': typeof AuthedIndexRoute
   '/_authed/battle/$gameID': typeof AuthedBattleGameIDRoute
   '/_authed/lobby/$gameID': typeof AuthedLobbyGameIDRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/login' | '/battle/$gameID' | '/lobby/$gameID'
+  fullPaths: '/' | '/login' | '/up' | '/battle/$gameID' | '/lobby/$gameID'
   fileRoutesByTo: FileRoutesByTo
-  to: '/login' | '/' | '/battle/$gameID' | '/lobby/$gameID'
+  to: '/login' | '/up' | '/' | '/battle/$gameID' | '/lobby/$gameID'
   id:
     | '__root__'
     | '/_authed'
     | '/login'
+    | '/up'
     | '/_authed/'
     | '/_authed/battle/$gameID'
     | '/_authed/lobby/$gameID'
@@ -77,10 +87,18 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   AuthedRoute: typeof AuthedRouteWithChildren
   LoginRoute: typeof LoginRoute
+  UpRoute: typeof UpRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/up': {
+      id: '/up'
+      path: '/up'
+      fullPath: '/up'
+      preLoaderRoute: typeof UpRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/login': {
       id: '/login'
       path: '/login'
@@ -137,6 +155,7 @@ const AuthedRouteWithChildren =
 const rootRouteChildren: RootRouteChildren = {
   AuthedRoute: AuthedRouteWithChildren,
   LoginRoute: LoginRoute,
+  UpRoute: UpRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
