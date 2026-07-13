@@ -199,7 +199,7 @@ func EffectActorsActive(priority int, updater Updater[Actor]) Effect {
 func EffectActorsActiveOther(priority int, updater Updater[Actor]) Effect {
 	return EffectActorsWhere(
 		priority,
-		CombineFilters(ActiveActors, AliveActors, NotSourceActor),
+		OtherActors,
 		updater,
 	)
 }

@@ -77,6 +77,9 @@ func SourceActor(g Game, actor Actor, context Context) bool {
 func NotSourceActor(g Game, actor Actor, context Context) bool {
 	return actor.ID != context.SourceID
 }
+func OtherActors(g Game, actor Actor, context Context) bool {
+	return CombineFilters(ActiveActors, AliveActors, NotSourceActor)(g, actor, context)
+}
 func TargetActors(g Game, actor Actor, context Context) bool {
 	is_actor := slices.Contains(context.ActorIDs, actor.ID)
 	is_pos := actor.IsActive() && slices.Contains(context.PositionIDs, actor.PositionID)

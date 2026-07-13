@@ -159,6 +159,47 @@ func DamageSideEffects(g *Game, context Context, result DamageResult, this *Acti
 	}
 }
 
+// effect helpers
+func EffectGainSourceOnSuccess(g *Game, effect Effect, ctx Context) {
+	source, ok := g.GetSource(ctx)
+	if !ok {
+		return
+	}
+
+	g.PushLogMeta(NewLog(
+		"$source$ gained $effect$.",
+		EffectTermsSource(source, effect),
+	).Bind(ctx))
+}
+func EffectGainTargetsOnSuccess(g *Game, effect Effect, ctx Context) {
+	targets := g.GetTargets(ctx)
+	for _, target := range targets {
+		g.PushLogMeta(NewLog(
+			"$target$ gained $effect$.",
+			EffectTermsTarget(target, effect),
+		).Bind(ctx))
+	}
+}
+func EffectGainWhereOnSuccess(where Filter[Actor]) func(g *Game, e Effect, ctx Context) {
+	return func(g *Game, e Effect, ctx Context) {
+		source, ok := g.GetSource(ctx)
+		if !ok {
+			return
+		}
+
+		targets := g.FindActors(where, ctx)
+		for _, target := range targets {
+			log_ctx := MakeContextFor(source, target)
+			log_ctx.EffectID = e.ID
+			g.PushLogMeta(NewLog(
+				"$target$ gained $effect$.",
+				EffectTermsTarget(target, e),
+			).Bind(log_ctx))
+		}
+	}
+
+}
+
 // context mappers
 func CtxToAllActiveTargets() func(g Game, ctx Context, this ActionContext) Context {
 	return func(g Game, ctx Context, this ActionContext) Context {

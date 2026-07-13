@@ -17,7 +17,7 @@ func stunTargets(duration int) game.Effect {
 	)
 	effect.Name = "Stunned"
 	effect.Duration = game.P(duration)
-	effect.CheckSuccess = EffectGainTargetsOnSuccess
+	effect.CheckSuccess = game.EffectGainTargetsOnSuccess
 
 	return effect
 }

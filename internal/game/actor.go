@@ -375,17 +375,28 @@ func (a Actor) GetRemainingHealth() float64 {
 	health := a.Stats[Health]
 	return health - a.Wounds
 }
-func (a Actor) GetEffects() []Effect {
-	effects := slices.Clone(a.Class.Effects)
+func (a Actor) getWeaponEffects() []Effect {
+	effects := map[uuid.UUID]Effect{}
 	if a.WeaponL != nil {
-		effects = append(effects, a.WeaponL.Effects...)
+		for _, e := range a.WeaponL.Effects {
+			effects[e.ID] = e
+		}
 	}
 	if a.WeaponR != nil {
-		effects = append(effects, a.WeaponR.Effects...)
+		for _, e := range a.WeaponR.Effects {
+			effects[e.ID] = e
+		}
 	}
+
+	return slices.Collect(maps.Values(effects))
+}
+func (a Actor) GetEffects() []Effect {
+	effects := slices.Clone(a.Class.Effects)
+	effects = append(effects, a.getWeaponEffects()...)
 	if a.Item != nil {
 		effects = append(effects, a.Item.Effects...)
 	}
+
 	return effects
 }
 func (a Actor) GetModifiers() []Modifier {

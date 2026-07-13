@@ -2,6 +2,8 @@ package effects
 
 import (
 	"grimdark/internal/game"
+
+	"github.com/google/uuid"
 )
 
 var AuraOfWeakness = auraOfWeakness()
@@ -18,23 +20,7 @@ func auraOfWeakness() game.Effect {
 				Name: "Aura of Weakness",
 			},
 			Resolve: func(g *game.Game, ctx game.Context, this game.ActionContext) []game.Transaction {
-				effect := game.EffectActorsActiveOther(game.EffectPriorityPostStagesStats, func(g game.Game, a game.Actor, ctx game.Context) game.Actor {
-					a.Stats[game.Melee] = a.Stats[game.Melee] * 0.75
-					return a
-				})
-				effect.Name = "Weakened"
-				effect.CheckSuccess = func(g *game.Game, e game.Effect, ctx game.Context) {
-					targets := g.FindActors(game.CombineFilters(game.ActiveActors, game.NotSourceActor), ctx)
-					for _, target := range targets {
-						log_ctx := game.MakeContextFor(this.Source, target)
-						log_ctx.EffectID = effect.ID
-						g.PushLogMeta(game.NewLog(
-							"$target$ gained $effect$.",
-							game.EffectTermsTarget(target, effect),
-						).Bind(log_ctx))
-					}
-				}
-				mutation := game.AddModifiers(effect.Bind(ctx))
+				mutation := game.AddModifiers(weakened().Bind(ctx))
 				this.Push(mutation.Bind(ctx))
 				return this.Done()
 			},
@@ -42,5 +28,19 @@ func auraOfWeakness() game.Effect {
 	})
 
 	effect.Name = "Aura of Weakness"
+	return effect
+}
+
+func meleeDown(g game.Game, a game.Actor, ctx game.Context) game.Actor {
+	a.Stats[game.Melee] = a.Stats[game.Melee] * 0.75
+	return a
+}
+func weakened() game.Effect {
+	effect := game.EffectActorsActiveOther(game.EffectPriorityPostStagesStats, meleeDown)
+	effect.ID = uuid.MustParse("019f58b9-4edd-7c60-bccd-08ff88120a5b")
+	effect.Name = "Weakened"
+	effect.CheckSuccess = game.EffectGainWhereOnSuccess(
+		game.OtherActors,
+	)
 	return effect
 }

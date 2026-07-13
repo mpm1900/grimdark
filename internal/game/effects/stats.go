@@ -7,27 +7,6 @@ import (
 	"github.com/google/uuid"
 )
 
-func EffectGainSourceOnSuccess(g *game.Game, this game.Effect, ctx game.Context) {
-	source, ok := g.GetSource(ctx)
-	if !ok {
-		return
-	}
-
-	g.PushLogMeta(game.NewLog(
-		"$source$ gained $effect$.",
-		game.EffectTermsSource(source, this),
-	).Bind(ctx))
-}
-func EffectGainTargetsOnSuccess(g *game.Game, this game.Effect, ctx game.Context) {
-	targets := g.GetTargets(ctx)
-	for _, target := range targets {
-		g.PushLogMeta(game.NewLog(
-			"$target$ gained $effect$.",
-			game.EffectTermsTarget(target, this),
-		).Bind(ctx))
-	}
-}
-
 func StatChangeActor(stat game.Stat, amount int) game.Updater[game.Actor] {
 	return func(g game.Game, a game.Actor, ctx game.Context) game.Actor {
 		a.Stages[stat] += amount
@@ -59,7 +38,7 @@ var StatDownIDs = map[game.Stat]uuid.UUID{
 func StatUpSource(stat game.Stat, amount int) game.Effect {
 	effect := game.EffectSource(game.EffectPriorityStages, StatChangeActor(stat, amount))
 	effect.Name = fmt.Sprintf("%s up", stat)
-	effect.CheckSuccess = EffectGainSourceOnSuccess
+	effect.CheckSuccess = game.EffectGainSourceOnSuccess
 	effect.ID = StatUpIDs[stat]
 
 	return effect
@@ -67,7 +46,7 @@ func StatUpSource(stat game.Stat, amount int) game.Effect {
 func StatDownSource(stat game.Stat, amount int) game.Effect {
 	effect := game.EffectSource(game.EffectPriorityStages, StatChangeActor(stat, -amount))
 	effect.Name = fmt.Sprintf("%s down", stat)
-	effect.CheckSuccess = EffectGainSourceOnSuccess
+	effect.CheckSuccess = game.EffectGainSourceOnSuccess
 	effect.ID = StatDownIDs[stat]
 
 	return effect
@@ -75,7 +54,7 @@ func StatDownSource(stat game.Stat, amount int) game.Effect {
 func StatUpTargets(stat game.Stat, amount int) game.Effect {
 	effect := game.EffectTargets(game.EffectPriorityStages, StatChangeActor(stat, amount))
 	effect.Name = fmt.Sprintf("%s up", stat)
-	effect.CheckSuccess = EffectGainTargetsOnSuccess
+	effect.CheckSuccess = game.EffectGainTargetsOnSuccess
 	effect.ID = StatUpIDs[stat]
 
 	return effect
@@ -83,7 +62,7 @@ func StatUpTargets(stat game.Stat, amount int) game.Effect {
 func StatDownTargets(stat game.Stat, amount int) game.Effect {
 	effect := game.EffectTargets(game.EffectPriorityStages, StatChangeActor(stat, -amount))
 	effect.Name = fmt.Sprintf("%s down", stat)
-	effect.CheckSuccess = EffectGainTargetsOnSuccess
+	effect.CheckSuccess = game.EffectGainTargetsOnSuccess
 	effect.ID = StatDownIDs[stat]
 
 	return effect
