@@ -1,9 +1,5 @@
 import { createFileRoute } from '@tanstack/react-router'
 
 export const Route = createFileRoute('/up')({
-  component: Up,
+  component: () => 'ok',
 })
-
-function Up() {
-  return 'ok'
-}

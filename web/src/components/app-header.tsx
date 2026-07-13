@@ -1,5 +1,4 @@
 import { NULL_CONTEXT } from '#/lib/game/context'
-import { useLogout } from '#/lib/mutations/logout'
 import { useUser } from '#/lib/queries/auth'
 import { lobbyStore } from '#/lib/stores/clients'
 import { gameStore } from '#/lib/stores/game'
@@ -9,11 +8,12 @@ import { useSelector } from '@tanstack/react-store'
 import { GiWingedSword } from 'react-icons/gi'
 import { Button } from './ui/button'
 import { GothicFramedButton } from './gothic-ui/button'
-import { Loader } from 'lucide-react'
+import { Loader, User } from 'lucide-react'
+import { AuthMenu } from './auth-menu'
 
 function AppHeader() {
   const { data: user } = useUser()
-  const logout = useLogout()
+
   const client = useSelector(lobbyStore, (c) => c.client)
   const game_status = useSelector(gameStore, (g) => g.status)
   const ready = useSelector(gameStore, (g) => g.ready)
@@ -22,9 +22,11 @@ function AppHeader() {
   return (
     <header className="fixed flex justify-between p-1 z-30 w-full">
       <div className="flex items-center gap-2">
-        <Link to="/" className="pl-2">
-          <GiWingedSword />
-        </Link>
+        <Button variant="ghost" size="icon" asChild>
+          <Link to="/">
+            <GiWingedSword />
+          </Link>
+        </Button>
 
         {client && (ready || turn > 0) && (
           <div className="flex gap-2">
@@ -58,15 +60,11 @@ function AppHeader() {
       <div className="flex items-center gap-4">
         <div className="font-mono text-sm flex items-center">
           {user && (
-            <div className="flex items-center gap-2">
-              <Button
-                variant="ghost"
-                onClick={() => logout.mutate()}
-                title="Logout"
-              >
-                <span className="hidden lg:inline">{user.email}</span>
+            <AuthMenu asChild>
+              <Button variant="ghost" size="icon">
+                <User />
               </Button>
-            </div>
+            </AuthMenu>
           )}
         </div>
       </div>

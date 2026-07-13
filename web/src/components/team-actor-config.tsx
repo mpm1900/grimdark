@@ -27,7 +27,6 @@ function WeaponsConfig({
   )
   const remaining_hands =
     actor_class.hands - (found_l?.hands ?? 0) - (found_r?.hands ?? 0)
-  console.log('rem', remaining_hands, actor_class)
   return (
     <div className="flex flex-col gap-1">
       <Marker variant="separator">
