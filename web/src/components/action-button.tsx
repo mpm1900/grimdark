@@ -27,15 +27,25 @@ import {
   TbSwitchVertical,
 } from 'react-icons/tb'
 import { DNumber } from './dnumber'
+import { sendContextMessage } from '#/lib/stores/socket'
+import { lobbyStore } from '#/lib/stores/clients'
 
 function ActionButton({
   action,
   actor,
   disabled,
+  onClick,
   ...props
 }: React.ComponentProps<typeof Button> & { action: Action; actor: Actor }) {
+  const client = useSelector(lobbyStore, (s) => s.client)
   const turn = useSelector(gameStore, (g) => g.turn)
   const status = useSelector(gameStore, (g) => g.status)
+  const actor_command = useSelector(gameStore, (g) =>
+    g.commands.find(
+      (c) =>
+        c.context.source_ID === actor?.ID && c.context.action_ID === action.ID
+    )
+  )
   const targets_options = getTargetsQuery(
     actor?.ID,
     actor?.player_ID,
@@ -45,18 +55,19 @@ function ActionButton({
   targets_options.enabled = !disabled
   const targets_query = useQuery(targets_options)
   const targets_context = targets_query.data ?? NULL_CONTEXT
+  const is_disabled =
+    disabled || action.is_disabled || !actor.is_active || status === 'running'
 
   return (
     <GothicFramedButton
       {...props}
+      onClick={is_disabled ? undefined : onClick}
       variant="basic"
-      className="relative h-auto w-full min-w-0 justify-start overflow-hidden border-6"
-      disabled={
-        disabled ||
-        action.is_disabled ||
-        !actor.is_active ||
-        status === 'running'
-      }
+      className={cn(
+        'relative h-auto w-full min-w-0 justify-start overflow-hidden border-6',
+        is_disabled && 'disabled'
+      )}
+      aria-disabled={is_disabled}
       onMouseEnter={() => {
         setRangePositions(targets_context.position_IDs)
       }}
@@ -90,6 +101,20 @@ function ActionButton({
           {action.config.name}
         </ItemTitle>
         <ItemDescription className="block min-w-0 max-w-full overflow-hidden text-ellipsis whitespace-nowrap text-left font-serif text-foreground/70">
+          {!!actor_command && status === 'idle' && (
+            <span
+              className="hover:underline isolate p-0 min-h-9 cursor-pointer"
+              onClick={() => {
+                sendContextMessage({
+                  type: 'cancel-action',
+                  client_ID: client?.ID!,
+                  context: actor_command.context,
+                })
+              }}
+            >
+              [Cancel]
+            </span>
+          )}{' '}
           {!action.config.power && (
             <span className="block truncate">
               {action.is_disabled && (
@@ -151,7 +176,7 @@ function ActionButton({
             <DNumber
               value={actor.stats['accuracy']}
               r={100}
-              className={cn('text-xs font-semibold')}
+              className={cn('text-xs font-semibold text-foreground/80')}
             >
               {Math.min(action.config.accuracy * 100, 100).toFixed(0)}%
             </DNumber>
@@ -183,10 +208,16 @@ function SystemActionButton({
       className="flex-1 w-12 p-0 text-stone-400"
       {...props}
     >
-      {action.tags.includes('swap') && <TbSwitchHorizontal className="size-6" />}
-      {action.tags.includes('retreat') && <TbSwitchVertical className="size-6" />}
+      {action.tags.includes('swap') && (
+        <TbSwitchHorizontal className="size-6" />
+      )}
+      {action.tags.includes('retreat') && (
+        <TbSwitchVertical className="size-6" />
+      )}
       {action.tags.includes('back') && <TbArrowBigLeft className="size-6" />}
-      {action.tags.includes('forward') && <TbArrowBigRight className="size-6" />}
+      {action.tags.includes('forward') && (
+        <TbArrowBigRight className="size-6" />
+      )}
       {action.tags.includes('front') && (
         <TbArrowBigRightLines className="size-6" />
       )}

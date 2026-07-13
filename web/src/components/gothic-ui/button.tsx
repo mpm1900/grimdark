@@ -19,6 +19,7 @@ const gothicButtonVariants = cva(
           "[border-image-source:url('/gothic/ButtonFramedGray_Normal.png')]",
           "active:[border-image-source:url('/gothic/ButtonFramedGray_Pressed.png')] active:text-foreground/60",
           "disabled:[border-image-source:url('/gothic/ButtonFramedGray_Disabled.png')] disabled:pointer-events-none",
+          "[&.disabled]:[border-image-source:url('/gothic/ButtonFramedGray_Disabled.png')]",
           "hover:[border-image-source:url('/gothic/ButtonFramedGray_Hovered.png')] hover:text-foreground"
         ),
         red: cn(
