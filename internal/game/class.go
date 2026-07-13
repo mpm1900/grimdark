@@ -19,6 +19,7 @@ type Class struct {
 	Affinities map[Affinity]struct{}
 	Effects    []Effect
 	Faction    ActorFaction
+	Hands      int
 	Name       string
 	Options    ClassOptions
 	Race       ActorRace
@@ -36,6 +37,7 @@ type classJSON struct {
 	Affinities []Affinity       `json:"affinities"`
 	Effects    []Effect         `json:"effects"`
 	Faction    ActorFaction     `json:"faction"`
+	Hands      int              `json:"hands"`
 	Name       string           `json:"name"`
 	Options    classOptionsJSON `json:"options"`
 	Race       ActorRace        `json:"race"`
@@ -49,6 +51,7 @@ func NewClass() Class {
 		Name:       "",
 		Race:       RaceHuman,
 		Faction:    FactionImperium,
+		Hands:      2,
 		Actions:    []Action{},
 		Affinities: map[Affinity]struct{}{},
 		Stats: map[Stat]float64{
@@ -83,6 +86,7 @@ func (c Class) Clone() Class {
 		Affinities: maps.Clone(c.Affinities),
 		Effects:    slices.Clone(c.Effects),
 		Faction:    c.Faction,
+		Hands:      c.Hands,
 		Options:    c.Options.Clone(),
 		Name:       c.Name,
 		Race:       c.Race,
@@ -93,17 +97,9 @@ func (c Class) Clone() Class {
 
 // omit options to save on data
 func (c Class) CloneForActor() Class {
-	return Class{
-		ID:         c.ID,
-		Actions:    slices.Clone(c.Actions),
-		Affinities: maps.Clone(c.Affinities),
-		Effects:    slices.Clone(c.Effects),
-		Faction:    c.Faction,
-		Name:       c.Name,
-		Race:       c.Race,
-		SpriteURL:  c.SpriteURL,
-		Stats:      maps.Clone(c.Stats),
-	}
+	clone := c.Clone()
+	clone.Options = ClassOptions{}
+	return clone
 }
 
 func (c Class) ToJSON() classJSON {
@@ -121,6 +117,7 @@ func (c Class) ToJSON() classJSON {
 		Affinities: slices.Collect(maps.Keys(c.Affinities)),
 		Effects:    c.Effects,
 		Faction:    c.Faction,
+		Hands:      c.Hands,
 		Name:       c.Name,
 		Options: classOptionsJSON{
 			Weapons: weapons,

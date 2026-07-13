@@ -17,12 +17,14 @@ import { WeaponDetails, weaponIcon } from './weapon-details'
 import { WEAPON_ICONS } from '#/icons/weapons'
 
 function WeaponCombobox({
+  remaining_hands,
   disabled,
   options,
   value,
   other,
   onValueChange,
 }: {
+  remaining_hands: number
   disabled?: boolean
   options: Array<Weapon>
   value: ID | null
@@ -82,7 +84,11 @@ function WeaponCombobox({
               <HoverCardTrigger asChild>
                 <ComboboxItem
                   value={weapon.ID}
-                  disabled={weapon.hands > 1 && !!other}
+                  disabled={
+                    weapon.hands > remaining_hands &&
+                    !!other &&
+                    weapon.ID !== value
+                  }
                 >
                   {weapon.name}
                 </ComboboxItem>

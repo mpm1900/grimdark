@@ -9,6 +9,7 @@ export type ActorClass = {
   affinities: Affinity[]
   effects: Effect[]
   faction: string
+  hands: number
   name: string
   options: {
     weapons: Weapon[]

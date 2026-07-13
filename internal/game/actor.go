@@ -75,7 +75,7 @@ type Actor struct {
 	IsHidden    bool // cannot be targeted by single-target actions (unimplemented)
 	IsInsulated bool // is immune from the secondary effects of attacking attacks (ie through AddResultEffects())
 	IsProtected bool // protected from actions that check accuracy
-	IsStunned   bool // staggered + and cannot queue commands (may not be needed)
+	IsStunned   bool // cannot act and cannot queue commands (may not be needed)
 
 	Meta ActorMeta
 }

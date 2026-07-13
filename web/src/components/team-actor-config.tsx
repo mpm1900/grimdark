@@ -7,6 +7,63 @@ import { useQuery } from '@tanstack/react-query'
 import { actorsQuery } from '#/lib/queries/get-actors'
 import { WeaponCombobox } from './weapon-combobox'
 import { GothicFrame } from './gothic-ui/frame'
+import type { ActorClass } from '#/lib/game/actor-class'
+import type { ActorConfig } from '#/lib/game/team'
+
+function WeaponsConfig({
+  actor_class,
+  value,
+  onValueChange,
+}: {
+  actor_class: ActorClass
+  value: ActorConfig
+  onValueChange: (value: ActorConfig) => void
+}) {
+  const found_l = actor_class.options.weapons.find(
+    (w) => w.ID === value.weapon_l
+  )
+  const found_r = actor_class.options.weapons.find(
+    (w) => w.ID === value.weapon_r
+  )
+  const remaining_hands =
+    actor_class.hands - (found_l?.hands ?? 0) - (found_r?.hands ?? 0)
+  console.log('rem', remaining_hands, actor_class)
+  return (
+    <div className="flex flex-col gap-1">
+      <Marker variant="separator">
+        <MarkerContent>Weapons</MarkerContent>
+      </Marker>
+      <div className="grid grid-cols-1">
+        <WeaponCombobox
+          disabled={remaining_hands <= 0 && !value.weapon_r}
+          options={actor_class.options.weapons}
+          value={value.weapon_r}
+          other={value.weapon_l}
+          remaining_hands={remaining_hands}
+          onValueChange={(w) => {
+            onValueChange({
+              ...value,
+              weapon_r: w,
+            })
+          }}
+        />
+        <WeaponCombobox
+          disabled={remaining_hands <= 0 && !value.weapon_l}
+          options={actor_class.options.weapons}
+          value={value.weapon_l}
+          other={value.weapon_r}
+          remaining_hands={remaining_hands}
+          onValueChange={(w) => {
+            onValueChange({
+              ...value,
+              weapon_l: w,
+            })
+          }}
+        />
+      </div>
+    </div>
+  )
+}
 
 function TeamActorConfig() {
   const team = useSelector(teamStore, (s) => s)
@@ -32,45 +89,16 @@ function TeamActorConfig() {
           />
         </div>
         {active_class && (
-          <div className="flex flex-col gap-1">
-            <Marker variant="separator">
-              <MarkerContent>Weapons</MarkerContent>
-            </Marker>
-            <div className="grid grid-cols-1">
-              <WeaponCombobox
-                disabled={
-                  active_class.options.weapons.find(
-                    (w) => w.ID === active_actor.weapon_l
-                  )?.hands == 2
-                }
-                options={active_class.options.weapons}
-                value={active_actor.weapon_r}
-                other={active_actor.weapon_l}
-                onValueChange={(w) => {
-                  updateActor(team.active_actor, (old) => ({
-                    ...old,
-                    weapon_r: w,
-                  }))
-                }}
-              />
-              <WeaponCombobox
-                disabled={
-                  active_class.options.weapons.find(
-                    (w) => w.ID === active_actor.weapon_r
-                  )?.hands == 2
-                }
-                options={active_class.options.weapons}
-                value={active_actor.weapon_l}
-                other={active_actor.weapon_r}
-                onValueChange={(w) => {
-                  updateActor(team.active_actor, (old) => ({
-                    ...old,
-                    weapon_l: w,
-                  }))
-                }}
-              />
-            </div>
-          </div>
+          <WeaponsConfig
+            actor_class={active_class}
+            value={active_actor}
+            onValueChange={(config) => {
+              updateActor(team.active_actor, (old) => ({
+                ...old,
+                ...config,
+              }))
+            }}
+          />
         )}
         {active_class && (
           <div className="flex flex-col gap-1">
