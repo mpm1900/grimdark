@@ -17,30 +17,30 @@ const (
 
 type Weapon struct {
 	Item
-	Actions    []Action
-	AuxStats   map[Stat]float64
-	Hands      int
-	WeaponType WeaponType
+	Actions     []Action
+	OffsetStats map[Stat]float64
+	Hands       int
+	WeaponType  WeaponType
 }
 
 type weaponJSON struct {
 	ID          uuid.UUID        `json:"ID"`
 	Actions     []actionJSON     `json:"actions"`
-	AuxStats    map[Stat]float64 `json:"aux_stats"`
 	Description string           `json:"description"`
 	Effects     []Effect         `json:"effects"`
 	Hands       int              `json:"hands"`
 	Name        string           `json:"name"`
+	OffsetStats map[Stat]float64 `json:"offset_stats"`
 	WeaponType  WeaponType       `json:"weapon_type"`
 }
 
 func (w Weapon) Clone() Weapon {
 	return Weapon{
-		Item:       w.Item.Clone(),
-		Actions:    slices.Clone(w.Actions),
-		AuxStats:   maps.Clone(w.AuxStats),
-		Hands:      w.Hands,
-		WeaponType: w.WeaponType,
+		Item:        w.Item.Clone(),
+		Actions:     slices.Clone(w.Actions),
+		OffsetStats: maps.Clone(w.OffsetStats),
+		Hands:       w.Hands,
+		WeaponType:  w.WeaponType,
 	}
 }
 
@@ -53,7 +53,7 @@ func (w Weapon) ToJSON(g Game, source Actor) weaponJSON {
 	return weaponJSON{
 		ID:          w.ID,
 		Actions:     actions,
-		AuxStats:    w.AuxStats,
+		OffsetStats: w.OffsetStats,
 		Description: w.Description,
 		Effects:     w.Effects,
 		Hands:       w.Hands,
@@ -71,7 +71,7 @@ func (w Weapon) ToJSONStatic() weaponJSON {
 	return weaponJSON{
 		ID:          w.ID,
 		Actions:     actions,
-		AuxStats:    w.AuxStats,
+		OffsetStats: w.OffsetStats,
 		Description: w.Description,
 		Effects:     w.Effects,
 		Hands:       w.Hands,

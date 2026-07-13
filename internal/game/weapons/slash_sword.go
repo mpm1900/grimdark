@@ -15,7 +15,7 @@ var SlashSword = game.Weapon{
 		Effects:     []game.Effect{},
 	},
 	Actions: []game.Action{actions.Slash, actions.Blast, actions.SwordsDance},
-	AuxStats: map[game.Stat]float64{
+	OffsetStats: map[game.Stat]float64{
 		game.Melee: 20,
 	},
 	Hands:      1,

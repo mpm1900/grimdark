@@ -16,7 +16,7 @@ var Pistol = game.Weapon{
 		Effects:     []game.Effect{effects.AuraOfWeakness},
 	},
 	Actions: []game.Action{actions.Slash, actions.Blast, actions.SwordsDance},
-	AuxStats: map[game.Stat]float64{
+	OffsetStats: map[game.Stat]float64{
 		game.Ranged: 20,
 	},
 	Hands:      1,

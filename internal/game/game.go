@@ -377,8 +377,8 @@ func (g *Game) SortCommands() {
 				return -1
 			}
 
-			a_state := a_source.ActionsState[a.Payload.ID]
-			b_state := b_source.ActionsState[b.Payload.ID]
+			a_state := a_source.ActionStates[a.Payload.ID]
+			b_state := b_source.ActionStates[b.Payload.ID]
 			a_priority := a.Priority + a_state.PriorityBonus
 			b_priority := b.Priority + b_state.PriorityBonus
 			by_priority := cmp.Compare(b_priority, a_priority)
@@ -779,7 +779,7 @@ func (g *Game) NextCommand() {
 		return
 	}
 
-	state, ok := source.ActionsState[cmd.Payload.ID]
+	state, ok := source.ActionStates[cmd.Payload.ID]
 	if !ok {
 		g.SetCooldown(cmd, ActionState{})
 		return

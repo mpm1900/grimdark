@@ -9,7 +9,7 @@ import (
 
 var Slash = game.Action{
 	ID:   uuid.MustParse("019f0aec-8b34-72cc-bbcc-36350e9fa6fb"),
-	Tags: []game.ActionTag{game.ATActor, game.ATWeapon},
+	Tags: []game.ActionTag{game.ATActor, game.ATWeapon, game.ATMovement},
 	Config: game.ActionConfig{
 		Name:         "Slash",
 		Description:  "Slashes target and possibly applies Speed Down.",
@@ -39,9 +39,9 @@ var Slash = game.Action{
 				effects.StaggerTargets,
 			)(g, context, this, result)
 
-			stun_ctx := context.CloneWithTarget(this.Source)
+			stun_ctx := game.MakeModifierContext(this.Source, this.Source)
 			this.Push(game.AddModifiers(effects.StunTargets.Bind(stun_ctx)).Bind(stun_ctx))
-			this.Push(game.PushSourceForwards().Bind(context))
+			this.Push(game.PushSourceBackwards().Bind(context))
 		},
 	}),
 	ValidateContext:  game.ContextTargetLength(1),

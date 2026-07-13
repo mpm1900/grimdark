@@ -89,7 +89,7 @@ function ActorFrameSlim({
   const status = useSelector(gameStore, (g) => g.status)
   return (
     <div className={cn('relative mt-4', className)} {...props}>
-      <div className="flex flex-row justify-between items-end mb-1 min-w-0">
+      <div className="flex flex-row justify-between items-end mb-1 gap-1 min-w-0">
         <Popover>
           <PopoverTrigger
             className="flex min-w-0 flex-1 items-end gap-1 cursor-pointer -mr-1"

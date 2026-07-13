@@ -56,10 +56,11 @@ type Actor struct {
 	WeaponL *Weapon
 	WeaponR *Weapon
 
-	ActionsState       map[uuid.UUID]ActionState
+	ActionStates       map[uuid.UUID]ActionState
 	AffinityDamage     map[Affinity]int
 	AffinityResistance map[Affinity]int
 	AffinityImmunities map[Affinity]float64
+	effectStates       map[uuid.UUID]EffectState
 	OffsetStats        map[Stat]float64
 	Stages             map[Stat]int
 	Stats              map[Stat]float64
@@ -71,7 +72,7 @@ type Actor struct {
 
 	IsAlive     bool
 	IsBulwark   bool // stops collateral penetration
-	IsHidden    bool // cannot be targeted by single-target actions
+	IsHidden    bool // cannot be targeted by single-target actions (unimplemented)
 	IsInsulated bool // is immune from the secondary effects of attacking attacks (ie through AddResultEffects())
 	IsProtected bool // protected from actions that check accuracy
 	IsStunned   bool // staggered + and cannot queue commands (may not be needed)
@@ -163,7 +164,8 @@ func NewActor(class Class, config ActorConfig) Actor {
 		IsProtected: false,
 		IsStunned:   false,
 
-		ActionsState: map[uuid.UUID]ActionState{},
+		ActionStates: map[uuid.UUID]ActionState{},
+		effectStates: map[uuid.UUID]EffectState{},
 
 		Meta: ActorMeta{
 			ActiveTurns:      0,
@@ -216,15 +218,16 @@ func (a Actor) Clone() Actor {
 		IsProtected: a.IsProtected,
 		IsStunned:   a.IsStunned,
 
-		ActionsState: maps.Clone(a.ActionsState),
+		ActionStates: maps.Clone(a.ActionStates),
+		effectStates: maps.Clone(a.effectStates),
 
 		Meta: a.Meta,
 	}
 }
 
 // mappers
-func (a *Actor) mapBaseStat(stat Stat, stats map[Stat]float64, aux float64) float64 {
-	base := stats[stat]*2 + aux
+func (a *Actor) mapBaseStat(stat Stat, stats map[Stat]float64, offset float64) float64 {
+	base := stats[stat]*2 + offset
 	ratio := float64(a.Level) / 100
 	result := (base*ratio + 5)
 	if stat == Health {
@@ -233,24 +236,24 @@ func (a *Actor) mapBaseStat(stat Stat, stats map[Stat]float64, aux float64) floa
 	return result
 }
 func (a *Actor) getStatOffset(stat Stat) float64 {
-	aux, ok := a.OffsetStats[stat]
+	offset, ok := a.OffsetStats[stat]
 	if !ok {
-		aux = 0
+		offset = 0
 	}
 	if a.WeaponL != nil {
-		weapon_aux, ok := a.WeaponL.AuxStats[stat]
+		weapon_offset, ok := a.WeaponL.OffsetStats[stat]
 		if ok {
-			aux += weapon_aux
+			offset += weapon_offset
 		}
 	}
 	if a.WeaponR != nil {
-		weapon_aux, ok := a.WeaponR.AuxStats[stat]
+		weapon_offset, ok := a.WeaponR.OffsetStats[stat]
 		if ok {
-			aux += weapon_aux
+			offset += weapon_offset
 		}
 	}
 
-	return aux
+	return offset
 }
 func (a *Actor) mapBaseStats() {
 	a.UnmodifiedStats = maps.Clone(a.Stats)
@@ -291,11 +294,11 @@ func (a *Actor) ApplyDamage(damage float64, resolved Actor) {
 	a.IsAlive = resolved.Stats[Health] > a.Wounds
 }
 func (a *Actor) UpdateActionState(action_id uuid.UUID, updater func(ActionState) ActionState) {
-	state, ok := a.ActionsState[action_id]
+	state, ok := a.ActionStates[action_id]
 	if !ok {
-		a.ActionsState[action_id] = updater(ActionState{})
+		a.ActionStates[action_id] = updater(ActionState{})
 	} else {
-		a.ActionsState[action_id] = updater(state)
+		a.ActionStates[action_id] = updater(state)
 	}
 }
 func (a *Actor) SetActionCooldown(action_id uuid.UUID, cooldown int) {
@@ -313,7 +316,7 @@ func (a *Actor) NextTurn() {
 		a.Meta.InactiveTurns++
 	}
 
-	for aid, state := range a.ActionsState {
+	for aid, state := range a.ActionStates {
 		if state.Cooldown > 0 {
 			a.UpdateActionState(aid, func(s ActionState) ActionState {
 				s.Cooldown--
@@ -375,6 +378,15 @@ func (a Actor) GetRemainingHealth() float64 {
 	health := a.Stats[Health]
 	return health - a.Wounds
 }
+func (a Actor) mapEffects(effects []Effect) []Effect {
+	for i, e := range effects {
+		state, ok := a.effectStates[e.ID]
+		if ok {
+			effects[i].ApplyState(state)
+		}
+	}
+	return effects
+}
 func (a Actor) getWeaponEffects() []Effect {
 	effects := map[uuid.UUID]Effect{}
 	if a.WeaponL != nil {
@@ -397,7 +409,7 @@ func (a Actor) GetEffects() []Effect {
 		effects = append(effects, a.Item.Effects...)
 	}
 
-	return effects
+	return a.mapEffects(effects)
 }
 func (a Actor) GetModifiers() []Modifier {
 	modifiers := []Modifier{}

@@ -6,18 +6,24 @@ import (
 
 const EffectPriorityAffinities = 0
 const EffectPriorityBaseStats = 0
-const EffectPriorityAuxStats = 0
+const EffectPriorityOffsetStats = 0
 const EffectPriorityFlags = 0
 const EffectPriorityTriggers = 0
-const EffectPriorityAuxOverwrite = 1
+const EffectPriorityOffsetOverwrite = 1
 const EffectPriorityMapBaseStats = 2
 const EffectPriorityPreStageStats = 3
 const EffectPriorityStages = 3
 const EffectPriorityStagesOverwrite = 4
 const EffectPriorityMapStages = 5
 const EffectPriorityPostStagesStats = 6
+const EffectPriorityActionState = 6
 
 var ET_DEFAULT = uuid.New()
+
+type EffectState struct {
+	Delay    *int
+	Duration *int
+}
 
 type Effect struct {
 	Mutation
@@ -66,6 +72,14 @@ func (e *Effect) SetID(id uuid.UUID) {
 
 	e.ID = id
 	e.SetTag(id)
+}
+func (e *Effect) ApplyState(s EffectState) {
+	if s.Delay != nil {
+		e.Delay = s.Delay
+	}
+	if s.Duration != nil {
+		e.Duration = s.Duration
+	}
 }
 
 func (e Effect) Ready() bool {

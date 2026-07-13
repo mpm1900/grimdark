@@ -11,16 +11,16 @@ import { GothicHoverCardContent } from './gothic-ui/hover-card'
 import { DNumber } from './dnumber'
 import { WEAPON_ICONS } from '#/icons/weapons'
 
-function InlineAuxStats({
-  aux_stats,
+function InlineOffsetStats({
+  offset_stats,
   className,
   ...props
 }: React.ComponentProps<'span'> & {
-  aux_stats: Partial<Record<Stat, number>>
+  offset_stats: Partial<Record<Stat, number>>
 }) {
   return (
     <span className={cn('flex gap-2', className)} {...props}>
-      {entries(aux_stats).map(([stat, aux], i) => (
+      {entries(offset_stats).map(([stat, aux], i) => (
         <DNumber key={i} value={aux}>
           {sign(aux)}
           {Math.abs(aux)} {STAT_LABELS[stat]}
@@ -137,7 +137,7 @@ function WeaponDetails({ weapon }: { weapon: Weapon }) {
                 ))}
               </span>
             )}
-            <InlineAuxStats aux_stats={weapon.aux_stats} />
+            <InlineOffsetStats offset_stats={weapon.offset_stats} />
           </ItemDescription>
         </GothicShadowFrame>
       </div>

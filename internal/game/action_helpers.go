@@ -236,6 +236,7 @@ func CtxTargetPreCollateral() func(g Game, ctx Context, this ActionContext) Cont
 	}
 }
 
+// movement
 // switches
 func Retreat() Action {
 	return Action{
@@ -246,7 +247,7 @@ func Retreat() Action {
 			Priority:    ActionPriorityRetreat,
 			TargetCount: 1,
 		},
-		Tags: []ActionTag{ATSystem, ATRetreat},
+		Tags: []ActionTag{ATSystem, ATMovement, ATRetreat},
 		Resolve: func(g *Game, ctx Context, this ActionContext) []Transaction {
 			if len(ctx.ActorIDs) != 1 {
 				return this.Done()
@@ -310,7 +311,7 @@ func SwitchIn(n int) Action {
 func Swap() Action {
 	return Action{
 		ID:   uuid.MustParse("019f20f2-0860-7149-a11e-fbc3df357824"),
-		Tags: []ActionTag{ATSystem, ATSwap},
+		Tags: []ActionTag{ATSystem, ATMovement, ATSwap},
 		Config: ActionConfig{
 			Name:        "Swap",
 			Description: "User switches places with target ally.",
@@ -332,7 +333,7 @@ func Swap() Action {
 func MoveForwards() Action {
 	return Action{
 		ID:   uuid.MustParse("019f3ab7-eca5-7a8f-a5a9-214159374007"),
-		Tags: []ActionTag{ATSystem, ATForward},
+		Tags: []ActionTag{ATSystem, ATMovement, ATForward},
 		Config: ActionConfig{
 			Name:        "Move Forwards",
 			Description: "User moves forwards, displacing other actors back.",
@@ -359,7 +360,7 @@ func MoveForwards() Action {
 func MoveFront() Action {
 	return Action{
 		ID:   uuid.MustParse("019f3ab7-eca5-70fc-9483-f147b1dbdebb"),
-		Tags: []ActionTag{ATSystem, ATFront},
+		Tags: []ActionTag{ATSystem, ATMovement, ATFront},
 		Config: ActionConfig{
 			Name:        "Move to Front",
 			Description: "User moves to the front (1st position), displacing other actors back.",
@@ -386,7 +387,7 @@ func MoveFront() Action {
 func MoveBackwards() Action {
 	return Action{
 		ID:   uuid.MustParse("019f3ab7-eca5-7ad4-a884-4ad97433a1e1"),
-		Tags: []ActionTag{ATSystem, ATBack},
+		Tags: []ActionTag{ATSystem, ATMovement, ATBack},
 		Config: ActionConfig{
 			Name:        "Move Backwards",
 			Description: "User moves backwards, displacing other actors forward.",

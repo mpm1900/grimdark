@@ -9,15 +9,16 @@ type ActionResolver func(g *Game, ctx Context, this ActionContext) []Transaction
 type ActionTag string
 
 const (
-	ATSystem  ActionTag = "system"
-	ATActor   ActionTag = "actor"
-	ATItem    ActionTag = "item"
-	ATWeapon  ActionTag = "weapon"
-	ATRetreat ActionTag = "retreat"
-	ATSwap    ActionTag = "swap"
-	ATBack    ActionTag = "back"
-	ATForward ActionTag = "forward"
-	ATFront   ActionTag = "front"
+	ATSystem   ActionTag = "system"
+	ATActor    ActionTag = "actor"
+	ATItem     ActionTag = "item"
+	ATWeapon   ActionTag = "weapon"
+	ATRetreat  ActionTag = "retreat"
+	ATMovement ActionTag = "movement"
+	ATSwap     ActionTag = "swap"
+	ATBack     ActionTag = "back"
+	ATForward  ActionTag = "forward"
+	ATFront    ActionTag = "front"
 )
 
 type Action struct {
@@ -44,7 +45,7 @@ type actionJSON struct {
 }
 
 func (a Action) Disabled(g Game, source Actor) bool {
-	state, ok := source.ActionsState[a.ID]
+	state, ok := source.ActionStates[a.ID]
 	if ok && state.Cooldown > 0 {
 		return true
 	}
@@ -53,7 +54,7 @@ func (a Action) Disabled(g Game, source Actor) bool {
 		return a.DisabledCheck(g, source)
 	}
 
-	return false
+	return state.IsDisabled
 }
 
 func (a Action) CanResolve(g Game, context Context, this *ActionContext) bool {
@@ -132,7 +133,7 @@ func (c Command) Resolve(g *Game) []Transaction {
 }
 
 func (a Action) ToJSON(g Game, source Actor) actionJSON {
-	state := source.ActionsState[a.ID]
+	state := source.ActionStates[a.ID]
 	config := a.Config
 	config.Cooldown = config.Cooldown + state.CooldownBonus
 	config.Priority = config.Priority + state.PriorityBonus

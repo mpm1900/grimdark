@@ -11,7 +11,7 @@ export type Item = {
 
 export type Weapon = Item & {
   actions: Action[]
-  aux_stats: Partial<Record<Stat, number>>
+  offset_stats: Partial<Record<Stat, number>>
   hands: number
   weapon_type: WeaponType
 }
