@@ -103,7 +103,7 @@ function WeaponDetails({ weapon }: { weapon: Weapon }) {
               {weapon.name}
             </span>
             <span className="text-foreground/60 block text-xs leading-none">
-              Common {weapon.hands}-handed {weapon.weapon_type}
+              Common {weapon.weapon_type} ({weapon.weight})
             </span>
           </div>
         </div>
@@ -160,7 +160,7 @@ function WeaponFrame({
         <GothicFrame
           className={cn(
             'relative w-20 overflow-visible',
-            weapon.hands === 2 && 'z-10',
+            weapon.weight === 2 && 'z-10',
             disabled && 'pointer-events-none'
           )}
         >
@@ -172,7 +172,7 @@ function WeaponFrame({
                 rarity: rarity,
                 className: cn(
                   'h-full relative',
-                  weapon.hands === 2 ? 'overflow-visible' : 'overflow-hidden'
+                  weapon.weight === 2 ? 'overflow-visible' : 'overflow-hidden'
                 ),
               })}
             >
@@ -219,7 +219,7 @@ function WeaponFrameExt({
             rarity: rarity,
             className: cn(
               'h-full relative',
-              weapon.hands === 2 ? 'overflow-visible' : 'overflow-hidden'
+              weapon.weight === 2 ? 'overflow-visible' : 'overflow-hidden'
             ),
           })}
         >

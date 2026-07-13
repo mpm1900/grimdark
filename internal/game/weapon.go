@@ -19,7 +19,7 @@ type Weapon struct {
 	Item
 	Actions     []Action
 	OffsetStats map[Stat]float64
-	Hands       int
+	Weight      int
 	WeaponType  WeaponType
 }
 
@@ -28,7 +28,7 @@ type weaponJSON struct {
 	Actions     []actionJSON     `json:"actions"`
 	Description string           `json:"description"`
 	Effects     []Effect         `json:"effects"`
-	Hands       int              `json:"hands"`
+	Weight      int              `json:"weight"`
 	Name        string           `json:"name"`
 	OffsetStats map[Stat]float64 `json:"offset_stats"`
 	WeaponType  WeaponType       `json:"weapon_type"`
@@ -39,7 +39,7 @@ func (w Weapon) Clone() Weapon {
 		Item:        w.Item.Clone(),
 		Actions:     slices.Clone(w.Actions),
 		OffsetStats: maps.Clone(w.OffsetStats),
-		Hands:       w.Hands,
+		Weight:      w.Weight,
 		WeaponType:  w.WeaponType,
 	}
 }
@@ -56,7 +56,7 @@ func (w Weapon) ToJSON(g Game, source Actor) weaponJSON {
 		OffsetStats: w.OffsetStats,
 		Description: w.Description,
 		Effects:     w.Effects,
-		Hands:       w.Hands,
+		Weight:      w.Weight,
 		Name:        w.Name,
 		WeaponType:  w.WeaponType,
 	}
@@ -74,7 +74,7 @@ func (w Weapon) ToJSONStatic() weaponJSON {
 		OffsetStats: w.OffsetStats,
 		Description: w.Description,
 		Effects:     w.Effects,
-		Hands:       w.Hands,
+		Weight:      w.Weight,
 		Name:        w.Name,
 		WeaponType:  w.WeaponType,
 	}

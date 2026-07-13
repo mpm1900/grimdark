@@ -19,6 +19,6 @@ var Pistol = game.Weapon{
 	OffsetStats: map[game.Stat]float64{
 		game.Ranged: 20,
 	},
-	Hands:      1,
+	Weight:     1,
 	WeaponType: game.WeaponTypePistol,
 }

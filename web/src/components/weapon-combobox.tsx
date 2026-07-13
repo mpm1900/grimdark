@@ -17,14 +17,14 @@ import { WeaponDetails, weaponIcon } from './weapon-details'
 import { WEAPON_ICONS } from '#/icons/weapons'
 
 function WeaponCombobox({
-  remaining_hands,
+  remaining_weight,
   disabled,
   options,
   value,
   other,
   onValueChange,
 }: {
-  remaining_hands: number
+  remaining_weight: number
   disabled?: boolean
   options: Array<Weapon>
   value: ID | null
@@ -85,7 +85,7 @@ function WeaponCombobox({
                 <ComboboxItem
                   value={weapon.ID}
                   disabled={
-                    weapon.hands > remaining_hands &&
+                    weapon.weight > remaining_weight &&
                     !!other &&
                     weapon.ID !== value
                   }

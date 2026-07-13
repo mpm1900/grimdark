@@ -19,6 +19,6 @@ var BigSword = game.Weapon{
 	OffsetStats: map[game.Stat]float64{
 		game.Melee: 20,
 	},
-	Hands:      2,
+	Weight:     2,
 	WeaponType: game.WeaponTypeBigSword,
 }

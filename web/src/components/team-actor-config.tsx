@@ -25,8 +25,8 @@ function WeaponsConfig({
   const found_r = actor_class.options.weapons.find(
     (w) => w.ID === value.weapon_r
   )
-  const remaining_hands =
-    actor_class.hands - (found_l?.hands ?? 0) - (found_r?.hands ?? 0)
+  const remaining_weight =
+    actor_class.hands - (found_l?.weight ?? 0) - (found_r?.weight ?? 0)
   return (
     <div className="flex flex-col gap-1">
       <Marker variant="separator">
@@ -34,11 +34,11 @@ function WeaponsConfig({
       </Marker>
       <div className="grid grid-cols-1">
         <WeaponCombobox
-          disabled={remaining_hands <= 0 && !value.weapon_r}
+          disabled={remaining_weight <= 0 && !value.weapon_r}
           options={actor_class.options.weapons}
           value={value.weapon_r}
           other={value.weapon_l}
-          remaining_hands={remaining_hands}
+          remaining_weight={remaining_weight}
           onValueChange={(w) => {
             onValueChange({
               ...value,
@@ -47,11 +47,11 @@ function WeaponsConfig({
           }}
         />
         <WeaponCombobox
-          disabled={remaining_hands <= 0 && !value.weapon_l}
+          disabled={remaining_weight <= 0 && !value.weapon_l}
           options={actor_class.options.weapons}
           value={value.weapon_l}
           other={value.weapon_r}
-          remaining_hands={remaining_hands}
+          remaining_weight={remaining_weight}
           onValueChange={(w) => {
             onValueChange({
               ...value,

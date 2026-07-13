@@ -18,6 +18,6 @@ var SlashSword = game.Weapon{
 	OffsetStats: map[game.Stat]float64{
 		game.Melee: 20,
 	},
-	Hands:      1,
+	Weight:     1,
 	WeaponType: game.WeaponTypeSword,
 }

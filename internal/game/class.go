@@ -19,12 +19,12 @@ type Class struct {
 	Affinities map[Affinity]struct{}
 	Effects    []Effect
 	Faction    ActorFaction
-	Hands      int
 	Name       string
 	Options    ClassOptions
 	Race       ActorRace
 	SpriteURL  string
 	Stats      map[Stat]float64
+	Strength   int
 }
 
 type classOptionsJSON struct {
@@ -37,23 +37,23 @@ type classJSON struct {
 	Affinities []Affinity       `json:"affinities"`
 	Effects    []Effect         `json:"effects"`
 	Faction    ActorFaction     `json:"faction"`
-	Hands      int              `json:"hands"`
 	Name       string           `json:"name"`
 	Options    classOptionsJSON `json:"options"`
 	Race       ActorRace        `json:"race"`
 	SpriteURL  string           `json:"sprite_url"`
 	Stats      map[Stat]float64 `json:"stats"`
+	Strength   int              `json:"strength"`
 }
 
 func NewClass() Class {
 	return Class{
 		ID:         uuid.New(),
-		Name:       "",
-		Race:       RaceHuman,
-		Faction:    FactionImperium,
-		Hands:      2,
 		Actions:    []Action{},
 		Affinities: map[Affinity]struct{}{},
+		Effects:    []Effect{},
+		Faction:    FactionImperium,
+		Name:       "",
+		Race:       RaceHuman,
 		Stats: map[Stat]float64{
 			Health:         100,
 			Speed:          100,
@@ -68,7 +68,7 @@ func NewClass() Class {
 			CriticalDamage: 1,
 			EffectChance:   1,
 		},
-		Effects: []Effect{},
+		Strength: 2,
 	}
 }
 
@@ -86,12 +86,12 @@ func (c Class) Clone() Class {
 		Affinities: maps.Clone(c.Affinities),
 		Effects:    slices.Clone(c.Effects),
 		Faction:    c.Faction,
-		Hands:      c.Hands,
 		Options:    c.Options.Clone(),
 		Name:       c.Name,
 		Race:       c.Race,
 		SpriteURL:  c.SpriteURL,
 		Stats:      maps.Clone(c.Stats),
+		Strength:   c.Strength,
 	}
 }
 
@@ -117,7 +117,6 @@ func (c Class) ToJSON() classJSON {
 		Affinities: slices.Collect(maps.Keys(c.Affinities)),
 		Effects:    c.Effects,
 		Faction:    c.Faction,
-		Hands:      c.Hands,
 		Name:       c.Name,
 		Options: classOptionsJSON{
 			Weapons: weapons,
@@ -126,6 +125,7 @@ func (c Class) ToJSON() classJSON {
 		Race:      c.Race,
 		SpriteURL: c.SpriteURL,
 		Stats:     c.Stats,
+		Strength:  c.Strength,
 	}
 }
 

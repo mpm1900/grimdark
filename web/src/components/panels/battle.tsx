@@ -23,7 +23,7 @@ function BattlePanel() {
   const weapons = [
     active_actor?.weapon_l ?? null,
     active_actor?.weapon_r ?? null,
-  ].sort((a, b) => (b?.hands ?? 0) - (a?.hands ?? 0))
+  ].sort((a, b) => (b?.weight ?? 0) - (a?.weight ?? 0))
   const main_weapon = weapons[0]
   const secondary_weapon = weapons[1]
 
@@ -56,14 +56,14 @@ function BattlePanel() {
               ) : (
                 <GothicFrame></GothicFrame>
               )}
-              {main_weapon?.hands == 2 ? (
+              {main_weapon?.weight == 2 ? (
                 <WeaponFrameExt weapon={main_weapon} disabled />
               ) : secondary_weapon ? (
                 <WeaponFrame disabled={false} weapon={secondary_weapon} />
               ) : (
                 <GothicFrame></GothicFrame>
               )}
-              {main_weapon?.hands == 2 && (
+              {main_weapon?.weight == 2 && (
                 <div className="pointer-events-none absolute inset-0 grid place-items-center z-20">
                   <HiLink className="rotate-136 size-6 fill-foreground/60" />
                 </div>
