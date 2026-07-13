@@ -12,13 +12,14 @@ type AttackEffectResult func(g Game, context Context, this *ActionContext, resul
 type StatusEffectResult func(g Game, context Context, this *ActionContext, result AccuracyResult)
 
 type AttackConfig struct {
-	OnSuccess       ActionEffect
-	OnFailure       ActionEffect
-	OnFinally       ActionEffect
-	OnSuccessResult AttackEffectResult
-	OnFailureResult AttackEffectResult
-	OnAttackSuccess ActionEffect
-	OnAttackFailure ActionEffect
+	OnSuccess        ActionEffect
+	OnFailure        ActionEffect
+	OnFinally        ActionEffect
+	OnCriticalResult AttackEffectResult
+	OnSuccessResult  AttackEffectResult
+	OnFailureResult  AttackEffectResult
+	OnAttackSuccess  ActionEffect
+	OnAttackFailure  ActionEffect
 }
 
 type StatusConfig struct {
@@ -129,6 +130,9 @@ func DamageSideEffects(g *Game, context Context, result DamageResult, this *Acti
 		g.On(OnDamageSend, trigger_context)
 		g.On(OnDamageRecieve, trigger_context)
 		if result.Critical {
+			if config.OnCriticalResult != nil {
+				config.OnCriticalResult(*g, context, this, result)
+			}
 			g.On(OnCriticalHit, trigger_context)
 		}
 
@@ -151,11 +155,13 @@ func DamageSideEffects(g *Game, context Context, result DamageResult, this *Acti
 			config.OnSuccessResult(*g, context, this, result)
 		}
 	}
-	if !result.Success() && config.OnFailureResult != nil {
+	if !result.Success() {
 		if !result.AccuracyResult.Pass {
 			g.On(OnMiss, trigger_context)
 		}
-		config.OnFailureResult(*g, context, this, result)
+		if config.OnFailureResult != nil {
+			config.OnFailureResult(*g, context, this, result)
+		}
 	}
 }
 
