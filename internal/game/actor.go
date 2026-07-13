@@ -439,7 +439,6 @@ func (a Actor) GetActions() []Action {
 		}
 	}
 
-	addActions(GLOBAL_ACTIONS)
 	addActions(a.Class.Actions)
 	if a.WeaponL != nil {
 		addActions(a.WeaponL.Actions)
@@ -448,9 +447,16 @@ func (a Actor) GetActions() []Action {
 		addActions(a.WeaponR.Actions)
 	}
 
-	return slices.DeleteFunc(actions, func(action Action) bool {
+	actions = slices.DeleteFunc(actions, func(action Action) bool {
 		return action.ActiveCheck != nil && !action.ActiveCheck(a)
 	})
+
+	if len(actions) == 0 {
+		actions = []Action{Struggle()}
+	}
+
+	addActions(GLOBAL_ACTIONS)
+	return actions
 }
 func (a Actor) GetActionByID(action_id uuid.UUID) (Action, bool) {
 	for _, action := range a.GetActions() {

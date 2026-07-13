@@ -157,3 +157,31 @@ func AddTargetsEffects(config StatusConfig, effects ...Effect) ActionResolver {
 		return this.Done()
 	}
 }
+
+func Struggle() Action {
+	return Action{
+		ID:   uuid.MustParse("019f5dab-239d-717a-9cc8-8a06f6461596"),
+		Tags: []ActionTag{ATSystem, ATActor},
+		Config: ActionConfig{
+			Name:        "Struggle",
+			Description: "User takes 1/4th of their max HP as recoil damage.",
+			Affinity:    Kinetic,
+			Stat:        Melee,
+			Accuracy:    P(1.0),
+			Power:       50,
+			Hits:        1,
+			TargetCount: 1,
+		},
+		LogTemplate: P("$source$ flails in a struggle."),
+		Resolve: MakeAttack(AttackConfig{
+			OnSuccessResult: func(g Game, context Context, this *ActionContext, result DamageResult) {
+				hp := this.Source.Stats[Health]
+				recoil := hp * 0.25
+				recoil_ctx := MakeContextFor(this.Source, this.Source)
+				this.Push(DamageTargets(recoil).Bind(recoil_ctx))
+			},
+		}),
+		ValidateContext:  ContextTargetLength(1),
+		TargetsPredicate: CombineFilters(ActiveActors, NotSourceActor),
+	}
+}

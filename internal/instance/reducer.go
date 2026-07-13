@@ -31,6 +31,11 @@ func getTargets(instance *Instance, request Request) {
 
 	context := request.Context.Clone()
 	context.ClearTargets()
+	if action.TargetsPredicate == nil {
+		instance.TargetIDsResponse(request.ClientID, context)
+		return
+	}
+
 	actors := instance.Game.State().Actors
 	for _, actor := range actors {
 		if action.TargetsPredicate(instance.Game, actor, request.Context) && actor.Targetable() {
