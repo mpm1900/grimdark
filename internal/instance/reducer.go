@@ -63,7 +63,7 @@ func readyPlayer(instance *Instance, request Request) {
 	}
 
 	instance.Game.MutatePlayer(player.ID, func(p game.Player) game.Player {
-		p.SetReady()
+		p.Ready = true
 		return p
 	})
 

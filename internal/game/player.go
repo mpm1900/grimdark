@@ -25,10 +25,6 @@ func NewPlayer(user User) *Player {
 	}
 }
 
-func (p *Player) SetReady() {
-	p.Ready = true
-}
-
 func (p *Player) NextTurn() {
 	p.Ready = false
 }
