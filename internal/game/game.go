@@ -232,16 +232,20 @@ func (g *Game) GetTriggers() []Trigger {
 	return triggers
 }
 func (g *Game) GetPlayer(id uuid.UUID) (Player, bool) {
-	return g.State().GetPlayer(id)
+	state := g.State()
+	return state.GetPlayer(id)
 }
 func (g *Game) GetActor(id uuid.UUID) (Actor, bool) {
-	return g.State().GetActor(id)
+	state := g.State()
+	return state.GetActor(id)
 }
 func (g *Game) FindActors(where Filter[Actor], context Context) []Actor {
-	return g.State().FindActors(g, where, context)
+	state := g.State()
+	return state.FindActors(g, where, context)
 }
 func (g *Game) GetActorsByPlayer(player_id uuid.UUID) []Actor {
-	return g.State().FindActors(g, func(g *Game, a Actor, ctx Context) bool {
+	state := g.State()
+	return state.FindActors(g, func(g *Game, a Actor, ctx Context) bool {
 		return a.PlayerID == player_id
 	}, NewContext())
 }
@@ -261,7 +265,8 @@ func (g *Game) GetActionableActionsCount() int {
 	return count
 }
 func (g *Game) FindCommands(where Filter[Command], context Context) []Command {
-	return g.State().FindCommands(g, where, context)
+	state := g.State()
+	return state.FindCommands(g, where, context)
 }
 
 func (g *Game) IsReadyToRun() bool {
@@ -677,8 +682,9 @@ func (g *Game) Validate() bool {
 
 	g.condensePositions()
 
-	for _, player := range g.State().Players {
-		open_positions := g.State().GetOpenPositionIDs(player.ID)
+	state := g.State()
+	for _, player := range state.Players {
+		open_positions := state.GetOpenPositionIDs(player.ID)
 		alive_inactive := g.FindActors(CombineFilters(AliveActors, Allies, InactiveActors), MakeContextPlayer(player.ID))
 		size := min(len(open_positions), len(alive_inactive))
 		if size > 0 {
@@ -713,8 +719,9 @@ func (g *Game) condensePositions() bool {
 }
 
 func (g *Game) nextActorBehindGap() (uuid.UUID, bool) {
-	for _, player := range g.State().Players {
-		positions := g.State().GetPositionsByPlayerID(player.ID)
+	state := g.State()
+	for _, player := range state.Players {
+		positions := state.GetPositionsByPlayerID(player.ID)
 		slices.SortStableFunc(positions, func(a, b Position) int {
 			return cmp.Compare(a.Rank, b.Rank)
 		})

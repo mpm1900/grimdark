@@ -40,8 +40,9 @@ func SetupOpponent(g *game.Game) {
 	}
 
 	SetupPlayer(g, user, config)
+	state := g.State()
 	for _, a := range g.GetActorsByPlayer(user.ID) {
-		open_positions := g.State().GetOpenPositions(user.ID)
+		open_positions := state.GetOpenPositions(user.ID)
 		if len(open_positions) > 0 {
 			pos := open_positions[0]
 			g.SetPosition(a.ID, pos.ID)

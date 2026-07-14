@@ -73,7 +73,7 @@ func (s *State) Clone() State {
 	}
 }
 
-func (s State) GetPlayer(id uuid.UUID) (Player, bool) {
+func (s *State) GetPlayer(id uuid.UUID) (Player, bool) {
 	if id == uuid.Nil {
 		return Player{}, false
 	}
@@ -86,7 +86,7 @@ func (s State) GetPlayer(id uuid.UUID) (Player, bool) {
 
 	return Player{}, false
 }
-func (s State) GetPosition(id uuid.UUID) (Position, bool) {
+func (s *State) GetPosition(id uuid.UUID) (Position, bool) {
 	if id == uuid.Nil {
 		return Position{}, false
 	}
@@ -99,7 +99,7 @@ func (s State) GetPosition(id uuid.UUID) (Position, bool) {
 
 	return Position{}, false
 }
-func (s State) GetPositionByActorID(actor_id uuid.UUID) (Position, bool) {
+func (s *State) GetPositionByActorID(actor_id uuid.UUID) (Position, bool) {
 	for _, pos := range s.Positions {
 		if pos.ActorID == actor_id {
 			return pos, true
@@ -108,7 +108,7 @@ func (s State) GetPositionByActorID(actor_id uuid.UUID) (Position, bool) {
 
 	return Position{}, false
 }
-func (s State) GetPositionsByPlayerID(player_id uuid.UUID) []Position {
+func (s *State) GetPositionsByPlayerID(player_id uuid.UUID) []Position {
 	positions := []Position{}
 	for _, pos := range s.Positions {
 		if pos.PlayerID == player_id {
@@ -121,7 +121,7 @@ func (s State) GetPositionsByPlayerID(player_id uuid.UUID) []Position {
 
 	return positions
 }
-func (s State) GetOpenPositions(player_ID uuid.UUID) []Position {
+func (s *State) GetOpenPositions(player_ID uuid.UUID) []Position {
 	positions := []Position{}
 	for _, pos := range s.Positions {
 		if pos.PlayerID == player_ID && pos.ActorID == uuid.Nil {
@@ -131,7 +131,7 @@ func (s State) GetOpenPositions(player_ID uuid.UUID) []Position {
 
 	return positions
 }
-func (s State) GetOpenPositionIDs(player_ID uuid.UUID) []uuid.UUID {
+func (s *State) GetOpenPositionIDs(player_ID uuid.UUID) []uuid.UUID {
 	positions := []uuid.UUID{}
 	for _, pos := range s.GetOpenPositions(player_ID) {
 		positions = append(positions, pos.ID)
@@ -139,7 +139,7 @@ func (s State) GetOpenPositionIDs(player_ID uuid.UUID) []uuid.UUID {
 
 	return positions
 }
-func (s State) GetActor(id uuid.UUID) (Actor, bool) {
+func (s *State) GetActor(id uuid.UUID) (Actor, bool) {
 	if id == uuid.Nil {
 		return Actor{}, false
 	}
@@ -152,7 +152,7 @@ func (s State) GetActor(id uuid.UUID) (Actor, bool) {
 
 	return Actor{}, false
 }
-func (s State) FindActors(g *Game, where Filter[Actor], context Context) []Actor {
+func (s *State) FindActors(g *Game, where Filter[Actor], context Context) []Actor {
 	actors := []Actor{}
 	for _, a := range s.Actors {
 		if where(g, a, context) {
@@ -162,7 +162,7 @@ func (s State) FindActors(g *Game, where Filter[Actor], context Context) []Actor
 
 	return actors
 }
-func (s State) FindCommands(g *Game, where Filter[Command], context Context) []Command {
+func (s *State) FindCommands(g *Game, where Filter[Command], context Context) []Command {
 	commands := []Command{}
 	for _, c := range s.Commands {
 		if where(g, c, context) {

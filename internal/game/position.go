@@ -23,7 +23,8 @@ func (p Position) GetDistanceFrom(other Position) int {
 }
 
 func (g *Game) GetPosition(position_id uuid.UUID) (Position, bool) {
-	return g.State().GetPosition(position_id)
+	state := g.State()
+	return state.GetPosition(position_id)
 }
 func (g *Game) GetDistance(a uuid.UUID, b uuid.UUID) (int, bool) {
 	position_a, aok := g.GetPosition(a)
