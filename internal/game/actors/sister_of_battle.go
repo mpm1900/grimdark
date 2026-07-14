@@ -4,12 +4,15 @@ import (
 	"grimdark/internal/game"
 	"grimdark/internal/game/items"
 	"grimdark/internal/game/weapons"
+
+	"github.com/google/uuid"
 )
 
 var SisterOfBattle = newSisterOfBattle()
 
 func newSisterOfBattle() game.Class {
 	class := game.NewClass()
+	class.ID = uuid.MustParse("019f5f11-933a-7cd3-bac9-5133bba94c7b")
 	class.Name = "Adepta Sororitas"
 	class.SpriteURL = "/img/sis.png"
 	class.Affinities = map[game.Affinity]struct{}{

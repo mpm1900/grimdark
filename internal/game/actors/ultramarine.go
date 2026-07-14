@@ -26,6 +26,7 @@ func newUltramarine() game.Class {
 	bypass.Name = "bypass effect"
 
 	class := game.NewClass()
+	class.ID = uuid.MustParse("019f5f12-6e78-7eda-b638-980453e3eaba")
 	class.Name = "Storm Warden"
 	class.SpriteURL = "/img/spm.png"
 	class.Affinities = map[game.Affinity]struct{}{

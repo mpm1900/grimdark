@@ -3,12 +3,15 @@ package actors
 import (
 	"grimdark/internal/game"
 	"grimdark/internal/game/weapons"
+
+	"github.com/google/uuid"
 )
 
 var NecronWarrior = newNecronWarrior()
 
 func newNecronWarrior() game.Class {
 	class := game.NewClass()
+	class.ID = uuid.MustParse("019f5f11-626c-7b69-a0f9-8115db2e2c8c")
 	class.Name = "Necron Warrior"
 	class.SpriteURL = "/img/nec.png"
 	class.Affinities = map[game.Affinity]struct{}{

@@ -3,12 +3,15 @@ package actors
 import (
 	"grimdark/internal/game"
 	"grimdark/internal/game/weapons"
+
+	"github.com/google/uuid"
 )
 
 var BloodAngel = newBloodAngel()
 
 func newBloodAngel() game.Class {
 	class := game.NewClass()
+	class.ID = uuid.MustParse("019f5f10-f5c1-7fd6-a1df-98644956735e")
 	class.Name = "Blood Angel"
 	class.SpriteURL = "/img/spm2.png"
 	class.Affinities = map[game.Affinity]struct{}{

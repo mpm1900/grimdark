@@ -3,12 +3,15 @@ package actors
 import (
 	"grimdark/internal/game"
 	"grimdark/internal/game/weapons"
+
+	"github.com/google/uuid"
 )
 
 var TechPriest = newTechPriest()
 
 func newTechPriest() game.Class {
 	class := game.NewClass()
+	class.ID = uuid.MustParse("019f5f12-29e1-7cc9-bfeb-468df5c53990")
 	class.Name = "Tech Priest"
 	class.SpriteURL = "/img/thp.png"
 	class.Affinities = map[game.Affinity]struct{}{

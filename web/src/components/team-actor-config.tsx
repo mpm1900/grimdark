@@ -71,7 +71,7 @@ function TeamActorConfig() {
     (c) => c.ID === active_actor.class
   )
   return (
-    <div className="w-1/3 p-8 h-full grid place-items-start">
+    <div className="flex-1 grid place-items-start">
       <GothicCard className="p-2 w-full gap-4">
         <div className="flex flex-col gap-1">
           <ActorCombobox

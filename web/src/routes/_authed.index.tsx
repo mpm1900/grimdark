@@ -4,6 +4,7 @@ import { InstanceCombobox } from '#/components/instance-combobox'
 import { TeamActor } from '#/components/team-actor'
 import { TeamActorConfig } from '#/components/team-actor-config'
 import { TeamPlatforms } from '#/components/team-platforms'
+import { Input } from '#/components/ui/input'
 import type { ID } from '#/lib/game/core'
 import { useConnect } from '#/lib/mutations/connect'
 import { useUser } from '#/lib/queries/auth'
@@ -106,7 +107,10 @@ function RouteComponent() {
               </LayoutGroup>
             </div>
           </div>
-          <TeamActorConfig />
+          <div className="h-full flex flex-col w-1/3 p-8 gap-4">
+            <Input placeholder="Name your team" />
+            <TeamActorConfig />
+          </div>
         </div>
       </div>
     </ClientOnly>
