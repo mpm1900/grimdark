@@ -12,6 +12,7 @@ import (
 	"net/http"
 
 	"github.com/google/uuid"
+	"github.com/jackc/pgx/v5/pgtype"
 )
 
 type TeamsHandler struct {
@@ -47,16 +48,37 @@ func (th *TeamsHandler) HandleGetTeams(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	response := make([]teamResponse, len(results))
+	for i, result := range results {
+		response[i] = newTeamResponse(result)
+	}
+
 	w.Header().Set("Content-Type", "application/json")
-	if err := json.NewEncoder(w).Encode(results); err != nil {
+	if err := json.NewEncoder(w).Encode(response); err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 }
 
 type upsertTeamBody struct {
-	ID     *uuid.UUID      `json:"id"`
+	ID     *uuid.UUID      `json:"ID"`
 	Config game.TeamConfig `json:"config"`
+}
+
+type teamResponse struct {
+	ID        uuid.UUID          `json:"ID"`
+	UserID    uuid.UUID          `json:"user_ID"`
+	Config    game.TeamConfig    `json:"config"`
+	CreatedAt pgtype.Timestamptz `json:"created_at"`
+}
+
+func newTeamResponse(t db.Team) teamResponse {
+	return teamResponse{
+		ID:        t.ID,
+		UserID:    t.UserID,
+		Config:    t.Config,
+		CreatedAt: t.CreatedAt,
+	}
 }
 
 func readUpsertTeamsBody(r *http.Request) (*upsertTeamBody, error) {
@@ -74,7 +96,7 @@ func readUpsertTeamsBody(r *http.Request) (*upsertTeamBody, error) {
 	return &body, nil
 }
 
-func (th *TeamsHandler) HandleUpsertTeam(w http.ResponseWriter, r *http.Request) {
+func (th *TeamsHandler) HandleSaveTeam(w http.ResponseWriter, r *http.Request) {
 	logger := slog.Default()
 	user, ok := auth.AuthenticatedUserFromContext(r.Context())
 	if !ok {
@@ -84,7 +106,7 @@ func (th *TeamsHandler) HandleUpsertTeam(w http.ResponseWriter, r *http.Request)
 
 	body, err := readUpsertTeamsBody(r)
 	if err != nil {
-		logger.Error("Signup: failed to read request body", "err", err)
+		logger.Error("Save Team: failed to read request body", "err", err)
 		http.Error(w, "invalid request body", http.StatusBadRequest)
 		return
 	}
@@ -102,6 +124,7 @@ func (th *TeamsHandler) HandleUpsertTeam(w http.ResponseWriter, r *http.Request)
 		// create
 		result, err = team.CreateTeam(r.Context(), th.queries, user.ID, body.Config)
 	}
+
 	if err != nil {
 		logger.Error("UpsertTeam: failed to upsert team", "user_id", user.ID, "err", err)
 		http.Error(w, "failed to save team", http.StatusInternalServerError)
@@ -109,7 +132,7 @@ func (th *TeamsHandler) HandleUpsertTeam(w http.ResponseWriter, r *http.Request)
 	}
 
 	w.Header().Set("Content-Type", "application/json")
-	if err := json.NewEncoder(w).Encode(result); err != nil {
+	if err := json.NewEncoder(w).Encode(newTeamResponse(result)); err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}

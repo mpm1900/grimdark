@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"grimdark/internal/db"
 	"grimdark/internal/game"
+	"time"
 
 	"github.com/google/uuid"
 )
@@ -24,6 +25,9 @@ func GetTeamByID(ctx context.Context, queries *db.Queries, id *uuid.UUID) (db.Te
 }
 
 func CreateTeam(ctx context.Context, queries *db.Queries, user_id uuid.UUID, config game.TeamConfig) (db.Team, error) {
+	if config.Name == "" {
+		config.Name = fmt.Sprintf("New Team (%s)", time.Now())
+	}
 	return queries.CreateTeam(ctx, db.CreateTeamParams{
 		UserID: user_id,
 		Config: config,

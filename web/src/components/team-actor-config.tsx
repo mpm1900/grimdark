@@ -65,7 +65,7 @@ function WeaponsConfig({
 
 function TeamActorConfig() {
   const team = useSelector(teamStore, (s) => s)
-  const active_actor = team.actors[team.active_actor]
+  const active_actor = team.config.actors[team.active_actor]
   const actors_query = useQuery(actorsQuery)
   const active_class = actors_query.data?.find(
     (c) => c.ID === active_actor.class

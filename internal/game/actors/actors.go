@@ -20,7 +20,11 @@ func HydrateActorClass(id uuid.UUID) (game.Class, bool) {
 }
 
 func HydrateActorConfig(config game.ActorConfig) (game.Actor, bool) {
-	class, ok := HydrateActorClass(config.Class)
+	if config.Class == nil {
+		return game.Actor{}, false
+	}
+
+	class, ok := HydrateActorClass(*config.Class)
 	if !ok {
 		return game.Actor{}, false
 	}

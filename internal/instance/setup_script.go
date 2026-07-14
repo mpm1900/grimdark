@@ -21,20 +21,20 @@ func SetupOpponent(g *game.Game) {
 	config := game.TeamConfig{
 		Actors: []game.ActorConfig{
 			{
-				Class:   actors.NecronWarrior.ID,
-				WeaponR: weapons.SlashSword.ID,
+				Class:   game.P(actors.NecronWarrior.ID),
+				WeaponR: game.P(weapons.SlashSword.ID),
 			},
 			{
-				Class:   actors.NecronWarrior.ID,
-				WeaponR: weapons.SlashSword.ID,
+				Class:   game.P(actors.NecronWarrior.ID),
+				WeaponR: game.P(weapons.SlashSword.ID),
 			},
 			{
-				Class:   actors.NecronWarrior.ID,
-				WeaponR: weapons.SlashSword.ID,
+				Class:   game.P(actors.NecronWarrior.ID),
+				WeaponR: game.P(weapons.SlashSword.ID),
 			},
 			{
-				Class:   actors.NecronWarrior.ID,
-				WeaponR: weapons.SlashSword.ID,
+				Class:   game.P(actors.NecronWarrior.ID),
+				WeaponR: game.P(weapons.SlashSword.ID),
 			},
 		},
 	}

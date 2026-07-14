@@ -1,16 +1,22 @@
 import { AppHeader } from '#/components/app-header'
-import { GothicBigButton } from '#/components/gothic-ui/button'
+import {
+  GothicBigButton,
+  GothicFramedButton,
+} from '#/components/gothic-ui/button'
 import { InstanceCombobox } from '#/components/instance-combobox'
 import { TeamActor } from '#/components/team-actor'
 import { TeamActorConfig } from '#/components/team-actor-config'
+import { TeamCombobox } from '#/components/team-combobox'
 import { TeamPlatforms } from '#/components/team-platforms'
 import { Input } from '#/components/ui/input'
 import type { ID } from '#/lib/game/core'
 import { useConnect } from '#/lib/mutations/connect'
+import { useSaveTeam } from '#/lib/mutations/save-team'
 import { useUser } from '#/lib/queries/auth'
 import { teamStore } from '#/lib/stores/team'
 import { ClientOnly, createFileRoute } from '@tanstack/react-router'
 import { useSelector } from '@tanstack/react-store'
+import { DownloadCloud, Save } from 'lucide-react'
 import { LayoutGroup } from 'motion/react'
 import { useEffect } from 'react'
 
@@ -22,16 +28,17 @@ function RouteComponent() {
   const user = useUser()
   const team = useSelector(teamStore, (s) => s)
   const navigate = Route.useNavigate()
-  const mutation = useConnect()
-  const actor_order = [...team.actors.map((_, i) => i)]
+  const connect = useConnect()
+  const save = useSaveTeam()
+  const actor_order = [...team.config.actors.map((_, i) => i)]
 
   function battle(instance_ID?: ID) {
     if (!user.data) return
-    localStorage.setItem('saved-actors', JSON.stringify(team.actors))
+    localStorage.setItem('saved-actors', JSON.stringify(team.config.actors))
 
-    mutation.mutate(
+    connect.mutate(
       {
-        ...team,
+        ...team.config,
         instance_ID,
       },
       {
@@ -55,7 +62,10 @@ function RouteComponent() {
     if (saved) {
       teamStore.setState((s) => ({
         ...s,
-        actors: saved,
+        config: {
+          ...s.config,
+          actors: saved,
+        },
       }))
     }
   }, [])
@@ -72,7 +82,7 @@ function RouteComponent() {
             <GothicBigButton
               variant="red"
               className="text-xl"
-              disabled={!!team.actors.find((a) => !a.class)}
+              disabled={!!team.config.actors.find((a) => !a.class)}
               onClick={() => battle()}
             >
               Battle!
@@ -86,7 +96,7 @@ function RouteComponent() {
                 <GothicBigButton
                   variant="red"
                   className="text-xl"
-                  disabled={!!team.actors.find((a) => !a.class)}
+                  disabled={!!team.config.actors.find((a) => !a.class)}
                 >
                   Join
                 </GothicBigButton>
@@ -101,14 +111,44 @@ function RouteComponent() {
               <LayoutGroup>
                 <div className="h-full min-w-0 flex flex-row-reverse gap-2">
                   {actor_order.map((i) => (
-                    <TeamActor key={i} config={team.actors[i]} index={i} />
+                    <TeamActor
+                      key={i}
+                      config={team.config.actors[i]}
+                      index={i}
+                    />
                   ))}
                 </div>
               </LayoutGroup>
             </div>
           </div>
-          <div className="h-full flex flex-col w-1/3 p-8 gap-4">
-            <Input placeholder="Name your team" />
+          <div className="h-full flex flex-col w-1/3 p-8 gap-2">
+            <div className="flex items-center gap-0">
+              <Input placeholder="Name your team" />
+              <div className="flex -space-x-px">
+                <GothicFramedButton
+                  className="size-10 p-1.5"
+                  onClick={() => {
+                    save.mutate(team)
+                  }}
+                >
+                  <Save />
+                </GothicFramedButton>
+                <TeamCombobox
+                  onSelect={(v) => {
+                    console.log('v', v)
+                    teamStore.setState((s) => ({
+                      ...s,
+                      ...v,
+                    }))
+                  }}
+                  render={
+                    <GothicFramedButton className="size-10 p-1.5">
+                      <DownloadCloud />
+                    </GothicFramedButton>
+                  }
+                />
+              </div>
+            </div>
             <TeamActorConfig />
           </div>
         </div>

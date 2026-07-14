@@ -33,6 +33,7 @@ type actorJSON struct {
 	Race               ActorRace            `json:"race"`
 	Seen               bool                 `json:"-"`
 	SpriteURL          string               `json:"sprite_url"`
+	Stacks             map[Stack]int        `json:"stacks"`
 	State              ActorState           `json:"state"`
 	Stats              map[Stat]int         `json:"stats"`
 	Stages             map[Stat]int         `json:"stages"`
@@ -123,6 +124,7 @@ func (a Actor) ToJSON(g Game) actorJSON {
 		Wounds:             int(a.Wounds),
 		Seen:               a.Meta.Seen,
 		SpriteURL:          a.Class.SpriteURL,
+		Stacks:             a.Stacks,
 		State:              a.State,
 		Status:             a.Status,
 		IsActive:           a.IsActive(),

@@ -14,10 +14,14 @@ function ActorPortrait({
 }) {
   return (
     <div className={cn('relative', className)} {...props}>
-      <img
-        //src="/img/portrait1_.png"
-        className="absolute size-18 top-1 left-1 bg-neutral-950"
-      />
+      <div className="absolute inset-2 overflow-hidden">
+        <div
+          className={cn(
+            'absolute w-36 h-36 top-2 left-1/2 -translate-x-1/2 bg-no-repeat bg-cover bg-top'
+          )}
+          style={{ backgroundImage: `url(${actor.sprite_url})` }}
+        />
+      </div>
       <div className="relative bg-[url('/gothic/CharacterTopFrame_Cframe.png')] z-10 size-20 bg-cover">
         <TinyBadge
           variant="default"

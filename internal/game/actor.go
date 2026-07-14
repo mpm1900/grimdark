@@ -65,6 +65,7 @@ type Actor struct {
 	Stages             map[Stat]int
 	Stats              map[Stat]float64
 	UnmodifiedStats    map[Stat]float64
+	Stacks             map[Stack]int
 
 	State  ActorState
 	Status ActorStatus
@@ -86,10 +87,10 @@ func NewActor(class Class, config ActorConfig) Actor {
 	var item *Item
 
 	for _, w := range class.Options.Weapons {
-		if w.ID == config.WeaponL {
+		if config.WeaponL != nil && w.ID == *config.WeaponL {
 			weapon_l = P(w.Clone())
 		}
-		if w.ID == config.WeaponR {
+		if config.WeaponR != nil && w.ID == *config.WeaponR {
 			weapon_r = P(w.Clone())
 		}
 	}
@@ -111,10 +112,11 @@ func NewActor(class Class, config ActorConfig) Actor {
 		Item:    item,
 
 		AffinityDamage:     map[Affinity]int{},
-		AffinityResistance: map[Affinity]int{},
 		AffinityImmunities: map[Affinity]float64{},
-		Stages:             map[Stat]int{},
+		AffinityResistance: map[Affinity]int{},
 		OffsetStats:        map[Stat]float64{},
+		Stacks:             map[Stack]int{},
+		Stages:             map[Stat]int{},
 		Stats:              maps.Clone(class.Stats),
 
 		Wounds: 0,
@@ -166,10 +168,11 @@ func (a Actor) Clone() Actor {
 		AffinityDamage:     maps.Clone(a.AffinityDamage),
 		AffinityResistance: maps.Clone(a.AffinityResistance),
 		AffinityImmunities: maps.Clone(a.AffinityImmunities),
-		UnmodifiedStats:    maps.Clone(a.UnmodifiedStats),
-		Stages:             maps.Clone(a.Stages),
 		OffsetStats:        maps.Clone(a.OffsetStats),
+		Stacks:             maps.Clone(a.Stacks),
+		Stages:             maps.Clone(a.Stages),
 		Stats:              maps.Clone(a.Stats),
+		UnmodifiedStats:    maps.Clone(a.UnmodifiedStats),
 
 		Wounds: a.Wounds,
 		State:  a.State,

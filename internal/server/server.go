@@ -38,7 +38,7 @@ func NewServer(ctx context.Context, queries *db.Queries) *Server {
 	api.HandleFunc("GET  /auth/me", auth.WithSession(handleMe(), queries))
 
 	api.HandleFunc("GET /teams", auth.WithSession(teamsHandler.HandleGetTeams, queries))
-	api.HandleFunc("POST /teams/upsert", auth.WithSession(teamsHandler.HandleUpsertTeam, queries))
+	api.HandleFunc("POST /teams/save", auth.WithSession(teamsHandler.HandleSaveTeam, queries))
 	api.HandleFunc("DELETE /teams/{team_id}", auth.WithSession(teamsHandler.HandleDeleteTeam, queries))
 
 	api.HandleFunc("GET /instances", auth.WithSession(instances_handler.HandleGetGames, queries))

@@ -6,7 +6,7 @@ function TeamPlatforms() {
   const team = useSelector(teamStore, (s) => s)
   return (
     <PlatformParent className="absolute inset-0 bottom-4/11 z-0 perspective-origin-top">
-      {team.actors.map((_, i) => (
+      {team.config.actors.map((_, i) => (
         <Platform
           key={i}
           rank={i}
