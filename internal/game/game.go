@@ -264,6 +264,16 @@ func (g *Game) GetActionableActionsCount() int {
 
 	return count
 }
+func (g *Game) GetActionableActionsByPlayer(player_ID uuid.UUID) int {
+	count := 0
+	for _, a := range g.GetActionableActors() {
+		if a.PlayerID == player_ID {
+			count += int(a.Stats[Actions])
+		}
+	}
+
+	return count
+}
 func (g *Game) FindCommands(where Filter[Command], context Context) []Command {
 	state := g.State()
 	return state.FindCommands(g, where, context)
@@ -463,6 +473,11 @@ func (g *Game) PushTransactions(transactions []Transaction) {
 		s.Transactions = append(s.Transactions, transactions...)
 	})
 }
+func (g *Game) MutatePlayer(id uuid.UUID, updater func(Player) Player) {
+	g.mutate(func(s *State) {
+		s.UpdatePlayer(id, updater)
+	})
+}
 func (g *Game) MutateActor(id uuid.UUID, updater func(Actor) Actor) {
 	g.mutate(func(s *State) {
 		s.UpdateActor(id, updater)
@@ -633,10 +648,17 @@ func (g *Game) DamageTargets(context Context, damage float64) {
 	}
 }
 func (g *Game) ActorNextTurnEffects() {
-	for _, actor := range g.State().Actors {
+	state := g.State()
+	for _, actor := range state.Actors {
 		g.MutateActor(actor.ID, func(a Actor) Actor {
 			a.NextTurn()
 			return a
+		})
+	}
+	for _, player := range state.Players {
+		g.MutatePlayer(player.ID, func(p Player) Player {
+			p.NextTurn()
+			return p
 		})
 	}
 }

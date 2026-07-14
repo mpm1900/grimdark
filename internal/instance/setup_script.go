@@ -10,7 +10,7 @@ import (
 
 func SetupPlayer(g *game.Game, user game.User, config game.TeamConfig) {
 	player := game.NewPlayer(user)
-	g.AddPlayers(player)
+	g.AddPlayers(*player)
 	actors.ApplyTeamConfig(g, player.ID, config)
 }
 

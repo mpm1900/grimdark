@@ -56,6 +56,26 @@ func validateContext(instance *Instance, request Request) {
 	instance.ValidateContextResponse(request.ClientID, request.Context, valid)
 }
 
+func readyPlayer(instance *Instance, request Request) {
+	player, ok := instance.Game.GetPlayer(request.Context.PlayerID)
+	if !ok {
+		return
+	}
+
+	instance.Game.MutatePlayer(player.ID, func(p game.Player) game.Player {
+		p.SetReady()
+		return p
+	})
+
+	for _, player := range instance.Game.State().Players {
+		if !player.Ready {
+			instance.BroadcastGame()
+			return
+		}
+	}
+
+	instance.RunGameActions()
+}
 func pushAction(instance *Instance, request Request) {
 	source, ok := instance.Game.GetSource(request.Context)
 	if !ok {
@@ -68,9 +88,14 @@ func pushAction(instance *Instance, request Request) {
 	}
 
 	instance.Game.PushCommand(source, action.Bind(request.Context))
-	needed_actions := instance.Game.GetActionableActionsCount()
-	if needed_actions == len(instance.Game.State().Commands) {
-		instance.RunGameActions()
+	needed_actions := instance.Game.GetActionableActionsByPlayer(request.ClientID)
+	state := instance.Game.State()
+	commands := state.FindCommands(instance.Game, func(g *game.Game, c game.Command, ctx game.Context) bool {
+		return c.Context.PlayerID == request.ClientID
+	}, request.Context)
+	if needed_actions == len(commands) {
+		readyPlayer(instance, request)
+		return
 	}
 
 	instance.BroadcastGame()

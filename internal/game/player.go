@@ -5,27 +5,39 @@ import (
 )
 
 type Player struct {
-	ID   uuid.UUID
-	User User
+	ID    uuid.UUID
+	Ready bool
+	User  User
 }
 
 type playerJSON struct {
 	ID         uuid.UUID `json:"ID"`
+	Ready      bool      `json:"ready"`
 	User       User      `json:"user"`
 	ActorCount int       `json:"actor_count"`
 }
 
-func NewPlayer(user User) Player {
-	return Player{
-		ID:   user.ID,
-		User: user,
+func NewPlayer(user User) *Player {
+	return &Player{
+		ID:    user.ID,
+		Ready: false,
+		User:  user,
 	}
 }
 
-func (p Player) ToJSON(actor_count int) playerJSON {
+func (p *Player) SetReady() {
+	p.Ready = true
+}
+
+func (p *Player) NextTurn() {
+	p.Ready = false
+}
+
+func (p *Player) ToJSON(actor_count int) playerJSON {
 	return playerJSON{
 		ID:         p.ID,
-		User:       p.User,
 		ActorCount: actor_count,
+		Ready:      p.Ready,
+		User:       p.User,
 	}
 }
