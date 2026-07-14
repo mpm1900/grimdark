@@ -10,13 +10,12 @@ type RequestType = string
 
 const (
 	PostConnect RequestType = "post-connect"
-	Ready       RequestType = "ready"
+	LobbyReady  RequestType = "ready"
 
 	PushAction    RequestType = "push-action"
 	CancelAction  RequestType = "cancel-action"
+	TurnReady     RequestType = "turn-ready"
 	ResolvePrompt RequestType = "resolve-prompt"
-
-	RunGameActions RequestType = "run-game-actions" // TEMP
 
 	GetTargets      RequestType = "get-targets"
 	ValidateContext RequestType = "validate-context"

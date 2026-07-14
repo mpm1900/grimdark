@@ -8,7 +8,7 @@ type SocketRequestType =
   | 'ready'
   | 'push-action'
   | 'cancel-action'
-  | 'run-game-actions'
+  | 'turn-ready'
   | 'resolve-prompt'
   | 'validate-context'
   | 'get-targets'

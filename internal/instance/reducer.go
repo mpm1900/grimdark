@@ -13,7 +13,7 @@ func postConnect(instance *Instance, request Request) {
 	actors.ApplyTeamConfig(instance.Game, request.ClientID, *request.TeamConfig)
 	instance.PostConnectResponse(request.ClientID)
 }
-func ready(instance *Instance, request Request) {
+func lobbyReady(instance *Instance, request Request) {
 	instance.Lobby.SetReady(request.ClientID)
 	instance.BroadcastLobby()
 	if instance.Lobby.Ready() {
@@ -56,8 +56,8 @@ func validateContext(instance *Instance, request Request) {
 	instance.ValidateContextResponse(request.ClientID, request.Context, valid)
 }
 
-func readyPlayer(instance *Instance, request Request) {
-	player, ok := instance.Game.GetPlayer(request.Context.PlayerID)
+func turnReady(instance *Instance, request Request) {
+	player, ok := instance.Game.GetPlayer(request.ClientID)
 	if !ok {
 		return
 	}
@@ -74,7 +74,9 @@ func readyPlayer(instance *Instance, request Request) {
 		}
 	}
 
-	instance.RunGameActions()
+	if instance.Game.Status == game.GameStatusIdle {
+		instance.RunGameActions()
+	}
 }
 func pushAction(instance *Instance, request Request) {
 	source, ok := instance.Game.GetSource(request.Context)
@@ -94,7 +96,7 @@ func pushAction(instance *Instance, request Request) {
 		return c.Context.PlayerID == request.ClientID
 	}, request.Context)
 	if needed_actions == len(commands) {
-		readyPlayer(instance, request)
+		turnReady(instance, request)
 		return
 	}
 
@@ -119,22 +121,14 @@ func resolvePrompt(instance *Instance, request Request) {
 
 	instance.BroadcastGame()
 }
-func runGameActions(instance *Instance) {
-	// TestGame(&instance.Game)
-	if instance.Game.Status == game.GameStatusRunning {
-		return
-	}
-
-	instance.RunGameActions()
-}
 
 func Reducer(instance *Instance, request Request) {
 	switch request.Type {
 	case PostConnect:
 		postConnect(instance, request)
 		return
-	case Ready:
-		ready(instance, request)
+	case LobbyReady:
+		lobbyReady(instance, request)
 		return
 
 	case GetTargets:
@@ -153,8 +147,8 @@ func Reducer(instance *Instance, request Request) {
 	case ResolvePrompt:
 		resolvePrompt(instance, request)
 		return
-	case RunGameActions:
-		runGameActions(instance)
+	case TurnReady:
+		turnReady(instance, request)
 		return
 	default:
 		return

@@ -35,7 +35,7 @@ function AppHeader() {
               disabled={game_status === 'running'}
               onClick={() => {
                 sendContextMessage({
-                  type: 'run-game-actions',
+                  type: 'turn-ready',
                   client_ID: client.ID,
                   context: NULL_CONTEXT,
                 })
