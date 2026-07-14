@@ -424,6 +424,7 @@ var GLOBAL_ACTIONS = []Action{
 	MoveFront(),
 	MoveBackwards(),
 	Retreat(),
+	Struggle(),
 	SwitchIn(1),
 	SwitchIn(2),
 	SwitchIn(3),
