@@ -118,7 +118,7 @@ func ActionRange(action_range int) Filter[Actor] {
 }
 
 // trigger validation filters
-func TriggerModifierParentIsActive(g Game, trigger Context, modifier Context) bool {
+func TriggerModifierParentIsActive(g *Game, trigger Context, modifier Context) bool {
 	parent, ok := g.GetParent(modifier)
 	if !ok {
 		return false
@@ -126,7 +126,7 @@ func TriggerModifierParentIsActive(g Game, trigger Context, modifier Context) bo
 
 	return parent.IsActive()
 }
-func TriggerTargetMatchesModifierParent(g Game, trigger Context, modifier Context) bool {
+func TriggerTargetMatchesModifierParent(g *Game, trigger Context, modifier Context) bool {
 	for _, target := range g.GetTargets(trigger) {
 		if target.ID == modifier.ParentID {
 			return true
@@ -135,6 +135,6 @@ func TriggerTargetMatchesModifierParent(g Game, trigger Context, modifier Contex
 
 	return false
 }
-func TriggerSourceMatchesModifierParent(g Game, trigger Context, modifier Context) bool {
+func TriggerSourceMatchesModifierParent(g *Game, trigger Context, modifier Context) bool {
 	return trigger.SourceID == modifier.ParentID
 }

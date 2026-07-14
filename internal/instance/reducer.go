@@ -10,7 +10,7 @@ func postConnect(instance *Instance, request Request) {
 		return
 	}
 
-	actors.ApplyTeamConfig(&instance.Game, request.ClientID, *request.TeamConfig)
+	actors.ApplyTeamConfig(instance.Game, request.ClientID, *request.TeamConfig)
 	instance.PostConnectResponse(request.ClientID)
 }
 func ready(instance *Instance, request Request) {
@@ -38,7 +38,7 @@ func getTargets(instance *Instance, request Request) {
 
 	actors := instance.Game.State().Actors
 	for _, actor := range actors {
-		if action.TargetsPredicate(&instance.Game, actor, request.Context) && actor.Targetable() {
+		if action.TargetsPredicate(instance.Game, actor, request.Context) && actor.Targetable() {
 			context.AddTarget(actor)
 		}
 	}
@@ -52,7 +52,7 @@ func validateContext(instance *Instance, request Request) {
 		return
 	}
 
-	valid := action.ValidateContext(&instance.Game, request.Context)
+	valid := action.ValidateContext(instance.Game, request.Context)
 	instance.ValidateContextResponse(request.ClientID, request.Context, valid)
 }
 

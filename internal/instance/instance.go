@@ -21,7 +21,7 @@ type Instance struct {
 	ctx     context.Context
 	Status  InstanceStatus
 	Lobby   Lobby
-	Game    game.Game
+	Game    *game.Game
 	Tick    time.Duration
 	onEmpty func(uuid.UUID)
 

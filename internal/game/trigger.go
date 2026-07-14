@@ -26,7 +26,7 @@ const (
 type Trigger struct {
 	Action
 	On       TriggerOn
-	Validate func(g Game, t_context Context, m_context Context) bool
+	Validate func(g *Game, t_context Context, m_context Context) bool
 }
 
 type TriggerCommand struct {
@@ -56,7 +56,7 @@ func (c TriggerCommand) Resolve(g *Game) []Transaction {
 
 	action_context := ActionContext{
 		Action:       c.Payload.Action,
-		Source:       c.GetParent(*g),
+		Source:       c.GetParent(g),
 		transactions: []Transaction{},
 	}
 
@@ -77,7 +77,7 @@ func (c TriggerCommand) Resolve(g *Game) []Transaction {
 
 	log := NewLog(fmt.Sprintf("$source$'s $action$ trigger (%s)", c.Payload.On), map[string]string{
 		"$source$": action_context.Source.Name,
-		"$action$": c.getName(*g),
+		"$action$": c.getName(g),
 	})
 	log_context := context.Clone()
 	log_context.SourceID = action_context.Source.ID
@@ -90,7 +90,7 @@ func (c TriggerCommand) Resolve(g *Game) []Transaction {
 	return c.Payload.Resolve(g, context, action_context)
 }
 
-func (c TriggerCommand) GetParent(g Game) Actor {
+func (c TriggerCommand) GetParent(g *Game) Actor {
 	parent, ok := g.GetParent(c.ParentContext)
 	if ok {
 		return parent
@@ -99,7 +99,7 @@ func (c TriggerCommand) GetParent(g Game) Actor {
 	return g.GetSourceAction(c.ParentContext)
 }
 
-func (c TriggerCommand) getName(g Game) string {
+func (c TriggerCommand) getName(g *Game) string {
 	for _, modifier := range g.GetModifiers() {
 		same_effect := modifier.Context.EffectID == c.ParentContext.EffectID
 		same_parent := modifier.Context.ParentID == c.ParentContext.ParentID

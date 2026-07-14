@@ -83,7 +83,7 @@ type Game struct {
 	Logs       []Bindable[Log]
 }
 
-func NewGame(instanceID uuid.UUID) Game {
+func NewGame(instanceID uuid.UUID) *Game {
 	var state = State{
 		Actors:       []Actor{},
 		Players:      []Player{},
@@ -109,7 +109,7 @@ func NewGame(instanceID uuid.UUID) Game {
 
 	state.Modifiers = append(state.Modifiers, system_modifiers...)
 
-	return Game{
+	return &Game{
 		state:     state,
 		resolved:  state,
 		gamestate: unresolved,
@@ -436,7 +436,7 @@ func (g *Game) On(on TriggerOn, context Context) {
 			if trigger.On != on {
 				continue
 			}
-			if trigger.Validate != nil && !trigger.Validate(*g, context, modifier.Context) {
+			if trigger.Validate != nil && !trigger.Validate(g, context, modifier.Context) {
 				continue
 			}
 
