@@ -81,7 +81,7 @@ type Actor struct {
 	Meta ActorMeta
 }
 
-func NewActor(class Class, config ActorConfig) Actor {
+func NewActor(class Class, config ActorConfig) *Actor {
 	var weapon_l *Weapon
 	var weapon_r *Weapon
 	var item *Item
@@ -99,7 +99,7 @@ func NewActor(class Class, config ActorConfig) Actor {
 			item = P(i.Clone())
 		}
 	}
-	return Actor{
+	return &Actor{
 		ID:         uuid.New(),
 		Class:      class.CloneForActor(),
 		Name:       class.Name,
@@ -142,7 +142,7 @@ func NewActor(class Class, config ActorConfig) Actor {
 	}
 }
 
-func (a Actor) Clone() Actor {
+func (a *Actor) Clone() *Actor {
 	var weapon_l *Weapon = nil
 	var weapon_r *Weapon = nil
 	if a.WeaponL != nil {
@@ -153,7 +153,7 @@ func (a Actor) Clone() Actor {
 		clone := a.WeaponR.Clone()
 		weapon_r = &clone
 	}
-	return Actor{
+	return &Actor{
 		ID:         a.ID,
 		Class:      a.Class.CloneForActor(),
 		Name:       a.Name,
@@ -306,13 +306,13 @@ func (a *Actor) SetPosition(position_id uuid.UUID) {
 }
 
 // getters
-func (a Actor) IsActive() bool {
+func (a *Actor) IsActive() bool {
 	return a.PositionID != uuid.Nil
 }
-func (a Actor) CanAct() bool {
+func (a *Actor) CanAct() bool {
 	return !a.IsStunned
 }
-func (a Actor) GetAffinityDamage(affinity Affinity) int {
+func (a *Actor) GetAffinityDamage(affinity Affinity) int {
 	base := maps.Clone(a.AffinityDamage)
 	for affinity := range a.Class.Affinities {
 		b, ok := base[affinity]
@@ -330,7 +330,7 @@ func (a Actor) GetAffinityDamage(affinity Affinity) int {
 
 	return 0
 }
-func (a Actor) GetAffinityResistance(affinity Affinity) int {
+func (a *Actor) GetAffinityResistance(affinity Affinity) int {
 	value, ok := a.AffinityResistance[affinity]
 	if ok {
 		return value
@@ -338,14 +338,14 @@ func (a Actor) GetAffinityResistance(affinity Affinity) int {
 
 	return 0
 }
-func (a Actor) GetEffectiveAffinityResistance(affinity Affinity) int {
-	return a.GetAffinityResistance(affinity) - affinity.GetBaseModifier(a)
+func (a *Actor) GetEffectiveAffinityResistance(affinity Affinity) int {
+	return a.GetAffinityResistance(affinity) - affinity.GetBaseModifier(*a)
 }
-func (a Actor) GetRemainingHealth() float64 {
+func (a *Actor) GetRemainingHealth() float64 {
 	health := a.Stats[Health]
 	return health - a.Wounds
 }
-func (a Actor) mapEffects(effects []Effect) []Effect {
+func (a *Actor) mapEffects(effects []Effect) []Effect {
 	for i, e := range effects {
 		state, ok := a.effectStates[e.ID]
 		if ok {
@@ -354,7 +354,7 @@ func (a Actor) mapEffects(effects []Effect) []Effect {
 	}
 	return effects
 }
-func (a Actor) getWeaponEffects() []Effect {
+func (a *Actor) getWeaponEffects() []Effect {
 	effects := map[uuid.UUID]Effect{}
 	if a.WeaponL != nil {
 		for _, e := range a.WeaponL.Effects {
@@ -369,7 +369,7 @@ func (a Actor) getWeaponEffects() []Effect {
 
 	return slices.Collect(maps.Values(effects))
 }
-func (a Actor) GetEffects() []Effect {
+func (a *Actor) GetEffects() []Effect {
 	effects := slices.Clone(a.Class.Effects)
 	effects = append(effects, a.getWeaponEffects()...)
 	if a.Item != nil {
@@ -378,11 +378,11 @@ func (a Actor) GetEffects() []Effect {
 
 	return a.mapEffects(effects)
 }
-func (a Actor) GetModifiers() []Modifier {
+func (a *Actor) GetModifiers() []Modifier {
 	modifiers := []Modifier{}
 	for _, effect := range a.GetEffects() {
 		if effect.Ready() {
-			context := MakeContextFrom(a)
+			context := MakeContextFrom(*a)
 			context.EffectID = effect.ID
 			modifier := effect.Bind(context)
 			modifiers = append(modifiers, modifier)
@@ -391,7 +391,7 @@ func (a Actor) GetModifiers() []Modifier {
 
 	return modifiers
 }
-func (a Actor) GetActions() []Action {
+func (a *Actor) GetActions() []Action {
 	actions := []Action{}
 	seen := map[uuid.UUID]struct{}{}
 
@@ -416,11 +416,11 @@ func (a Actor) GetActions() []Action {
 
 	addActions(GLOBAL_ACTIONS)
 	actions = slices.DeleteFunc(actions, func(action Action) bool {
-		return action.ActiveCheck != nil && !action.ActiveCheck(a)
+		return action.ActiveCheck != nil && !action.ActiveCheck(*a)
 	})
 	return actions
 }
-func (a Actor) GetActionByID(action_id uuid.UUID) (Action, bool) {
+func (a *Actor) GetActionByID(action_id uuid.UUID) (Action, bool) {
 	for _, action := range a.GetActions() {
 		if action.ID == action_id {
 			return action, true
@@ -429,7 +429,7 @@ func (a Actor) GetActionByID(action_id uuid.UUID) (Action, bool) {
 
 	return Action{}, false
 }
-func (a Actor) Targetable() bool {
+func (a *Actor) Targetable() bool {
 	if a.IsActive() {
 		return !a.IsHidden
 	}

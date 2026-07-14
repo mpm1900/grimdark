@@ -19,14 +19,14 @@ func HydrateActorClass(id uuid.UUID) (game.Class, bool) {
 	return class, ok
 }
 
-func HydrateActorConfig(config game.ActorConfig) (game.Actor, bool) {
+func HydrateActorConfig(config game.ActorConfig) (*game.Actor, bool) {
 	if config.Class == nil {
-		return game.Actor{}, false
+		return nil, false
 	}
 
 	class, ok := HydrateActorClass(*config.Class)
 	if !ok {
-		return game.Actor{}, false
+		return nil, false
 	}
 
 	return game.NewActor(class, config), true
@@ -37,7 +37,7 @@ func ApplyTeamConfig(g *game.Game, playerID uuid.UUID, config game.TeamConfig) {
 		actor, ok := HydrateActorConfig(a_config)
 		if ok {
 			actor.PlayerID = playerID
-			g.AddActors(actor)
+			g.AddActors(*actor)
 		}
 	}
 }

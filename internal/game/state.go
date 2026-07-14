@@ -25,7 +25,7 @@ func (s *State) Clone() State {
 
 	actors := make([]Actor, len(s.Actors))
 	for i, actor := range s.Actors {
-		actors[i] = actor.Clone()
+		actors[i] = *actor.Clone()
 	}
 
 	transactions := slices.Clone(s.Transactions)
