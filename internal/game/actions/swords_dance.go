@@ -24,7 +24,7 @@ var SwordsDance = game.Action{
 	),
 	ValidateContext:  game.TrueGameFilter,
 	TargetsPredicate: game.NoneActors,
-	DisabledCheck: func(g game.Game, source game.Actor) bool {
+	DisabledCheck: func(g *game.Game, source game.Actor) bool {
 		return source.Meta.ActiveTurns > 1
 	},
 	ActiveCheck: func(source game.Actor) bool {

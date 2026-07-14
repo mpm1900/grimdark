@@ -93,7 +93,7 @@ func (e Effect) HasTag(tag uuid.UUID) bool {
 	_, ok := e.Tags[tag]
 	return ok
 }
-func (e Effect) Filter(g Game, context Context) bool {
+func (e Effect) Filter(g *Game, context Context) bool {
 	if e.filter == nil {
 		return true
 	}
@@ -146,7 +146,7 @@ func EffectSource(priority int, updater Updater[Actor]) Effect {
 
 			applied = append(applied, context.SourceID)
 			g.ModifyActor(context.SourceID, func(a Actor) Actor {
-				return updater(*g, a, context)
+				return updater(g, a, context)
 			})
 
 			return applied
@@ -165,7 +165,7 @@ func EffectTargets(priority int, updater Updater[Actor]) Effect {
 			for _, target := range g.GetTargets(context) {
 				applied = append(applied, target.ID)
 				g.ModifyActor(target.ID, func(a Actor) Actor {
-					return updater(*g, a, context)
+					return updater(g, a, context)
 				})
 			}
 
@@ -186,7 +186,7 @@ func EffectActorsWhere(priority int, where Filter[Actor], updater Updater[Actor]
 			for _, target := range actors {
 				applied = append(applied, target.ID)
 				g.ModifyActor(target.ID, func(a Actor) Actor {
-					return updater(*g, a, context)
+					return updater(g, a, context)
 				})
 			}
 

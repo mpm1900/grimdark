@@ -96,12 +96,12 @@ func NewGame(instanceID uuid.UUID) Game {
 	}
 	var system_modifiers = []Modifier{
 		// map stat stages
-		EffectActorsAll(EffectPriorityMapStages, func(g Game, a Actor, ctx Context) Actor {
+		EffectActorsAll(EffectPriorityMapStages, func(g *Game, a Actor, ctx Context) Actor {
 			a.mapStagedStats()
 			return a
 		}).Bind(NewContext()),
 		// map base stats
-		EffectActorsAll(EffectPriorityMapBaseStats, func(g Game, a Actor, ctx Context) Actor {
+		EffectActorsAll(EffectPriorityMapBaseStats, func(g *Game, a Actor, ctx Context) Actor {
 			a.mapBaseStats()
 			return a
 		}).Bind(NewContext()),
@@ -238,10 +238,10 @@ func (g *Game) GetActor(id uuid.UUID) (Actor, bool) {
 	return g.State().GetActor(id)
 }
 func (g *Game) FindActors(where Filter[Actor], context Context) []Actor {
-	return g.State().FindActors(*g, where, context)
+	return g.State().FindActors(g, where, context)
 }
 func (g *Game) GetActorsByPlayer(player_id uuid.UUID) []Actor {
-	return g.State().FindActors(*g, func(g Game, a Actor, ctx Context) bool {
+	return g.State().FindActors(g, func(g *Game, a Actor, ctx Context) bool {
 		return a.PlayerID == player_id
 	}, NewContext())
 }
@@ -261,7 +261,7 @@ func (g *Game) GetActionableActionsCount() int {
 	return count
 }
 func (g *Game) FindCommands(where Filter[Command], context Context) []Command {
-	return g.State().FindCommands(*g, where, context)
+	return g.State().FindCommands(g, where, context)
 }
 
 func (g *Game) IsReadyToRun() bool {
@@ -329,7 +329,7 @@ func (g *Game) AddModifiers(modifiers ...Modifier) {
 		for _, mod := range modifiers {
 			success := true
 			if mod.Payload.Check != nil {
-				success = mod.Payload.Check(*g, mod.Context)
+				success = mod.Payload.Check(g, mod.Context)
 			}
 
 			if success {
@@ -355,12 +355,12 @@ func (g *Game) AddModifiers(modifiers ...Modifier) {
 func (g *Game) RemoveModifiers(where Filter[Modifier], ctx Context) {
 	g.mutate(func(s *State) {
 		s.Modifiers = slices.DeleteFunc(s.Modifiers, func(m Modifier) bool {
-			return where(*g, m, ctx)
+			return where(g, m, ctx)
 		})
 	})
 }
 func (g *Game) PushCommand(source Actor, command Command) {
-	found := g.FindCommands(func(g Game, c Command, ctx Context) bool {
+	found := g.FindCommands(func(g *Game, c Command, ctx Context) bool {
 		return c.Context.SourceID == command.Context.SourceID
 	}, command.Context)
 
@@ -424,7 +424,7 @@ func (g *Game) UpdatePromptCommand(context Context) {
 			is_action := cmd.Context.ActionID == context.ActionID
 			if is_player && is_source && is_action {
 				s.Prompts[i].Context = context
-				s.Prompts[i].Ready = cmd.Payload.ValidateContext(*g, context)
+				s.Prompts[i].Ready = cmd.Payload.ValidateContext(g, context)
 			}
 		}
 	})
@@ -863,7 +863,7 @@ type GameJSON struct {
 	Turn          int                    `json:"turn"`
 }
 
-func (g Game) ToJSON() GameJSON {
+func (g *Game) ToJSON() GameJSON {
 	state := g.State()
 	players := make([]playerJSON, len(state.Players))
 	for i, player := range state.Players {
@@ -938,6 +938,6 @@ func (g *Game) Flush() {
 	})
 }
 
-func (g Game) MarshalJSON() ([]byte, error) {
+func (g *Game) MarshalJSON() ([]byte, error) {
 	return json.Marshal(g.ToJSON())
 }

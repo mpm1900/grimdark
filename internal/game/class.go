@@ -24,7 +24,7 @@ type Class struct {
 	Race       ActorRace
 	SpriteURL  string
 	Stats      map[Stat]float64
-	Strength   int
+	Strength   int // amount of weapons that can be equipped
 }
 
 type classOptionsJSON struct {

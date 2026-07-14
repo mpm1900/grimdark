@@ -11,7 +11,7 @@ import (
 var Ultramarine = newUltramarine()
 
 func newUltramarine() game.Class {
-	bypass := effects.StagesResetWhere(func(g game.Game, a game.Actor, ctx game.Context) bool {
+	bypass := effects.StagesResetWhere(func(g *game.Game, a game.Actor, ctx game.Context) bool {
 		active_context := g.State().ActiveContext
 		if active_context == nil {
 			return false

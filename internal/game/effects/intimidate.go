@@ -7,7 +7,7 @@ import (
 var Intimidate = intimidate()
 
 func intimidate() game.Effect {
-	effect := game.EffectSource(game.EffectPriorityTriggers, func(g game.Game, a game.Actor, ctx game.Context) game.Actor {
+	effect := game.EffectSource(game.EffectPriorityTriggers, func(g *game.Game, a game.Actor, ctx game.Context) game.Actor {
 		return a
 	})
 	effect.Triggers = append(effect.Triggers, game.Trigger{

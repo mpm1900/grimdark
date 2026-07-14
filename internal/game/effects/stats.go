@@ -8,7 +8,7 @@ import (
 )
 
 func StatChangeActor(stat game.Stat, amount int) game.Updater[game.Actor] {
-	return func(g game.Game, a game.Actor, ctx game.Context) game.Actor {
+	return func(g *game.Game, a game.Actor, ctx game.Context) game.Actor {
 		a.Stages[stat] += amount
 		return a
 	}
@@ -69,7 +69,7 @@ func StatDownTargets(stat game.Stat, amount int) game.Effect {
 }
 
 func StagesResetWhere(where game.Filter[game.Actor]) game.Effect {
-	effect := game.EffectActorsWhere(game.EffectPriorityStagesOverwrite, where, func(g game.Game, a game.Actor, ctx game.Context) game.Actor {
+	effect := game.EffectActorsWhere(game.EffectPriorityStagesOverwrite, where, func(g *game.Game, a game.Actor, ctx game.Context) game.Actor {
 		for stat, _ := range a.Stages {
 			a.Stages[stat] = 0
 		}
@@ -87,7 +87,7 @@ func StagesResetWhere(where game.Filter[game.Actor]) game.Effect {
 }
 
 func OffsetResetWhere(where game.Filter[game.Actor]) game.Effect {
-	effect := game.EffectActorsWhere(game.EffectPriorityOffsetOverwrite, where, func(g game.Game, a game.Actor, ctx game.Context) game.Actor {
+	effect := game.EffectActorsWhere(game.EffectPriorityOffsetOverwrite, where, func(g *game.Game, a game.Actor, ctx game.Context) game.Actor {
 		for stat, _ := range a.OffsetStats {
 			a.OffsetStats[stat] = 0
 		}

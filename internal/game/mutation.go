@@ -34,7 +34,7 @@ func NewMutation(filter GameFilter, delta Mutator) Mutation {
 func (m *Mutation) SetFilter(filter GameFilter) {
 	m.filter = filter
 }
-func (m Mutation) Filter(g Game, context Context) bool {
+func (m Mutation) Filter(g *Game, context Context) bool {
 	if m.filter == nil {
 		return true
 	}
@@ -55,12 +55,12 @@ func (m Mutation) Bind(context Context) Transaction {
 }
 
 type resolvableMutation interface {
-	Filter(Game, Context) bool
+	Filter(*Game, Context) bool
 	Delta(*Game, Context) []uuid.UUID
 }
 
 func resolveMutation(g *Game, context Context, mutation resolvableMutation) []uuid.UUID {
-	if !mutation.Filter(*g, context) {
+	if !mutation.Filter(g, context) {
 		return []uuid.UUID{}
 	}
 
@@ -81,7 +81,7 @@ func AddModifiers(modifiers ...Modifier) Mutation {
 func RemoveModifier(modifier Modifier) Mutation {
 	return Mutation{
 		delta: func(g *Game, ctx Context) []uuid.UUID {
-			g.RemoveModifiers(func(g Game, m Modifier, ctx Context) bool {
+			g.RemoveModifiers(func(g *Game, m Modifier, ctx Context) bool {
 				return m.ID == modifier.ID
 			}, ctx)
 
@@ -115,7 +115,7 @@ func MutateSource(updater Updater[Actor]) Mutation {
 
 			applied = append(applied, context.SourceID)
 			g.MutateActor(context.SourceID, func(a Actor) Actor {
-				return updater(*g, a, context)
+				return updater(g, a, context)
 			})
 
 			return applied
@@ -130,7 +130,7 @@ func MutateTargets(updater Updater[Actor]) Mutation {
 			for _, target := range g.GetTargets(context) {
 				applied = append(applied, target.ID)
 				g.MutateActor(target.ID, func(a Actor) Actor {
-					return updater(*g, a, context)
+					return updater(g, a, context)
 				})
 			}
 

@@ -7,9 +7,9 @@ import (
 	"github.com/google/uuid"
 )
 
-type ActionEffect func(g Game, context Context, this *ActionContext)
-type AttackEffectResult func(g Game, context Context, this *ActionContext, result DamageResult)
-type StatusEffectResult func(g Game, context Context, this *ActionContext, result AccuracyResult)
+type ActionEffect func(g *Game, context Context, this *ActionContext)
+type AttackEffectResult func(g *Game, context Context, this *ActionContext, result DamageResult)
+type StatusEffectResult func(g *Game, context Context, this *ActionContext, result AccuracyResult)
 
 type AttackConfig struct {
 	OnSuccess        ActionEffect
@@ -30,7 +30,7 @@ type StatusConfig struct {
 }
 
 func AddResultEffects(chance float64, effects ...Effect) AttackEffectResult {
-	return func(g Game, context Context, this *ActionContext, result DamageResult) {
+	return func(g *Game, context Context, this *ActionContext, result DamageResult) {
 		if !Chance(chance * this.Source.Stats[EffectChance]) {
 			return
 		}
@@ -131,7 +131,7 @@ func DamageSideEffects(g *Game, context Context, result DamageResult, this *Acti
 		g.On(OnDamageRecieve, trigger_context)
 		if result.Critical {
 			if config.OnCriticalResult != nil {
-				config.OnCriticalResult(*g, context, this, result)
+				config.OnCriticalResult(g, context, this, result)
 			}
 			g.On(OnCriticalHit, trigger_context)
 		}
@@ -152,7 +152,7 @@ func DamageSideEffects(g *Game, context Context, result DamageResult, this *Acti
 		}
 
 		if config.OnSuccessResult != nil {
-			config.OnSuccessResult(*g, context, this, result)
+			config.OnSuccessResult(g, context, this, result)
 		}
 	}
 	if !result.Success() {
@@ -160,7 +160,7 @@ func DamageSideEffects(g *Game, context Context, result DamageResult, this *Acti
 			g.On(OnMiss, trigger_context)
 		}
 		if config.OnFailureResult != nil {
-			config.OnFailureResult(*g, context, this, result)
+			config.OnFailureResult(g, context, this, result)
 		}
 	}
 }
@@ -207,21 +207,21 @@ func EffectGainWhereOnSuccess(where Filter[Actor]) func(g *Game, e Effect, ctx C
 }
 
 // context mappers
-func CtxToAllActiveTargets() func(g Game, ctx Context, this ActionContext) Context {
-	return func(g Game, ctx Context, this ActionContext) Context {
+func CtxToAllActiveTargets() func(g *Game, ctx Context, this ActionContext) Context {
+	return func(g *Game, ctx Context, this ActionContext) Context {
 		c := ctx.CloneWithTargets(g.FindActors(ActiveActors, ctx))
 		return c
 	}
 }
-func CtxToAllOtherActiveTargets() func(g Game, ctx Context, this ActionContext) Context {
-	return func(g Game, ctx Context, this ActionContext) Context {
+func CtxToAllOtherActiveTargets() func(g *Game, ctx Context, this ActionContext) Context {
+	return func(g *Game, ctx Context, this ActionContext) Context {
 		c := ctx.CloneWithTargets(g.FindActors(ActiveActors, ctx))
 		c.RemoveTarget(this.Source)
 		return c
 	}
 }
-func CtxTargetPreCollateral() func(g Game, ctx Context, this ActionContext) Context {
-	return func(g Game, ctx Context, this ActionContext) Context {
+func CtxTargetPreCollateral() func(g *Game, ctx Context, this ActionContext) Context {
+	return func(g *Game, ctx Context, this ActionContext) Context {
 		if len(ctx.PositionIDs) == 0 {
 			return ctx
 		}
@@ -351,7 +351,7 @@ func MoveForwards() Action {
 
 			return this.Done()
 		},
-		DisabledCheck: func(g Game, source Actor) bool {
+		DisabledCheck: func(g *Game, source Actor) bool {
 			pos, ok := g.GetPosition(source.PositionID)
 			if !ok {
 				return true
@@ -378,7 +378,7 @@ func MoveFront() Action {
 
 			return this.Done()
 		},
-		DisabledCheck: func(g Game, source Actor) bool {
+		DisabledCheck: func(g *Game, source Actor) bool {
 			pos, ok := g.GetPosition(source.PositionID)
 			if !ok {
 				return true
@@ -405,7 +405,7 @@ func MoveBackwards() Action {
 
 			return this.Done()
 		},
-		DisabledCheck: func(g Game, source Actor) bool {
+		DisabledCheck: func(g *Game, source Actor) bool {
 			pos, ok := g.GetPosition(source.PositionID)
 			if !ok {
 				return true

@@ -37,24 +37,24 @@ func MakeAttack(config AttackConfig) ActionResolver {
 			if pending_damage[target.ID] > 0 {
 				g.On(OnAttackSuccess, trigger_ctx)
 				if config.OnAttackSuccess != nil {
-					config.OnAttackSuccess(*g, trigger_ctx, &this)
+					config.OnAttackSuccess(g, trigger_ctx, &this)
 				}
 			} else {
 				g.On(OnAttackFailure, trigger_ctx)
 				if config.OnAttackFailure != nil {
-					config.OnAttackFailure(*g, trigger_ctx, &this)
+					config.OnAttackFailure(g, trigger_ctx, &this)
 				}
 			}
 		}
 
 		if success && config.OnSuccess != nil {
-			config.OnSuccess(*g, context, &this)
+			config.OnSuccess(g, context, &this)
 		}
 		if !success && config.OnFailure != nil {
-			config.OnFailure(*g, context, &this)
+			config.OnFailure(g, context, &this)
 		}
 		if config.OnFinally != nil {
-			config.OnFinally(*g, context, &this)
+			config.OnFinally(g, context, &this)
 		}
 
 		return this.Done()
@@ -66,10 +66,10 @@ func AddSourceEffects(config StatusConfig, chance float64, effects ...Effect) Ac
 		chance = chance * this.Source.Stats[EffectChance]
 		if !Chance(chance) {
 			if config.OnFailureResult != nil {
-				config.OnFailureResult(*g, ctx, &this, AccuracyResult{})
+				config.OnFailureResult(g, ctx, &this, AccuracyResult{})
 			}
 			if config.OnFailure != nil {
-				config.OnFailure(*g, ctx, &this)
+				config.OnFailure(g, ctx, &this)
 			}
 
 			return this.Done()
@@ -86,10 +86,10 @@ func AddSourceEffects(config StatusConfig, chance float64, effects ...Effect) Ac
 			)).Bind(ctx))
 
 			if config.OnFailureResult != nil {
-				config.OnFailureResult(*g, ctx, &this, AccuracyResult{})
+				config.OnFailureResult(g, ctx, &this, AccuracyResult{})
 			}
 			if config.OnFailure != nil {
-				config.OnFailure(*g, ctx, &this)
+				config.OnFailure(g, ctx, &this)
 			}
 
 			return this.Done()
@@ -102,10 +102,10 @@ func AddSourceEffects(config StatusConfig, chance float64, effects ...Effect) Ac
 
 		this.Push(AddModifiers(modifiers...).Bind(NewContext()))
 		if config.OnSuccessResult != nil {
-			config.OnSuccessResult(*g, ctx, &this, AccuracyResult{})
+			config.OnSuccessResult(g, ctx, &this, AccuracyResult{})
 		}
 		if config.OnSuccess != nil {
-			config.OnSuccess(*g, ctx, &this)
+			config.OnSuccess(g, ctx, &this)
 		}
 		return this.Done()
 	}
@@ -138,20 +138,20 @@ func AddTargetsEffects(config StatusConfig, effects ...Effect) ActionResolver {
 				}
 				this.Push(AddModifiers(modifiers...).Bind(NewContext()))
 				if config.OnSuccessResult != nil {
-					config.OnSuccessResult(*g, ctx, &this, result)
+					config.OnSuccessResult(g, ctx, &this, result)
 				}
 			}
 			if !result_success && config.OnFailureResult != nil {
-				config.OnFailureResult(*g, ctx, &this, result)
+				config.OnFailureResult(g, ctx, &this, result)
 			}
 		}
 
 		if success && config.OnSuccess != nil {
-			config.OnSuccess(*g, ctx, &this)
+			config.OnSuccess(g, ctx, &this)
 		}
 
 		if !success && config.OnFailure != nil {
-			config.OnFailure(*g, ctx, &this)
+			config.OnFailure(g, ctx, &this)
 		}
 
 		return this.Done()
@@ -174,7 +174,7 @@ func Struggle() Action {
 		},
 		LogTemplate: P("$source$ flails in a struggle."),
 		Resolve: MakeAttack(AttackConfig{
-			OnSuccessResult: func(g Game, context Context, this *ActionContext, result DamageResult) {
+			OnSuccessResult: func(g *Game, context Context, this *ActionContext, result DamageResult) {
 				hp := this.Source.Stats[Health]
 				recoil := hp * 0.25
 				recoil_ctx := MakeContextFor(this.Source, this.Source)

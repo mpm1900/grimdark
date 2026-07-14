@@ -152,7 +152,7 @@ func (s State) GetActor(id uuid.UUID) (Actor, bool) {
 
 	return Actor{}, false
 }
-func (s State) FindActors(g Game, where Filter[Actor], context Context) []Actor {
+func (s State) FindActors(g *Game, where Filter[Actor], context Context) []Actor {
 	actors := []Actor{}
 	for _, a := range s.Actors {
 		if where(g, a, context) {
@@ -162,7 +162,7 @@ func (s State) FindActors(g Game, where Filter[Actor], context Context) []Actor 
 
 	return actors
 }
-func (s State) FindCommands(g Game, where Filter[Command], context Context) []Command {
+func (s State) FindCommands(g *Game, where Filter[Command], context Context) []Command {
 	commands := []Command{}
 	for _, c := range s.Commands {
 		if where(g, c, context) {

@@ -33,7 +33,7 @@ type actorJSON struct {
 	Race               ActorRace            `json:"race"`
 	Seen               bool                 `json:"-"`
 	SpriteURL          string               `json:"sprite_url"`
-	Stacks             map[Stack]int        `json:"stacks"`
+	Stacks             map[Stack]float64    `json:"stacks"`
 	State              ActorState           `json:"state"`
 	Stats              map[Stat]int         `json:"stats"`
 	Stages             map[Stat]int         `json:"stages"`
@@ -44,7 +44,7 @@ type actorJSON struct {
 	Wounds             int                  `json:"wounds"`
 }
 
-func (a Actor) ToJSON(g Game) actorJSON {
+func (a Actor) ToJSON(g *Game) actorJSON {
 	stats := make(map[Stat]int, len(a.Stats))
 	unmodified_stats := make(map[Stat]int, len(a.UnmodifiedStats))
 	active_modifiers := slices.Collect(maps.Keys(g.AppliedModifiers(a.ID)))

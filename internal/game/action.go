@@ -31,9 +31,9 @@ type Action struct {
 	ValidateRuntime  GameFilter
 	ValidateContext  GameFilter
 	TargetsPredicate Filter[Actor]
-	MapContext       func(g Game, ctx Context, this ActionContext) Context
+	MapContext       func(g *Game, ctx Context, this ActionContext) Context
 	ActiveCheck      func(source Actor) bool
-	DisabledCheck    func(g Game, source Actor) bool
+	DisabledCheck    func(g *Game, source Actor) bool
 }
 
 type actionJSON struct {
@@ -44,7 +44,7 @@ type actionJSON struct {
 	Tags       []ActionTag  `json:"tags"`
 }
 
-func (a Action) Disabled(g Game, source Actor) bool {
+func (a Action) Disabled(g *Game, source Actor) bool {
 	state, ok := source.ActionStates[a.ID]
 	if ok && state.Cooldown > 0 {
 		return true
@@ -57,7 +57,7 @@ func (a Action) Disabled(g Game, source Actor) bool {
 	return state.IsDisabled
 }
 
-func (a Action) CanResolve(g Game, context Context, this *ActionContext) bool {
+func (a Action) CanResolve(g *Game, context Context, this *ActionContext) bool {
 	source, ok := g.GetSource(context)
 	if !ok {
 		return false
@@ -110,7 +110,7 @@ func (c Command) Resolve(g *Game) []Transaction {
 
 	context := c.Context
 	if c.Payload.MapContext != nil {
-		context = c.Payload.MapContext(*g, context, action_context)
+		context = c.Payload.MapContext(g, context, action_context)
 	}
 
 	g.SetActiveContext(context)
@@ -124,7 +124,7 @@ func (c Command) Resolve(g *Game) []Transaction {
 		action_context.Push(PushLogDepth(log, 0).Bind(context))
 	}
 
-	if c.Payload.Resolve == nil || !c.Payload.CanResolve(*g, context, &action_context) {
+	if c.Payload.Resolve == nil || !c.Payload.CanResolve(g, context, &action_context) {
 		return action_context.transactions
 	}
 
@@ -132,7 +132,7 @@ func (c Command) Resolve(g *Game) []Transaction {
 	return c.Payload.Resolve(g, context, action_context)
 }
 
-func (a Action) ToJSON(g Game, source Actor) actionJSON {
+func (a Action) ToJSON(g *Game, source Actor) actionJSON {
 	state := source.ActionStates[a.ID]
 	config := a.Config
 	config.Cooldown = config.Cooldown + state.CooldownBonus

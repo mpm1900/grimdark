@@ -8,7 +8,7 @@ import (
 var Immobile = immobile()
 
 func immobile() game.Effect {
-	effect := game.EffectSource(game.EffectPriorityActionState, func(g game.Game, a game.Actor, ctx game.Context) game.Actor {
+	effect := game.EffectSource(game.EffectPriorityActionState, func(g *game.Game, a game.Actor, ctx game.Context) game.Actor {
 		for _, action := range a.GetActions() {
 			if slices.Contains(action.Tags, game.ATMovement) {
 				a.UpdateActionState(action.ID, func(as game.ActionState) game.ActionState {

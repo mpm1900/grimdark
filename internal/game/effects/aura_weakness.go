@@ -9,7 +9,7 @@ import (
 var AuraOfWeakness = auraOfWeakness()
 
 func auraOfWeakness() game.Effect {
-	effect := game.EffectSource(game.EffectPriorityTriggers, func(g game.Game, a game.Actor, ctx game.Context) game.Actor {
+	effect := game.EffectSource(game.EffectPriorityTriggers, func(g *game.Game, a game.Actor, ctx game.Context) game.Actor {
 		return a
 	})
 	effect.Triggers = append(effect.Triggers, game.Trigger{
@@ -31,7 +31,7 @@ func auraOfWeakness() game.Effect {
 	return effect
 }
 
-func meleeDown(g game.Game, a game.Actor, ctx game.Context) game.Actor {
+func meleeDown(g *game.Game, a game.Actor, ctx game.Context) game.Actor {
 	a.Stats[game.Melee] = a.Stats[game.Melee] * 0.75
 	return a
 }

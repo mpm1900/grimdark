@@ -29,7 +29,7 @@ var Slash = game.Action{
 		"$source$ unleashed a flurry of slashes.",
 	),
 	Resolve: game.MakeAttack(game.AttackConfig{
-		OnSuccessResult: func(g game.Game, context game.Context, this *game.ActionContext, result game.DamageResult) {
+		OnSuccessResult: func(g *game.Game, context game.Context, this *game.ActionContext, result game.DamageResult) {
 			game.AddResultEffects(
 				0.5,
 				effects.StatDownTargets(game.Speed, 1),

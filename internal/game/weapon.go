@@ -44,7 +44,7 @@ func (w Weapon) Clone() Weapon {
 	}
 }
 
-func (w Weapon) ToJSON(g Game, source Actor) weaponJSON {
+func (w Weapon) ToJSON(g *Game, source Actor) weaponJSON {
 	actions := make([]actionJSON, len(w.Actions))
 	for i, action := range w.Actions {
 		actions[i] = action.ToJSON(g, source)

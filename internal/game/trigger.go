@@ -69,7 +69,7 @@ func (c TriggerCommand) Resolve(g *Game) []Transaction {
 	}
 	context.ParentID = c.ParentContext.ParentID
 	if c.Payload.MapContext != nil {
-		context = c.Payload.MapContext(*g, context, action_context)
+		context = c.Payload.MapContext(g, context, action_context)
 	}
 
 	g.SetActiveContext(context)

@@ -8,7 +8,7 @@ import (
 )
 
 func testItem() game.Item {
-	effect := game.EffectSource(game.EffectPriorityStages, func(g game.Game, a game.Actor, ctx game.Context) game.Actor {
+	effect := game.EffectSource(game.EffectPriorityStages, func(g *game.Game, a game.Actor, ctx game.Context) game.Actor {
 		a.Stages[game.Accuracy] = a.Stages[game.Accuracy] + 1
 		a.Stages[game.CriticalChance] = a.Stages[game.CriticalChance] + 1
 		a.Stages[game.CriticalDamage] = a.Stages[game.CriticalDamage] - 1
@@ -41,7 +41,7 @@ func testItem() game.Item {
 	}
 	effect.Name = "test effect"
 
-	effect2 := game.EffectSource(game.EffectPriorityPostStagesStats, func(g game.Game, a game.Actor, ctx game.Context) game.Actor {
+	effect2 := game.EffectSource(game.EffectPriorityPostStagesStats, func(g *game.Game, a game.Actor, ctx game.Context) game.Actor {
 		a.Stats[game.Melee] = a.Stats[game.Melee] / 2
 		// this below is the wrong priority, testing only
 		a.Status = game.StatusBurned

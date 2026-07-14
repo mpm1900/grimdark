@@ -65,7 +65,7 @@ type Actor struct {
 	Stages             map[Stat]int
 	Stats              map[Stat]float64
 	UnmodifiedStats    map[Stat]float64
-	Stacks             map[Stack]int
+	Stacks             map[Stack]float64
 
 	State  ActorState
 	Status ActorStatus
@@ -115,7 +115,7 @@ func NewActor(class Class, config ActorConfig) Actor {
 		AffinityImmunities: map[Affinity]float64{},
 		AffinityResistance: map[Affinity]int{},
 		OffsetStats:        map[Stat]float64{},
-		Stacks:             map[Stack]int{},
+		Stacks:             map[Stack]float64{},
 		Stages:             map[Stat]int{},
 		Stats:              maps.Clone(class.Stats),
 
