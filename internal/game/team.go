@@ -11,5 +11,6 @@ type ActorConfig struct {
 }
 
 type TeamConfig struct {
-	Actors []ActorConfig
+	Actors []ActorConfig `json:"actors"`
+	Name   string        `json:"name"`
 }

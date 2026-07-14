@@ -22,6 +22,7 @@ func NewServer(ctx context.Context, queries *db.Queries) *Server {
 
 	instances_handler := NewInstancesHandler(ctx)
 	gamedata_handler := NewGamedataHandler(ctx)
+	teamsHandler := NewTeamsHandler(ctx, queries)
 
 	mux := http.NewServeMux()
 	api := http.NewServeMux()
@@ -35,6 +36,10 @@ func NewServer(ctx context.Context, queries *db.Queries) *Server {
 	api.HandleFunc("POST /auth/login", handleLogin(ctx, queries))
 	api.HandleFunc("POST /auth/logout", auth.WithSession(handleLogout(ctx, queries), queries))
 	api.HandleFunc("GET  /auth/me", auth.WithSession(handleMe(), queries))
+
+	api.HandleFunc("GET /teams", auth.WithSession(teamsHandler.HandleGetTeams, queries))
+	api.HandleFunc("POST /teams/upsert", auth.WithSession(teamsHandler.HandleUpsertTeam, queries))
+	api.HandleFunc("DELETE /teams/{team_id}", auth.WithSession(teamsHandler.HandleDeleteTeam, queries))
 
 	api.HandleFunc("GET /instances", auth.WithSession(instances_handler.HandleGetGames, queries))
 	api.HandleFunc("GET /instance/{instanceID}", auth.WithSession(instances_handler.HandleGetGame, queries))

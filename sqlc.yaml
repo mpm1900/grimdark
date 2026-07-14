@@ -15,6 +15,10 @@ sql:
             go_type:
               import: "github.com/google/uuid"
               type: "UUID"
+          - column: "teams.config"
+            go_type:
+              import: "grimdark/internal/game"
+              type: "TeamConfig"
           - column: "users.password"
             go_struct_tag: 'json:"-"'
           - column: "users.salt"
