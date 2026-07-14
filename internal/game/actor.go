@@ -456,6 +456,9 @@ func (a Actor) GetActions() []Action {
 	}
 
 	addActions(GLOBAL_ACTIONS)
+	actions = slices.DeleteFunc(actions, func(action Action) bool {
+		return action.ActiveCheck != nil && !action.ActiveCheck(a)
+	})
 	return actions
 }
 func (a Actor) GetActionByID(action_id uuid.UUID) (Action, bool) {

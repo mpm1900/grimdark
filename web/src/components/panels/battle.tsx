@@ -12,14 +12,71 @@ import { useSelector } from '@tanstack/react-store'
 import { uiStore } from '#/lib/stores/ui'
 import { gameStore } from '#/lib/stores/game'
 import { ActorLore } from '../actor-lore'
+import type { Actor } from '#/lib/game/actor'
+
+function ActionsPanel({ active_actor }: { active_actor: Actor }) {
+  const game = useSelector(gameStore, (g) => g)
+  const acitve_actor_commands = game.commands.filter(
+    (c) => c.context.source_ID === active_actor?.ID
+  )
+  const remaining_ap = active_actor.stats.actions - acitve_actor_commands.length
+  return (
+    <GothicCard className="relative flex-row h-full max-w-1/3 bg-neutral-950 z-10">
+      <TinyBadge
+        variant="default"
+        className="absolute z-10 px-1 -top-1.5 border-t-0 left-1/2 -translate-x-1/2 rounded-xs rounded-b-sm font-cinzel border-white/30 text-foreground/60"
+      >
+        Actions ({active_actor.stats.actions})
+      </TinyBadge>
+      <div className="grid grid-cols-2 grid-rows-3">
+        {active_actor?.actions
+          .filter((a) => a.tags.includes('actor'))
+          .map((action) => (
+            <ActionContextDialog
+              key={action.ID}
+              actor={active_actor}
+              action={action}
+              enabled={!action.is_disabled}
+            >
+              <DialogTrigger asChild>
+                <ActionButton
+                  action={action}
+                  actor={active_actor}
+                  disabled={remaining_ap === 0 || active_actor.is_stunned}
+                />
+              </DialogTrigger>
+            </ActionContextDialog>
+          ))}
+      </div>
+      <div className="flex flex-col justify-between">
+        {active_actor?.actions
+          .filter((a) => a.tags.includes('system'))
+          .map((action) => (
+            <ActionContextDialog
+              key={action.ID}
+              actor={active_actor}
+              action={action}
+              enabled={!action.is_disabled}
+            >
+              <DialogTrigger asChild>
+                <SystemActionButton
+                  action={action}
+                  actor={active_actor}
+                  disabled={remaining_ap === 0 || active_actor.is_stunned}
+                />
+              </DialogTrigger>
+            </ActionContextDialog>
+          ))}
+      </div>
+    </GothicCard>
+  )
+}
 
 function BattlePanel() {
   const active_actor_id = useSelector(uiStore, (s) => s.active_actor)
   const game = useSelector(gameStore, (g) => g)
   const active_actor = game.actors.find((a) => a.ID === active_actor_id)
-  const acitve_actor_command = game.commands.find(
-    (c) => c.context.source_ID === active_actor?.ID
-  )
+
   const weapons = [
     active_actor?.weapon_l ?? null,
     active_actor?.weapon_r ?? null,
@@ -72,60 +129,7 @@ function BattlePanel() {
           </div>
         </GothicCard>
       )}
-      {active_actor?.is_player && (
-        <GothicCard className="relative flex-row h-full max-w-1/3 bg-neutral-950 z-10">
-          <TinyBadge
-            variant="default"
-            className="absolute z-10 px-1 -top-1.5 border-t-0 left-1/2 -translate-x-1/2 rounded-xs rounded-b-sm font-cinzel border-white/30 text-foreground/60"
-          >
-            Actions
-          </TinyBadge>
-          <div className="grid grid-cols-2 grid-rows-3">
-            {active_actor?.actions
-              .filter((a) => a.tags.includes('actor'))
-              .map((action) => (
-                <ActionContextDialog
-                  key={action.ID}
-                  actor={active_actor}
-                  action={action}
-                  enabled={!action.is_disabled}
-                >
-                  <DialogTrigger asChild>
-                    <ActionButton
-                      action={action}
-                      actor={active_actor}
-                      disabled={
-                        !!acitve_actor_command || active_actor.is_stunned
-                      }
-                    />
-                  </DialogTrigger>
-                </ActionContextDialog>
-              ))}
-          </div>
-          <div className="flex flex-col justify-between">
-            {active_actor?.actions
-              .filter((a) => a.tags.includes('system'))
-              .map((action) => (
-                <ActionContextDialog
-                  key={action.ID}
-                  actor={active_actor}
-                  action={action}
-                  enabled={!action.is_disabled}
-                >
-                  <DialogTrigger asChild>
-                    <SystemActionButton
-                      action={action}
-                      actor={active_actor}
-                      disabled={
-                        !!acitve_actor_command || active_actor.is_stunned
-                      }
-                    />
-                  </DialogTrigger>
-                </ActionContextDialog>
-              ))}
-          </div>
-        </GothicCard>
-      )}
+      {active_actor?.is_player && <ActionsPanel active_actor={active_actor} />}
       {active_actor && !active_actor.is_player && (
         <GothicCard className="h-full w-1/3 z-10">
           <ActorLore actor={active_actor} className="" />

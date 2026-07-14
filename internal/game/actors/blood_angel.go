@@ -26,6 +26,7 @@ func newBloodAngel() game.Class {
 		game.Accuracy:       1,
 		game.Evasion:        1,
 
+		game.Actions:        1,
 		game.CriticalChance: 1,
 		game.CriticalDamage: 1,
 		game.DamageReflect:  0,

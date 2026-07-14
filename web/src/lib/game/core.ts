@@ -21,6 +21,7 @@ export type Stat =
   | 'special-defense'
   | 'accuracy'
   | 'evasion'
+  | 'actions'
   | 'critical-chance'
   | 'critical-damage'
   | 'damage-reflect'
@@ -85,6 +86,7 @@ export const STAT_LABELS: Record<Stat, string> = {
   speed: 'Speed',
   accuracy: 'Accuracy',
   evasion: 'Evasion',
+  actions: 'AP',
   'critical-chance': 'Critical Chance',
   'critical-damage': 'Critical Damage',
   'damage-reflect': 'Damage Reflect',
@@ -100,6 +102,7 @@ export const STAT_SLUGS: Record<Stat, string> = {
   speed: 'Spe',
   accuracy: 'Acc',
   evasion: 'Eva',
+  actions: 'AP',
   'critical-chance': 'Crit.%',
   'critical-damage': 'Crit.Dmg',
   'damage-reflect': 'Dmg.Rflct',

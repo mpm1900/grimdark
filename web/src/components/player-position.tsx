@@ -26,7 +26,9 @@ function PlayerSprite({
   const status = useSelector(gameStore, (g) => g.status)
   const commands = useSelector(gameStore, (g) => g.commands)
   const ui = useSelector(uiStore, (s) => s)
-  const actor_command = commands.find((c) => c.context.source_ID === actor?.ID)
+  const actor_commands = commands.filter(
+    (c) => c.context.source_ID === actor?.ID
+  )
   const is_highlighted =
     status === 'idle'
       ? ui.active_actor === actor.ID || hover_position === position_ID
@@ -56,21 +58,24 @@ function PlayerSprite({
           !actor && 'opacity-0'
         )}
       />
-      {!!actor_command && status === 'idle' && (
-        <div className="absolute inset-0 grid place-items-center z-20">
-          <GothicBigButton
-            className="p-0 min-h-9"
-            variant="red"
-            onClick={() => {
-              sendContextMessage({
-                type: 'cancel-action',
-                client_ID: client?.ID!,
-                context: actor_command.context,
-              })
-            }}
-          >
-            Cancel Action
-          </GothicBigButton>
+      {status === 'idle' && (
+        <div className="absolute inset-0 justify-center flex flex-col gap-1 z-20">
+          {actor_commands.map((actor_command) => (
+            <GothicBigButton
+              key={actor_command.ID}
+              className="p-0 min-h-9"
+              variant="red"
+              onClick={() => {
+                sendContextMessage({
+                  type: 'cancel-action',
+                  client_ID: client?.ID!,
+                  context: actor_command.context,
+                })
+              }}
+            >
+              Cancel {actor_command.payload.config.name}
+            </GothicBigButton>
+          ))}
         </div>
       )}
     </div>

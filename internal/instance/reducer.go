@@ -1,6 +1,7 @@
 package instance
 
 import (
+	"fmt"
 	"grimdark/internal/game"
 	"grimdark/internal/game/actors"
 )
@@ -57,17 +58,19 @@ func validateContext(instance *Instance, request Request) {
 }
 
 func pushAction(instance *Instance, request Request) {
-	actor, ok := instance.Game.GetSource(request.Context)
+	source, ok := instance.Game.GetSource(request.Context)
 	if !ok {
 		return
 	}
 
-	action, ok := actor.GetActionByID(request.Context.ActionID)
+	action, ok := source.GetActionByID(request.Context.ActionID)
 	if !ok {
 		return
 	}
 
-	instance.Game.PushCommand(action.Bind(request.Context))
+	instance.Game.PushCommand(source, action.Bind(request.Context))
+	needed_actions := instance.Game.GetActionableActionsCount()
+	fmt.Println("Needs", needed_actions, "has", len(instance.Game.State().Commands))
 	// instance.RunGameActions()
 
 	instance.BroadcastGame()

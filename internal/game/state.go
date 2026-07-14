@@ -162,6 +162,16 @@ func (s State) FindActors(g Game, where Filter[Actor], context Context) []Actor 
 
 	return actors
 }
+func (s State) FindCommands(g Game, where Filter[Command], context Context) []Command {
+	commands := []Command{}
+	for _, c := range s.Commands {
+		if where(g, c, context) {
+			commands = append(commands, c)
+		}
+	}
+
+	return commands
+}
 
 func (s *State) UpdatePlayer(id uuid.UUID, updater func(Player) Player) {
 	for i, p := range s.Players {

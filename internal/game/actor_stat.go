@@ -13,6 +13,7 @@ const (
 
 	Accuracy       Stat = "accuracy"
 	Evasion        Stat = "evasion"
+	Actions        Stat = "actions"
 	CriticalChance Stat = "critical-chance"
 	CriticalDamage Stat = "critical-damage"
 	DamageReflect  Stat = "damage-reflect"

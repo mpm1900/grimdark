@@ -16,6 +16,7 @@ const statVariants = cva('', {
       'special-defense': 'text-special',
       accuracy: '',
       evasion: '',
+      actions: '',
       'critical-chance': '',
       'critical-damage': '',
       'effect-chance': '',

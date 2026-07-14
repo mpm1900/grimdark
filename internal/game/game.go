@@ -252,6 +252,17 @@ func (g *Game) GetActionableActors() []Actor {
 		NonStunnedActors,
 	), NewContext())
 }
+func (g *Game) GetActionableActionsCount() int {
+	count := 0
+	for _, a := range g.GetActionableActors() {
+		count += int(a.Stats[Actions])
+	}
+
+	return count
+}
+func (g *Game) FindCommands(where Filter[Command], context Context) []Command {
+	return g.State().FindCommands(*g, where, context)
+}
 
 func (g *Game) IsReadyToRun() bool {
 	return len(g.State().Commands) == len(g.GetActionableActors())
@@ -348,7 +359,16 @@ func (g *Game) RemoveModifiers(where Filter[Modifier], ctx Context) {
 		})
 	})
 }
-func (g *Game) PushCommand(command Command) {
+func (g *Game) PushCommand(source Actor, command Command) {
+	found := g.FindCommands(func(g Game, c Command, ctx Context) bool {
+		return c.Context.SourceID == command.Context.SourceID
+	}, command.Context)
+
+	if len(found) >= int(source.Stats[Actions]) {
+		fmt.Println("Actor already actions queued.")
+		return
+	}
+
 	g.mutate(func(s *State) {
 		s.Commands = append(s.Commands, command)
 	})

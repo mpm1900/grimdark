@@ -161,7 +161,7 @@ func AddTargetsEffects(config StatusConfig, effects ...Effect) ActionResolver {
 func Struggle() Action {
 	return Action{
 		ID:   uuid.MustParse("019f5dab-239d-717a-9cc8-8a06f6461596"),
-		Tags: []ActionTag{ATSystem, ATActor},
+		Tags: []ActionTag{ATActor},
 		Config: ActionConfig{
 			Name:        "Struggle",
 			Description: "User takes 1/4th of their max HP as recoil damage.",

@@ -64,6 +64,7 @@ func NewClass() Class {
 			SpecialDefense: 100,
 			Accuracy:       1,
 			Evasion:        1,
+			Actions:        1,
 			CriticalChance: 1,
 			CriticalDamage: 1,
 			EffectChance:   1,
