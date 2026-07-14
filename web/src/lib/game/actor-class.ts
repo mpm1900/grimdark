@@ -9,7 +9,6 @@ export type ActorClass = {
   affinities: Affinity[]
   effects: Effect[]
   faction: string
-  hands: number
   name: string
   options: {
     weapons: Weapon[]
@@ -18,4 +17,5 @@ export type ActorClass = {
   race: string
   sprite_url: string
   stats: Record<Stat, number>
+  strength: number
 }

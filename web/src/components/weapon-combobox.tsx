@@ -21,18 +21,21 @@ function WeaponCombobox({
   disabled,
   options,
   value,
-  other,
   onValueChange,
 }: {
   remaining_weight: number
   disabled?: boolean
   options: Array<Weapon>
   value: ID | null
-  other: ID | null
   onValueChange: (value: ID | null) => void
 }) {
   const weapon = options.find((o) => o.ID === value)
   const Icon = weapon ? WEAPON_ICONS[weapon?.weapon_type] : undefined
+  const available_weight = remaining_weight + (weapon?.weight ?? 0)
+  console.log(
+    `remaining=${remaining_weight} avilable=${available_weight}`,
+    options
+  )
   return (
     <Combobox
       items={options}
@@ -79,22 +82,18 @@ function WeaponCombobox({
         <ComboboxInput showTrigger={false} placeholder="Search" />
         <ComboboxEmpty>No weapons found.</ComboboxEmpty>
         <ComboboxList>
-          {(weapon: Weapon) => (
-            <HoverCard key={weapon.ID}>
+          {(w: Weapon) => (
+            <HoverCard key={w.ID}>
               <HoverCardTrigger asChild>
                 <ComboboxItem
-                  value={weapon.ID}
-                  disabled={
-                    weapon.weight > remaining_weight &&
-                    !!other &&
-                    weapon.ID !== value
-                  }
+                  value={w.ID}
+                  disabled={w.weight > available_weight && w.ID !== weapon?.ID}
                 >
-                  {weapon.name}
+                  {w.name}
                 </ComboboxItem>
               </HoverCardTrigger>
               <GothicHoverCardContent sideOffset={0} side="left">
-                <WeaponDetails weapon={weapon} />
+                <WeaponDetails weapon={w} />
               </GothicHoverCardContent>
             </HoverCard>
           )}

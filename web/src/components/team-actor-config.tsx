@@ -26,7 +26,8 @@ function WeaponsConfig({
     (w) => w.ID === value.weapon_r
   )
   const remaining_weight =
-    actor_class.hands - (found_l?.weight ?? 0) - (found_r?.weight ?? 0)
+    actor_class.strength - (found_l?.weight ?? 0) - (found_r?.weight ?? 0)
+
   return (
     <div className="flex flex-col gap-1">
       <Marker variant="separator">
@@ -37,7 +38,6 @@ function WeaponsConfig({
           disabled={remaining_weight <= 0 && !value.weapon_r}
           options={actor_class.options.weapons}
           value={value.weapon_r}
-          other={value.weapon_l}
           remaining_weight={remaining_weight}
           onValueChange={(w) => {
             onValueChange({
@@ -50,7 +50,6 @@ function WeaponsConfig({
           disabled={remaining_weight <= 0 && !value.weapon_l}
           options={actor_class.options.weapons}
           value={value.weapon_l}
-          other={value.weapon_r}
           remaining_weight={remaining_weight}
           onValueChange={(w) => {
             onValueChange({
