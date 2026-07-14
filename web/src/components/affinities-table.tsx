@@ -70,15 +70,15 @@ function AffinitiesTable({
     >
       <div>
         <Marker variant="separator">
-          <MarkerContent>Resistances</MarkerContent>
-        </Marker>
-        <AffinityResistanceTable actor={actor} />
-      </div>
-      <div>
-        <Marker variant="separator">
           <MarkerContent>Damage</MarkerContent>
         </Marker>
         <AffinityDamageTable actor={actor} />
+      </div>
+      <div>
+        <Marker variant="separator">
+          <MarkerContent>Resistances</MarkerContent>
+        </Marker>
+        <AffinityResistanceTable actor={actor} />
       </div>
     </div>
   )

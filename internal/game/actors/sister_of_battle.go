@@ -13,8 +13,8 @@ func newSisterOfBattle() game.Class {
 	class.Name = "Adepta Sororitas"
 	class.SpriteURL = "/img/sis.png"
 	class.Affinities = map[game.Affinity]struct{}{
-		game.Fire:    {},
-		game.Kinetic: {},
+		game.Fire:      {},
+		game.Lightning: {},
 	}
 	class.Stats = map[game.Stat]float64{
 		game.Health:         80,

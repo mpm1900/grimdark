@@ -86,7 +86,7 @@ export const STAT_LABELS: Record<Stat, string> = {
   speed: 'Speed',
   accuracy: 'Accuracy',
   evasion: 'Evasion',
-  actions: 'AP',
+  actions: 'Actions per Turn',
   'critical-chance': 'Critical Chance',
   'critical-damage': 'Critical Damage',
   'damage-reflect': 'Damage Reflect',

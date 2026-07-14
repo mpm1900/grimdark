@@ -95,6 +95,22 @@ function OffsetStatRow({ actor, stat }: { actor: Actor; stat: Stat }) {
     </TableRow>
   )
 }
+function RawStatRow({ actor, stat }: { actor: Actor; stat: Stat }) {
+  const value = actor.stats[stat]
+  return (
+    <TableRow>
+      <TableCell className="capitalize font-cinzel" colSpan={2}>
+        {STAT_LABELS[stat]}
+      </TableCell>
+      <TableCell className="text-end">
+        <DNumber value={value} r={1}>
+          {Math.abs(value)}
+        </DNumber>
+      </TableCell>
+      <TableCell className="text-end text-foreground/20">--</TableCell>
+    </TableRow>
+  )
+}
 
 function StatsTable({
   actor,
@@ -106,9 +122,6 @@ function StatsTable({
       <TableBody>
         {MAIN_STATS.map((stat) => (
           <MainStatRow key={stat} actor={actor} stat={stat} />
-        ))}
-        {ACCURACY_STATS.map((stat) => (
-          <MultiplierStatRow key={stat} actor={actor} stat={stat} />
         ))}
       </TableBody>
     </Table>
@@ -123,10 +136,14 @@ function OtherStatsTable({
   return (
     <Table className={cn('font-mono', className)} {...props}>
       <TableBody>
+        {ACCURACY_STATS.map((stat) => (
+          <MultiplierStatRow key={stat} actor={actor} stat={stat} />
+        ))}
         <MultiplierStatRow actor={actor} stat="critical-damage" />
         <OffsetStatRow actor={actor} stat="critical-chance" />
         <OffsetStatRow actor={actor} stat="damage-reflect" />
         <MultiplierStatRow actor={actor} stat="effect-chance" />
+        <RawStatRow actor={actor} stat="actions" />
       </TableBody>
     </Table>
   )

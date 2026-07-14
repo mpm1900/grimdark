@@ -32,10 +32,6 @@ function WeaponCombobox({
   const weapon = options.find((o) => o.ID === value)
   const Icon = weapon ? WEAPON_ICONS[weapon?.weapon_type] : undefined
   const available_weight = remaining_weight + (weapon?.weight ?? 0)
-  console.log(
-    `remaining=${remaining_weight} avilable=${available_weight}`,
-    options
-  )
   return (
     <Combobox
       items={options}

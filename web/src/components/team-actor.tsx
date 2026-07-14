@@ -94,6 +94,13 @@ function TeamActor({
           </div>
         </div>
       </div>
+      {config.weapon_l || config.weapon_r ? (
+        <div className="text-center text-positive font-serif">Ready</div>
+      ) : (
+        <div className="text-center text-negative font-serif">
+          Requires a weapon
+        </div>
+      )}
       <div className="mx-2 mt-4 h-43 space-y-1">
         {CLASS_STATS.map((stat) => (
           <div key={stat} className="flex items-center gap-2">

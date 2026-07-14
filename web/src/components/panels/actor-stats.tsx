@@ -27,21 +27,27 @@ function ActorStatsPanel({
         <div className="py-4 p-2 hidden">
           {actor.weapon_l && <WeaponDetails weapon={actor.weapon_l} />}
         </div>
-        <div className='px-1 pt-2'>
+        <div className="px-1 py-2">
           <Marker variant="separator">
             <MarkerContent>Other stats</MarkerContent>
           </Marker>
           <OtherStatsTable actor={actor} />
         </div>
-        <div className='px-1  max-w-72'>
-
+      </div>
+      <GothicHighlightFrame className="-mx-3 -mt-px gap-4">
+        <StatsTable actor={actor} />
+        <div className="px-2 max-w-72 font-serif">
           <Marker variant="separator">
             <MarkerContent>Active Effects</MarkerContent>
           </Marker>
 
           <div className="min-w-0 flex flex-row flex-wrap gap-2 p-2">
             {applied_effects.map((effect) => (
-              <GothicBadge variant="empty" key={effect.ID} className="capitalize">
+              <GothicBadge
+                variant="empty"
+                key={effect.ID}
+                className="capitalize"
+              >
                 {effect.name}
                 {effect.count > 1 && `(${effect.count})`}
               </GothicBadge>
@@ -51,9 +57,6 @@ function ActorStatsPanel({
             )}
           </div>
         </div>
-      </div>
-      <GothicHighlightFrame className="-mx-3 -mt-px">
-        <StatsTable actor={actor} />
       </GothicHighlightFrame>
       <AffinitiesTable actor={actor} className="pl-3.5" />
     </div>
