@@ -1,7 +1,6 @@
 package instance
 
 import (
-	"fmt"
 	"grimdark/internal/game"
 	"grimdark/internal/game/actors"
 )
@@ -70,8 +69,9 @@ func pushAction(instance *Instance, request Request) {
 
 	instance.Game.PushCommand(source, action.Bind(request.Context))
 	needed_actions := instance.Game.GetActionableActionsCount()
-	fmt.Println("Needs", needed_actions, "has", len(instance.Game.State().Commands))
-	// instance.RunGameActions()
+	if needed_actions == len(instance.Game.State().Commands) {
+		instance.RunGameActions()
+	}
 
 	instance.BroadcastGame()
 }
