@@ -121,7 +121,6 @@ func (a Actor) ToJSON(g *Game) actorJSON {
 		Stages:             maps.Clone(a.Stages),
 		UnmodifiedStats:    unmodified_stats,
 		ActiveModifiers:    active_modifiers,
-		Wounds:             int(a.Wounds),
 		Seen:               a.Meta.Seen,
 		SpriteURL:          a.Class.SpriteURL,
 		Stacks:             a.Stacks,

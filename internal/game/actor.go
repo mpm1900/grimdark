@@ -60,7 +60,7 @@ type Actor struct {
 	AffinityDamage     map[Affinity]int
 	AffinityResistance map[Affinity]int
 	AffinityImmunities map[Affinity]float64
-	EffectImmunities   map[string]struct{}
+	EffectImmunities   map[uuid.UUID]struct{}
 	effectStates       map[uuid.UUID]EffectState
 	OffsetStats        map[Stat]float64
 	Stages             map[Stat]int
@@ -70,7 +70,6 @@ type Actor struct {
 
 	State  ActorState
 	Status ActorStatus
-	Wounds float64
 
 	IsAlive     bool
 	IsBulwark   bool // stops collateral penetration
@@ -115,13 +114,14 @@ func NewActor(class Class, config ActorConfig) *Actor {
 		AffinityDamage:     map[Affinity]int{},
 		AffinityImmunities: map[Affinity]float64{},
 		AffinityResistance: map[Affinity]int{},
-		EffectImmunities:   map[string]struct{}{},
+		EffectImmunities:   map[uuid.UUID]struct{}{},
 		OffsetStats:        map[Stat]float64{},
-		Stacks:             map[Stack]float64{},
-		Stages:             map[Stat]int{},
-		Stats:              maps.Clone(class.Stats),
+		Stacks: map[Stack]float64{
+			Wounds: 0,
+		},
+		Stages: map[Stat]int{},
+		Stats:  maps.Clone(class.Stats),
 
-		Wounds: 0,
 		State:  StateGrounded,
 		Status: StatusNone,
 
@@ -177,7 +177,6 @@ func (a *Actor) Clone() *Actor {
 		Stats:              maps.Clone(a.Stats),
 		UnmodifiedStats:    maps.Clone(a.UnmodifiedStats),
 
-		Wounds: a.Wounds,
 		State:  a.State,
 		Status: a.Status,
 
@@ -256,12 +255,12 @@ func (a *Actor) mapStagedStats() {
 
 // mutators
 func (a *Actor) ApplyDamage(damage float64, resolved Actor) {
-	a.Wounds = a.Wounds + damage
-	if a.Wounds < 0 {
-		a.Wounds = 0
+	a.Stacks[Wounds] = a.Stacks[Wounds] + damage
+	if a.Stacks[Wounds] < 0 {
+		a.Stacks[Wounds] = 0
 	}
 
-	a.IsAlive = resolved.Stats[Health] > a.Wounds
+	a.IsAlive = resolved.Stats[Health] > a.Stacks[Wounds]
 }
 func (a *Actor) UpdateActionState(action_id uuid.UUID, updater func(ActionState) ActionState) {
 	state, ok := a.ActionStates[action_id]
@@ -346,7 +345,7 @@ func (a *Actor) GetEffectiveAffinityResistance(affinity Affinity) int {
 }
 func (a *Actor) GetRemainingHealth() float64 {
 	health := a.Stats[Health]
-	return health - a.Wounds
+	return health - a.Stacks[Wounds]
 }
 func (a *Actor) getWeaponEffects() []Effect {
 	effects := map[uuid.UUID]Effect{}
@@ -385,7 +384,7 @@ func (a *Actor) HasEffectImmunity(effect_ID uuid.UUID) bool {
 		return false
 	}
 
-	_, ok := a.EffectImmunities[effect_ID.String()]
+	_, ok := a.EffectImmunities[effect_ID]
 	return ok
 }
 func (a *Actor) FilterEffectImmunities(effects []Effect) ([]Effect, []Effect) {

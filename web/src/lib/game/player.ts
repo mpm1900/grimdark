@@ -5,4 +5,5 @@ export type Player = {
   ID: ID
   user: User
   actor_count: number
+  ready: boolean
 }

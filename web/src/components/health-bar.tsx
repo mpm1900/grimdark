@@ -16,8 +16,8 @@ function HealthBar({
   hide_numbers?: boolean
   type: HealthBarType
 }) {
-  const health = actor.stats['health']
-  const remaining = health - actor.wounds
+  const health = Math.floor(actor.stats['health'])
+  const remaining = health - Math.floor(actor.stacks.wounds)
   const ratio = getHealthRatio(actor)
   return (
     <GothicProgress

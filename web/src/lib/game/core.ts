@@ -27,6 +27,8 @@ export type Stat =
   | 'damage-reflect'
   | 'effect-chance'
 
+export type Stack = 'wounds'
+
 export type Phase = 'init' | 'start' | 'main' | 'end' | 'cleanup'
 
 export type Status = 'idle' | 'running' | 'waiting'

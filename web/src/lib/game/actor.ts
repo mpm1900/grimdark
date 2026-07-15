@@ -1,5 +1,5 @@
 import type { Action } from './action'
-import type { Affinity, ID, Stat } from './core'
+import type { Affinity, ID, Stack, Stat } from './core'
 import type { Effect } from './effect'
 import type { Item, Weapon } from './weapon'
 
@@ -28,6 +28,7 @@ export type Actor = {
   position_ID: ID | null
   race: string
   sprite_url: string
+  stacks: Record<Stack, number>
   stages: Record<Stat, number>
   state: string
   stats: Record<Stat, number>
@@ -35,12 +36,11 @@ export type Actor = {
   unmodified_stats: Record<Stat, number>
   weapon_l: Weapon | null
   weapon_r: Weapon | null
-  wounds: number
 }
 
 function getHealthRatio(actor: Actor): number {
-  const health = actor.stats['health']
-  const remaining = health - actor.wounds
+  const health = Math.floor(actor.stats['health'])
+  const remaining = health - actor.stacks.wounds
   const ratio = remaining / health
   return ratio * 100
 }

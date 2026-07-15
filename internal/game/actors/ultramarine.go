@@ -26,7 +26,7 @@ func newUltramarine() game.Class {
 	bypass.Name = "bypass effect"
 
 	weakness_immune := game.EffectSource(game.EffectPriorityImmunities, func(g *game.Game, a game.Actor, ctx game.Context) game.Actor {
-		a.EffectImmunities[effects.Weakened().ID.String()] = struct{}{}
+		a.EffectImmunities[effects.Weakened().ID] = struct{}{}
 		return a
 	})
 

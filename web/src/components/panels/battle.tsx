@@ -13,6 +13,11 @@ import { uiStore } from '#/lib/stores/ui'
 import { gameStore } from '#/lib/stores/game'
 import { ActorLore } from '../actor-lore'
 import type { Actor } from '#/lib/game/actor'
+import { sendContextMessage } from '#/lib/stores/socket'
+import { GothicFramedButton } from '../gothic-ui/button'
+import { NULL_CONTEXT } from '#/lib/game/context'
+import { lobbyStore } from '#/lib/stores/clients'
+import { Check, ChevronsRight } from 'lucide-react'
 
 function ActionsPanel({ active_actor }: { active_actor: Actor }) {
   const game = useSelector(gameStore, (g) => g)
@@ -73,8 +78,11 @@ function ActionsPanel({ active_actor }: { active_actor: Actor }) {
 }
 
 function BattlePanel() {
+  const client = useSelector(lobbyStore, (s) => s.client)
   const active_actor_id = useSelector(uiStore, (s) => s.active_actor)
   const game = useSelector(gameStore, (g) => g)
+  const game_status = game.status
+  const player = game.players.find((p) => p.ID === client?.ID)
   const active_actor = game.actors.find((a) => a.ID === active_actor_id)
 
   const weapons = [
@@ -144,6 +152,25 @@ function BattlePanel() {
         </TinyBadge>
         <BattleLog />
       </GothicCard>
+      {client && (
+        <div className="grid place-items-center h-full -ml-1">
+          <GothicFramedButton
+            variant="red"
+            className="flex flex-col p-0 px-1 h-18 w-18 text-xs font-serif text-foreground/60"
+            disabled={game_status != 'idle' || !player || player.ready}
+            onClick={() => {
+              sendContextMessage({
+                type: 'turn-ready',
+                client_ID: client.ID,
+                context: NULL_CONTEXT,
+              })
+            }}
+          >
+            All Done
+            <ChevronsRight />
+          </GothicFramedButton>
+        </div>
+      )}
     </div>
   )
 }
