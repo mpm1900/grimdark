@@ -84,6 +84,13 @@ function BattlePanel() {
   const game_status = game.status
   const player = game.players.find((p) => p.ID === client?.ID)
   const active_actor = game.actors.find((a) => a.ID === active_actor_id)
+  const commands = game.commands.filter(
+    (c) => c.context.player_ID === client?.ID
+  )
+  const actions = game.actors
+    .filter((a) => a.player_ID === client?.ID && a.position_ID)
+    .map((a) => a.stats.actions)
+    .reduce((sum, c) => sum + c, 0)
 
   const weapons = [
     active_actor?.weapon_l ?? null,
@@ -156,7 +163,7 @@ function BattlePanel() {
         <div className="grid place-items-center h-full -ml-1">
           <GothicFramedButton
             variant="red"
-            className="flex flex-col p-0 px-1 h-18 w-18 text-xs font-serif text-foreground/60"
+            className="flex flex-col p-0 px-1 h-18 w-18 text-lg gap-0 font-serif text-foreground/60"
             disabled={game_status != 'idle' || !player || player.ready}
             onClick={() => {
               sendContextMessage({
@@ -166,7 +173,7 @@ function BattlePanel() {
               })
             }}
           >
-            All Done
+            {commands.length}/{actions}
             <ChevronsRight />
           </GothicFramedButton>
         </div>
