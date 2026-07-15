@@ -39,7 +39,9 @@ function AffinityIcon({
           {...props}
         />
       </TooltipTrigger>
-      <TooltipContent>{affinity}</TooltipContent>
+      <TooltipContent className="capitalize font-serif font-semibold text-sm">
+        {affinity}
+      </TooltipContent>
     </Tooltip>
   )
 }

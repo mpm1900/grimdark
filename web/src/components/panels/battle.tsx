@@ -17,7 +17,7 @@ import { sendContextMessage } from '#/lib/stores/socket'
 import { GothicFramedButton } from '../gothic-ui/button'
 import { NULL_CONTEXT } from '#/lib/game/context'
 import { lobbyStore } from '#/lib/stores/clients'
-import { Check, ChevronsRight } from 'lucide-react'
+import { Check, ChevronsRight, Loader } from 'lucide-react'
 
 function ActionsPanel({ active_actor }: { active_actor: Actor }) {
   const game = useSelector(gameStore, (g) => g)
@@ -173,8 +173,15 @@ function BattlePanel() {
               })
             }}
           >
-            {commands.length}/{actions}
-            <ChevronsRight />
+            {game.status === 'idle' && (
+              <span>
+                {commands.length}/{actions}
+              </span>
+            )}
+            {game.status === 'idle' && !player?.ready && <ChevronsRight />}
+            {game.status === 'idle' && player?.ready && <Check />}
+            {game.status === 'running' && <Loader className="animate-spin" />}
+            {game.status === 'waiting' && <Loader className="animate-spin" />}
           </GothicFramedButton>
         </div>
       )}

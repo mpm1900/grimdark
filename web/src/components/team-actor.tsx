@@ -74,7 +74,7 @@ function TeamActor({
     >
       <div className="relative h-full">
         <ClassSprite actor_class_id={config?.class} index={index} />
-        <div className="absolute bottom-0 inset-x-0 text-center h-12 leading-9 mx-1">
+        <div className="absolute bottom-0 inset-x-0 text-center h-12 leading-9 mx-1 z-10">
           <div className="flex gap-1 justify-center">
             {AFFINITIES.filter((a) => actor_class?.affinities.includes(a)).map(
               (a) => (
