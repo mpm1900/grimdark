@@ -3,6 +3,7 @@ import type { Affinity } from '#/lib/game/core'
 import { cn } from '#/lib/utils'
 import { cva } from 'class-variance-authority'
 import type { IconType } from 'react-icons/lib'
+import { Tooltip, TooltipContent, TooltipTrigger } from './ui/tooltip'
 
 const affinityVariants = cva('capitalize', {
   variants: {
@@ -21,21 +22,6 @@ const affinityVariants = cva('capitalize', {
   },
 })
 
-function AffinityName({
-  affinity,
-  className,
-  ...props
-}: React.ComponentProps<'span'> & {
-  affinity: Affinity
-}) {
-  const Icon = AFFINITY_ICONS[affinity]
-  return (
-    <span {...props} className={cn(affinityVariants({ affinity }), className)}>
-      <Icon className="size-5" />
-    </span>
-  )
-}
-
 function AffinityIcon({
   affinity,
   className,
@@ -46,9 +32,16 @@ function AffinityIcon({
   const Icon = AFFINITY_ICONS[affinity]
   if (!Icon) return null
   return (
-    <Icon className={cn(affinityVariants({ affinity }), className)} {...props} />
+    <Tooltip delayDuration={1000}>
+      <TooltipTrigger asChild>
+        <Icon
+          className={cn(affinityVariants({ affinity }), className)}
+          {...props}
+        />
+      </TooltipTrigger>
+      <TooltipContent>{affinity}</TooltipContent>
+    </Tooltip>
   )
 }
 
-
-export { AffinityName, AffinityIcon, affinityVariants }
+export { AffinityIcon, affinityVariants }

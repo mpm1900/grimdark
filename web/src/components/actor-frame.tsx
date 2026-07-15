@@ -9,7 +9,7 @@ import {
 } from '#/lib/game/core'
 import { gameStore } from '#/lib/stores/game'
 import { useSelector } from '@tanstack/react-store'
-import { AffinityName } from './affinity-name'
+import { AffinityIcon } from './affinity-name'
 import { TinyBadge } from './gothic-ui/badge'
 import { HealthBar } from './health-bar'
 import { cn } from '#/lib/utils'
@@ -58,7 +58,7 @@ function ActorFrame({
           </span>
           <div className="flex gap-0">
             {AFFINITIES.filter((a) => actor.affinities.includes(a)).map((a) => (
-              <AffinityName key={a} affinity={a} />
+              <AffinityIcon key={a} affinity={a} />
             ))}
           </div>
         </div>
@@ -121,7 +121,7 @@ function ActorFrameSlim({
 
         <div className="flex items-center gap-0">
           {AFFINITIES.filter((a) => actor.affinities.includes(a)).map((a) => (
-            <AffinityName key={a} affinity={a} />
+            <AffinityIcon key={a} affinity={a} className="size-5" />
           ))}
         </div>
       </div>

@@ -2,7 +2,7 @@ import type { Actor } from '#/lib/game/actor'
 import { cn } from '#/lib/utils'
 import { Marker, MarkerContent } from './ui/marker'
 import { Table, TableBody, TableCell, TableRow } from './ui/table'
-import { AffinityName } from './affinity-name'
+import { AffinityIcon } from './affinity-name'
 import {
   AffinityDamageMultiplier,
   AffinityDamageValue,
@@ -18,7 +18,7 @@ function AffinityDamageTable({ actor }: { actor: Actor }) {
         {AFFINITIES.map((affinity) => (
           <TableRow key={affinity}>
             <TableCell>
-              <AffinityName affinity={affinity} />
+              <AffinityIcon affinity={affinity} className="size-5" />
             </TableCell>
             <TableCell className="text-end">
               <AffinityDamageValue actor={actor} affinity={affinity} />
@@ -39,7 +39,7 @@ function AffinityResistanceTable({ actor }: { actor: Actor }) {
         {AFFINITIES.map((affinity) => (
           <TableRow key={affinity}>
             <TableCell>
-              <AffinityName affinity={affinity} />
+              <AffinityIcon affinity={affinity} className="size-5" />
             </TableCell>
             <TableCell className="text-end">
               <AffinityResistanceValue actor={actor} affinity={affinity} />

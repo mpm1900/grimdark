@@ -8,7 +8,7 @@ import { Gauge } from './gothic-ui/progress'
 import { StatIcon } from './stat-name'
 import { useSelector } from '@tanstack/react-store'
 import { motion } from 'motion/react'
-import { AffinityName } from './affinity-name'
+import { AffinityIcon } from './affinity-name'
 
 function ClassSprite({
   index,
@@ -78,7 +78,7 @@ function TeamActor({
           <div className="flex gap-1 justify-center">
             {AFFINITIES.filter((a) => actor_class?.affinities.includes(a)).map(
               (a) => (
-                <AffinityName key={a} affinity={a} />
+                <AffinityIcon key={a} affinity={a} className="size-5" />
               )
             )}
           </div>
