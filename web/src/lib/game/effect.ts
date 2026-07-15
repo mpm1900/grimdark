@@ -1,10 +1,11 @@
-import type { Bindable, ID } from "./core"
+import type { Bindable, ID } from './core'
 
 export type Effect = {
-  ID: ID,
-  name: string,
-  delay: number | null,
-  duration: number | null,
+  ID: ID
+  name: string
+  description: string
+  delay: number | null
+  duration: number | null
   priority: number
 }
 

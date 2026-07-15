@@ -10,6 +10,7 @@ import { HoverCard, HoverCardTrigger } from './ui/hover-card'
 import { GothicHoverCardContent } from './gothic-ui/hover-card'
 import { DNumber } from './dnumber'
 import { WEAPON_ICONS } from '#/icons/weapons'
+import { EffectTooltip } from './effect-tooltip'
 
 function InlineOffsetStats({
   offset_stats,
@@ -133,7 +134,9 @@ function WeaponDetails({ weapon }: { weapon: Weapon }) {
             {weapon.effects.length > 0 && (
               <span className="space-x-2">
                 {weapon.effects.map((e) => (
-                  <span key={e.ID}>{e.name}</span>
+                  <EffectTooltip key={e.ID} effect={e}>
+                    {e.name}
+                  </EffectTooltip>
                 ))}
               </span>
             )}

@@ -26,13 +26,14 @@ type EffectState struct {
 
 type Effect struct {
 	Mutation
-	ID       uuid.UUID           `json:"ID"`
-	Name     string              `json:"name"`
-	Delay    *int                `json:"delay"`
-	Duration *int                `json:"duration"`
-	Priority int                 `json:"priority"`
-	Tags     map[string]struct{} `json:"-"`
-	Triggers []Trigger           `json:"-"`
+	ID          uuid.UUID           `json:"ID"`
+	Name        string              `json:"name"`
+	Description string              `json:"description"`
+	Delay       *int                `json:"delay"`
+	Duration    *int                `json:"duration"`
+	Priority    int                 `json:"priority"`
+	Tags        map[string]struct{} `json:"-"`
+	Triggers    []Trigger           `json:"-"`
 	// check is ran on add
 	Check GameFilter `json:"-"`
 	// success logs
@@ -51,12 +52,13 @@ func NewEffect() Effect {
 	tags[id.String()] = struct{}{}
 
 	return Effect{
-		ID:       id,
-		Name:     "",
-		Delay:    nil,
-		Duration: nil,
-		Priority: 0,
-		Tags:     tags,
+		ID:          id,
+		Name:        "",
+		Description: "",
+		Delay:       nil,
+		Duration:    nil,
+		Priority:    0,
+		Tags:        tags,
 	}
 }
 

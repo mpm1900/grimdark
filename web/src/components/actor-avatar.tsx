@@ -4,6 +4,7 @@ import { useSelector } from '@tanstack/react-store'
 import { TinyBadge } from './gothic-ui/badge'
 import { gameStore } from '#/lib/stores/game'
 import { getAppliedEffects } from '#/lib/game/game'
+import { EffectTooltip } from './effect-tooltip'
 
 function ActorAvatar({ actor }: { actor: Actor }) {
   const game = useSelector(gameStore, (g) => g)
@@ -32,13 +33,12 @@ function ActorAvatar({ actor }: { actor: Actor }) {
           <div className="text-xs text-foreground/40">{actor.level}</div>
           <div className="absolute -right-5 top-15 flex flex-col items-end gap-px pr-2 text-center capitalize font-cinzel">
             {applied_effects.map((effect) => (
-              <TinyBadge
-                key={effect.ID}
-                className="pr-3 text-center capitalize font-cinzel"
-              >
-                {effect.name}
-                {effect.count > 1 && `(${effect.count})`}
-              </TinyBadge>
+              <EffectTooltip key={effect.ID} effect={effect} asChild>
+                <TinyBadge className="pr-3 text-center capitalize font-cinzel">
+                  {effect.name}
+                  {effect.count > 1 && `(${effect.count})`}
+                </TinyBadge>
+              </EffectTooltip>
             ))}
           </div>
         </div>

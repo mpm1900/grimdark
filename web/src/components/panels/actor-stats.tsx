@@ -11,6 +11,7 @@ import { WeaponDetails } from '../weapon-details'
 import { PanelHeader } from './panel-header'
 import { gameStore } from '#/lib/stores/game'
 import { getAppliedEffects } from '#/lib/game/game'
+import { EffectTooltip } from '../effect-tooltip'
 
 function ActorStatsPanel({
   actor,
@@ -43,14 +44,12 @@ function ActorStatsPanel({
 
           <div className="min-w-0 flex flex-row flex-wrap gap-2 p-2">
             {applied_effects.map((effect) => (
-              <GothicBadge
-                variant="empty"
-                key={effect.ID}
-                className="capitalize"
-              >
-                {effect.name}
-                {effect.count > 1 && `(${effect.count})`}
-              </GothicBadge>
+              <EffectTooltip key={effect.ID} effect={effect} asChild>
+                <GothicBadge variant="empty" className="capitalize">
+                  {effect.name}
+                  {effect.count > 1 && `(${effect.count})`}
+                </GothicBadge>
+              </EffectTooltip>
             ))}
             {applied_effects.length === 0 && (
               <span className="italic text-muted-foreground">None</span>

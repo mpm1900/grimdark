@@ -65,6 +65,10 @@ function RenderTerm({
           {terms[term_key]}
         </span>
       )
+    case '$effect$':
+      return <span className="text-foreground/60">{terms[term_key]}</span>
+    case '$action$':
+      return <span className="text-foreground/80">{terms[term_key]}</span>
     default:
       return <span>{terms[term_key]}</span>
   }
