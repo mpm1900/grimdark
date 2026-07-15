@@ -60,6 +60,7 @@ type Actor struct {
 	AffinityDamage     map[Affinity]int
 	AffinityResistance map[Affinity]int
 	AffinityImmunities map[Affinity]float64
+	EffectImmunities   map[string]struct{}
 	effectStates       map[uuid.UUID]EffectState
 	OffsetStats        map[Stat]float64
 	Stages             map[Stat]int
@@ -114,6 +115,7 @@ func NewActor(class Class, config ActorConfig) *Actor {
 		AffinityDamage:     map[Affinity]int{},
 		AffinityImmunities: map[Affinity]float64{},
 		AffinityResistance: map[Affinity]int{},
+		EffectImmunities:   map[string]struct{}{},
 		OffsetStats:        map[Stat]float64{},
 		Stacks:             map[Stack]float64{},
 		Stages:             map[Stat]int{},
@@ -168,6 +170,7 @@ func (a *Actor) Clone() *Actor {
 		AffinityDamage:     maps.Clone(a.AffinityDamage),
 		AffinityResistance: maps.Clone(a.AffinityResistance),
 		AffinityImmunities: maps.Clone(a.AffinityImmunities),
+		EffectImmunities:   maps.Clone(a.EffectImmunities),
 		OffsetStats:        maps.Clone(a.OffsetStats),
 		Stacks:             maps.Clone(a.Stacks),
 		Stages:             maps.Clone(a.Stages),
@@ -345,15 +348,6 @@ func (a *Actor) GetRemainingHealth() float64 {
 	health := a.Stats[Health]
 	return health - a.Wounds
 }
-func (a *Actor) mapEffects(effects []Effect) []Effect {
-	for i, e := range effects {
-		state, ok := a.effectStates[e.ID]
-		if ok {
-			effects[i].ApplyState(state)
-		}
-	}
-	return effects
-}
 func (a *Actor) getWeaponEffects() []Effect {
 	effects := map[uuid.UUID]Effect{}
 	if a.WeaponL != nil {
@@ -376,7 +370,37 @@ func (a *Actor) GetEffects() []Effect {
 		effects = append(effects, a.Item.Effects...)
 	}
 
-	return a.mapEffects(effects)
+	for i, e := range effects {
+		state, ok := a.effectStates[e.ID]
+		if ok {
+			effects[i].ApplyState(state)
+		}
+	}
+
+	effects, _ = a.FilterEffectImmunities(effects)
+	return effects
+}
+func (a *Actor) HasEffectImmunity(effect_ID uuid.UUID) bool {
+	if effect_ID == uuid.Nil {
+		return false
+	}
+
+	_, ok := a.EffectImmunities[effect_ID.String()]
+	return ok
+}
+func (a *Actor) FilterEffectImmunities(effects []Effect) ([]Effect, []Effect) {
+	result := []Effect{}
+	removed := []Effect{}
+	for _, effect := range effects {
+		if a.HasEffectImmunity(effect.ID) {
+			removed = append(removed, effect)
+			continue
+		}
+
+		result = append(result, effect)
+	}
+
+	return result, removed
 }
 func (a *Actor) GetModifiers() []Modifier {
 	modifiers := []Modifier{}

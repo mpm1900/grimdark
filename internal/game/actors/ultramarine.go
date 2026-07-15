@@ -25,6 +25,11 @@ func newUltramarine() game.Class {
 	})
 	bypass.Name = "bypass effect"
 
+	weakness_immune := game.EffectSource(game.EffectPriorityImmunities, func(g *game.Game, a game.Actor, ctx game.Context) game.Actor {
+		a.EffectImmunities[effects.Weakened().ID.String()] = struct{}{}
+		return a
+	})
+
 	class := game.NewClass()
 	class.ID = uuid.MustParse("019f5f12-6e78-7eda-b638-980453e3eaba")
 	class.Name = "Storm Warden"
@@ -49,7 +54,7 @@ func newUltramarine() game.Class {
 		game.DamageReflect:  0,
 		game.EffectChance:   1,
 	}
-	class.Effects = []game.Effect{bypass}
+	class.Effects = []game.Effect{bypass, weakness_immune}
 	class.Options = game.ClassOptions{
 		Items: []game.Item{},
 		Weapons: []game.Weapon{

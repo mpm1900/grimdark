@@ -166,24 +166,41 @@ func DamageSideEffects(g *Game, context Context, result DamageResult, this *Acti
 }
 
 // effect helpers
-func EffectGainSourceOnSuccess(g *Game, effect Effect, ctx Context) {
+func EffectGainSourceOnSuccess(g *Game, e Effect, ctx Context) {
 	source, ok := g.GetSource(ctx)
 	if !ok {
+		return
+	}
+	if source.HasEffectImmunity(e.ID) {
+		g.PushLogMeta(NewLog(
+			"$source$ was immune to $effect$.",
+			EffectTermsSource(source, e),
+		).Bind(ctx))
 		return
 	}
 
 	g.PushLogMeta(NewLog(
 		"$source$ gained $effect$.",
-		EffectTermsSource(source, effect),
+		EffectTermsSource(source, e),
 	).Bind(ctx))
 }
-func EffectGainTargetsOnSuccess(g *Game, effect Effect, ctx Context) {
+func EffectGainTargetsOnSuccess(g *Game, e Effect, ctx Context) {
 	targets := g.GetTargets(ctx)
 	for _, target := range targets {
+		log_ctx := ctx.CloneWithTarget(target)
+		log_ctx.EffectID = e.ID
+		if target.HasEffectImmunity(e.ID) {
+			g.PushLogMeta(NewLog(
+				"$target$ was immune to $effect$.",
+				EffectTermsTarget(target, e),
+			).Bind(log_ctx))
+			continue
+		}
+
 		g.PushLogMeta(NewLog(
 			"$target$ gained $effect$.",
-			EffectTermsTarget(target, effect),
-		).Bind(ctx))
+			EffectTermsTarget(target, e),
+		).Bind(log_ctx))
 	}
 }
 func EffectGainWhereOnSuccess(where Filter[Actor]) func(g *Game, e Effect, ctx Context) {
@@ -197,6 +214,14 @@ func EffectGainWhereOnSuccess(where Filter[Actor]) func(g *Game, e Effect, ctx C
 		for _, target := range targets {
 			log_ctx := MakeContextFor(source, target)
 			log_ctx.EffectID = e.ID
+			if target.HasEffectImmunity(e.ID) {
+				g.PushLogMeta(NewLog(
+					"$target$ was immune to $effect$.",
+					EffectTermsTarget(target, e),
+				).Bind(log_ctx))
+				continue
+			}
+
 			g.PushLogMeta(NewLog(
 				"$target$ gained $effect$.",
 				EffectTermsTarget(target, e),

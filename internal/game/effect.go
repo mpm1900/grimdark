@@ -4,6 +4,7 @@ import (
 	"github.com/google/uuid"
 )
 
+const EffectPriorityImmunities = -1
 const EffectPriorityAffinities = 0
 const EffectPriorityBaseStats = 0
 const EffectPriorityOffsetStats = 0
@@ -18,8 +19,6 @@ const EffectPriorityMapStages = 5
 const EffectPriorityPostStagesStats = 6
 const EffectPriorityActionState = 6
 
-var ET_DEFAULT = uuid.New()
-
 type EffectState struct {
 	Delay    *int
 	Duration *int
@@ -27,13 +26,13 @@ type EffectState struct {
 
 type Effect struct {
 	Mutation
-	ID       uuid.UUID              `json:"ID"`
-	Name     string                 `json:"name"`
-	Delay    *int                   `json:"delay"`
-	Duration *int                   `json:"duration"`
-	Priority int                    `json:"priority"`
-	Tags     map[uuid.UUID]struct{} `json:"-"`
-	Triggers []Trigger              `json:"-"`
+	ID       uuid.UUID           `json:"ID"`
+	Name     string              `json:"name"`
+	Delay    *int                `json:"delay"`
+	Duration *int                `json:"duration"`
+	Priority int                 `json:"priority"`
+	Tags     map[string]struct{} `json:"-"`
+	Triggers []Trigger           `json:"-"`
 	// check is ran on add
 	Check GameFilter `json:"-"`
 	// success logs
@@ -48,6 +47,8 @@ type Modifier struct {
 
 func NewEffect() Effect {
 	id := uuid.New()
+	tags := map[string]struct{}{}
+	tags[id.String()] = struct{}{}
 
 	return Effect{
 		ID:       id,
@@ -55,23 +56,20 @@ func NewEffect() Effect {
 		Delay:    nil,
 		Duration: nil,
 		Priority: 0,
-		Tags: map[uuid.UUID]struct{}{
-			ET_DEFAULT: {},
-			id:         {},
-		},
+		Tags:     tags,
 	}
 }
 
-func (e *Effect) SetTag(tag uuid.UUID) {
+func (e *Effect) SetTag(tag string) {
 	e.Tags[tag] = struct{}{}
 }
 
 func (e *Effect) SetID(id uuid.UUID) {
 	old := e.ID
-	delete(e.Tags, old)
+	delete(e.Tags, old.String())
 
 	e.ID = id
-	e.SetTag(id)
+	e.SetTag(id.String())
 }
 func (e *Effect) ApplyState(s EffectState) {
 	if s.Delay != nil {
@@ -85,7 +83,7 @@ func (e *Effect) ApplyState(s EffectState) {
 func (e Effect) Ready() bool {
 	return e.Delay == nil || *e.Delay <= 0
 }
-func (e Effect) HasTag(tag uuid.UUID) bool {
+func (e Effect) HasTag(tag string) bool {
 	if e.Tags == nil {
 		return false
 	}
@@ -108,6 +106,8 @@ func (e Effect) Delta(g *Game, context Context) []uuid.UUID {
 	return e.delta(g, context)
 }
 func (e Effect) Bind(context Context) Modifier {
+	context = context.Clone()
+	context.EffectID = e.ID
 	bindable := bind(e, context)
 	mod := Modifier{
 		Bindable: bindable,
@@ -116,12 +116,6 @@ func (e Effect) Bind(context Context) Modifier {
 	return mod
 }
 func (m *Modifier) Resolve(g *Game) []uuid.UUID {
-	for tag := range m.Payload.Tags {
-		if _, immune := g.meta.modifier_immunities[tag]; immune {
-			return []uuid.UUID{}
-		}
-	}
-
 	actorIDs := resolveMutation(g, m.Context, m.Payload)
 	if len(actorIDs) > 0 {
 		for _, actorID := range actorIDs {
@@ -144,6 +138,14 @@ func EffectSource(priority int, updater Updater[Actor]) Effect {
 				return applied
 			}
 
+			source, ok := g.GetSource(context)
+			if !ok {
+				return applied
+			}
+			if source.HasEffectImmunity(context.EffectID) {
+				return applied
+			}
+
 			applied = append(applied, context.SourceID)
 			g.ModifyActor(context.SourceID, func(a Actor) Actor {
 				return updater(g, a, context)
@@ -163,6 +165,10 @@ func EffectTargets(priority int, updater Updater[Actor]) Effect {
 			applied := []uuid.UUID{}
 
 			for _, target := range g.GetTargets(context) {
+				if target.HasEffectImmunity(context.EffectID) {
+					continue
+				}
+
 				applied = append(applied, target.ID)
 				g.ModifyActor(target.ID, func(a Actor) Actor {
 					return updater(g, a, context)
@@ -184,6 +190,10 @@ func EffectActorsWhere(priority int, where Filter[Actor], updater Updater[Actor]
 
 			actors := g.FindActors(where, context)
 			for _, target := range actors {
+				if target.HasEffectImmunity(context.EffectID) {
+					continue
+				}
+
 				applied = append(applied, target.ID)
 				g.ModifyActor(target.ID, func(a Actor) Actor {
 					return updater(g, a, context)

@@ -20,7 +20,7 @@ func auraOfWeakness() game.Effect {
 				Name: "Aura of Weakness",
 			},
 			Resolve: func(g *game.Game, ctx game.Context, this game.ActionContext) []game.Transaction {
-				mutation := game.AddModifiers(weakened().Bind(ctx))
+				mutation := game.AddModifiers(Weakened().Bind(ctx))
 				this.Push(mutation.Bind(ctx))
 				return this.Done()
 			},
@@ -35,7 +35,7 @@ func meleeDown(g *game.Game, a game.Actor, ctx game.Context) game.Actor {
 	a.Stats[game.Melee] = a.Stats[game.Melee] * 0.75
 	return a
 }
-func weakened() game.Effect {
+func Weakened() game.Effect {
 	effect := game.EffectActorsActiveOther(game.EffectPriorityPostStagesStats, meleeDown)
 	effect.ID = uuid.MustParse("019f58b9-4edd-7c60-bccd-08ff88120a5b")
 	effect.Name = "Weakened"

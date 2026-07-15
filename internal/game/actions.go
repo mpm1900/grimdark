@@ -94,7 +94,6 @@ func AddSourceEffects(config StatusConfig, chance float64, effects ...Effect) Ac
 
 			return this.Done()
 		}
-
 		modifiers := make([]Modifier, len(effects))
 		for i, effect := range effects {
 			modifiers[i] = effect.Bind(ctx)
@@ -117,8 +116,8 @@ func AddTargetsEffects(config StatusConfig, effects ...Effect) ActionResolver {
 		success := false
 		for _, target := range targets {
 			result := this.Action.Config.GetAccuracyResult(this.Source, target)
-			_, immune := target.AffinityImmunities[this.Action.Config.Affinity]
-			if immune {
+			_, immune_affinity := target.AffinityImmunities[this.Action.Config.Affinity]
+			if immune_affinity {
 				this.Push(PushLog(NewLog(
 					"$target$ was immune to $aff$.",
 					CombineTerms(
@@ -128,7 +127,7 @@ func AddTargetsEffects(config StatusConfig, effects ...Effect) ActionResolver {
 				)).Bind(ctx))
 			}
 
-			result_success := result.Success() && !immune
+			result_success := result.Success() && !immune_affinity
 			success = success || result_success
 			if result_success {
 				modifiers := make([]Modifier, len(effects))
