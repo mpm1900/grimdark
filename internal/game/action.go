@@ -72,7 +72,7 @@ func (a Action) CanResolve(g *Game, context Context, this *ActionContext) bool {
 			this.Push(PushLog(NewLog("$source$ was stunned.", SourceTerms(source))).Bind(context))
 		}
 		if !action_valid {
-			this.Push(PushLog(NewLog("$action$ as disabled.", ActionTerms(a))).Bind(context))
+			this.Push(PushLog(NewLog("$action$ was disabled.", ActionTerms(a))).Bind(context))
 		} else if !valid {
 			this.Push(PushLog(NewLog("$action$ failed.", ActionTerms(a))).Bind(context))
 		}
