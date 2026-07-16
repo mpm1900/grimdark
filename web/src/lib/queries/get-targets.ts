@@ -1,41 +1,15 @@
 import { queryOptions } from '@tanstack/react-query'
 import { contextToString, NULL_CONTEXT, type Context } from '../game/context'
-import { lobbyStore } from '../stores/clients'
-import { sendContextMessage } from '../stores/socket'
 import type { ID } from '../game/core'
-import { subscribe } from '../socket/subscribe'
-import { v4 } from 'uuid'
+import { promisify } from '../socket/promise'
 
 async function getTargets(context: Context): Promise<Context> {
-  const client = lobbyStore.state.client
-
-  const promise: Promise<Context> = new Promise((resolve, reject) => {
-    if (!client) {
-      return reject('no client')
-    }
-
-    const request_ID = v4()
-    sendContextMessage({
-      request_ID,
-      type: 'get-targets',
-      client_ID: client.ID,
-      context,
-    })
-
-    const unsub = subscribe((_event, message) => {
-      if (message && message.context) {
-        if (message.request_ID === request_ID) {
-          resolve(message.context as Context)
-          unsub()
-        }
-      } else {
-        reject('no message')
-        unsub()
-      }
-    })
+  const response = await promisify({
+    type: 'get-targets',
+    context,
   })
 
-  return promise
+  return response.context!
 }
 
 function getTargetsQuery(
