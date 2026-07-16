@@ -169,6 +169,7 @@ export const AFFINITY_MATRIX: Record<
   psychic: {
     arcane: 2,
     fire: 2,
+    kinetic: 2,
     lightning: 2,
     poison: -2,
     psychic: -2,

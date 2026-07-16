@@ -75,12 +75,7 @@ func (a Actor) ToJSON(g *Game) actorJSON {
 
 	affinity_damage := maps.Clone(a.AffinityDamage)
 	for affinity := range a.Class.Affinities {
-		base, ok := affinity_damage[affinity]
-		if !ok {
-			affinity_damage[affinity] = 1
-		} else {
-			affinity_damage[affinity] = base + 1
-		}
+		affinity_damage[affinity] = a.GetAffinityDamage(affinity)
 	}
 
 	actor_actions := a.GetActions()

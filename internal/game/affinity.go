@@ -57,6 +57,7 @@ var AFFINITY_MATRIX = map[Affinity]map[Affinity]int{
 	Psychic: {
 		Arcane:    2,
 		Fire:      2,
+		Kinetic:   2,
 		Lightning: 2,
 		Poison:    -2,
 		Psychic:   -2,

@@ -209,24 +209,16 @@ func (a *Actor) Clone() *Actor {
 func (a *Actor) CanAct() bool {
 	return !a.IsStunned
 }
+
 func (a *Actor) GetAffinityDamage(affinity Affinity) int {
-	base := maps.Clone(a.AffinityDamage)
-	for affinity := range a.Class.Affinities {
-		b, ok := base[affinity]
-		if !ok {
-			continue
-		}
-
-		base[affinity] = b + 1
+	value := a.AffinityDamage[affinity]
+	if _, ok := a.Class.Affinities[affinity]; ok {
+		value++
 	}
 
-	value, ok := base[affinity]
-	if ok {
-		return value
-	}
-
-	return 0
+	return value
 }
+
 func (a *Actor) GetAffinityResistance(affinity Affinity) int {
 	value, ok := a.AffinityResistance[affinity]
 	if ok {
@@ -235,6 +227,7 @@ func (a *Actor) GetAffinityResistance(affinity Affinity) int {
 
 	return 0
 }
+
 func (a *Actor) GetEffectiveAffinityResistance(affinity Affinity) int {
 	return a.GetAffinityResistance(affinity) - affinity.GetBaseModifier(*a)
 }
@@ -243,6 +236,7 @@ func (a *Actor) GetRemainingHealth() float64 {
 	health := a.Stats[Health]
 	return health - a.Stacks[Wounds]
 }
+
 func (a *Actor) getWeaponEffects() []Effect {
 	effects := map[uuid.UUID]Effect{}
 	if a.WeaponL != nil {
@@ -258,6 +252,7 @@ func (a *Actor) getWeaponEffects() []Effect {
 
 	return slices.Collect(maps.Values(effects))
 }
+
 func (a *Actor) GetEffects() []Effect {
 	effects := slices.Clone(a.Class.Effects)
 	effects = append(effects, a.getWeaponEffects()...)
@@ -275,10 +270,12 @@ func (a *Actor) GetEffects() []Effect {
 	effects, _ = a.FilterEffectImmunities(effects)
 	return effects
 }
+
 func (a *Actor) HasEffectImmunity(tag uuid.UUID) bool {
 	_, ok := a.EffectImmunities[tag]
 	return ok
 }
+
 func (a *Actor) FilterEffectImmunities(effects []Effect) ([]Effect, []Effect) {
 	result := []Effect{}
 	removed := []Effect{}
@@ -293,6 +290,7 @@ func (a *Actor) FilterEffectImmunities(effects []Effect) ([]Effect, []Effect) {
 
 	return result, removed
 }
+
 func (a *Actor) GetModifiers() []Modifier {
 	modifiers := []Modifier{}
 	for _, effect := range a.GetEffects() {
@@ -306,6 +304,7 @@ func (a *Actor) GetModifiers() []Modifier {
 
 	return modifiers
 }
+
 func (a *Actor) GetActions() []Action {
 	actions := []Action{}
 	seen := map[uuid.UUID]struct{}{}
@@ -335,6 +334,7 @@ func (a *Actor) GetActions() []Action {
 	})
 	return actions
 }
+
 func (a *Actor) GetActionByID(action_id uuid.UUID) (Action, bool) {
 	for _, action := range a.GetActions() {
 		if action.ID == action_id {
@@ -344,9 +344,11 @@ func (a *Actor) GetActionByID(action_id uuid.UUID) (Action, bool) {
 
 	return Action{}, false
 }
+
 func (a *Actor) Active() bool {
 	return a.PositionID != uuid.Nil
 }
+
 func (a *Actor) Targetable() bool {
 	if a.Active() {
 		return !a.IsHidden

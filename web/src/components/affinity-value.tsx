@@ -83,7 +83,7 @@ function AffinityDamageMultiplier({
   actor: Actor
   affinity: Affinity
 }) {
-  const mult = mapStage(actor.affinity_damage[affinity], 2, 1)
+  const mult = mapStage(actor.affinity_damage[affinity] ?? 0, 2, 1)
   return (
     <span
       {...props}
