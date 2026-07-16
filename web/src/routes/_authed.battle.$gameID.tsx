@@ -3,6 +3,7 @@ import { BattlePanel } from '#/components/panels/battle'
 import { PlayerPositions } from '#/components/player-positions'
 import { PlayerTeam } from '#/components/player-team'
 import { PromptController } from '#/components/prompt-controller'
+import { TargetingArrows } from '#/components/targeting-arrows'
 import { TurnContext } from '#/components/turn-context'
 import { useReconnect } from '#/hooks/use-reconnect'
 import { getInstance } from '#/lib/queries/get-instance'
@@ -54,7 +55,8 @@ function RouteComponent() {
             {client_player && <PlayerTeam player={client_player} />}
             {other_player && <PlayerTeam player={other_player} />}
           </div>
-          <div className="flex flex-1 h-full px-3 z-10 mb-56">
+          <div className="relative flex flex-1 h-full px-3 z-10 mb-56">
+            <TargetingArrows />
             {client_player && (
               <PlayerPositions
                 className="flex-1 gap-1"

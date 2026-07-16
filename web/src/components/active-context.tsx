@@ -31,12 +31,12 @@ function ActiveContext({
         side="bottom"
         className="text-center grid place-items-center"
       >
-        {!!action && (
+        {!!action && !waiting && (
           <div>
             {source?.name} used {action.config.name}
           </div>
         )}
-        {!!modifier && (
+        {!!modifier && !waiting && (
           <div>
             {parent?.name}'s {modifier.payload.name} trigger
           </div>
