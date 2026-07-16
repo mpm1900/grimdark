@@ -20,11 +20,13 @@ function PromptController() {
   const prompt = useSelector(gameStore, (g) => g.prompts[0])
   const client = useSelector(lobbyStore, (s) => s.client!)
   const turn = useSelector(gameStore, (g) => g.turn)
+  const prompt_context = prompt?.context ?? NULL_CONTEXT
   const targets_options = getTargetsQuery(
-    null,
-    prompt?.context.player_ID,
+    prompt_context.source_ID,
+    prompt_context.player_ID,
     prompt?.payload.ID,
-    [prompt?.ID ?? '', turn]
+    [prompt?.ID ?? '', turn],
+    prompt_context
   )
   targets_options.enabled = !!prompt
   const targets_query = useQuery(targets_options)
