@@ -12,7 +12,6 @@ const (
 	Psychic   Affinity = "psychic"
 )
 
-// AFFINITY_MATRIX maps defender affinity -> incoming affinity -> stage modifier.
 var AFFINITY_MATRIX = map[Affinity]map[Affinity]int{
 	Arcane: {
 		Arcane:    2,
