@@ -3,6 +3,7 @@ import { contextToString, type Context } from '../game/context'
 import { lobbyStore } from '../stores/clients'
 import { sendContextMessage } from '../stores/socket'
 import { subscribe } from '../socket/subscribe'
+import { v4 } from 'uuid'
 
 async function validateContext(context: Context): Promise<boolean> {
   const client = lobbyStore.state.client
@@ -11,7 +12,9 @@ async function validateContext(context: Context): Promise<boolean> {
       return reject('no client')
     }
 
+    const request_ID = v4()
     sendContextMessage({
+      request_ID,
       type: 'validate-context',
       client_ID: client.ID,
       context,
@@ -19,10 +22,7 @@ async function validateContext(context: Context): Promise<boolean> {
 
     const unsub = subscribe((_event, message) => {
       if (message && message.context) {
-        if (
-          message.type === 'validate-context' &&
-          contextToString(context) == contextToString(message.context)
-        ) {
+        if (message.request_ID === request_ID) {
           resolve(!!message.valid)
           unsub()
         }

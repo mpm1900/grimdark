@@ -24,9 +24,10 @@ const (
 )
 
 type Response struct {
-	Type  ResponseType   `json:"type"`
-	Game  *game.GameJSON `json:"game"`
-	Lobby *LobbyJSON     `json:"lobby"`
+	Type      ResponseType   `json:"type"`
+	RequestID uuid.UUID      `json:"request_ID"`
+	Game      *game.GameJSON `json:"game"`
+	Lobby     *LobbyJSON     `json:"lobby"`
 
 	Valid   *bool         `json:"valid"`
 	Context *game.Context `json:"context"`
@@ -77,17 +78,19 @@ func GameStartMessage(client *Client) Response {
 	}
 }
 
-func TargetIDsResponse(client *Client, context game.Context) Response {
+func TargetIDsResponse(client *Client, request_ID uuid.UUID, context game.Context) Response {
 	return Response{
-		Type:    ResponseTypeTargetIDs,
-		Context: &context,
+		Type:      ResponseTypeTargetIDs,
+		Context:   &context,
+		RequestID: request_ID,
 	}
 }
 
-func ValidateContextMessage(client *Client, context game.Context, valid bool) Response {
+func ValidateContextMessage(client *Client, request_ID uuid.UUID, context game.Context, valid bool) Response {
 	return Response{
-		Type:    ResponseTypeValidateContext,
-		Context: &context,
-		Valid:   &valid,
+		Type:      ResponseTypeValidateContext,
+		Context:   &context,
+		RequestID: request_ID,
+		Valid:     &valid,
 	}
 }

@@ -19,6 +19,7 @@ import { sendContextMessage } from '#/lib/stores/socket'
 import { ClientOnly, createFileRoute, redirect } from '@tanstack/react-router'
 import { useSelector } from '@tanstack/react-store'
 import { useEffect } from 'react'
+import { v4 } from 'uuid'
 import z from 'zod'
 
 export const Route = createFileRoute('/_authed/lobby/$gameID')({
@@ -77,6 +78,7 @@ function RouteComponent() {
                       <GothicFramedButton
                         onClick={() => {
                           sendContextMessage({
+                            request_ID: v4(),
                             type: 'ready',
                             client_ID: lobby.client?.ID!,
                             context: NULL_CONTEXT,

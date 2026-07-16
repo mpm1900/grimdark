@@ -29,6 +29,7 @@ import {
 import { DNumber } from './dnumber'
 import { sendContextMessage } from '#/lib/stores/socket'
 import { lobbyStore } from '#/lib/stores/clients'
+import { v4 } from 'uuid'
 
 function ActionButton({
   action,
@@ -106,6 +107,7 @@ function ActionButton({
               className="hover:underline isolate p-0 min-h-9 cursor-pointer"
               onClick={() => {
                 sendContextMessage({
+                  request_ID: v4(),
                   type: 'cancel-action',
                   client_ID: client?.ID!,
                   context: actor_command.context,

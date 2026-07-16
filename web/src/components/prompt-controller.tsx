@@ -15,6 +15,7 @@ import {
 } from './gothic-ui/dialog'
 import { GothicFramedButton } from './gothic-ui/button'
 import { TargetsButtonGrid } from './targets-button-grid'
+import { v4 } from 'uuid'
 
 function PromptController() {
   const prompt = useSelector(gameStore, (g) => g.prompts[0])
@@ -81,6 +82,7 @@ function PromptController() {
               disabled={!validate_query.data || validate_query.isLoading}
               onClick={() => {
                 sendContextMessage({
+                  request_ID: v4(),
                   type: 'resolve-prompt',
                   client_ID: client.ID,
                   context: resolved_context,

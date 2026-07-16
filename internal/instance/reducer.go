@@ -25,14 +25,14 @@ func lobbyReady(instance *Instance, request Request) {
 func getTargets(instance *Instance, request Request) {
 	action, ok := instance.Game.FindAction(request.Context)
 	if !ok {
-		instance.TargetIDsResponse(request.ClientID, request.Context)
+		instance.TargetIDsResponse(request.ClientID, request.RequestID, request.Context)
 		return
 	}
 
 	context := request.Context.Clone()
 	context.ClearTargets()
 	if action.TargetsPredicate == nil {
-		instance.TargetIDsResponse(request.ClientID, context)
+		instance.TargetIDsResponse(request.ClientID, request.RequestID, context)
 		return
 	}
 
@@ -43,17 +43,17 @@ func getTargets(instance *Instance, request Request) {
 		}
 	}
 
-	instance.TargetIDsResponse(request.ClientID, context)
+	instance.TargetIDsResponse(request.ClientID, request.RequestID, context)
 }
 func validateContext(instance *Instance, request Request) {
 	action, ok := instance.Game.FindAction(request.Context)
 	if !ok {
-		instance.ValidateContextResponse(request.ClientID, request.Context, false)
+		instance.ValidateContextResponse(request.ClientID, request.RequestID, request.Context, false)
 		return
 	}
 
 	valid := action.ValidateContext(instance.Game, request.Context)
-	instance.ValidateContextResponse(request.ClientID, request.Context, valid)
+	instance.ValidateContextResponse(request.ClientID, request.RequestID, request.Context, valid)
 }
 
 func turnReady(instance *Instance, request Request) {

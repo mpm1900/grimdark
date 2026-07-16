@@ -24,6 +24,7 @@ import { AffinityIcon } from './affinity-name'
 import { StatIcon } from './stat-name'
 import { cn } from '#/lib/utils'
 import { DNumber } from './dnumber'
+import { v4 } from 'uuid'
 
 function formatNumber(value: number) {
   return Number.isInteger(value) ? value.toFixed(0) : value.toFixed(1)
@@ -254,6 +255,7 @@ function ActionContextDialog({
               className="-mr-px"
               onClick={() => {
                 sendContextMessage({
+                  request_ID: v4(),
                   type: 'push-action',
                   client_ID: client.ID,
                   context: context.value,

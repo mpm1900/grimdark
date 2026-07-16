@@ -96,21 +96,21 @@ func (i *Instance) PostConnectResponse(client_id uuid.UUID) {
 	client.TryWriteResponse(PostConnectMessage(client, i.Game.ToJSON()))
 }
 
-func (i *Instance) TargetIDsResponse(client_id uuid.UUID, context game.Context) {
+func (i *Instance) TargetIDsResponse(client_id uuid.UUID, request_ID uuid.UUID, context game.Context) {
 	client, ok := i.Lobby.GetClient(client_id)
 	if !ok {
 		return
 	}
 
-	client.TryWriteResponse(TargetIDsResponse(client, context))
+	client.TryWriteResponse(TargetIDsResponse(client, request_ID, context))
 }
-func (i *Instance) ValidateContextResponse(client_id uuid.UUID, context game.Context, valid bool) {
+func (i *Instance) ValidateContextResponse(client_id uuid.UUID, request_ID uuid.UUID, context game.Context, valid bool) {
 	client, ok := i.Lobby.GetClient(client_id)
 	if !ok {
 		return
 	}
 
-	client.TryWriteResponse(ValidateContextMessage(client, context, valid))
+	client.TryWriteResponse(ValidateContextMessage(client, request_ID, context, valid))
 }
 
 func (i *Instance) BroadcastLobby() {

@@ -15,6 +15,7 @@ type SocketRequestType =
 
 type SocketRequest = {
   type: SocketRequestType
+  request_ID: string
   client_ID: string
   context: Context
   team_config?: TeamConfig
@@ -29,6 +30,7 @@ type SocketResponse = {
     | 'lobby'
     | 'validate-context'
     | 'target-IDs'
+  request_ID: string
   game: Game | null
   lobby: Lobby | null
   context: Context | null

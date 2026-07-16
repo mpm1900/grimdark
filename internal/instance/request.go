@@ -22,8 +22,9 @@ const (
 )
 
 type Request struct {
-	Type       RequestType      `json:"type"`
 	ClientID   uuid.UUID        `json:"client_ID"`
 	Context    game.Context     `json:"context"`
+	RequestID  uuid.UUID        `json:"request_ID"`
 	TeamConfig *game.TeamConfig `json:"team_config"`
+	Type       RequestType      `json:"type"`
 }

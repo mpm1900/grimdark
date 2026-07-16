@@ -10,6 +10,7 @@ import { NULL_CONTEXT } from '../game/context'
 import { lobbyStore } from '../stores/clients'
 import { subscribe } from '../socket/subscribe'
 import type { ID } from '../game/core'
+import { v4 } from 'uuid'
 
 async function postConnect(team_config: TeamConfig): Promise<SocketResponse> {
   const client = lobbyStore.state.client
@@ -19,6 +20,7 @@ async function postConnect(team_config: TeamConfig): Promise<SocketResponse> {
     }
 
     sendContextMessage({
+      request_ID: v4(),
       type: 'post-connect',
       client_ID: client.ID,
       context: NULL_CONTEXT,

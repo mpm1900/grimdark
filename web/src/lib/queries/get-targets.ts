@@ -4,6 +4,7 @@ import { lobbyStore } from '../stores/clients'
 import { sendContextMessage } from '../stores/socket'
 import type { ID } from '../game/core'
 import { subscribe } from '../socket/subscribe'
+import { v4 } from 'uuid'
 
 async function getTargets(context: Context): Promise<Context> {
   const client = lobbyStore.state.client
@@ -13,7 +14,9 @@ async function getTargets(context: Context): Promise<Context> {
       return reject('no client')
     }
 
+    const request_ID = v4()
     sendContextMessage({
+      request_ID,
       type: 'get-targets',
       client_ID: client.ID,
       context,
@@ -21,11 +24,7 @@ async function getTargets(context: Context): Promise<Context> {
 
     const unsub = subscribe((_event, message) => {
       if (message && message.context) {
-        if (
-          message.type === 'target-IDs' &&
-          message.context.source_ID === context.source_ID &&
-          message.context.action_ID === context.action_ID
-        ) {
+        if (message.request_ID === request_ID) {
           resolve(message.context as Context)
           unsub()
         }

@@ -10,6 +10,7 @@ import { isIdNull } from '#/lib/game/core'
 import type { Actor } from '#/lib/game/actor'
 import type { Position } from '#/lib/game/position'
 import { AnimatePresence, motion } from 'motion/react'
+import { v4 } from 'uuid'
 
 function PlayerSprite({
   actor,
@@ -67,6 +68,7 @@ function PlayerSprite({
               variant="red"
               onClick={() => {
                 sendContextMessage({
+                  request_ID: v4(),
                   type: 'cancel-action',
                   client_ID: client?.ID!,
                   context: actor_command.context,

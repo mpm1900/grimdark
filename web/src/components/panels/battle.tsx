@@ -18,6 +18,7 @@ import { GothicFramedButton } from '../gothic-ui/button'
 import { NULL_CONTEXT } from '#/lib/game/context'
 import { lobbyStore } from '#/lib/stores/clients'
 import { Check, ChevronsRight, Loader } from 'lucide-react'
+import { v4 } from 'uuid'
 
 function ActionsPanel({ active_actor }: { active_actor: Actor }) {
   const game = useSelector(gameStore, (g) => g)
@@ -167,6 +168,7 @@ function BattlePanel() {
             disabled={game_status != 'idle' || !player || player.ready}
             onClick={() => {
               sendContextMessage({
+                request_ID: v4(),
                 type: 'turn-ready',
                 client_ID: client.ID,
                 context: NULL_CONTEXT,
