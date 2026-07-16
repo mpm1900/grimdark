@@ -39,8 +39,9 @@ function RouteComponent() {
   const params = Route.useParams()
   const game = useSelector(gameStore, (g) => g)
   const client = useSelector(lobbyStore, (s) => s.client)
-  const client_player = game.players.find((p) => p.user.id === client?.ID)
-  const other_player = game.players.find((p) => p.user.id !== client?.ID)
+  const client_player =
+    game.players.find((p) => p.user.id === client?.ID) ?? game.players[0]
+  const other_player = game.players.find((p) => p.user.id !== client_player.ID)
   useReconnect(params.gameID)
 
   return (

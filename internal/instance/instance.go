@@ -129,14 +129,10 @@ func (i *Instance) Run() {
 		select {
 		case client := <-i.Register:
 			_, exists := i.Game.GetPlayer(client.ID)
-			if !exists && len(i.Game.State().Players) >= 2 {
-				continue
-			}
-
 			i.RegisterClient(client)
 			i.BroadcastLobby()
 
-			if !exists {
+			if !exists && len(i.Game.State().Players) < 2 {
 				player := game.NewPlayer(*client.User)
 				i.Game.AddPlayers(*player)
 				i.BroadcastGame()
