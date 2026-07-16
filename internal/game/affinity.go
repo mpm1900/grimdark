@@ -12,6 +12,7 @@ const (
 	Psychic   Affinity = "psychic"
 )
 
+// AFFINITY_MATRIX maps defender affinity -> incoming affinity -> stage modifier.
 var AFFINITY_MATRIX = map[Affinity]map[Affinity]int{
 	Arcane: {
 		Arcane:    2,
@@ -58,7 +59,7 @@ var AFFINITY_MATRIX = map[Affinity]map[Affinity]int{
 		Arcane:    2,
 		Fire:      2,
 		Kinetic:   2,
-		Lightning: 2,
+		Lightning: -2,
 		Poison:    -2,
 		Psychic:   -2,
 	},
@@ -67,8 +68,8 @@ var AFFINITY_MATRIX = map[Affinity]map[Affinity]int{
 func (a Affinity) GetBaseModifier(target Actor) int {
 	result := 0
 
-	for affinity := range target.Class.Affinities {
-		stage, ok := AFFINITY_MATRIX[a][affinity]
+	for target_affinity := range target.Class.Affinities {
+		stage, ok := AFFINITY_MATRIX[a][target_affinity]
 		if !ok {
 			continue
 		}

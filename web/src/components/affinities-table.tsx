@@ -48,7 +48,7 @@ function AffinityResistanceTable({ actor }: { actor: Actor }) {
               <AffinityResistanceMultiplier
                 actor={actor}
                 affinity={affinity}
-                value={actor.affinity_resistance[affinity] * -1}
+                value={(actor.affinity_resistance[affinity] ?? 0) * -1}
               />
             </TableCell>
           </TableRow>

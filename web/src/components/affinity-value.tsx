@@ -14,8 +14,9 @@ function AffinityResistanceValue({
   ...props
 }: React.ComponentProps<'span'> & { actor: Actor; affinity: Affinity }) {
   const immunity = actor.affinity_immunities[affinity]
-  const value = actor.affinity_resistance[affinity]
+  const value = actor.affinity_resistance[affinity] ?? 0
   const unmodified = getBaseAffinityResistance(actor, affinity)
+  if (!value) return null
 
   return (
     <DNumber

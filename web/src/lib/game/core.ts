@@ -180,17 +180,16 @@ function getBaseAffinityResistance(
   actor: Actor,
   target_affinity: Affinity
 ): number {
-  return (
-    -1 *
-    actor.affinities.reduce((result, affinity) => {
-      const stage = AFFINITY_MATRIX[target_affinity][affinity]
-      if (stage == undefined) {
-        return result
-      }
+  const stage = actor.affinities.reduce((result, affinity) => {
+    const stage = AFFINITY_MATRIX[target_affinity][affinity]
+    if (stage == undefined) {
+      return result
+    }
 
-      return result + stage
-    }, 0)
-  )
+    return result + stage
+  }, 0)
+
+  return stage === 0 ? 0 : -stage
 }
 
 function getBaseAffinityDamage(
