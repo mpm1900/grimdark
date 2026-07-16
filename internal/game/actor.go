@@ -147,6 +147,7 @@ func NewActor(class Class, config ActorConfig) *Actor {
 func (a *Actor) Clone() *Actor {
 	var weapon_l *Weapon = nil
 	var weapon_r *Weapon = nil
+	var item *Item = nil
 	if a.WeaponL != nil {
 		clone := a.WeaponL.Clone()
 		weapon_l = &clone
@@ -154,6 +155,10 @@ func (a *Actor) Clone() *Actor {
 	if a.WeaponR != nil {
 		clone := a.WeaponR.Clone()
 		weapon_r = &clone
+	}
+	if a.Item != nil {
+		clone := a.Item.Clone()
+		item = &clone
 	}
 	return &Actor{
 		ID:         a.ID,
@@ -165,7 +170,7 @@ func (a *Actor) Clone() *Actor {
 
 		WeaponL: weapon_l,
 		WeaponR: weapon_r,
-		Item:    a.Item,
+		Item:    item,
 
 		AffinityDamage:     maps.Clone(a.AffinityDamage),
 		AffinityResistance: maps.Clone(a.AffinityResistance),
@@ -379,12 +384,8 @@ func (a *Actor) GetEffects() []Effect {
 	effects, _ = a.FilterEffectImmunities(effects)
 	return effects
 }
-func (a *Actor) HasEffectImmunity(effect_ID uuid.UUID) bool {
-	if effect_ID == uuid.Nil {
-		return false
-	}
-
-	_, ok := a.EffectImmunities[effect_ID]
+func (a *Actor) HasEffectImmunity(tag uuid.UUID) bool {
+	_, ok := a.EffectImmunities[tag]
 	return ok
 }
 func (a *Actor) FilterEffectImmunities(effects []Effect) ([]Effect, []Effect) {

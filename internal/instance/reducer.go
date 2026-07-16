@@ -80,7 +80,7 @@ func turnReady(instance *Instance, request Request) {
 }
 func pushAction(instance *Instance, request Request) {
 	source, ok := instance.Game.GetSource(request.Context)
-	if !ok {
+	if !ok || source.PlayerID != request.ClientID {
 		return
 	}
 
