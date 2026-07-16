@@ -48,10 +48,10 @@ func AllActors(g *Game, actor Actor, context Context) bool {
 	return true
 }
 func ActiveActors(g *Game, actor Actor, context Context) bool {
-	return actor.IsActive()
+	return actor.Active()
 }
 func InactiveActors(g *Game, actor Actor, context Context) bool {
-	return !actor.IsActive()
+	return !actor.Active()
 }
 func AliveActors(g *Game, actor Actor, context Context) bool {
 	return actor.IsAlive
@@ -82,7 +82,7 @@ func OtherActors(g *Game, actor Actor, context Context) bool {
 }
 func TargetActors(g *Game, actor Actor, context Context) bool {
 	is_actor := slices.Contains(context.ActorIDs, actor.ID)
-	is_pos := actor.IsActive() && slices.Contains(context.PositionIDs, actor.PositionID)
+	is_pos := actor.Active() && slices.Contains(context.PositionIDs, actor.PositionID)
 	return is_actor || is_pos
 }
 func PositionRank(rank int) Filter[Actor] {
@@ -124,7 +124,7 @@ func TriggerModifierParentIsActive(g *Game, trigger Context, modifier Context) b
 		return false
 	}
 
-	return parent.IsActive()
+	return parent.Active()
 }
 func TriggerTargetMatchesModifierParent(g *Game, trigger Context, modifier Context) bool {
 	for _, target := range g.GetTargets(trigger) {

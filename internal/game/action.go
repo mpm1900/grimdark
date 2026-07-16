@@ -63,7 +63,7 @@ func (a Action) CanResolve(g *Game, context Context, this *ActionContext) bool {
 		return false
 	}
 	runtime_valid := a.ValidateRuntime == nil || a.ValidateRuntime(g, context)
-	source_valid := source.IsAlive && source.IsActive() && source.CanAct()
+	source_valid := source.IsAlive && source.Active() && source.CanAct()
 	action_valid := !a.Disabled(g, source)
 	valid := action_valid && runtime_valid && source_valid
 

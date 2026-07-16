@@ -131,7 +131,7 @@ func MakeModifierContext(source Actor, target Actor) Context {
 }
 
 func (c *Context) AddTarget(target Actor) {
-	if target.IsActive() {
+	if target.Active() {
 		c.PositionIDs = append(c.PositionIDs, target.PositionID)
 	} else {
 		c.ActorIDs = append(c.ActorIDs, target.ID)
@@ -151,7 +151,7 @@ func (c *Context) RemoveTarget(target Actor) {
 	}
 	c.ActorIDs = actor_ids
 
-	if target.IsActive() {
+	if target.Active() {
 		for _, pid := range c.PositionIDs {
 			if pid != target.PositionID {
 				pos_ids = append(pos_ids, pid)
@@ -184,7 +184,7 @@ func (c Context) CloneWithTargets(targets []Actor) Context {
 	return clone
 }
 func (c Context) HasTarget(target Actor) bool {
-	if target.IsActive() && slices.Contains(c.PositionIDs, target.PositionID) {
+	if target.Active() && slices.Contains(c.PositionIDs, target.PositionID) {
 		return true
 	}
 
@@ -210,7 +210,7 @@ func (g *Game) GetTargets(context Context) []Actor {
 		if slices.Contains(context.ActorIDs, a.ID) {
 			actors = append(actors, a)
 		}
-		if a.IsActive() && slices.Contains(context.PositionIDs, a.PositionID) {
+		if a.Active() && slices.Contains(context.PositionIDs, a.PositionID) {
 			actors = append(actors, a)
 		}
 	}

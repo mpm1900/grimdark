@@ -20,12 +20,6 @@ const (
 	EffectChance   Stat = "effect-chance"
 )
 
-type Stack string
-
-const (
-	Wounds Stack = "wounds"
-)
-
 // mapped stats are piped through the funciton that factors in level and other factors
 var mappedStats map[Stat]struct{} = map[Stat]struct{}{
 	Health:         {},

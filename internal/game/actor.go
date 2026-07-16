@@ -44,6 +44,12 @@ type ActorMeta struct {
 	Seen             bool
 }
 
+type ActorStack string
+
+const (
+	Wounds ActorStack = "wounds"
+)
+
 type Actor struct {
 	ID         uuid.UUID
 	Class      Class
@@ -66,7 +72,7 @@ type Actor struct {
 	Stages             map[Stat]int
 	Stats              map[Stat]float64
 	UnmodifiedStats    map[Stat]float64
-	Stacks             map[Stack]float64
+	Stacks             map[ActorStack]float64
 
 	State  ActorState
 	Status ActorStatus
@@ -116,7 +122,7 @@ func NewActor(class Class, config ActorConfig) *Actor {
 		AffinityResistance: map[Affinity]int{},
 		EffectImmunities:   map[uuid.UUID]struct{}{},
 		OffsetStats:        map[Stat]float64{},
-		Stacks: map[Stack]float64{
+		Stacks: map[ActorStack]float64{
 			Wounds: 0,
 		},
 		Stages: map[Stat]int{},
@@ -199,123 +205,7 @@ func (a *Actor) Clone() *Actor {
 	}
 }
 
-// mappers
-func (a *Actor) mapBaseStat(stat Stat, stats map[Stat]float64, offset float64) float64 {
-	base := stats[stat]*2 + offset
-	ratio := float64(a.Level) / 100
-	result := (base*ratio + 5)
-	if stat == Health {
-		result += float64(a.Level)
-	}
-	return result
-}
-func (a *Actor) getStatOffset(stat Stat) float64 {
-	offset, ok := a.OffsetStats[stat]
-	if !ok {
-		offset = 0
-	}
-	if a.WeaponL != nil {
-		weapon_offset, ok := a.WeaponL.OffsetStats[stat]
-		if ok {
-			offset += weapon_offset
-		}
-	}
-	if a.WeaponR != nil {
-		weapon_offset, ok := a.WeaponR.OffsetStats[stat]
-		if ok {
-			offset += weapon_offset
-		}
-	}
-
-	return offset
-}
-func (a *Actor) mapBaseStats() {
-	a.UnmodifiedStats = maps.Clone(a.Stats)
-
-	for stat, _ := range a.Stats {
-		if _, ok := mappedStats[stat]; !ok {
-			continue
-		}
-
-		a.Stats[stat] = a.mapBaseStat(stat, a.Stats, a.getStatOffset(stat))
-		a.UnmodifiedStats[stat] = a.mapBaseStat(stat, a.UnmodifiedStats, 0)
-	}
-}
-func (a *Actor) mapStagedStats() {
-	builder := NewStageBuilder(a.Stages)
-	stats := builder.ResolveAll(a.Stats)
-
-	builder.Mod = 3
-	accuracy := builder.Resolve(Accuracy, a.Stats[Accuracy])
-	evasion := builder.Resolve(Evasion, a.Stats[Evasion])
-	crit_damage := builder.Resolve(CriticalDamage, a.Stats[CriticalDamage])
-	effect_chance := builder.Resolve(EffectChance, a.Stats[EffectChance])
-
-	a.Stats = stats
-	a.Stats[Accuracy] = accuracy
-	a.Stats[Evasion] = evasion
-	a.Stats[CriticalDamage] = crit_damage
-	a.Stats[EffectChance] = effect_chance
-}
-
-// mutators
-func (a *Actor) ApplyDamage(damage float64, resolved Actor) {
-	a.Stacks[Wounds] = a.Stacks[Wounds] + damage
-	if a.Stacks[Wounds] < 0 {
-		a.Stacks[Wounds] = 0
-	}
-
-	a.IsAlive = resolved.Stats[Health] > a.Stacks[Wounds]
-}
-func (a *Actor) UpdateActionState(action_id uuid.UUID, updater func(ActionState) ActionState) {
-	state, ok := a.ActionStates[action_id]
-	if !ok {
-		a.ActionStates[action_id] = updater(ActionState{})
-	} else {
-		a.ActionStates[action_id] = updater(state)
-	}
-}
-func (a *Actor) SetActionCooldown(action_id uuid.UUID, cooldown int) {
-	// +1 is for semantics, since cooldowns are decremented at turn end,
-	// a one-turn cooldown needs a value of 2.
-	a.UpdateActionState(action_id, func(s ActionState) ActionState {
-		s.Cooldown = cooldown + 1
-		return s
-	})
-}
-func (a *Actor) NextTurn() {
-	if a.IsActive() {
-		a.Meta.ActiveTurns++
-	} else {
-		a.Meta.InactiveTurns++
-	}
-
-	for aid, state := range a.ActionStates {
-		if state.Cooldown > 0 {
-			a.UpdateActionState(aid, func(s ActionState) ActionState {
-				s.Cooldown--
-				return s
-			})
-		}
-	}
-}
-func (a *Actor) SetPosition(position_id uuid.UUID) {
-	if position_id == uuid.Nil {
-		a.Meta.InactiveTurns = 0
-		a.Meta.LastUsedActionID = uuid.Nil
-	} else {
-		a.Meta.Seen = true
-	}
-	if a.PositionID == uuid.Nil {
-		a.Meta.ActiveTurns = 0
-	}
-	a.PositionID = position_id
-}
-
 // getters
-func (a *Actor) IsActive() bool {
-	return a.PositionID != uuid.Nil
-}
 func (a *Actor) CanAct() bool {
 	return !a.IsStunned
 }
@@ -348,6 +238,7 @@ func (a *Actor) GetAffinityResistance(affinity Affinity) int {
 func (a *Actor) GetEffectiveAffinityResistance(affinity Affinity) int {
 	return a.GetAffinityResistance(affinity) - affinity.GetBaseModifier(*a)
 }
+
 func (a *Actor) GetRemainingHealth() float64 {
 	health := a.Stats[Health]
 	return health - a.Stacks[Wounds]
@@ -453,8 +344,11 @@ func (a *Actor) GetActionByID(action_id uuid.UUID) (Action, bool) {
 
 	return Action{}, false
 }
+func (a *Actor) Active() bool {
+	return a.PositionID != uuid.Nil
+}
 func (a *Actor) Targetable() bool {
-	if a.IsActive() {
+	if a.Active() {
 		return !a.IsHidden
 	}
 

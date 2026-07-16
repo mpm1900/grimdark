@@ -222,7 +222,7 @@ func (s *State) SetPosition(position_id uuid.UUID, actor Actor) (uuid.UUID, bool
 	}
 
 	if position_id == uuid.Nil {
-		return evicted_id, updated || actor.IsActive()
+		return evicted_id, updated || actor.Active()
 	}
 
 	if current.ActorID != uuid.Nil && current.ActorID != actor.ID {
