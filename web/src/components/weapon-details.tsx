@@ -139,7 +139,11 @@ function WeaponDetails({ weapon }: { weapon: Weapon }) {
             {weapon.effects.length > 0 && (
               <span className="space-x-2">
                 {weapon.effects.map((e) => (
-                  <EffectTooltip key={e.ID} effect={e}>
+                  <EffectTooltip
+                    key={e.ID}
+                    effect={e}
+                    className="cursor-default hover:underline"
+                  >
                     {e.name}
                   </EffectTooltip>
                 ))}

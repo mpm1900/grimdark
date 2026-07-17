@@ -20,6 +20,7 @@ func MakeAttack(config AttackConfig) ActionResolver {
 
 			for _, target := range targets {
 				result := this.Action.Config.GetDamageResult(this.Source, target, context, rand.Float64(), pending_damage[target.ID])
+				result.Print(this.Source)
 				success = success && result.Success()
 				dmg_ctx := MakeContextFor(this.Source, target)
 
