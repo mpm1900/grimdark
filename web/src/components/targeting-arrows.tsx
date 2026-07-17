@@ -28,7 +28,7 @@ const EMPTY_LAYOUT: ArrowLayout = {
 function getAnchor(rect: DOMRect, parentRect: DOMRect): Point {
   return {
     x: rect.left - parentRect.left + rect.width / 2,
-    y: rect.bottom - parentRect.top - Math.min(110, rect.height * 0.3),
+    y: rect.bottom - parentRect.top - rect.height * 0.3,
   }
 }
 
@@ -201,12 +201,12 @@ function TargetingArrows() {
   return (
     <div
       ref={overlayRef}
-      className="pointer-events-none absolute inset-0 z-30 top-0"
+      className="pointer-events-none absolute inset-0 z-30 opacity-50"
     >
       {layout.arrows.length > 0 && (
         <svg
           aria-hidden="true"
-          className="absolute inset-0 size-full overflow-visible"
+          className="absolute inset-0 bottom-1/2 size-full overflow-visible"
           viewBox={`0 0 ${layout.width} ${layout.height}`}
         >
           {layout.arrows.map((arrow) => (

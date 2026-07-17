@@ -124,7 +124,7 @@ function WeaponDetails({ weapon }: { weapon: Weapon }) {
                   action={a}
                   className={statVariants({
                     stat: a.config.stat,
-                    className: 'cursor-default',
+                    className: 'cursor-default hover:underline',
                   })}
                 >
                   {a.config.name}
