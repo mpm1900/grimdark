@@ -1,5 +1,7 @@
 package game
 
+import "github.com/google/uuid"
+
 type Prompt struct {
 	Action
 }
@@ -25,9 +27,10 @@ func (c PromptCommand) Resolve(g *Game) []Transaction {
 	}
 
 	action_context := ActionContext{
-		Action:       c.Payload.Action,
-		Source:       g.GetSourceAction(c.Context),
-		transactions: []Transaction{},
+		Action:         c.Payload.Action,
+		Source:         g.GetSourceAction(c.Context),
+		transactions:   []Transaction{},
+		pending_damage: map[uuid.UUID]float64{},
 	}
 
 	context := c.Context

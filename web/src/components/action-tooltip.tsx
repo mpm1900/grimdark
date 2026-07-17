@@ -22,17 +22,16 @@ function ActionTooltip({
         <div
           className={statVariants({
             stat: action.config.stat,
-            className: 'font-semibold text-foreground/80',
+            className: 'font-semibold text-foreground/80 px-1',
           })}
         >
           {action.config.name}
         </div>
-        <div className="grid grid-cols-3 text-center">
+        <div className="grid grid-cols-2 text-center">
           <span>
             {action.config.accuracy ? action.config.accuracy * 100 + '%' : '-'}
           </span>
           <span>{action.config.power || '-'}</span>
-          <span>{action.config.range ?? '-'}</span>
         </div>
         <div className="text-xs">
           {action.config.description}

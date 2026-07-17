@@ -15,22 +15,6 @@ const (
 	resolved   gamestate = 2
 )
 
-type ActionContext struct {
-	Action       Action
-	Source       Actor
-	transactions []Transaction
-}
-
-func (ac *ActionContext) Push(transactions ...Transaction) {
-	ac.transactions = append(ac.transactions, transactions...)
-}
-func (ac *ActionContext) Concat(transactions []Transaction) {
-	ac.transactions = append(ac.transactions, transactions...)
-}
-func (ac *ActionContext) Done() []Transaction {
-	return ac.transactions
-}
-
 type gamemeta struct {
 	applied_modifiers map[uuid.UUID]map[uuid.UUID]struct{}
 	log_depth         int

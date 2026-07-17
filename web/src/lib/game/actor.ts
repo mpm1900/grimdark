@@ -24,6 +24,7 @@ export type Actor = {
   item: Item | null
   level: number
   name: string
+  offset_stats: Partial<Record<Stat, number>>
   player_ID: ID
   position_ID: ID | null
   race: string

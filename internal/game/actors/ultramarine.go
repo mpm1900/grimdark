@@ -11,19 +11,37 @@ import (
 var Ultramarine = newUltramarine()
 
 func newUltramarine() game.Class {
-	bypass := effects.StagesResetWhere(func(g *game.Game, a game.Actor, ctx game.Context) bool {
+	_ = effects.ProtectedWhere(func(g *game.Game, a game.Actor, ctx game.Context) bool {
 		active_context := g.State().ActiveContext
 		if active_context == nil {
 			return false
 		}
 
-		if active_context.ActionID != uuid.Nil && active_context.SourceID == ctx.ParentID {
-			return active_context.HasTarget(a)
+		parent, ok := g.GetParent(ctx)
+		if !ok {
+			return false
 		}
 
-		return false
+		if active_context.ActionID == uuid.Nil {
+			return false
+		}
+
+		if !active_context.HasTarget(parent) {
+			return false
+		}
+
+		source, ok := g.GetSource(*active_context)
+		if !ok {
+			return false
+		}
+
+		action, ok := source.GetActionByID(active_context.ActionID)
+		if !ok {
+			return false
+		}
+
+		return action.Config.Affinity == game.Psychic
 	})
-	bypass.Name = "bypass effect"
 
 	weakness_immune := game.EffectSource(game.EffectPriorityImmunities, func(g *game.Game, a game.Actor, ctx game.Context) game.Actor {
 		a.EffectImmunities[effects.Weakened().ID] = struct{}{}
@@ -54,7 +72,7 @@ func newUltramarine() game.Class {
 		game.DamageReflect:  0,
 		game.EffectChance:   1,
 	}
-	class.Effects = []game.Effect{bypass, weakness_immune}
+	class.Effects = []game.Effect{weakness_immune}
 	class.Options = game.ClassOptions{
 		Items: []game.Item{},
 		Weapons: []game.Weapon{

@@ -103,9 +103,10 @@ type Command struct {
 
 func (c Command) Resolve(g *Game) []Transaction {
 	action_context := ActionContext{
-		Action:       c.Payload,
-		Source:       g.GetSourceAction(c.Context),
-		transactions: []Transaction{},
+		Action:         c.Payload,
+		Source:         g.GetSourceAction(c.Context),
+		transactions:   []Transaction{},
+		pending_damage: map[uuid.UUID]float64{},
 	}
 
 	context := c.Context

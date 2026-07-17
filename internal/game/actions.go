@@ -11,7 +11,6 @@ func MakeAttack(config AttackConfig) ActionResolver {
 		targets := g.GetTargets(context)
 		success := true
 		hits := this.Action.Config.Hits
-		pending_damage := map[uuid.UUID]float64{}
 
 		for hit := range hits {
 			if !success && this.Action.Config.StopOnMiss {
@@ -19,13 +18,19 @@ func MakeAttack(config AttackConfig) ActionResolver {
 			}
 
 			for _, target := range targets {
-				result := this.Action.Config.GetDamageResult(this.Source, target, context, rand.Float64(), pending_damage[target.ID])
+				result := this.Action.Config.GetDamageResult(
+					this.Source,
+					target,
+					context,
+					rand.Float64(),
+					this.PendingDamage(target.ID),
+				)
 				result.Print(this.Source)
 				success = success && result.Success()
 				dmg_ctx := MakeContextFor(this.Source, target)
 
 				this.Push(DamageTargets(result.Damage).Bind(dmg_ctx))
-				pending_damage[target.ID] += result.Damage
+				this.RecordDamage(target.ID, result.Damage)
 
 				MultiHitLogs(result, context, &this, hit)
 				PostDamageLogs(result, context, &this)
@@ -35,7 +40,7 @@ func MakeAttack(config AttackConfig) ActionResolver {
 
 		for _, target := range targets {
 			trigger_ctx := context.CloneWithTarget(target)
-			if pending_damage[target.ID] > 0 {
+			if this.PendingDamage(target.ID) > 0 {
 				g.On(OnAttackSuccess, trigger_ctx)
 				if config.OnAttackSuccess != nil {
 					config.OnAttackSuccess(g, trigger_ctx, &this)

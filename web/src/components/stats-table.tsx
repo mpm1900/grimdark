@@ -14,8 +14,9 @@ import { Table, TableBody, TableCell, TableRow } from './ui/table'
 
 function MainStatRow({ actor, stat }: { actor: Actor; stat: Stat }) {
   const stage = actor.stages[stat]
-  const mod = 2
-  const mult = mapStage(stage, mod, 1)
+  const mult =
+    (actor.stats[stat] - (actor.offset_stats[stat] ?? 0)) /
+    actor.unmodified_stats[stat]
   return (
     <TableRow>
       <TableCell className="capitalize font-cinzel">
@@ -36,7 +37,8 @@ function MainStatRow({ actor, stat }: { actor: Actor; stat: Stat }) {
       <TableCell className="text-end">
         {stage != 0 && (
           <DNumber
-            value={stage}
+            value={mult}
+            r={1}
             className={cn(mult === 1 && 'text-foreground/20')}
           >
             x{mult.toFixed(2)}

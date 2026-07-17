@@ -85,15 +85,3 @@ func StagesResetWhere(where game.Filter[game.Actor]) game.Effect {
 
 	return effect
 }
-
-func OffsetResetWhere(where game.Filter[game.Actor]) game.Effect {
-	effect := game.EffectActorsWhere(game.EffectPriorityOffsetOverwrite, where, func(g *game.Game, a game.Actor, ctx game.Context) game.Actor {
-		for stat, _ := range a.OffsetStats {
-			a.OffsetStats[stat] = 0
-		}
-
-		return a
-	})
-
-	return effect
-}

@@ -28,6 +28,7 @@ type actorJSON struct {
 	Item               *Item                  `json:"item"`
 	Level              int                    `json:"level"`
 	Name               string                 `json:"name"`
+	OffsetStats        map[Stat]int           `json:"offset_stats"`
 	PlayerID           uuid.UUID              `json:"player_ID"`
 	PositionID         *uuid.UUID             `json:"position_ID"`
 	Race               ActorRace              `json:"race"`
@@ -48,6 +49,7 @@ func (a Actor) ToJSON(g *Game) actorJSON {
 	stats := make(map[Stat]int, len(a.Stats))
 	unmodified_stats := make(map[Stat]int, len(a.UnmodifiedStats))
 	active_modifiers := slices.Collect(maps.Keys(g.AppliedModifiers(a.ID)))
+	offset_stats := make(map[Stat]int)
 
 	for stat, v := range a.Stats {
 		if _, ok := percentStats[stat]; ok {
@@ -60,6 +62,9 @@ func (a Actor) ToJSON(g *Game) actorJSON {
 			v = v * 100
 		}
 		unmodified_stats[stat] = int(v)
+	}
+	for stat, _ := range a.Stats {
+		offset_stats[stat] = int(a.getStatOffset(stat))
 	}
 
 	affinity_resistance := maps.Clone(a.AffinityResistance)
@@ -114,6 +119,7 @@ func (a Actor) ToJSON(g *Game) actorJSON {
 		AffinityImmunities: a.AffinityImmunities,
 		Stats:              stats,
 		Stages:             maps.Clone(a.Stages),
+		OffsetStats:        offset_stats,
 		UnmodifiedStats:    unmodified_stats,
 		ActiveModifiers:    active_modifiers,
 		Seen:               a.Meta.Seen,

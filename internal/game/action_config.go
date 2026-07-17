@@ -3,6 +3,8 @@ package game
 import (
 	"fmt"
 	"math/rand/v2"
+
+	"github.com/google/uuid"
 )
 
 const ActionPriorityRetreat = 5
@@ -26,6 +28,8 @@ type ActionConfig struct {
 	Stat         Stat     `json:"stat"`
 	StopOnMiss   bool     `json:"-"`
 	TargetCount  int      `json:"target_count"`
+
+	pending_damage map[uuid.UUID]float64
 }
 
 /**
@@ -39,6 +43,7 @@ type AccuracyResult struct {
 	Critical     bool
 	CriticalRoll float64
 	Pass         bool
+	Stat         Stat
 	Target       Actor
 }
 
@@ -54,14 +59,14 @@ type DamageResult struct {
 	Raw               float64
 }
 
-func (ac ActionConfig) GetBaseDamage(source, target Actor, useBaseStats bool) float64 {
+func (ac *ActionConfig) GetBaseDamage(source, target Actor, useBaseStats bool) float64 {
 	adp_ratio := ac.Stat.GetRatio(source, target, useBaseStats) * ac.Power
 	level_mod := float64(source.Level*2)/5 + 2
 	base := (adp_ratio*level_mod)/50 + 2
 	return base
 }
 
-func (ac ActionConfig) GetAccuracy(source, target Actor, useBaseStats bool) float64 {
+func (ac *ActionConfig) GetAccuracy(source, target Actor, useBaseStats bool) float64 {
 	if ac.Accuracy == nil {
 		return 1.0
 	}
@@ -70,7 +75,7 @@ func (ac ActionConfig) GetAccuracy(source, target Actor, useBaseStats bool) floa
 	return ratio * *ac.Accuracy
 }
 
-func (ac ActionConfig) GetAccuracyResult(source, target Actor) AccuracyResult {
+func (ac *ActionConfig) GetAccuracyResult(source, target Actor) AccuracyResult {
 	accuracy_roll := rand.Float64()
 	critical_roll := rand.Float64()
 	critical_stage := ac.CritStage + source.Stages[CriticalChance]
@@ -85,16 +90,17 @@ func (ac ActionConfig) GetAccuracyResult(source, target Actor) AccuracyResult {
 	}
 
 	return AccuracyResult{
-		Pass:         success,
 		Accuracy:     accuracy,
 		AccuracyRoll: accuracy_roll,
 		Critical:     critical,
 		CriticalRoll: critical_roll,
+		Pass:         success,
+		Stat:         ac.Stat,
 		Target:       target,
 	}
 }
 
-func (ar AccuracyResult) Success() bool {
+func (ar *AccuracyResult) Success() bool {
 	return ar.Pass && !ar.Target.IsProtected
 }
 
@@ -102,7 +108,7 @@ const MULTI_TARGET_MODIFIER = 0.75
 const DAMAGE_RAND_MIN = 0.8
 const DAMAGE_RAND_MAX = 1.05
 
-func (ac ActionConfig) GetDamageResult(source, target Actor, context Context, random_roll float64, pending_damage float64) DamageResult {
+func (ac *ActionConfig) GetDamageResult(source, target Actor, context Context, random_roll float64, pending_damage float64) DamageResult {
 	multipliers := 1.0
 	accuracy := ac.GetAccuracyResult(source, target)
 	affinity, total_stage, base_stage := ac.Affinity.GetAffinityModifier(source, target)
@@ -152,7 +158,7 @@ func (dr *DamageResult) Success() bool {
 }
 
 func (dr *DamageResult) Print(source Actor) {
-	fmt.Printf("DAMAGE RESULT: (%s) => %s \n", source.Name, dr.Target.Name)
+	fmt.Printf("DAMAGE RESULT: (%s@%s) => %s \n", source.Name, dr.Stat, dr.Target.Name)
 	fmt.Printf("SUCCESS: %t, ACC: %f, ROLL: %f \n", dr.Success(), dr.AccuracyResult.Accuracy, dr.AccuracyResult.AccuracyRoll)
 	fmt.Printf("DAMAGE = %f, BASE = %f, AFFINITY = %f, RAND = %f \n", dr.Damage, dr.BaseDamage, dr.Affinity, dr.Random)
 }

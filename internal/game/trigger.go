@@ -55,9 +55,10 @@ func (c TriggerCommand) Resolve(g *Game) []Transaction {
 	}
 
 	action_context := ActionContext{
-		Action:       c.Payload.Action,
-		Source:       c.GetParent(g),
-		transactions: []Transaction{},
+		Action:         c.Payload.Action,
+		Source:         c.GetParent(g),
+		transactions:   []Transaction{},
+		pending_damage: map[uuid.UUID]float64{},
 	}
 
 	context := c.Context.Clone()
