@@ -1,14 +1,14 @@
-import type { Effect } from '#/lib/game/effect'
+import type { Action } from '#/lib/game/action'
 import { cn } from '#/lib/utils'
 import { GothicHoverCardContent } from './gothic-ui/hover-card'
 import { HoverCard, HoverCardContent, HoverCardTrigger } from './ui/hover-card'
 
-function EffectTooltip({
-  effect,
+function ActionTooltip({
+  action,
   card_content = {},
   ...props
 }: React.ComponentProps<typeof HoverCardTrigger> & {
-  effect: Effect
+  action: Action
   card_content?: Partial<React.ComponentProps<typeof HoverCardContent>>
 }) {
   return (
@@ -18,11 +18,20 @@ function EffectTooltip({
         {...card_content}
         className={cn('font-serif', card_content?.className)}
       >
-        <div className="font-semibold text-foreground/80">{effect.name}</div>
-        <div className="text-xs">{effect.description}</div>
+        <div className="font-semibold text-foreground/80">
+          {action.config.name}
+        </div>
+        <div className="grid grid-cols-3 text-center">
+          <span>
+            {action.config.accuracy ? action.config.accuracy * 100 + '%' : '-'}
+          </span>
+          <span>{action.config.power || '-'}</span>
+          <span>{action.config.range ?? '-'}</span>
+        </div>
+        <div className="text-xs">{action.config.description}</div>
       </GothicHoverCardContent>
     </HoverCard>
   )
 }
 
-export { EffectTooltip }
+export { ActionTooltip }

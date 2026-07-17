@@ -11,6 +11,7 @@ import { GothicHoverCardContent } from './gothic-ui/hover-card'
 import { DNumber } from './dnumber'
 import { WEAPON_ICONS } from '#/icons/weapons'
 import { EffectTooltip } from './effect-tooltip'
+import { ActionTooltip } from './action-tooltip'
 
 function InlineOffsetStats({
   offset_stats,
@@ -118,12 +119,16 @@ function WeaponDetails({ weapon }: { weapon: Weapon }) {
             </span>
             <span className="space-x-2">
               {weapon.actions.map((a) => (
-                <span
+                <ActionTooltip
                   key={a.ID}
-                  className={statVariants({ stat: a.config.stat })}
+                  action={a}
+                  className={statVariants({
+                    stat: a.config.stat,
+                    className: 'cursor-default',
+                  })}
                 >
                   {a.config.name}
-                </span>
+                </ActionTooltip>
               ))}
             </span>
           </ItemDescription>
