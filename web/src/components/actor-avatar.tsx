@@ -5,6 +5,7 @@ import { TinyBadge } from './gothic-ui/badge'
 import { gameStore } from '#/lib/stores/game'
 import { getAppliedEffects } from '#/lib/game/game'
 import { EffectTooltip } from './effect-tooltip'
+import { AffinityIcon } from './affinity-name'
 
 function ActorAvatar({ actor }: { actor: Actor }) {
   const game = useSelector(gameStore, (g) => g)
@@ -41,6 +42,16 @@ function ActorAvatar({ actor }: { actor: Actor }) {
               </EffectTooltip>
             ))}
           </div>
+          {actor.affinities[0] && (
+            <div className="absolute -bottom-4 left-8.5 bg-[url('/gothic/MiniIconUIFrame_48.png')] bg-cover size-10 grid place-items-center text-3xl text-foreground/70 font-bold font-cinzel">
+              <AffinityIcon affinity={actor.affinities[0]} className="size-5" />
+            </div>
+          )}
+          {actor.affinities[1] && (
+            <div className="absolute -bottom-14 left-5 bg-[url('/gothic/MiniIconUIFrame_48.png')] bg-cover size-10 grid place-items-center text-3xl text-foreground/70 font-bold font-cinzel">
+              <AffinityIcon affinity={actor.affinities[1]} className="size-5" />
+            </div>
+          )}
         </div>
         {position && (
           <div className="absolute bottom-7 -right-1 bg-[url('/gothic/MiniIconUIFrame_48.png')] bg-cover size-12 grid place-items-center text-3xl text-foreground/70 font-bold font-cinzel">

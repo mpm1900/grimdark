@@ -18,8 +18,10 @@ function EffectTooltip({
         {...card_content}
         className={cn('font-serif', card_content?.className)}
       >
-        <div className="font-semibold text-foreground/80">{effect.name}</div>
-        <div className="text-xs">{effect.description}</div>
+        <div className="font-semibold text-foreground/80 capitalize px-1">
+          {effect.name}
+        </div>
+        <div className="text-xs p-1">{effect.description}</div>
       </GothicHoverCardContent>
     </HoverCard>
   )

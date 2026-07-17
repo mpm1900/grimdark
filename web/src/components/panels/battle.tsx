@@ -123,7 +123,7 @@ function BattlePanel() {
             >
               Weapons
             </TinyBadge>
-            <div className="relative h-full grid grid-cols-1 grid-rows-2 overflow-hidden">
+            <div className="relative h-full grid grid-cols-1 grid-rows-2 overflow-hidden min-w-18">
               {main_weapon ? (
                 <WeaponFrame disabled={false} weapon={main_weapon} />
               ) : (

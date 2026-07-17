@@ -33,7 +33,7 @@ function ActionTooltip({
           </span>
           <span>{action.config.power || '-'}</span>
         </div>
-        <div className="text-xs">
+        <div className="text-xs p-1">
           {action.config.description}
           {action.config.range && (
             <span> Range of {action.config.range} tile.</span>

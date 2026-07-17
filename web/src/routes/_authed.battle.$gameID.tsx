@@ -51,7 +51,7 @@ function RouteComponent() {
         <AppHeader />
         <TurnContext />
 
-        <div className="relative flex h-full min-h-0 flex-col overflow-hidden pt-12 z-20">
+        <div className="relative flex h-full min-h-0 flex-col overflow-hidden pt-6 z-20">
           <div className="z-0 flex items-start justify-between p-2">
             {client_player && <PlayerTeam player={client_player} />}
             {other_player && <PlayerTeam player={other_player} />}

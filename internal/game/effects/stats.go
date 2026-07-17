@@ -38,6 +38,11 @@ var StatDownIDs = map[game.Stat]uuid.UUID{
 func StatUpSource(stat game.Stat, amount int) game.Effect {
 	effect := game.EffectSource(game.EffectPriorityStages, StatChangeActor(stat, amount))
 	effect.Name = fmt.Sprintf("%s up", stat)
+	if amount == 1 {
+		effect.Description = fmt.Sprintf("Raises %s by 1 stage.", stat)
+	} else {
+		effect.Description = fmt.Sprintf("Raises %s by %d stages.", stat, amount)
+	}
 	effect.CheckSuccess = game.EffectGainSourceOnSuccess
 	effect.ID = StatUpIDs[stat]
 
@@ -46,6 +51,11 @@ func StatUpSource(stat game.Stat, amount int) game.Effect {
 func StatDownSource(stat game.Stat, amount int) game.Effect {
 	effect := game.EffectSource(game.EffectPriorityStages, StatChangeActor(stat, -amount))
 	effect.Name = fmt.Sprintf("%s down", stat)
+	if amount == 1 {
+		effect.Description = fmt.Sprintf("Lowers %s by 1 stage.", stat)
+	} else {
+		effect.Description = fmt.Sprintf("Lowers %s by %d stages.", stat, amount)
+	}
 	effect.CheckSuccess = game.EffectGainSourceOnSuccess
 	effect.ID = StatDownIDs[stat]
 
@@ -54,6 +64,11 @@ func StatDownSource(stat game.Stat, amount int) game.Effect {
 func StatUpTargets(stat game.Stat, amount int) game.Effect {
 	effect := game.EffectTargets(game.EffectPriorityStages, StatChangeActor(stat, amount))
 	effect.Name = fmt.Sprintf("%s up", stat)
+	if amount == 1 {
+		effect.Description = fmt.Sprintf("Raises %s by 1 stage.", stat)
+	} else {
+		effect.Description = fmt.Sprintf("Raises %s by %d stages.", stat, amount)
+	}
 	effect.CheckSuccess = game.EffectGainTargetsOnSuccess
 	effect.ID = StatUpIDs[stat]
 
@@ -62,6 +77,11 @@ func StatUpTargets(stat game.Stat, amount int) game.Effect {
 func StatDownTargets(stat game.Stat, amount int) game.Effect {
 	effect := game.EffectTargets(game.EffectPriorityStages, StatChangeActor(stat, -amount))
 	effect.Name = fmt.Sprintf("%s down", stat)
+	if amount == 1 {
+		effect.Description = fmt.Sprintf("Lowers %s by 1 stage.", stat)
+	} else {
+		effect.Description = fmt.Sprintf("Lowers %s by %d stages.", stat, amount)
+	}
 	effect.CheckSuccess = game.EffectGainTargetsOnSuccess
 	effect.ID = StatDownIDs[stat]
 
