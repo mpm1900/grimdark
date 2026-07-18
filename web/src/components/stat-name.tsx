@@ -3,6 +3,7 @@ import type { Stat } from '#/lib/game/core'
 import { cn } from '#/lib/utils'
 import { cva } from 'class-variance-authority'
 import type { IconType } from 'react-icons/lib'
+import { Tooltip, TooltipContent, TooltipTrigger } from './ui/tooltip'
 
 const statVariants = cva('', {
   variants: {
@@ -61,7 +62,19 @@ function StatIcon({
 }: React.ComponentProps<IconType> & { stat: Stat }) {
   const Icon = STAT_ICONS[stat]
   if (!Icon) return null
-  return <Icon className={cn(statVariants({ stat }), className)} {...props} />
+  return (
+    <Tooltip delayDuration={500}>
+      <TooltipTrigger asChild>
+        <Icon className={cn(statVariants({ stat }), className)} {...props} />
+      </TooltipTrigger>
+      <TooltipContent
+        className="capitalize font-serif font-semibold text-sm"
+        side="left"
+      >
+        {stat}
+      </TooltipContent>
+    </Tooltip>
+  )
 }
 
 export { StatName, StatIcon, statVariants }
