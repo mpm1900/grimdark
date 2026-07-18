@@ -1,5 +1,6 @@
 import {
   HeadContent,
+  Navigate,
   Scripts,
   createRootRouteWithContext,
 } from '@tanstack/react-router'
@@ -53,6 +54,7 @@ export const Route = createRootRouteWithContext<RouterContext>()({
   }),
   shellComponent: RootDocument,
   errorComponent: PageError,
+  notFoundComponent: () => <Navigate to="/login" replace />,
 })
 
 function RootDocument({ children }: { children: React.ReactNode }) {
@@ -62,7 +64,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
         <HeadContent />
       </head>
       <body>
-        <div className="absolute inset-0 bottom-3/5 bg-neutral-900 z-0" />
+        <div className="absolute overflow-hidden inset-0 bottom-3/5 bg-neutral-900 z-0"></div>
         <TooltipProvider>{children}</TooltipProvider>
         <Toaster position="bottom-center" />
         <Scripts />

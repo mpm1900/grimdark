@@ -1,4 +1,9 @@
-import { Outlet, createFileRoute, redirect } from '@tanstack/react-router'
+import {
+  Navigate,
+  Outlet,
+  createFileRoute,
+  redirect,
+} from '@tanstack/react-router'
 
 export const Route = createFileRoute('/_authed')({
   beforeLoad: ({ context }) => {
@@ -7,6 +12,7 @@ export const Route = createFileRoute('/_authed')({
     }
   },
   component: AuthenticatedLayout,
+  notFoundComponent: () => <Navigate to="/" replace />,
 })
 
 function AuthenticatedLayout() {

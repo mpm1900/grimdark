@@ -54,6 +54,14 @@ function getVariant(
   position: Position,
   status: Status
 ): VariantProps<typeof platformVariants>['variant'] {
+  if (status === 'waiting') {
+    if (position.player_ID === client_ID) {
+      return 'player'
+    }
+    if (position.player_ID !== client_ID) {
+      return 'enemy'
+    }
+  }
   if (store.source_actor === position.actor_ID) {
     return 'source'
   }

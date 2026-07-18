@@ -57,7 +57,7 @@ function RouteComponent() {
             {other_player && <PlayerTeam player={other_player} />}
           </div>
           <div className="relative flex flex-1 h-full px-3 z-10 mb-56">
-            <TargetingArrows />
+            {game.status !== 'waiting' && <TargetingArrows />}
             {client_player && (
               <PlayerPositions
                 className="flex-1 gap-1"
