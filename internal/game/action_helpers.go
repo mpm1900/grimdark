@@ -386,6 +386,31 @@ func MoveForwards() Action {
 		},
 		TargetsPredicate: NoneActors,
 		ValidateContext:  ContextTargetLength(0),
+		MapContext: func(g *Game, ctx Context, this ActionContext) Context {
+			source, ok := g.GetSource(ctx)
+			if !ok {
+				return ctx
+			}
+
+			source_pos, ok := g.FindPosition(func(g *Game, p Position, ctx Context) bool {
+				return p.ID == source.PositionID
+			})
+
+			if !ok {
+				return ctx
+			}
+
+			pos, ok := g.FindPosition(func(g *Game, p Position, ctx Context) bool {
+				return p.PlayerID == source.PlayerID && p.Rank == source_pos.Rank-1
+			})
+
+			if !ok {
+				return ctx
+			}
+
+			ctx.PositionIDs = append(ctx.PositionIDs, pos.ID)
+			return ctx
+		},
 	}
 }
 func MoveFront() Action {
@@ -413,6 +438,23 @@ func MoveFront() Action {
 		},
 		TargetsPredicate: NoneActors,
 		ValidateContext:  ContextTargetLength(0),
+		MapContext: func(g *Game, ctx Context, this ActionContext) Context {
+			source, ok := g.GetSource(ctx)
+			if !ok {
+				return ctx
+			}
+
+			pos, ok := g.FindPosition(func(g *Game, p Position, ctx Context) bool {
+				return p.PlayerID == source.PlayerID && p.Rank == 0
+			})
+
+			if !ok {
+				return ctx
+			}
+
+			ctx.PositionIDs = append(ctx.PositionIDs, pos.ID)
+			return ctx
+		},
 	}
 }
 func MoveBackwards() Action {
@@ -440,6 +482,31 @@ func MoveBackwards() Action {
 		},
 		TargetsPredicate: NoneActors,
 		ValidateContext:  ContextTargetLength(0),
+		MapContext: func(g *Game, ctx Context, this ActionContext) Context {
+			source, ok := g.GetSource(ctx)
+			if !ok {
+				return ctx
+			}
+
+			source_pos, ok := g.FindPosition(func(g *Game, p Position, ctx Context) bool {
+				return p.ID == source.PositionID
+			})
+
+			if !ok {
+				return ctx
+			}
+
+			pos, ok := g.FindPosition(func(g *Game, p Position, ctx Context) bool {
+				return p.PlayerID == source.PlayerID && p.Rank == source_pos.Rank+1
+			})
+
+			if !ok {
+				return ctx
+			}
+
+			ctx.PositionIDs = append(ctx.PositionIDs, pos.ID)
+			return ctx
+		},
 	}
 }
 

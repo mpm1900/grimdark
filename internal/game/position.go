@@ -26,6 +26,16 @@ func (g *Game) GetPosition(position_id uuid.UUID) (Position, bool) {
 	state := g.State()
 	return state.GetPosition(position_id)
 }
+func (g *Game) FindPosition(where Filter[Position]) (Position, bool) {
+	state := g.State()
+	for _, p := range state.Positions {
+		if where(g, p, NewContext()) {
+			return p, true
+		}
+	}
+
+	return Position{}, false
+}
 func (g *Game) GetDistance(a uuid.UUID, b uuid.UUID) (int, bool) {
 	position_a, aok := g.GetPosition(a)
 	position_b, bok := g.GetPosition(b)
