@@ -93,6 +93,25 @@ func (e Effect) HasTag(tag string) bool {
 	_, ok := e.Tags[tag]
 	return ok
 }
+func (e Effect) Clone() Effect {
+	if e.Delay != nil {
+		delay := *e.Delay
+		e.Delay = &delay
+	}
+	if e.Duration != nil {
+		duration := *e.Duration
+		e.Duration = &duration
+	}
+	if e.Tags != nil {
+		tags := make(map[string]struct{}, len(e.Tags))
+		for tag := range e.Tags {
+			tags[tag] = struct{}{}
+		}
+		e.Tags = tags
+	}
+
+	return e
+}
 func (e Effect) Filter(g *Game, context Context) bool {
 	if e.filter == nil {
 		return true
@@ -109,6 +128,7 @@ func (e Effect) Delta(g *Game, context Context) []uuid.UUID {
 }
 func (e Effect) Bind(context Context) Modifier {
 	context = context.Clone()
+	e = e.Clone()
 	context.EffectID = e.ID
 	bindable := bind(e, context)
 	mod := Modifier{

@@ -22,7 +22,7 @@ function HealthBar({
   return (
     <GothicProgress
       {...props}
-      className={cn('h-6 font-cinzel font-semibold rounded-xs', className)}
+      className={cn('h-6 font-cinzel font-semibold rounded-none', className)}
       resetKey={actor.ID}
       value={ratio}
     >

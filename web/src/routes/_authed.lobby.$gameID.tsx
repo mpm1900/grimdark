@@ -62,11 +62,13 @@ function RouteComponent() {
       <AppHeader />
       <div className="absolute inset-0 bottom-1/2 bg-neutral-900 z-0" />
       <div className="flex min-h-svh w-full items-center justify-center p-6 md:p-10">
-        <GothicCard className="relative z-10">
+        <GothicCard className="relative z-10 font-serif">
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead colSpan={2}>Players</TableHead>
+                <TableHead colSpan={2} className="font-cinzel">
+                  Players
+                </TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>

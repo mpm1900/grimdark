@@ -89,7 +89,7 @@ function BattlePanel() {
     (c) => c.context.player_ID === client?.ID
   )
   const actions = game.actors
-    .filter((a) => a.player_ID === client?.ID && a.position_ID)
+    .filter((a) => !a.is_stunned && a.player_ID === client?.ID && a.position_ID)
     .map((a) => a.stats.actions)
     .reduce((sum, c) => sum + c, 0)
 
