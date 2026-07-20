@@ -123,12 +123,19 @@ function RouteComponent() {
           </div>
           <div className="h-full flex flex-col w-1/3 p-8 gap-2">
             <div className="flex items-center gap-0">
-              <Input placeholder="Name your team" />
+              <Input placeholder="Name your team" value={team.config.name} />
               <div className="flex -space-x-px">
                 <GothicFramedButton
                   className="size-10 p-1.5"
                   onClick={() => {
-                    save.mutate(team)
+                    save.mutate(team, {
+                      onSuccess: (saved) => {
+                        teamStore.setState((s) => ({
+                          ...s,
+                          ...saved,
+                        }))
+                      },
+                    })
                   }}
                 >
                   <Save />
