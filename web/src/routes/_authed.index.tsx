@@ -19,6 +19,7 @@ import { useSelector } from '@tanstack/react-store'
 import { DownloadCloud, Save } from 'lucide-react'
 import { LayoutGroup } from 'motion/react'
 import { useEffect } from 'react'
+import { toast } from 'sonner'
 
 export const Route = createFileRoute('/_authed/')({
   component: RouteComponent,
@@ -130,6 +131,7 @@ function RouteComponent() {
                   onClick={() => {
                     save.mutate(team, {
                       onSuccess: (saved) => {
+                        toast('Team saved successfully')
                         teamStore.setState((s) => ({
                           ...s,
                           ...saved,
