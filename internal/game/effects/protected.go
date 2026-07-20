@@ -20,6 +20,7 @@ func ProtectedWhere(where game.Filter[game.Actor]) game.Effect {
 		return a
 	})
 	effect.Name = "Protected"
+	effect.Description = "Protected from attacks."
 
 	return effect
 }

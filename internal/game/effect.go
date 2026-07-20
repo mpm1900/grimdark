@@ -252,7 +252,7 @@ func EffectActorsActiveOther(priority int, updater Updater[Actor]) Effect {
 func EffectAllies(priority int, updater Updater[Actor]) Effect {
 	return EffectActorsWhere(
 		priority,
-		CombineFilters(Allies),
+		CombineFilters(ActiveActors, Allies),
 		updater,
 	)
 }

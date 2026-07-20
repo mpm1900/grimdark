@@ -21,7 +21,15 @@ function EffectTooltip({
         <div className="font-semibold text-foreground/80 capitalize px-1">
           {effect.name}
         </div>
-        <div className="text-xs p-1">{effect.description}</div>
+        <div className="text-xs p-1">
+          {effect.description}
+          {!!effect.duration && (
+            <span className="text-xs p-1">
+              {' '}
+              {effect.duration} turn duration.
+            </span>
+          )}
+        </div>
       </GothicHoverCardContent>
     </HoverCard>
   )

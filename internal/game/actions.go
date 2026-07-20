@@ -67,6 +67,37 @@ func MakeAttack(config AttackConfig) ActionResolver {
 	}
 }
 
+func AddGlobalEffects(config StatusConfig, chance float64, effects ...Effect) ActionResolver {
+	return func(g *Game, ctx Context, this ActionContext) []Transaction {
+		ctx.ParentID = uuid.Nil
+		chance = chance * this.Source.Stats[EffectChance]
+		if !Chance(chance) {
+			if config.OnFailureResult != nil {
+				config.OnFailureResult(g, ctx, &this, AccuracyResult{})
+			}
+			if config.OnFailure != nil {
+				config.OnFailure(g, ctx, &this)
+			}
+
+			return this.Done()
+		}
+
+		modifiers := make([]Modifier, len(effects))
+		for i, effect := range effects {
+			modifiers[i] = effect.Bind(ctx)
+		}
+
+		this.Push(AddModifiers(modifiers...).Bind(NewContext()))
+		if config.OnSuccessResult != nil {
+			config.OnSuccessResult(g, ctx, &this, AccuracyResult{})
+		}
+		if config.OnSuccess != nil {
+			config.OnSuccess(g, ctx, &this)
+		}
+		return this.Done()
+	}
+}
+
 func AddSourceEffects(config StatusConfig, chance float64, effects ...Effect) ActionResolver {
 	return func(g *Game, ctx Context, this ActionContext) []Transaction {
 		chance = chance * this.Source.Stats[EffectChance]

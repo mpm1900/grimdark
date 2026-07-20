@@ -275,7 +275,7 @@ func Retreat() Action {
 		Config: ActionConfig{
 			Name:        "Retreat",
 			Description: "User switches out for an ally.",
-			Priority:    ActionPriorityRetreat,
+			Priority:    ActionPriorityMovement,
 			TargetCount: 1,
 		},
 		Tags: []ActionTag{ATSystem, ATMovement, ATRetreat},
@@ -313,7 +313,7 @@ func SwitchIn(n int) Action {
 		Config: ActionConfig{
 			Name:        "Switch In",
 			Description: fmt.Sprintf("Switch %s into battle.", noun),
-			Priority:    ActionPriorityRetreat,
+			Priority:    ActionPriorityMovement,
 			TargetCount: n,
 		},
 		Tags: []ActionTag{ATSystem},
@@ -346,7 +346,7 @@ func Swap() Action {
 		Config: ActionConfig{
 			Name:        "Swap",
 			Description: "User switches places with target ally.",
-			Priority:    ActionPriorityRetreat,
+			Priority:    ActionPriorityMovement,
 			TargetCount: 1,
 		},
 		Resolve: func(g *Game, ctx Context, this ActionContext) []Transaction {
@@ -368,7 +368,7 @@ func MoveForwards() Action {
 		Config: ActionConfig{
 			Name:        "Move Forwards",
 			Description: "User moves forwards, displacing other actors back.",
-			Priority:    ActionPriorityRetreat,
+			Priority:    ActionPriorityMovement,
 			TargetCount: 0,
 		},
 		Resolve: func(g *Game, ctx Context, this ActionContext) []Transaction {
@@ -420,7 +420,7 @@ func MoveFront() Action {
 		Config: ActionConfig{
 			Name:        "Move to Front",
 			Description: "User moves to the front (1st position), displacing other actors back.",
-			Priority:    ActionPriorityRetreat,
+			Priority:    ActionPriorityMovement,
 			TargetCount: 0,
 		},
 		Resolve: func(g *Game, ctx Context, this ActionContext) []Transaction {
@@ -464,7 +464,7 @@ func MoveBackwards() Action {
 		Config: ActionConfig{
 			Name:        "Move Backwards",
 			Description: "User moves backwards, displacing other actors forward.",
-			Priority:    ActionPriorityRetreat,
+			Priority:    ActionPriorityMovement,
 			TargetCount: 0,
 		},
 		Resolve: func(g *Game, ctx Context, this ActionContext) []Transaction {

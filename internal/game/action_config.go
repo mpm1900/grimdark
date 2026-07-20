@@ -7,7 +7,7 @@ import (
 	"github.com/google/uuid"
 )
 
-const ActionPriorityRetreat = 5
+const ActionPriorityMovement = 5
 const ActionPriorityDefault = 0
 
 type ActionConfig struct {

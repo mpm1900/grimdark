@@ -28,6 +28,7 @@ func auraOfWeakness() game.Effect {
 	})
 
 	effect.Name = "Aura of Weakness"
+	effect.Description = "Other active actors are Weakend."
 	return effect
 }
 
@@ -39,7 +40,7 @@ func Weakened() game.Effect {
 	effect := game.EffectActorsActiveOther(game.EffectPriorityPostStagesStats, meleeDown)
 	effect.ID = uuid.MustParse("019f58b9-4edd-7c60-bccd-08ff88120a5b")
 	effect.Name = "Weakened"
-	effect.Description = "Melee x0.75"
+	effect.Description = "Melee x0.75."
 	effect.CheckSuccess = game.EffectGainWhereOnSuccess(
 		game.OtherActors,
 	)
