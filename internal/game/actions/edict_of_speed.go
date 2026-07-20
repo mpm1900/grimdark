@@ -41,7 +41,7 @@ func edictOfSpeedEffect() game.Effect {
 	effect.Description = "Speed x2.0."
 	effect.Duration = game.P(6)
 	effect.CheckSuccess = game.EffectGainWhereOnSuccess(
-		game.Allies,
+		game.CombineFilters(game.Allies, game.ActiveActors),
 	)
 	return effect
 }

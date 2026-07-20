@@ -12,7 +12,7 @@ var BloodLeech = game.Action{
 	Tags: []game.ActionTag{game.ATActor, game.ATWeapon},
 	Config: game.ActionConfig{
 		Name:        "Blood Leech",
-		Description: "Applies Leeched to targets.",
+		Description: "Applies Leeched to target.",
 		Affinity:    game.Poison,
 		TargetCount: 1,
 	},
