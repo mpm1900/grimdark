@@ -15,7 +15,9 @@ var Pistol = game.Weapon{
 		Description: "A bolter pistol. Pew pew.",
 		Effects:     []game.Effect{effects.AuraOfWeakness},
 	},
-	Actions: []game.Action{actions.Slash, actions.Blast, actions.SwordsDance, actions.EdictOfSpeed},
+	Actions: []game.Action{
+		actions.Slash, actions.Blast, actions.SwordsDance, actions.EdictOfSpeed, actions.BloodLeech,
+	},
 	OffsetStats: map[game.Stat]float64{
 		game.Ranged: 20,
 	},

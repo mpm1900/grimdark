@@ -288,7 +288,9 @@ func (g *Game) On(on TriggerOn, context Context) {
 				continue
 			}
 
-			triggers = append(triggers, trigger.BindWithParent(context, modifier.Context))
+			parent_context := modifier.Context.Clone()
+			parent_context.ModifierID = modifier.ID
+			triggers = append(triggers, trigger.BindWithParent(context, parent_context))
 		}
 	}
 

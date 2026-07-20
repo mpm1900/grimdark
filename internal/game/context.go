@@ -104,6 +104,19 @@ func (c Context) Clone() Context {
 	}
 }
 
+func CopyContext(a, b *Context) {
+	if a.SourceID != uuid.Nil {
+		b.SourceID = a.SourceID
+	}
+	if a.ParentID != uuid.Nil {
+		b.ParentID = a.ParentID
+	}
+
+	if len(a.ActorIDs) > 0 || len(a.PositionIDs) > 0 {
+		b.ActorIDs = a.ActorIDs
+		b.PositionIDs = a.PositionIDs
+	}
+}
 func MakeContextPlayer(player_id uuid.UUID) Context {
 	ctx := NewContext()
 	ctx.PlayerID = player_id

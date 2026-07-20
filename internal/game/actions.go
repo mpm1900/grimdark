@@ -147,7 +147,7 @@ func AddSourceEffects(config StatusConfig, chance float64, effects ...Effect) Ac
 	}
 }
 
-func AddTargetsEffects(config StatusConfig, effects ...Effect) ActionResolver {
+func AddTargetsEffects(config StatusConfig, modifier_context Context, effects ...Effect) ActionResolver {
 	return func(g *Game, ctx Context, this ActionContext) []Transaction {
 		targets := g.GetTargets(ctx)
 		success := false
@@ -169,6 +169,7 @@ func AddTargetsEffects(config StatusConfig, effects ...Effect) ActionResolver {
 			if result_success {
 				modifiers := make([]Modifier, len(effects))
 				target_ctx := MakeModifierContext(this.Source, target)
+				CopyContext(&modifier_context, &target_ctx)
 				for i, effect := range effects {
 					modifiers[i] = effect.Bind(target_ctx)
 				}

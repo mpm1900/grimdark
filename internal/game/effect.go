@@ -179,6 +179,35 @@ func EffectSource(priority int, updater Updater[Actor]) Effect {
 
 	return effect
 }
+func EffectParent(priority int, updater Updater[Actor]) Effect {
+	effect := NewEffect()
+	effect.Priority = priority
+	effect.Mutation = Mutation{
+		delta: func(g *Game, context Context) []uuid.UUID {
+			applied := []uuid.UUID{}
+			if context.ParentID == uuid.Nil {
+				return applied
+			}
+
+			parent, ok := g.GetParent(context)
+			if !ok {
+				return applied
+			}
+			if parent.HasEffectImmunity(context.EffectID) {
+				return applied
+			}
+
+			applied = append(applied, parent.ID)
+			g.ModifyActor(parent.ID, func(a Actor) Actor {
+				return updater(g, a, context)
+			})
+
+			return applied
+		},
+	}
+
+	return effect
+}
 func EffectTargets(priority int, updater Updater[Actor]) Effect {
 	effect := NewEffect()
 	effect.Priority = priority
