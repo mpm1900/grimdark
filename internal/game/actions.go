@@ -29,7 +29,7 @@ func MakeAttack(config AttackConfig) ActionResolver {
 				success = success && result.Success()
 				dmg_ctx := MakeContextFor(this.Source, target)
 
-				this.Push(DamageTargets(result.Damage).Bind(dmg_ctx))
+				this.Push(DamageTargets(result.Damage, true).Bind(dmg_ctx))
 				this.RecordDamage(target.ID, result.Damage)
 
 				MultiHitLogs(result, context, &this, hit)
@@ -214,7 +214,7 @@ func Struggle() Action {
 				hp := this.Source.Stats[Health]
 				recoil := hp * 0.25
 				recoil_ctx := MakeContextFor(this.Source, this.Source)
-				this.Push(DamageTargets(recoil).Bind(recoil_ctx))
+				this.Push(DamageTargets(recoil, false).Bind(recoil_ctx))
 			},
 		}),
 		ValidateContext:  ContextTargetLength(1),

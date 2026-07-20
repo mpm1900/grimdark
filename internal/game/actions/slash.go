@@ -24,6 +24,7 @@ var Slash = game.Action{
 		CritModifier: 1.5,
 		TargetCount:  1,
 		Range:        game.P(1),
+		Uses:         game.P(5),
 	},
 	LogTemplate: game.P(
 		"$source$ unleashed a flurry of slashes.",

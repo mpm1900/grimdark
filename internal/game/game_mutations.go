@@ -87,7 +87,7 @@ func (g *Game) AddPlayers(players ...Player) {
 	})
 }
 
-func (g *Game) DamageTargets(context Context, damage float64) {
+func (g *Game) DamageTargets(context Context, damage float64, hit bool) {
 	for _, target := range g.GetTargets(context) {
 		g.MutateActor(target.ID, func(a Actor) Actor {
 			resolved, ok := g.GetActor(target.ID)
@@ -104,6 +104,9 @@ func (g *Game) DamageTargets(context Context, damage float64) {
 			}
 
 			a.ApplyDamage(target_damage, resolved)
+			if hit {
+				a.Meta.ActiveHits += 1
+			}
 			log_ctx := MakeContextFor(a, a)
 
 			if target_damage > 0 {

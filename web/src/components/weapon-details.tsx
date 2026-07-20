@@ -117,7 +117,7 @@ function WeaponDetails({ weapon }: { weapon: Weapon }) {
             <span className="text-foreground/40 block font-cinzel font-semibold">
               Actions
             </span>
-            <span className="space-x-2">
+            <span className="space-x-2 flex flex-wrap">
               {weapon.actions.map((a) => (
                 <ActionTooltip
                   key={a.ID}

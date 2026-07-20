@@ -41,6 +41,13 @@ function ActionTooltip({
           {action.config.cooldown > 0 && (
             <span>{` ${action.config.cooldown} turn cooldown.`}</span>
           )}
+          {!!action.config.uses && (
+            <span>
+              {' '}
+              {action.config.uses - action.uses} of {action.config.uses} uses
+              remaining.
+            </span>
+          )}
         </div>
       </GothicHoverCardContent>
     </HoverCard>

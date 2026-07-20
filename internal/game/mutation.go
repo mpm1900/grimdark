@@ -150,12 +150,12 @@ func ConsumeItem() Mutation {
 		},
 	}
 }
-func DamageTargets(damage float64) Mutation {
+func DamageTargets(damage float64, hit bool) Mutation {
 	return Mutation{
 		delta: func(g *Game, context Context) []uuid.UUID {
 			applied := []uuid.UUID{}
 
-			g.DamageTargets(context, damage)
+			g.DamageTargets(context, damage, hit)
 			for _, target := range g.GetTargets(context) {
 				applied = append(applied, target.ID)
 			}
@@ -172,7 +172,7 @@ func DamageRatioTargets(ratio float64) Mutation {
 			for _, target := range g.GetTargets(context) {
 				target_context := context.CloneWithTarget(target)
 				damage := target.Stats[Health] * ratio
-				g.DamageTargets(target_context, damage)
+				g.DamageTargets(target_context, damage, false)
 				applied = append(applied, target.ID)
 			}
 

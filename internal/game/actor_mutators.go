@@ -33,6 +33,7 @@ func (a *Actor) SetActionCooldown(action_id uuid.UUID, cooldown int) {
 	// a one-turn cooldown needs a value of 2.
 	a.UpdateActionState(action_id, func(s ActionState) ActionState {
 		s.Cooldown = cooldown + 1
+		s.Uses += 1
 		return s
 	})
 }
@@ -46,6 +47,7 @@ func (a *Actor) SetPosition(position_id uuid.UUID) {
 	}
 	if a.PositionID == uuid.Nil {
 		a.Meta.ActiveTurns = 0
+		a.Meta.ActiveHits = 0
 	}
 	a.PositionID = position_id
 }

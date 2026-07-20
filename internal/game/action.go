@@ -42,11 +42,15 @@ type actionJSON struct {
 	Cooldown   int          `json:"cooldown"`
 	IsDisabled bool         `json:"is_disabled"`
 	Tags       []ActionTag  `json:"tags"`
+	Uses       int          `json:"uses"`
 }
 
 func (a Action) Disabled(g *Game, source Actor) bool {
 	state, ok := source.ActionStates[a.ID]
 	if ok && state.Cooldown > 0 {
+		return true
+	}
+	if ok && a.Config.Uses != nil && state.Uses >= *a.Config.Uses {
 		return true
 	}
 
@@ -147,6 +151,7 @@ func (a Action) ToJSON(g *Game, source Actor) actionJSON {
 		Cooldown:   state.Cooldown,
 		IsDisabled: a.Disabled(g, source),
 		Tags:       a.Tags,
+		Uses:       state.Uses,
 	}
 
 	if json.Config.Accuracy != nil {
@@ -166,5 +171,6 @@ func (a Action) ToJSONStatic() actionJSON {
 		Cooldown:   0,
 		IsDisabled: false,
 		Tags:       a.Tags,
+		Uses:       0,
 	}
 }

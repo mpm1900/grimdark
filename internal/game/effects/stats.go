@@ -65,9 +65,9 @@ func StatUpTargets(stat game.Stat, amount int) game.Effect {
 	effect := game.EffectTargets(game.EffectPriorityStages, StatChangeActor(stat, amount))
 	effect.Name = fmt.Sprintf("%s up", stat)
 	if amount == 1 {
-		effect.Description = fmt.Sprintf("Raises %s by 1 stage.", stat)
+		effect.Description = fmt.Sprintf("This actor's %s stat is raised by 1 stage.", stat)
 	} else {
-		effect.Description = fmt.Sprintf("Raises %s by %d stages.", stat, amount)
+		effect.Description = fmt.Sprintf("This actor's %s stat is raised by %d stages.", stat, amount)
 	}
 	effect.CheckSuccess = game.EffectGainTargetsOnSuccess
 	effect.ID = StatUpIDs[stat]
@@ -78,9 +78,9 @@ func StatDownTargets(stat game.Stat, amount int) game.Effect {
 	effect := game.EffectTargets(game.EffectPriorityStages, StatChangeActor(stat, -amount))
 	effect.Name = fmt.Sprintf("%s down", stat)
 	if amount == 1 {
-		effect.Description = fmt.Sprintf("Lowers %s by 1 stage.", stat)
+		effect.Description = fmt.Sprintf("This actor's %s stat is lowered by 1 stage.", stat)
 	} else {
-		effect.Description = fmt.Sprintf("Lowers %s by %d stages.", stat, amount)
+		effect.Description = fmt.Sprintf("This actor's %s stat is lowered by %d stages.", stat, amount)
 	}
 	effect.CheckSuccess = game.EffectGainTargetsOnSuccess
 	effect.ID = StatDownIDs[stat]

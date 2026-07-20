@@ -138,17 +138,23 @@ func DamageSideEffects(g *Game, context Context, result DamageResult, this *Acti
 
 		if this.Action.Config.Recoil > 0 {
 			recoil_ctx := MakeContextFor(this.Source, this.Source)
-			this.Push(DamageTargets(result.Damage * this.Action.Config.Recoil).Bind(recoil_ctx))
+			this.Push(
+				DamageTargets(result.Damage*this.Action.Config.Recoil, false).Bind(recoil_ctx),
+			)
 		}
 
 		if this.Action.Config.Lifesteal > 0 {
 			lifesteal_ctx := MakeContextFor(this.Source, this.Source)
-			this.Push(DamageTargets(result.Damage * this.Action.Config.Lifesteal * -1.0).Bind(lifesteal_ctx))
+			this.Push(
+				DamageTargets(result.Damage*this.Action.Config.Lifesteal*-1.0, false).Bind(lifesteal_ctx),
+			)
 		}
 
 		if result.Target.Stats[DamageReflect] > 0 {
 			reflect_ctx := MakeContextFor(result.Target, this.Source)
-			this.Push(DamageTargets(result.Damage * result.Target.Stats[DamageReflect]).Bind(reflect_ctx))
+			this.Push(
+				DamageTargets(result.Damage*result.Target.Stats[DamageReflect], false).Bind(reflect_ctx),
+			)
 		}
 
 		if config.OnSuccessResult != nil {

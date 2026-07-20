@@ -11,8 +11,8 @@ var EdictOfSpeed = game.Action{
 	Tags: []game.ActionTag{game.ATActor, game.ATWeapon},
 	Config: game.ActionConfig{
 		Name:        "Edict Of Speed",
-		Description: "Raises user's team's Speed for 5 turns.",
-		Affinity:    game.Kinetic,
+		Description: "Doubles team's Speed for 5 turns.",
+		Affinity:    game.Lightning,
 		TargetCount: 0,
 	},
 	Resolve: game.AddGlobalEffects(

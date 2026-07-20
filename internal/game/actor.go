@@ -35,9 +35,11 @@ type ActionState struct {
 	IsDisabled    bool
 	PriorityBonus int
 	RangeBonus    int
+	Uses          int
 }
 
 type ActorMeta struct {
+	ActiveHits       int
 	ActiveTurns      int
 	InactiveTurns    int
 	LastUsedActionID uuid.UUID
@@ -142,6 +144,7 @@ func NewActor(class Class, config ActorConfig) *Actor {
 		effectStates: map[uuid.UUID]EffectState{},
 
 		Meta: ActorMeta{
+			ActiveHits:       0,
 			ActiveTurns:      0,
 			InactiveTurns:    0,
 			LastUsedActionID: uuid.Nil,

@@ -33,14 +33,14 @@ func auraOfWeakness() game.Effect {
 }
 
 func meleeDown(g *game.Game, a game.Actor, ctx game.Context) game.Actor {
-	a.Stats[game.Melee] = a.Stats[game.Melee] * 0.75
+	a.Stats[game.Melee] -= a.Stats[game.Melee] * 0.25
 	return a
 }
 func Weakened() game.Effect {
 	effect := game.EffectActorsActiveOther(game.EffectPriorityPostStagesStats, meleeDown)
 	effect.ID = uuid.MustParse("019f58b9-4edd-7c60-bccd-08ff88120a5b")
 	effect.Name = "Weakened"
-	effect.Description = "Melee x0.75."
+	effect.Description = "This actor's Melee stat is lowered by 25%."
 	effect.CheckSuccess = game.EffectGainWhereOnSuccess(
 		game.OtherActors,
 	)

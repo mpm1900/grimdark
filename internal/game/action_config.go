@@ -28,6 +28,7 @@ type ActionConfig struct {
 	Stat         Stat     `json:"stat"`
 	StopOnMiss   bool     `json:"-"`
 	TargetCount  int      `json:"target_count"`
+	Uses         *int     `json:"uses"`
 
 	pending_damage map[uuid.UUID]float64
 }

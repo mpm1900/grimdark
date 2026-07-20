@@ -17,6 +17,7 @@ export type ActionConfig = {
   recoil: number
   stat: Stat | null
   target_count: number
+  uses: number | null
 }
 
 export type Action = {
@@ -25,4 +26,5 @@ export type Action = {
   cooldown: number
   is_disabled: boolean
   tags: Array<string>
+  uses: number
 }
