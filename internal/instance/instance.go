@@ -2,6 +2,7 @@ package instance
 
 import (
 	"context"
+	"fmt"
 	"grimdark/internal/game"
 	"time"
 
@@ -46,7 +47,9 @@ func NewInstance(ctx context.Context, id uuid.UUID, onEmpty func(uuid.UUID)) *In
 		Unregister:  make(chan *Client),
 		ReadRequest: make(chan Request),
 
-		Game: game.NewGame(id),
+		Game: game.NewGame(id, func() {
+			fmt.Println("game is over")
+		}),
 		Tick: time.Second / 2,
 	}
 

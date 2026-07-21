@@ -95,7 +95,7 @@ function ActionButton({
       <ItemContent className="gap-0 py-0.5 min-w-0 overflow-hidden">
         <ItemTitle
           className={cn(
-            'text-white gap-1',
+            'text-white gap-1 font-serif',
             action.is_disabled && 'text-white/60'
           )}
         >

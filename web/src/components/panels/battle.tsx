@@ -1,4 +1,5 @@
 import { HiLink } from 'react-icons/hi'
+import { useEffect, useMemo, useState } from 'react'
 import { ActorAvatar } from '../actor-avatar'
 import { TinyBadge } from '../gothic-ui/badge'
 import { GothicCard } from '../gothic-ui/card'
@@ -13,12 +14,38 @@ import { uiStore } from '#/lib/stores/ui'
 import { gameStore } from '#/lib/stores/game'
 import { ActorLore } from '../actor-lore'
 import type { Actor } from '#/lib/game/actor'
+import type { Action } from '#/lib/game/action'
 import { sendContextMessage } from '#/lib/stores/socket'
 import { GothicFramedButton } from '../gothic-ui/button'
 import { NULL_CONTEXT } from '#/lib/game/context'
 import { lobbyStore } from '#/lib/stores/clients'
-import { Check, ChevronsRight, Loader } from 'lucide-react'
+import {
+  Check,
+  ChevronLeft,
+  ChevronRight,
+  ChevronsRight,
+  Loader,
+} from 'lucide-react'
 import { v4 } from 'uuid'
+import {
+  Carousel,
+  type CarouselApi,
+  CarouselContent,
+  CarouselItem,
+} from '../ui/carousel'
+
+const ACTIONS_PER_PAGE = 6
+
+function chunkActions(actions: Action[]) {
+  return Array.from(
+    { length: Math.ceil(actions.length / ACTIONS_PER_PAGE) },
+    (_, index) =>
+      actions.slice(
+        index * ACTIONS_PER_PAGE,
+        index * ACTIONS_PER_PAGE + ACTIONS_PER_PAGE
+      )
+  )
+}
 
 function ActionsPanel({ active_actor }: { active_actor: Actor }) {
   const game = useSelector(gameStore, (g) => g)
@@ -26,6 +53,40 @@ function ActionsPanel({ active_actor }: { active_actor: Actor }) {
     (c) => c.context.source_ID === active_actor?.ID
   )
   const remaining_ap = active_actor.stats.actions - acitve_actor_commands.length
+  const actor_actions = useMemo(
+    () => active_actor.actions.filter((a) => a.tags.includes('actor')),
+    [active_actor.actions]
+  )
+  const action_pages = useMemo(
+    () => chunkActions(actor_actions),
+    [actor_actions]
+  )
+  const [carousel_api, set_carousel_api] = useState<CarouselApi>()
+  const [can_scroll_previous, set_can_scroll_previous] = useState(false)
+  const [can_scroll_next, set_can_scroll_next] = useState(false)
+
+  useEffect(() => {
+    if (!carousel_api) return
+
+    const update_scroll_buttons = () => {
+      set_can_scroll_previous(carousel_api.canScrollPrev())
+      set_can_scroll_next(carousel_api.canScrollNext())
+    }
+
+    update_scroll_buttons()
+    carousel_api.on('select', update_scroll_buttons)
+    carousel_api.on('reInit', update_scroll_buttons)
+
+    return () => {
+      carousel_api.off('select', update_scroll_buttons)
+      carousel_api.off('reInit', update_scroll_buttons)
+    }
+  }, [carousel_api])
+
+  useEffect(() => {
+    carousel_api?.scrollTo(0)
+  }, [active_actor.ID, carousel_api])
+
   return (
     <GothicCard className="relative flex-row h-full max-w-1/3 bg-neutral-950 z-10">
       <TinyBadge
@@ -34,26 +95,53 @@ function ActionsPanel({ active_actor }: { active_actor: Actor }) {
       >
         Actions ({active_actor.stats.actions})
       </TinyBadge>
-      <div className="grid grid-cols-2 grid-rows-3">
-        {active_actor?.actions
-          .filter((a) => a.tags.includes('actor'))
-          .map((action) => (
-            <ActionContextDialog
-              key={action.ID}
-              actor={active_actor}
-              action={action}
-              enabled={!action.is_disabled}
-            >
-              <DialogTrigger asChild>
-                <ActionButton
-                  action={action}
-                  actor={active_actor}
-                  disabled={remaining_ap === 0 || active_actor.is_stunned}
-                />
-              </DialogTrigger>
-            </ActionContextDialog>
+      <Carousel
+        setApi={set_carousel_api}
+        className="h-full min-w-0 flex-1 [&_[data-slot=carousel-content]]:h-full"
+      >
+        <CarouselContent className="-ml-0 h-full">
+          {action_pages.map((actions, page_index) => (
+            <CarouselItem key={page_index} className="pl-0">
+              <div className="grid h-full grid-cols-2 grid-rows-3">
+                {actions.map((action) => (
+                  <ActionContextDialog
+                    key={action.ID}
+                    actor={active_actor}
+                    action={action}
+                    enabled={!action.is_disabled}
+                  >
+                    <DialogTrigger asChild>
+                      <ActionButton
+                        action={action}
+                        actor={active_actor}
+                        disabled={remaining_ap === 0 || active_actor.is_stunned}
+                      />
+                    </DialogTrigger>
+                  </ActionContextDialog>
+                ))}
+              </div>
+            </CarouselItem>
           ))}
-      </div>
+        </CarouselContent>
+        <div className="absolute -bottom-3 left-1/2 -translate-x-1/2 flex">
+          <GothicFramedButton
+            variant="red"
+            className="p-0 size-6"
+            disabled={!can_scroll_previous}
+            onClick={() => carousel_api?.scrollPrev()}
+          >
+            <ChevronLeft />
+          </GothicFramedButton>
+          <GothicFramedButton
+            variant="red"
+            className="p-0 size-6"
+            disabled={!can_scroll_next}
+            onClick={() => carousel_api?.scrollNext()}
+          >
+            <ChevronRight />
+          </GothicFramedButton>
+        </div>
+      </Carousel>
       <div className="flex flex-col justify-between">
         {active_actor?.actions
           .filter((a) => a.tags.includes('system'))

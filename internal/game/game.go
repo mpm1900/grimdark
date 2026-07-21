@@ -53,8 +53,9 @@ type Game struct {
 	state    State
 	resolved State
 
-	gamestate gamestate
-	meta      gamemeta
+	gamestate  gamestate
+	meta       gamemeta
+	onComplete func()
 
 	InstanceID uuid.UUID
 	Phase      GamePhase
@@ -63,7 +64,7 @@ type Game struct {
 	Logs       []Bindable[Log]
 }
 
-func NewGame(instanceID uuid.UUID) *Game {
+func NewGame(instanceID uuid.UUID, onComplete func()) *Game {
 	var state = State{
 		Actors:       []Actor{},
 		Players:      []Player{},
@@ -96,6 +97,7 @@ func NewGame(instanceID uuid.UUID) *Game {
 		meta: gamemeta{
 			applied_modifiers: map[uuid.UUID]map[uuid.UUID]struct{}{},
 		},
+		onComplete: onComplete,
 		InstanceID: instanceID,
 		Logs:       []Bindable[Log]{},
 		Phase:      PhaseInit,
@@ -324,6 +326,11 @@ func (g *Game) Validate() bool {
 			ctx.ActionID = action.ID
 			ctx.PositionIDs = open_positions
 			g.PushPromptCommand((action).ToPrompt().Bind(ctx))
+		}
+
+		if len(open_positions) == 0 && len(alive_inactive) == 0 {
+			// the battle is over
+			g.onComplete()
 		}
 	}
 

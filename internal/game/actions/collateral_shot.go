@@ -1,0 +1,29 @@
+package actions
+
+import (
+	"grimdark/internal/game"
+
+	"github.com/google/uuid"
+)
+
+var CollateralShot = game.Action{
+	ID:   uuid.MustParse("019f8624-d636-7f7e-9a7a-31bb0f0fa529"),
+	Tags: []game.ActionTag{game.ATActor, game.ATWeapon},
+	Config: game.ActionConfig{
+		Name:         "Collateral Shot",
+		Description:  "This action also damages all enemy actors positioned in front of the target.",
+		Affinity:     game.Kinetic,
+		Stat:         game.Ranged,
+		Accuracy:     game.P(0.80),
+		Power:        85,
+		Lifesteal:    0,
+		Hits:         1,
+		CritChance:   0,
+		CritModifier: 1.5,
+		TargetCount:  1,
+	},
+	Resolve:          game.MakeAttack(game.AttackConfig{}),
+	MapContext:       game.CtxTargetPreCollateral(),
+	ValidateContext:  game.ContextTargetLength(1),
+	TargetsPredicate: game.CombineFilters(game.ActiveActors, game.Enemies),
+}
