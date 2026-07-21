@@ -6,9 +6,10 @@ import { cn } from '../utils'
 import { getTargetsFromContext, type Context } from './context'
 import type { Game } from './game'
 import { Marker, MarkerContent } from '#/components/ui/marker'
-import { setHoverPosition } from '../stores/ui'
+import { setActiveActor, setHoverPosition } from '../stores/ui'
 import { ActionTooltip } from '#/components/action-tooltip'
 import type { Actor } from './actor'
+import { EffectTooltip } from '#/components/effect-tooltip'
 
 export type Log = {
   depth: number
@@ -41,6 +42,10 @@ function RenderTerm({
           onMouseLeave={() => {
             setHoverPosition(null)
           }}
+          onClick={() => {
+            if (!source) return
+            setActiveActor(source.ID)
+          }}
           className={cn('hover:underline cursor-default', {
             'text-ally/60': source?.player_ID === client_ID,
             'text-enemy/60': source?.player_ID !== client_ID,
@@ -60,6 +65,9 @@ function RenderTerm({
           onMouseLeave={() => {
             setHoverPosition(null)
           }}
+          onClick={() => {
+            setActiveActor(target.ID)
+          }}
           className={cn('hover:underline cursor-default', {
             'text-ally/60': target?.player_ID === client_ID,
             'text-enemy/60': target?.player_ID !== client_ID,
@@ -69,6 +77,18 @@ function RenderTerm({
         </span>
       )
     case '$effect$':
+      const effect = game.modifiers.find(
+        (m) => m.payload.ID === context.effect_ID
+      )?.payload
+      if (effect) {
+        return (
+          <EffectTooltip effect={effect}>
+            <span className="text-foreground/60 hover:underline">
+              {terms[term_key]}
+            </span>
+          </EffectTooltip>
+        )
+      }
       return <span className="text-foreground/60">{terms[term_key]}</span>
     case '$action$':
       source = game.actors.find((a) => a.ID === context.source_ID)
