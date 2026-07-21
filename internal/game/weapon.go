@@ -13,6 +13,7 @@ const (
 	WeaponTypeSword    WeaponType = "sword"
 	WeaponTypeBigSword WeaponType = "big-sword"
 	WeaponTypePistol   WeaponType = "pistol"
+	WeaponTypeRifle    WeaponType = "rifle"
 )
 
 type Weapon struct {

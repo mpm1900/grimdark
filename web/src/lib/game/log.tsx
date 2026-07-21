@@ -7,6 +7,8 @@ import { getTargetsFromContext, type Context } from './context'
 import type { Game } from './game'
 import { Marker, MarkerContent } from '#/components/ui/marker'
 import { setHoverPosition } from '../stores/ui'
+import { ActionTooltip } from '#/components/action-tooltip'
+import type { Actor } from './actor'
 
 export type Log = {
   depth: number
@@ -27,9 +29,10 @@ function RenderTerm({
   term_key: string
 }) {
   const client_ID = lobbyStore.state.client?.ID
+  let source: Actor | undefined = undefined
   switch (term_key) {
     case '$source$':
-      const source = game.actors.find((a) => a.ID === context.source_ID)
+      source = game.actors.find((a) => a.ID === context.source_ID)
       return (
         <span
           onMouseEnter={() => {
@@ -68,6 +71,17 @@ function RenderTerm({
     case '$effect$':
       return <span className="text-foreground/60">{terms[term_key]}</span>
     case '$action$':
+      source = game.actors.find((a) => a.ID === context.source_ID)
+      const action = source?.actions.find((a) => a.ID === context.action_ID)
+      if (action) {
+        return (
+          <ActionTooltip action={action} card_content={{ side: 'left' }}>
+            <span className="text-foreground/80 hover:underline">
+              {terms[term_key]}
+            </span>
+          </ActionTooltip>
+        )
+      }
       return <span className="text-foreground/80">{terms[term_key]}</span>
     default:
       return <span>{terms[term_key]}</span>

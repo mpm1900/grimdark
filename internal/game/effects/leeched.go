@@ -49,7 +49,7 @@ func leeched() game.Effect {
 
 	effect.ID = uuid.MustParse("019f8182-e430-7fd3-92d6-6b46385d03a8")
 	effect.Name = "Leeched"
-	effect.Description = "On turn end, this actor loses 12% of their max Health to another actor."
+	effect.Description = "On turn end, this actor loses 12% of their max Health to heal another actor."
 
 	return effect
 }

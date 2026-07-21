@@ -229,7 +229,7 @@ func EffectGainWhereOnSuccess(where Filter[Actor]) func(g *Game, e Effect, ctx C
 			}
 
 			g.PushLogMeta(NewLog(
-				"$target$ gained $effect$.",
+				"$target$ became $effect$.",
 				EffectTermsTarget(target, e),
 			).Bind(log_ctx))
 		}

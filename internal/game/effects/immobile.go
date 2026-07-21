@@ -21,7 +21,7 @@ func immobile() game.Effect {
 		return a
 	})
 	effect.Name = "Immobile"
-	effect.Description = "Cannot use movement actions."
+	effect.Description = "This actor cannot use movement actions."
 	effect.CheckSuccess = game.EffectGainTargetsOnSuccess
 
 	return effect

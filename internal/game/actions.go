@@ -202,7 +202,6 @@ func Struggle() Action {
 		Config: ActionConfig{
 			Name:        "Struggle",
 			Description: "User takes 1/4th of their max HP as recoil damage.",
-			Affinity:    Kinetic,
 			Stat:        Melee,
 			Accuracy:    P(1.0),
 			Power:       50,

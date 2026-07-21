@@ -41,6 +41,7 @@ func newTechPriest() game.Class {
 		Weapons: []game.Weapon{
 			weapons.SlashSword,
 			weapons.BigSword,
+			weapons.RelicRifle,
 		},
 	}
 

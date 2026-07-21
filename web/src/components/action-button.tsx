@@ -83,7 +83,7 @@ function ActionButton({
         />
       )}
       {action.config.affinity && (
-        <ItemMedia className="mr-3">
+        <ItemMedia className="mr-2">
           <div className="absolute top-0 overflow-hidden size-12 left-0.5">
             <AffinityIcon
               affinity={action.config.affinity}

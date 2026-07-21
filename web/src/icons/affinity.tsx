@@ -7,6 +7,7 @@ import {
   GiBeveledStar,
   GiBleedingEye,
   GiPerpendicularRings,
+  GiFly,
 } from 'react-icons/gi'
 import type { IconType } from 'react-icons/lib'
 
@@ -16,6 +17,6 @@ export const AFFINITY_ICONS: Record<Affinity, IconType> = {
   fire: GiSmallFire,
   kinetic: GiPerpendicularRings,
   lightning: GiPowerLightning,
-  poison: FaBiohazard,
+  poison: GiFly,
   psychic: GiBleedingEye,
 }

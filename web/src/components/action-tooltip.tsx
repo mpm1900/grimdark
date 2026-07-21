@@ -28,10 +28,10 @@ function ActionTooltip({
           {action.config.name}
         </div>
         <div className="grid grid-cols-2 text-center">
+          <span>{action.config.power || '-'}</span>
           <span>
             {action.config.accuracy ? action.config.accuracy * 100 + '%' : '-'}
           </span>
-          <span>{action.config.power || '-'}</span>
         </div>
         <div className="text-xs p-1">
           {action.config.description}

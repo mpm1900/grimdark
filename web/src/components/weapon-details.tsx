@@ -21,7 +21,7 @@ function InlineOffsetStats({
   offset_stats: Partial<Record<Stat, number>>
 }) {
   return (
-    <span className={cn('flex gap-2', className)} {...props}>
+    <span className={cn('flex flex-wrap gap-x-2', className)} {...props}>
       {entries(offset_stats).map(([stat, aux], i) => (
         <DNumber key={i} value={aux}>
           {sign(aux)}
@@ -76,6 +76,7 @@ const weaponIcon = cva('absolute top-1 h-auto block', {
       sword: 'size-24 top-4 rotate-135',
       'big-sword': 'size-9 top-2',
       pistol: 'size-14 left-1/2 top-4',
+      rifle: 'size-26 top-6 rotate-130',
     },
   },
   defaultVariants: {
@@ -92,13 +93,15 @@ function WeaponDetails({ weapon }: { weapon: Weapon }) {
       <div className={weaponBody({ rarity: rarity })}>
         <div className="p-2">
           <div className="absolute z-10 bottom-0 left-2/3 right-0 top-2 overflow-hidden">
-            <Icon
-              className={weaponIcon({
-                rarity,
-                weapon_type: weapon.weapon_type,
-                className: 'left-1/2 -translate-x-1/2 fading-image z-30',
-              })}
-            />
+            {Icon && (
+              <Icon
+                className={weaponIcon({
+                  rarity,
+                  weapon_type: weapon.weapon_type,
+                  className: 'left-1/2 -translate-x-1/2 fading-image z-30',
+                })}
+              />
+            )}
           </div>
           <div className="pr-6">
             <span className={weaponTitle({ rarity: rarity })}>
@@ -137,7 +140,7 @@ function WeaponDetails({ weapon }: { weapon: Weapon }) {
               Effects
             </span>
             {weapon.effects.length > 0 && (
-              <span className="space-x-2">
+              <span className="space-x-2 flex flex-wrap">
                 {weapon.effects.map((e) => (
                   <EffectTooltip
                     key={e.ID}
