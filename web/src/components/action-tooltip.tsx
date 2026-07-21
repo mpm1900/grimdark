@@ -1,5 +1,6 @@
 import type { Action } from '#/lib/game/action'
 import { cn } from '#/lib/utils'
+import { AffinityIcon } from './affinity-name'
 import { GothicHoverCardContent } from './gothic-ui/hover-card'
 import { statVariants } from './stat-name'
 import { HoverCard, HoverCardContent, HoverCardTrigger } from './ui/hover-card'
@@ -19,6 +20,12 @@ function ActionTooltip({
         {...card_content}
         className={cn('font-serif', card_content?.className)}
       >
+        <div className="absolute top-2 right-2 overflow-hidden size-12">
+          <AffinityIcon
+            affinity={action.config.affinity}
+            className="size-12 opacity-50"
+          />
+        </div>
         <div
           className={statVariants({
             stat: action.config.stat,
@@ -27,7 +34,7 @@ function ActionTooltip({
         >
           {action.config.name}
         </div>
-        <div className="grid grid-cols-2 text-center">
+        <div className="grid grid-cols-2 text-center pr-14">
           <span>{action.config.power || '-'}</span>
           <span>
             {action.config.accuracy ? action.config.accuracy * 100 + '%' : '-'}

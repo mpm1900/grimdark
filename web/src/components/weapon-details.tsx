@@ -76,7 +76,7 @@ const weaponIcon = cva('absolute top-1 h-auto block', {
       sword: 'size-24 top-4 rotate-135',
       'big-sword': 'size-9 top-2',
       pistol: 'size-14 left-1/2 top-4',
-      rifle: 'size-26 top-6 rotate-130',
+      rifle: 'size-32 top-3 rotate-130',
     },
   },
   defaultVariants: {
