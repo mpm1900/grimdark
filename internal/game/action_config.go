@@ -8,6 +8,7 @@ import (
 )
 
 const ActionPriorityMovement = 5
+const ActionPriorityProtect = 4
 const ActionPriorityDefault = 0
 
 type ActionConfig struct {

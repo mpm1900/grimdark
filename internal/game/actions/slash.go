@@ -20,7 +20,7 @@ var Slash = game.Action{
 		Lifesteal:    0.12,
 		Hits:         1,
 		Cooldown:     1,
-		CritChance:   0,
+		CritStage:    0,
 		CritModifier: 1.5,
 		TargetCount:  1,
 		Range:        game.P(1),

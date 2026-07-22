@@ -6,12 +6,12 @@ import (
 	"github.com/google/uuid"
 )
 
-var CollateralShot = game.Action{
-	ID:   uuid.MustParse("019f8624-d636-7f7e-9a7a-31bb0f0fa529"),
+var PiercingShot = game.Action{
+	ID:   uuid.MustParse("019f87df-76c5-78b1-a12b-0d485ee54dad"),
 	Tags: []game.ActionTag{game.ATActor, game.ATWeapon},
 	Config: game.ActionConfig{
-		Name:         "Collateral Shot",
-		Description:  "This action also damages all enemy actors positioned in front of the target. This action is only usable from 2nd or 3rd position.",
+		Name:         "Piercing Shot",
+		Description:  "This action also damages all enemy actors positioned behind the target. This action is only usable from 2nd or 3rd position.",
 		Affinity:     game.Kinetic,
 		Stat:         game.Ranged,
 		Accuracy:     game.P(0.80),
@@ -23,7 +23,7 @@ var CollateralShot = game.Action{
 		TargetCount:  1,
 	},
 	Resolve:          game.MakeAttack(game.AttackConfig{}),
-	MapContext:       game.CtxTargetPreCollateral(),
+	MapContext:       game.CtxTargetPostCollateral(),
 	ValidateContext:  game.ContextTargetLength(1),
 	TargetsPredicate: game.CombineFilters(game.ActiveActors, game.Enemies),
 	DisabledCheck: func(g *game.Game, source game.Actor) bool {

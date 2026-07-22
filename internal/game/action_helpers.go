@@ -2,6 +2,7 @@ package game
 
 import (
 	"fmt"
+	"slices"
 	"strconv"
 
 	"github.com/google/uuid"
@@ -265,6 +266,30 @@ func CtxTargetPreCollateral() func(g *Game, ctx Context, this ActionContext) Con
 		c := ctx.Clone()
 		c.ClearTargets()
 		positions := g.GetEnemyPositionsByRank(ctx.PlayerID, target_position.Rank, -1)
+		for _, pos := range positions {
+			c.PositionIDs = append(c.PositionIDs, pos.ID)
+		}
+
+		return c
+	}
+}
+func CtxTargetPostCollateral() func(g *Game, ctx Context, this ActionContext) Context {
+	return func(g *Game, ctx Context, this ActionContext) Context {
+		if len(ctx.PositionIDs) == 0 {
+			return ctx
+		}
+
+		target_position, ok := g.GetPosition(ctx.PositionIDs[0])
+		if !ok {
+			return ctx
+		}
+
+		c := ctx.Clone()
+		c.ClearTargets()
+		positions := g.GetEnemyPositionsByRank(ctx.PlayerID, target_position.Rank, 1)
+		slices.SortFunc(positions, func(a, b Position) int {
+			return a.Rank - b.Rank
+		})
 		for _, pos := range positions {
 			c.PositionIDs = append(c.PositionIDs, pos.ID)
 		}

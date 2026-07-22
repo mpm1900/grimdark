@@ -17,7 +17,7 @@ var CalledShot = game.Action{
 		Power:        95,
 		Lifesteal:    0,
 		Hits:         1,
-		CritChance:   0,
+		CritStage:    0,
 		CritModifier: 2,
 		TargetCount:  1,
 		Priority:     -1,
