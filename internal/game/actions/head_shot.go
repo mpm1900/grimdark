@@ -15,7 +15,7 @@ var Headshot = game.Action{
 		Affinity:     game.Kinetic,
 		Stat:         game.Ranged,
 		Power:        75,
-		Accuracy:     game.P(90.0),
+		Accuracy:     game.P(0.90),
 		Lifesteal:    0,
 		Hits:         1,
 		CritStage:    3,
