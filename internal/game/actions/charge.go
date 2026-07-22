@@ -18,6 +18,7 @@ var Charge = game.Action{
 		Accuracy:     game.P(1.0),
 		Lifesteal:    0,
 		Hits:         1,
+		Cooldown:     1,
 		CritStage:    0,
 		CritModifier: 1.5,
 		TargetCount:  1,
