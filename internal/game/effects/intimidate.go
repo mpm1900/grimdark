@@ -31,6 +31,6 @@ func intimidate() game.Effect {
 	})
 
 	effect.Name = "Intimidate"
-	effect.Description = "When this actor enters, the attack stat of other active actors is lowered by one stage."
+	effect.Description = "When this actor enters, the attack stat of other active actors is lowered."
 	return effect
 }

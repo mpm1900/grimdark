@@ -65,7 +65,7 @@ function ActionButton({
       onClick={is_disabled ? undefined : onClick}
       variant="basic"
       className={cn(
-        'relative h-auto w-full min-w-0 justify-start overflow-hidden border-6',
+        'relative h-auto w-full min-w-0 justify-start overflow-hidden border-6 gap-0.5',
         is_disabled && 'disabled'
       )}
       aria-disabled={is_disabled}

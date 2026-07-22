@@ -17,6 +17,7 @@ var Greatsword = game.Weapon{
 	Actions: []game.Action{
 		actions.Charge,
 		actions.Execute,
+		actions.HeavySwing,
 	},
 	OffsetStats: map[game.Stat]float64{
 		game.Melee:          32,

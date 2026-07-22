@@ -7,12 +7,12 @@ import (
 	"github.com/google/uuid"
 )
 
-var Execute = game.Action{
-	ID:   uuid.MustParse("019f8b18-358d-73b6-91a4-5ae8f516b113"),
+var HeavySwing = game.Action{
+	ID:   uuid.MustParse("019f8b1e-d47f-7863-981f-bf17defd2135"),
 	Tags: []game.ActionTag{game.ATActor, game.ATWeapon},
 	Config: game.ActionConfig{
-		Name:         "Execute",
-		Description:  "Deals massive damage. User is stunned next turn unless this action killed the target. This action is only usable from 1st position.",
+		Name:         "Heavy Swing",
+		Description:  "This action lowers the user's Martial Defense stat. This action is only usable from 1st position.",
 		Affinity:     game.Kinetic,
 		Stat:         game.Melee,
 		Power:        120,
@@ -27,11 +27,8 @@ var Execute = game.Action{
 	},
 	Resolve: game.MakeAttack(game.AttackConfig{
 		OnSuccessResult: func(g *game.Game, context game.Context, this *game.ActionContext, result game.DamageResult) {
-			result_health := result.Target.GetRemainingHealth()
-			if result.Damage < result_health {
-				stun_ctx := game.MakeModifierContext(this.Source, this.Source)
-				this.Push(game.AddModifiers(effects.StunTargets.Bind(stun_ctx)).Bind(stun_ctx))
-			}
+			mod_ctx := game.MakeModifierContext(this.Source, this.Source)
+			this.Push(game.AddModifiers(effects.StatDownSource(game.MartialDefense, 1).Bind(mod_ctx)).Bind(mod_ctx))
 		},
 	}),
 	ValidateContext:  game.ContextTargetLength(1),
