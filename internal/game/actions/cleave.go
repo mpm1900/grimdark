@@ -6,25 +6,25 @@ import (
 	"github.com/google/uuid"
 )
 
-var PiercingShot = game.Action{
-	ID:   uuid.MustParse("019f87df-76c5-78b1-a12b-0d485ee54dad"),
+var Cleave = game.Action{
+	ID:   uuid.MustParse("019f8b2e-55cb-7cc5-a83a-12ca212535f9"),
 	Tags: []game.ActionTag{game.ATActor, game.ATWeapon},
 	Config: game.ActionConfig{
-		Name:         "Piercing Shot",
-		Description:  "Damages all enemy actors positioned behind the target. This action is only usable from 2nd or 3rd position.",
+		Name:         "Cleave",
+		Description:  "Damages all enemy actors in 1st and 2nd position.",
 		Affinity:     game.Kinetic,
-		Stat:         game.Ranged,
-		Accuracy:     game.P(0.80),
-		Power:        85,
+		Stat:         game.Melee,
+		Accuracy:     game.P(0.90),
+		Power:        70,
 		Lifesteal:    0,
 		Hits:         1,
 		CritStage:    0,
 		CritModifier: 1.5,
-		TargetCount:  1,
+		TargetCount:  0,
 	},
 	Resolve:          game.MakeAttack(game.AttackConfig{}),
-	MapContext:       game.CtxTargetPostCollateral(),
-	ValidateContext:  game.ContextTargetLength(1),
+	MapContext:       game.CtxToRangeEnemies(2),
+	ValidateContext:  game.ContextTargetLength(0),
 	TargetsPredicate: game.CombineFilters(game.ActiveActors, game.Enemies),
 	DisabledCheck: func(g *game.Game, source game.Actor) bool {
 		position, ok := g.GetPosition(source.PositionID)
@@ -32,6 +32,6 @@ var PiercingShot = game.Action{
 			return true
 		}
 
-		return position.Rank == 0
+		return position.Rank != 0
 	},
 }

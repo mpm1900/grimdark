@@ -16,6 +16,7 @@ var Greatsword = game.Weapon{
 	},
 	Actions: []game.Action{
 		actions.Charge,
+		actions.Cleave,
 		actions.Execute,
 		actions.HeavySwing,
 	},
