@@ -17,6 +17,7 @@ var RelicRifle = game.Weapon{
 	Actions: []game.Action{
 		actions.CalledShot,
 		actions.CollateralShot,
+		actions.LockOn,
 	},
 	OffsetStats: map[game.Stat]float64{
 		game.Ranged:         32,

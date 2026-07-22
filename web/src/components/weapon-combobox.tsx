@@ -70,7 +70,7 @@ function WeaponCombobox({
             }
           />
         </HoverCardTrigger>
-        <GothicHoverCardContent sideOffset={0} side="left">
+        <GothicHoverCardContent sideOffset={0} side="left" className="w-80">
           {weapon && <WeaponDetails weapon={weapon} />}
         </GothicHoverCardContent>
       </HoverCard>
@@ -88,7 +88,11 @@ function WeaponCombobox({
                   {w.name}
                 </ComboboxItem>
               </HoverCardTrigger>
-              <GothicHoverCardContent sideOffset={0} side="left">
+              <GothicHoverCardContent
+                sideOffset={0}
+                side="left"
+                className="w-80"
+              >
                 <WeaponDetails weapon={w} />
               </GothicHoverCardContent>
             </HoverCard>
