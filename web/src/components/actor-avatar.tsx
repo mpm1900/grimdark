@@ -1,4 +1,4 @@
-import type { Actor } from '#/lib/game/actor'
+import { getHealthRatio, type Actor } from '#/lib/game/actor'
 import { cn } from '#/lib/utils'
 import { useSelector } from '@tanstack/react-store'
 import { TinyBadge } from './gothic-ui/badge'
@@ -13,6 +13,7 @@ function ActorAvatar({ actor }: { actor: Actor }) {
     (a, b) => b.name.length - a.name.length
   )
   const position = game.positions.find((p) => p.actor_ID === actor.ID)
+  const ratio = 100 - Math.max(0, Math.min(getHealthRatio(actor), 100))
   return (
     <div className="relative h-48 w-52">
       <div className="absolute size-42 left-6 mt-13 rounded-full overflow-hidden bg-linear-to-b from-emerald-950/0 to-emerald-950">
@@ -22,6 +23,16 @@ function ActorAvatar({ actor }: { actor: Actor }) {
           )}
           style={{ backgroundImage: `url(${actor.sprite_url})` }}
         />
+        <div
+          className="absolute inset-0 bg-red-900/50 transition-[clip-path] duration-300 ease-out"
+          style={{ clipPath: `inset(${100 - ratio}% 0 0 0)` }}
+        ></div>
+        {actor.is_player && (
+          <div className="absolute bottom-6 left-1/2 -translate-x-1/2 font-serif font-bold [text-shadow:0_2px_0_var(--color-black)]">
+            {(actor.stats.health - actor.stacks.wounds).toFixed(0)}/
+            {actor.stats.health.toFixed(0)}
+          </div>
+        )}
       </div>
       <div className="absolute -bottom-9 -right-1 bg-[url(/gothic/AvatarCircleFrame.png)] bg-contain bg-center size-52">
         <div
