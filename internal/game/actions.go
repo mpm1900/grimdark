@@ -35,6 +35,15 @@ func MakeAttack(config AttackConfig) ActionResolver {
 				MultiHitLogs(result, context, &this, hit)
 				PostDamageLogs(result, context, &this)
 				DamageSideEffects(g, context, result, &this, config)
+				g.MutateActor(this.Source.ID, func(a Actor) Actor {
+					if this.Action.Weapon == nil {
+						return a
+					}
+
+					slot := this.Action.Weapon.Slot
+					a.Stacks[slot.String()] -= 1
+					return a
+				})
 			}
 		}
 

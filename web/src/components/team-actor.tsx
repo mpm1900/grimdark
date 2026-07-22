@@ -52,7 +52,6 @@ function TeamActor({
   config: ActorConfig
   index: number
 }) {
-  console.log(config)
   const actors_query = useQuery(actorsQuery)
   const active_index = useSelector(teamStore, (s) => s.active_actor)
   const actor_class = actors_query.data?.find((a) => a.ID === config.class)

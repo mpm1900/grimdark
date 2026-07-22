@@ -12,7 +12,7 @@ var LockOn = game.Action{
 	Tags: []game.ActionTag{game.ATActor, game.ATWeapon},
 	Config: game.ActionConfig{
 		Name:        "Lock On",
-		Description: "Raises users's melee and accuracy stats by 1 stage.",
+		Description: "Raises users's ranged and accuracy stats by 1 stage.",
 		Affinity:    game.Kinetic,
 		TargetCount: 0,
 	},
@@ -20,7 +20,7 @@ var LockOn = game.Action{
 		game.StatusConfig{},
 		1,
 		effects.StatUpSource(game.Accuracy, 1),
-		effects.StatUpSource(game.Melee, 1),
+		effects.StatUpSource(game.Ranged, 1),
 	),
 	ValidateContext:  game.TrueGameFilter,
 	TargetsPredicate: game.NoneActors,

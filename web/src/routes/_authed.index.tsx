@@ -144,7 +144,6 @@ function RouteComponent() {
                 </GothicFramedButton>
                 <TeamCombobox
                   onSelect={(v) => {
-                    console.log('v', v)
                     teamStore.setState((s) => ({
                       ...s,
                       ...v,

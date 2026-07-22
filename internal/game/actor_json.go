@@ -89,8 +89,8 @@ func (a Actor) ToJSON(g *Game) actorJSON {
 	}
 
 	weapons := map[uuid.UUID]*weaponJSON{}
-	for wid, w := range a.Weapons {
-		weapons[wid] = P(w.ToJSON(g, a))
+	for slot, w := range a.Weapons {
+		weapons[slot] = P(w.ToJSON(g, a))
 	}
 
 	return actorJSON{

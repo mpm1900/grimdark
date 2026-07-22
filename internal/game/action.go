@@ -22,18 +22,18 @@ const (
 )
 
 type Action struct {
-	ID          uuid.UUID
-	Config      ActionConfig
-	LogTemplate *string
-	Tags        []ActionTag
-
+	ID               uuid.UUID
+	ActiveCheck      func(source Actor) bool
+	Config           ActionConfig
+	DisabledCheck    func(g *Game, source Actor) bool
+	LogTemplate      *string
+	MapContext       func(g *Game, ctx Context, this ActionContext) Context
 	Resolve          ActionResolver
+	Tags             []ActionTag
+	TargetsPredicate Filter[Actor]
 	ValidateRuntime  GameFilter
 	ValidateContext  GameFilter
-	TargetsPredicate Filter[Actor]
-	MapContext       func(g *Game, ctx Context, this ActionContext) Context
-	ActiveCheck      func(source Actor) bool
-	DisabledCheck    func(g *Game, source Actor) bool
+	Weapon           *Weapon
 }
 
 type actionJSON struct {

@@ -19,10 +19,12 @@ const (
 type Weapon struct {
 	Item
 	Actions     []Action
+	Clip        int
 	OffsetStats map[Stat]float64
+	Reload      func(g *Game, parent *Actor, slot uuid.UUID)
+	Slot        uuid.UUID
 	Weight      int
 	WeaponType  WeaponType
-	Reload      func(g *Game, parent *Actor)
 }
 
 type weaponJSON struct {
@@ -37,13 +39,29 @@ type weaponJSON struct {
 }
 
 func (w Weapon) Clone() Weapon {
-	return Weapon{
+	clone := Weapon{
 		Item:        w.Item.Clone(),
 		Actions:     slices.Clone(w.Actions),
+		Clip:        w.Clip,
 		OffsetStats: maps.Clone(w.OffsetStats),
+		Reload:      w.Reload,
+		Slot:        w.Slot,
 		Weight:      w.Weight,
 		WeaponType:  w.WeaponType,
 	}
+	clone.BindActions()
+	return clone
+}
+
+func (w *Weapon) BindActions() {
+	for i := range w.Actions {
+		w.Actions[i].Weapon = w
+	}
+}
+
+func (w *Weapon) AddAction(a Action) {
+	a.Weapon = w
+	w.Actions = append(w.Actions, a)
 }
 
 func (w Weapon) ToJSON(g *Game, source Actor) weaponJSON {

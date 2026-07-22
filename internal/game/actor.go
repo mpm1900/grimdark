@@ -46,7 +46,7 @@ type ActorMeta struct {
 	Seen             bool
 }
 
-type ActorStack string
+type ActorStack = string
 
 const (
 	Wounds ActorStack = "wounds"
@@ -89,13 +89,20 @@ type Actor struct {
 }
 
 func NewActor(class Class, config ActorConfig) *Actor {
+	var stacks = map[ActorStack]float64{
+		Wounds: 0,
+	}
 	var weapons = map[uuid.UUID]Weapon{}
 	var item *Item
 
 	for _, w := range class.Options.Weapons {
-		for sid, wid := range config.Weapons {
+		for slot, wid := range config.Weapons {
 			if w.ID == wid {
-				weapons[sid] = w.Clone()
+				clone := w.Clone()
+				clone.Slot = slot
+				clone.BindActions()
+				stacks[slot.String()] = float64(clone.Clip)
+				weapons[slot] = clone
 			}
 		}
 	}
@@ -120,11 +127,9 @@ func NewActor(class Class, config ActorConfig) *Actor {
 		AffinityResistance: map[Affinity]int{},
 		EffectImmunities:   map[uuid.UUID]struct{}{},
 		OffsetStats:        map[Stat]float64{},
-		Stacks: map[ActorStack]float64{
-			Wounds: 0,
-		},
-		Stages: map[Stat]int{},
-		Stats:  maps.Clone(class.Stats),
+		Stacks:             stacks,
+		Stages:             map[Stat]int{},
+		Stats:              maps.Clone(class.Stats),
 
 		State:  StateGrounded,
 		Status: StatusNone,
@@ -152,8 +157,8 @@ func NewActor(class Class, config ActorConfig) *Actor {
 func (a *Actor) Clone() *Actor {
 	var weapons = map[uuid.UUID]Weapon{}
 	var item *Item = nil
-	for wid, w := range a.Weapons {
-		weapons[wid] = w.Clone()
+	for slot, w := range a.Weapons {
+		weapons[slot] = w.Clone()
 	}
 	if a.Item != nil {
 		clone := a.Item.Clone()
