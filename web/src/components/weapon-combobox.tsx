@@ -48,7 +48,7 @@ function WeaponCombobox({
               <GothicFramedButton className="justify-between">
                 <ComboboxValue>
                   {weapon ? (
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-2 truncate">
                       <div className="flex size-6 shrink-0 items-center justify-center overflow-hidden">
                         {Icon && (
                           <Icon

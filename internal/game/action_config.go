@@ -10,6 +10,7 @@ import (
 const ActionPriorityMovement = 5
 const ActionPriorityProtect = 4
 const ActionPriorityDefault = 0
+const ActionPriorityDelayed = -1
 
 type ActionConfig struct {
 	Accuracy     *float64 `json:"accuracy"`

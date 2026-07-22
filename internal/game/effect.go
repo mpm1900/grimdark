@@ -24,16 +24,18 @@ type EffectState struct {
 	Duration *int
 }
 
+type EffectTag = string
+
 type Effect struct {
 	Mutation
-	ID          uuid.UUID           `json:"ID"`
-	Name        string              `json:"name"`
-	Description string              `json:"description"`
-	Delay       *int                `json:"delay"`
-	Duration    *int                `json:"duration"`
-	Priority    int                 `json:"priority"`
-	Tags        map[string]struct{} `json:"-"`
-	Triggers    []Trigger           `json:"-"`
+	ID          uuid.UUID              `json:"ID"`
+	Name        string                 `json:"name"`
+	Description string                 `json:"description"`
+	Delay       *int                   `json:"delay"`
+	Duration    *int                   `json:"duration"`
+	Priority    int                    `json:"priority"`
+	Tags        map[EffectTag]struct{} `json:"-"`
+	Triggers    []Trigger              `json:"-"`
 	// check is ran on add
 	Check GameFilter `json:"-"`
 	// success logs
@@ -48,7 +50,7 @@ type Modifier struct {
 
 func NewEffect() Effect {
 	id := uuid.New()
-	tags := map[string]struct{}{}
+	tags := map[EffectTag]struct{}{}
 	tags[id.String()] = struct{}{}
 
 	return Effect{
@@ -62,10 +64,9 @@ func NewEffect() Effect {
 	}
 }
 
-func (e *Effect) SetTag(tag string) {
+func (e *Effect) SetTag(tag EffectTag) {
 	e.Tags[tag] = struct{}{}
 }
-
 func (e *Effect) SetID(id uuid.UUID) {
 	old := e.ID
 	delete(e.Tags, old.String())
@@ -85,7 +86,7 @@ func (e *Effect) ApplyState(s EffectState) {
 func (e Effect) Ready() bool {
 	return e.Delay == nil || *e.Delay <= 0
 }
-func (e Effect) HasTag(tag string) bool {
+func (e Effect) HasTag(tag EffectTag) bool {
 	if e.Tags == nil {
 		return false
 	}
@@ -103,7 +104,7 @@ func (e Effect) Clone() Effect {
 		e.Duration = &duration
 	}
 	if e.Tags != nil {
-		tags := make(map[string]struct{}, len(e.Tags))
+		tags := make(map[EffectTag]struct{}, len(e.Tags))
 		for tag := range e.Tags {
 			tags[tag] = struct{}{}
 		}

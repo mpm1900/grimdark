@@ -11,7 +11,7 @@ var CollateralShot = game.Action{
 	Tags: []game.ActionTag{game.ATActor, game.ATWeapon},
 	Config: game.ActionConfig{
 		Name:         "Collateral Shot",
-		Description:  "This action also damages all enemy actors positioned in front of the target. This action is only usable from 2nd or 3rd position.",
+		Description:  "Damages all enemy actors positioned in front of the target. This action is only usable from 2nd or 3rd position.",
 		Affinity:     game.Kinetic,
 		Stat:         game.Ranged,
 		Accuracy:     game.P(0.80),

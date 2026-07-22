@@ -20,7 +20,7 @@ var CalledShot = game.Action{
 		CritStage:    0,
 		CritModifier: 2,
 		TargetCount:  1,
-		Priority:     -1,
+		Priority:     game.ActionPriorityDelayed,
 	},
 	Resolve:          game.MakeAttack(game.AttackConfig{}),
 	ValidateContext:  game.ContextTargetLength(1),

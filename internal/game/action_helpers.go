@@ -13,6 +13,7 @@ type AttackEffectResult func(g *Game, context Context, this *ActionContext, resu
 type StatusEffectResult func(g *Game, context Context, this *ActionContext, result AccuracyResult)
 
 type AttackConfig struct {
+	BeforeAttack     ActionEffect
 	OnSuccess        ActionEffect
 	OnFailure        ActionEffect
 	OnFinally        ActionEffect

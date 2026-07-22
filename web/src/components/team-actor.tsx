@@ -91,10 +91,10 @@ function TeamActor({
             >
               {config.name || actor_class?.name}
             </span>
-          </div>
+          </div>  
         </div>
       </div>
-      {Object.values(config.weapons).every((id) => id !== null) ? (
+      {Object.values(config.weapons).some((id) => id !== null) ? (
         <div className="text-center text-positive font-serif">Ready</div>
       ) : (
         <div className="text-center text-negative font-serif">

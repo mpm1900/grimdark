@@ -12,6 +12,10 @@ func MakeAttack(config AttackConfig) ActionResolver {
 		success := true
 		hits := this.Action.Config.Hits
 
+		if config.BeforeAttack != nil {
+			config.BeforeAttack(g, context, &this)
+		}
+
 		for hit := range hits {
 			if !success && this.Action.Config.StopOnMiss {
 				break
