@@ -35,8 +35,7 @@ export type Actor = {
   stats: Record<Stat, number>
   status: string
   unmodified_stats: Record<Stat, number>
-  weapon_l: Weapon | null
-  weapon_r: Weapon | null
+  weapons: Record<ID, Weapon>
 }
 
 function getHealthRatio(actor: Actor): number {

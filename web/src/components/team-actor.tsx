@@ -52,6 +52,7 @@ function TeamActor({
   config: ActorConfig
   index: number
 }) {
+  console.log(config)
   const actors_query = useQuery(actorsQuery)
   const active_index = useSelector(teamStore, (s) => s.active_actor)
   const actor_class = actors_query.data?.find((a) => a.ID === config.class)
@@ -94,7 +95,7 @@ function TeamActor({
           </div>
         </div>
       </div>
-      {config.weapon_l || config.weapon_r ? (
+      {Object.values(config.weapons).every((id) => id !== null) ? (
         <div className="text-center text-positive font-serif">Ready</div>
       ) : (
         <div className="text-center text-negative font-serif">

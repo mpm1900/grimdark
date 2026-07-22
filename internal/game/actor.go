@@ -61,8 +61,7 @@ type Actor struct {
 	PositionID uuid.UUID
 
 	Item    *Item
-	WeaponL *Weapon
-	WeaponR *Weapon
+	Weapons map[uuid.UUID]Weapon
 
 	ActionStates       map[uuid.UUID]ActionState
 	AffinityDamage     map[Affinity]int
@@ -90,16 +89,14 @@ type Actor struct {
 }
 
 func NewActor(class Class, config ActorConfig) *Actor {
-	var weapon_l *Weapon
-	var weapon_r *Weapon
+	var weapons = map[uuid.UUID]Weapon{}
 	var item *Item
 
 	for _, w := range class.Options.Weapons {
-		if config.WeaponL != nil && w.ID == *config.WeaponL {
-			weapon_l = P(w.Clone())
-		}
-		if config.WeaponR != nil && w.ID == *config.WeaponR {
-			weapon_r = P(w.Clone())
+		for sid, wid := range config.Weapons {
+			if w.ID == wid {
+				weapons[sid] = w.Clone()
+			}
 		}
 	}
 	for _, i := range class.Options.Items {
@@ -115,8 +112,7 @@ func NewActor(class Class, config ActorConfig) *Actor {
 		PositionID: uuid.Nil,
 		Level:      100,
 
-		WeaponL: weapon_l,
-		WeaponR: weapon_r,
+		Weapons: weapons,
 		Item:    item,
 
 		AffinityDamage:     map[Affinity]int{},
@@ -154,16 +150,10 @@ func NewActor(class Class, config ActorConfig) *Actor {
 }
 
 func (a *Actor) Clone() *Actor {
-	var weapon_l *Weapon = nil
-	var weapon_r *Weapon = nil
+	var weapons = map[uuid.UUID]Weapon{}
 	var item *Item = nil
-	if a.WeaponL != nil {
-		clone := a.WeaponL.Clone()
-		weapon_l = &clone
-	}
-	if a.WeaponR != nil {
-		clone := a.WeaponR.Clone()
-		weapon_r = &clone
+	for wid, w := range a.Weapons {
+		weapons[wid] = w.Clone()
 	}
 	if a.Item != nil {
 		clone := a.Item.Clone()
@@ -177,8 +167,7 @@ func (a *Actor) Clone() *Actor {
 		PlayerID:   a.PlayerID,
 		PositionID: a.PositionID,
 
-		WeaponL: weapon_l,
-		WeaponR: weapon_r,
+		Weapons: weapons,
 		Item:    item,
 
 		AffinityDamage:     maps.Clone(a.AffinityDamage),
@@ -242,13 +231,8 @@ func (a *Actor) GetRemainingHealth() float64 {
 
 func (a *Actor) getWeaponEffects() []Effect {
 	effects := map[uuid.UUID]Effect{}
-	if a.WeaponL != nil {
-		for _, e := range a.WeaponL.Effects {
-			effects[e.ID] = e
-		}
-	}
-	if a.WeaponR != nil {
-		for _, e := range a.WeaponR.Effects {
+	for _, w := range a.Weapons {
+		for _, e := range w.Effects {
 			effects[e.ID] = e
 		}
 	}
@@ -324,11 +308,8 @@ func (a *Actor) GetActions() []Action {
 	}
 
 	addActions(a.Class.Actions)
-	if a.WeaponL != nil {
-		addActions(a.WeaponL.Actions)
-	}
-	if a.WeaponR != nil {
-		addActions(a.WeaponR.Actions)
+	for _, w := range a.Weapons {
+		addActions(w.Actions)
 	}
 
 	addActions(GLOBAL_ACTIONS)

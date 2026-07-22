@@ -7,6 +7,7 @@ export type ActorClass = {
   ID: ID
   actions: Action[]
   affinities: Affinity[]
+  arms: number
   effects: Effect[]
   faction: string
   name: string

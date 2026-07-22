@@ -10,6 +10,7 @@ func ProtectedSource() game.Effect {
 	})
 	effect.Name = "Protected"
 	effect.Description = "Protected from attacks and actions."
+	effect.Duration = game.P(1)
 	effect.CheckSuccess = game.EffectGainSourceOnSuccess
 
 	return effect
@@ -23,6 +24,7 @@ func ProtectedWhere(where game.Filter[game.Actor]) game.Effect {
 	})
 	effect.Name = "Protected"
 	effect.Description = "Protected from attacks and actions."
+	effect.Duration = game.P(1)
 
 	return effect
 }

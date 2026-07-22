@@ -8,41 +8,40 @@ import (
 )
 
 type actorJSON struct {
-	ID                 uuid.UUID              `json:"ID"`
-	Actions            []actionJSON           `json:"actions"`
-	ActiveModifiers    []uuid.UUID            `json:"active_modifiers"`
-	Affinities         []Affinity             `json:"affinities"`
-	AffinityDamage     map[Affinity]int       `json:"affinity_damage"`
-	AffinityImmunities map[Affinity]float64   `json:"affinity_immunities"`
-	AffinityResistance map[Affinity]int       `json:"affinity_resistance"`
-	Effects            []Effect               `json:"effects"`
-	Faction            ActorFaction           `json:"faction"`
-	IsActive           bool                   `json:"is_active"`
-	IsAlive            bool                   `json:"is_alive"`
-	IsBulwark          bool                   `json:"is_bulwark"`
-	IsHidden           bool                   `json:"is_hidden"`
-	IsInsulated        bool                   `json:"is_insulated"`
-	IsPlayer           bool                   `json:"is_player"`
-	IsProtected        bool                   `json:"is_protected"`
-	IsStunned          bool                   `json:"is_stunned"`
-	Item               *Item                  `json:"item"`
-	Level              int                    `json:"level"`
-	Name               string                 `json:"name"`
-	OffsetStats        map[Stat]int           `json:"offset_stats"`
-	PlayerID           uuid.UUID              `json:"player_ID"`
-	PositionID         *uuid.UUID             `json:"position_ID"`
-	Race               ActorRace              `json:"race"`
-	Seen               bool                   `json:"-"`
-	SpriteURL          string                 `json:"sprite_url"`
-	Stacks             map[ActorStack]float64 `json:"stacks"`
-	State              ActorState             `json:"state"`
-	Stats              map[Stat]int           `json:"stats"`
-	Stages             map[Stat]int           `json:"stages"`
-	Status             ActorStatus            `json:"status"`
-	UnmodifiedStats    map[Stat]int           `json:"unmodified_stats"`
-	WeaponL            *weaponJSON            `json:"weapon_l"`
-	WeaponR            *weaponJSON            `json:"weapon_r"`
-	Wounds             int                    `json:"wounds"`
+	ID                 uuid.UUID                 `json:"ID"`
+	Actions            []actionJSON              `json:"actions"`
+	ActiveModifiers    []uuid.UUID               `json:"active_modifiers"`
+	Affinities         []Affinity                `json:"affinities"`
+	AffinityDamage     map[Affinity]int          `json:"affinity_damage"`
+	AffinityImmunities map[Affinity]float64      `json:"affinity_immunities"`
+	AffinityResistance map[Affinity]int          `json:"affinity_resistance"`
+	Effects            []Effect                  `json:"effects"`
+	Faction            ActorFaction              `json:"faction"`
+	IsActive           bool                      `json:"is_active"`
+	IsAlive            bool                      `json:"is_alive"`
+	IsBulwark          bool                      `json:"is_bulwark"`
+	IsHidden           bool                      `json:"is_hidden"`
+	IsInsulated        bool                      `json:"is_insulated"`
+	IsPlayer           bool                      `json:"is_player"`
+	IsProtected        bool                      `json:"is_protected"`
+	IsStunned          bool                      `json:"is_stunned"`
+	Item               *Item                     `json:"item"`
+	Level              int                       `json:"level"`
+	Name               string                    `json:"name"`
+	OffsetStats        map[Stat]int              `json:"offset_stats"`
+	PlayerID           uuid.UUID                 `json:"player_ID"`
+	PositionID         *uuid.UUID                `json:"position_ID"`
+	Race               ActorRace                 `json:"race"`
+	Seen               bool                      `json:"-"`
+	SpriteURL          string                    `json:"sprite_url"`
+	Stacks             map[ActorStack]float64    `json:"stacks"`
+	State              ActorState                `json:"state"`
+	Stats              map[Stat]int              `json:"stats"`
+	Stages             map[Stat]int              `json:"stages"`
+	Status             ActorStatus               `json:"status"`
+	UnmodifiedStats    map[Stat]int              `json:"unmodified_stats"`
+	Weapons            map[uuid.UUID]*weaponJSON `json:"weapons"`
+	Wounds             int                       `json:"wounds"`
 }
 
 func (a Actor) ToJSON(g *Game) actorJSON {
@@ -89,15 +88,9 @@ func (a Actor) ToJSON(g *Game) actorJSON {
 		actions[i] = action.ToJSON(g, a)
 	}
 
-	var weapon_l *weaponJSON = nil
-	var weapon_r *weaponJSON = nil
-	if a.WeaponL != nil {
-		clone := a.WeaponL.ToJSON(g, a)
-		weapon_l = &clone
-	}
-	if a.WeaponR != nil {
-		clone := a.WeaponR.ToJSON(g, a)
-		weapon_r = &clone
+	weapons := map[uuid.UUID]*weaponJSON{}
+	for wid, w := range a.Weapons {
+		weapons[wid] = P(w.ToJSON(g, a))
 	}
 
 	return actorJSON{
@@ -109,8 +102,7 @@ func (a Actor) ToJSON(g *Game) actorJSON {
 		PlayerID:           a.PlayerID,
 		PositionID:         NilifyUUID(a.PositionID),
 		Actions:            actions,
-		WeaponL:            weapon_l,
-		WeaponR:            weapon_r,
+		Weapons:            weapons,
 		Item:               a.Item,
 		Effects:            a.GetEffects(),
 		Affinities:         slices.Collect(maps.Keys(a.Class.Affinities)),

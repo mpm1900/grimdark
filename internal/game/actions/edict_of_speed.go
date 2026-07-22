@@ -23,10 +23,18 @@ var EdictOfSpeed = game.Action{
 	ValidateContext:  game.TrueGameFilter,
 	TargetsPredicate: game.NoneActors,
 	ActiveCheck: func(source game.Actor) bool {
-		if source.WeaponL != nil && source.WeaponR != nil {
-			return source.WeaponL.ID == source.WeaponR.ID
+		found := uuid.Nil
+		for _, w := range source.Weapons {
+			if found == uuid.Nil {
+				found = w.Item.ID
+				continue
+			}
+
+			if w.Item.ID != found {
+				return false
+			}
 		}
-		return false
+		return true
 	},
 }
 

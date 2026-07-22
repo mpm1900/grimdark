@@ -17,6 +17,7 @@ type Class struct {
 	ID         uuid.UUID
 	Actions    []Action
 	Affinities map[Affinity]struct{}
+	Arms       int // the amount of weapons that can be equipped
 	Effects    []Effect
 	Faction    ActorFaction
 	Name       string
@@ -24,7 +25,7 @@ type Class struct {
 	Race       ActorRace
 	SpriteURL  string
 	Stats      map[Stat]float64
-	Strength   int // amount of weapons that can be equipped
+	Strength   int // weight of weapons that can be equipped
 }
 
 type classOptionsJSON struct {
@@ -35,6 +36,7 @@ type classJSON struct {
 	ID         uuid.UUID        `json:"ID"`
 	Actions    []actionJSON     `json:"actions"`
 	Affinities []Affinity       `json:"affinities"`
+	Arms       int              `json:"arms"`
 	Effects    []Effect         `json:"effects"`
 	Faction    ActorFaction     `json:"faction"`
 	Name       string           `json:"name"`
@@ -50,6 +52,7 @@ func NewClass() Class {
 		ID:         uuid.New(),
 		Actions:    []Action{},
 		Affinities: map[Affinity]struct{}{},
+		Arms:       2,
 		Effects:    []Effect{},
 		Faction:    FactionImperium,
 		Name:       "",
@@ -85,6 +88,7 @@ func (c Class) Clone() Class {
 		ID:         c.ID,
 		Actions:    slices.Clone(c.Actions),
 		Affinities: maps.Clone(c.Affinities),
+		Arms:       c.Arms,
 		Effects:    slices.Clone(c.Effects),
 		Faction:    c.Faction,
 		Options:    c.Options.Clone(),
@@ -116,6 +120,7 @@ func (c Class) ToJSON() classJSON {
 		ID:         c.ID,
 		Actions:    actions,
 		Affinities: slices.Collect(maps.Keys(c.Affinities)),
+		Arms:       c.Arms,
 		Effects:    c.Effects,
 		Faction:    c.Faction,
 		Name:       c.Name,

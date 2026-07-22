@@ -4,8 +4,7 @@ export const ActorConfigSchema = z.object({
   class: z.uuid().nullable(),
   items: z.uuid().array(),
   name: z.string(),
-  weapon_l: z.uuid().nullable(),
-  weapon_r: z.uuid().nullable(),
+  weapons: z.record(z.uuid(), z.uuid().nullable()),
 })
 
 export const TeamConfigSchema = z.object({

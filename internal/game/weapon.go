@@ -22,6 +22,7 @@ type Weapon struct {
 	OffsetStats map[Stat]float64
 	Weight      int
 	WeaponType  WeaponType
+	Reload      func(g *Game, parent *Actor)
 }
 
 type weaponJSON struct {

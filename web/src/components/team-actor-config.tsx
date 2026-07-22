@@ -9,6 +9,8 @@ import { WeaponCombobox } from './weapon-combobox'
 import { GothicFrame } from './gothic-ui/frame'
 import type { ActorClass } from '#/lib/game/actor-class'
 import type { ActorConfig } from '#/lib/game/team'
+import { entries } from '#/utils/maps'
+import { v4 } from 'uuid'
 
 function WeaponsConfig({
   actor_class,
@@ -19,14 +21,11 @@ function WeaponsConfig({
   value: ActorConfig
   onValueChange: (value: ActorConfig) => void
 }) {
-  const found_l = actor_class.options.weapons.find(
-    (w) => w.ID === value.weapon_l
-  )
-  const found_r = actor_class.options.weapons.find(
-    (w) => w.ID === value.weapon_r
-  )
-  const remaining_weight =
-    actor_class.strength - (found_l?.weight ?? 0) - (found_r?.weight ?? 0)
+  const total_weight = Object.values(value.weapons).reduce((prev, curr) => {
+    const found = actor_class.options.weapons.find((w) => w.ID == curr)
+    return prev + (found?.weight ?? 0)
+  }, 0)
+  const remaining_weight = actor_class.strength - total_weight
 
   return (
     <div className="flex flex-col gap-1">
@@ -34,30 +33,23 @@ function WeaponsConfig({
         <MarkerContent>Weapons</MarkerContent>
       </Marker>
       <div className="grid grid-cols-1">
-        <WeaponCombobox
-          disabled={remaining_weight <= 0 && !value.weapon_r}
-          options={actor_class.options.weapons}
-          value={value.weapon_r}
-          remaining_weight={remaining_weight}
-          onValueChange={(w) => {
-            onValueChange({
-              ...value,
-              weapon_r: w,
-            })
-          }}
-        />
-        <WeaponCombobox
-          disabled={remaining_weight <= 0 && !value.weapon_l}
-          options={actor_class.options.weapons}
-          value={value.weapon_l}
-          remaining_weight={remaining_weight}
-          onValueChange={(w) => {
-            onValueChange({
-              ...value,
-              weapon_l: w,
-            })
-          }}
-        />
+        {entries(value.weapons).map(([slot, weapon]) => (
+          <WeaponCombobox
+            disabled={remaining_weight <= 0 && !weapon}
+            options={actor_class.options.weapons}
+            value={weapon}
+            remaining_weight={remaining_weight}
+            onValueChange={(w) => {
+              onValueChange({
+                ...value,
+                weapons: {
+                  ...value.weapons,
+                  [slot]: w,
+                },
+              })
+            }}
+          />
+        ))}
       </div>
     </div>
   )
@@ -76,12 +68,15 @@ function TeamActorConfig() {
         <div className="flex flex-col gap-1">
           <ActorCombobox
             value={active_actor.class}
-            onValueChange={(c) => {
+            onValueChange={(class_ID) => {
+              const ac = actors_query.data?.find((c) => c.ID === class_ID)
+              if (!ac) return
               updateActor(team.active_actor, (old) => ({
                 ...old,
-                class: c,
-                weapon_l: null,
-                weapon_r: null,
+                class: class_ID,
+                weapons: Object.fromEntries(
+                  Array.from({ length: ac.arms }).map((_) => [v4(), null])
+                ),
               }))
             }}
           />

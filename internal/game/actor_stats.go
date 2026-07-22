@@ -17,14 +17,9 @@ func (a *Actor) getStatOffset(stat Stat) float64 {
 	if !ok {
 		offset = 0
 	}
-	if a.WeaponL != nil {
-		weapon_offset, ok := a.WeaponL.OffsetStats[stat]
-		if ok {
-			offset += weapon_offset
-		}
-	}
-	if a.WeaponR != nil {
-		weapon_offset, ok := a.WeaponR.OffsetStats[stat]
+
+	for _, w := range a.Weapons {
+		weapon_offset, ok := w.OffsetStats[stat]
 		if ok {
 			offset += weapon_offset
 		}

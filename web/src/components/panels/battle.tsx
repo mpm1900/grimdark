@@ -97,9 +97,9 @@ function ActionsPanel({ active_actor }: { active_actor: Actor }) {
       </TinyBadge>
       <Carousel
         setApi={set_carousel_api}
-        className="h-full min-w-0 flex-1 [&_[data-slot=carousel-content]]:h-full"
+        className="h-full min-w-0 flex-1 *:data-[slot=carousel-content]:h-full"
       >
-        <CarouselContent className="-ml-0 h-full">
+        <CarouselContent className="ml-0 h-full">
           {action_pages.map((actions, page_index) => (
             <CarouselItem key={page_index} className="pl-0">
               <div className="grid h-full grid-cols-2 grid-rows-3">
@@ -181,10 +181,9 @@ function BattlePanel() {
     .map((a) => a.stats.actions)
     .reduce((sum, c) => sum + c, 0)
 
-  const weapons = [
-    active_actor?.weapon_l ?? null,
-    active_actor?.weapon_r ?? null,
-  ].sort((a, b) => (b?.weight ?? 0) - (a?.weight ?? 0))
+  const weapons = Object.values(active_actor?.weapons ?? {}).sort(
+    (a, b) => (b?.weight ?? 0) - (a?.weight ?? 0)
+  )
   const main_weapon = weapons[0]
   const secondary_weapon = weapons[1]
 
