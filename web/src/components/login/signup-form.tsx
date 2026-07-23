@@ -47,7 +47,7 @@ function SignupForm() {
                 <Input
                   id="signup-username"
                   type="text"
-                  placeholder="battle-brother"
+                  placeholder="username"
                   value={field.state.value}
                   onChange={(e) => field.handleChange(e.target.value)}
                 />

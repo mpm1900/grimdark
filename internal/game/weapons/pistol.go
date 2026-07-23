@@ -16,7 +16,8 @@ var Pistol = game.Weapon{
 		Effects:     []game.Effect{effects.AuraOfWeakness},
 	},
 	Actions: []game.Action{
-		actions.Slash, actions.Blast, actions.SwordsDance, actions.EdictOfSpeed, actions.BloodLeech,
+		actions.BurstFire,
+		actions.EdictOfSpeed,
 		actions.CalledShot,
 	},
 	OffsetStats: map[game.Stat]float64{

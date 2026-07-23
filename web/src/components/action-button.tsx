@@ -11,7 +11,7 @@ import {
   ItemMedia,
   ItemTitle,
 } from './ui/item'
-import { StatIcon } from './stat-name'
+import { StatIcon, statVariants } from './stat-name'
 import { GothicFramedButton } from './gothic-ui/button'
 import { useSelector } from '@tanstack/react-store'
 import { gameStore } from '#/lib/stores/game'
@@ -96,7 +96,10 @@ function ActionButton({
         <ItemTitle
           className={cn(
             'text-white gap-1 font-serif',
-            action.is_disabled && 'text-white/60'
+            action.is_disabled && 'text-white/60',
+            statVariants({
+              stat: action.config.stat,
+            })
           )}
         >
           {action.config.name}

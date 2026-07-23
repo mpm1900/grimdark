@@ -1,6 +1,7 @@
 package effects
 
 import (
+	"fmt"
 	"grimdark/internal/game"
 
 	"github.com/google/uuid"
@@ -28,7 +29,7 @@ func auraOfWeakness() game.Effect {
 	})
 
 	effect.Name = "Aura of Weakness"
-	effect.Description = "Other active actors are Weakend."
+	effect.Description = fmt.Sprintf("Other active actors are Weakend. (%s)", Weakened().Description)
 	return effect
 }
 

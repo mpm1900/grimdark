@@ -117,7 +117,7 @@ function ActionsPanel({ active_actor }: { active_actor: Actor }) {
             </TinyBadge>
           </TabsTrigger>
         </TabsList>
-        <TabsContent value="actions" className="relative h-full">
+        <TabsContent value="actions" className="relative h-full flex">
           <Carousel
             setApi={set_carousel_api}
             className="h-full min-w-0 flex-1 *:data-[slot=carousel-content]:h-full"
