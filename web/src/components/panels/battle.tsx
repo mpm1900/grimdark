@@ -33,6 +33,7 @@ import {
   CarouselContent,
   CarouselItem,
 } from '../ui/carousel'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs'
 
 const ACTIONS_PER_PAGE = 6
 
@@ -88,80 +89,109 @@ function ActionsPanel({ active_actor }: { active_actor: Actor }) {
   }, [active_actor.ID, carousel_api])
 
   return (
-    <GothicCard className="relative flex-row h-full max-w-1/3 bg-neutral-950 z-10">
-      <TinyBadge
-        variant="default"
-        className="absolute z-10 px-1 -top-1.5 border-t-0 left-1/2 -translate-x-1/2 rounded-xs rounded-b-sm font-cinzel border-white/30 text-foreground/60"
-      >
-        Actions ({active_actor.stats.actions})
-      </TinyBadge>
-      <Carousel
-        setApi={set_carousel_api}
-        className="h-full min-w-0 flex-1 *:data-[slot=carousel-content]:h-full"
-      >
-        <CarouselContent className="ml-0 h-full">
-          {action_pages.map((actions, page_index) => (
-            <CarouselItem key={page_index} className="pl-0">
-              <div className="grid h-full grid-cols-2 grid-rows-3">
-                {actions.map((action) => (
-                  <ActionContextDialog
-                    key={action.ID}
-                    actor={active_actor}
-                    action={action}
-                    enabled={!action.is_disabled}
-                  >
-                    <DialogTrigger asChild>
-                      <ActionButton
-                        action={action}
-                        actor={active_actor}
-                        disabled={remaining_ap === 0 || active_actor.is_stunned}
-                      />
-                    </DialogTrigger>
-                  </ActionContextDialog>
-                ))}
-              </div>
-            </CarouselItem>
-          ))}
-        </CarouselContent>
-        <div className="absolute -bottom-3 left-1/2 -translate-x-1/2 flex">
-          <GothicFramedButton
-            variant="red"
-            className="p-0 size-6"
-            disabled={!can_scroll_previous}
-            onClick={() => carousel_api?.scrollPrev()}
+    <GothicCard className="relative flex-row h-full w-1/3 bg-neutral-950 z-10">
+      <Tabs defaultValue="actions" className="relative h-full w-full">
+        <TabsList className="absolute z-10 select-none -top-1.75 border-t-0 left-1/2 -translate-x-1/2 flex -space-x-px h-auto rounded-none bg-transparent p-0 group-data-[orientation=horizontal]/tabs:h-auto">
+          <TabsTrigger
+            value="actions"
+            asChild
+            className="w-18 text-center bg-neutral-950! data-[state=active]:bg-neutral-900! text-[10px] leading-3"
           >
-            <ChevronLeft />
-          </GothicFramedButton>
-          <GothicFramedButton
-            variant="red"
-            className="p-0 size-6"
-            disabled={!can_scroll_next}
-            onClick={() => carousel_api?.scrollNext()}
-          >
-            <ChevronRight />
-          </GothicFramedButton>
-        </div>
-      </Carousel>
-      <div className="flex flex-col justify-between">
-        {active_actor?.actions
-          .filter((a) => a.tags.includes('system'))
-          .map((action) => (
-            <ActionContextDialog
-              key={action.ID}
-              actor={active_actor}
-              action={action}
-              enabled={!action.is_disabled}
+            <TinyBadge
+              variant="default"
+              className="block rounded-xs py-0 px-1 rounded-b-sm font-cinzel border-white/30! text-foreground/60"
             >
-              <DialogTrigger asChild>
-                <SystemActionButton
-                  action={action}
+              Actions
+            </TinyBadge>
+          </TabsTrigger>
+          <TabsTrigger
+            value="info"
+            asChild
+            className="w-18 text-center bg-neutral-950! data-[state=active]:bg-neutral-900! text-[10px] leading-3"
+          >
+            <TinyBadge
+              variant="default"
+              className="block rounded-xs py-0 px-1 rounded-b-sm font-cinzel border-white/30! text-foreground/60"
+            >
+              Info
+            </TinyBadge>
+          </TabsTrigger>
+        </TabsList>
+        <TabsContent value="actions" className="relative h-full">
+          <Carousel
+            setApi={set_carousel_api}
+            className="h-full min-w-0 flex-1 *:data-[slot=carousel-content]:h-full"
+          >
+            <CarouselContent className="ml-0 h-full">
+              {action_pages.map((actions, page_index) => (
+                <CarouselItem key={page_index} className="pl-0">
+                  <div className="grid h-full grid-cols-2 grid-rows-3">
+                    {actions.map((action) => (
+                      <ActionContextDialog
+                        key={action.ID}
+                        actor={active_actor}
+                        action={action}
+                        enabled={!action.is_disabled}
+                      >
+                        <DialogTrigger asChild>
+                          <ActionButton
+                            action={action}
+                            actor={active_actor}
+                            disabled={
+                              remaining_ap === 0 || active_actor.is_stunned
+                            }
+                          />
+                        </DialogTrigger>
+                      </ActionContextDialog>
+                    ))}
+                  </div>
+                </CarouselItem>
+              ))}
+            </CarouselContent>
+            <div className="absolute -bottom-3 left-1/2 -translate-x-1/2 flex">
+              <GothicFramedButton
+                variant="red"
+                className="p-0 size-6"
+                disabled={!can_scroll_previous}
+                onClick={() => carousel_api?.scrollPrev()}
+              >
+                <ChevronLeft />
+              </GothicFramedButton>
+              <GothicFramedButton
+                variant="red"
+                className="p-0 size-6"
+                disabled={!can_scroll_next}
+                onClick={() => carousel_api?.scrollNext()}
+              >
+                <ChevronRight />
+              </GothicFramedButton>
+            </div>
+          </Carousel>
+          <div className="flex flex-col justify-between">
+            {active_actor?.actions
+              .filter((a) => a.tags.includes('system'))
+              .map((action) => (
+                <ActionContextDialog
+                  key={action.ID}
                   actor={active_actor}
-                  disabled={remaining_ap === 0 || active_actor.is_stunned}
-                />
-              </DialogTrigger>
-            </ActionContextDialog>
-          ))}
-      </div>
+                  action={action}
+                  enabled={!action.is_disabled}
+                >
+                  <DialogTrigger asChild>
+                    <SystemActionButton
+                      action={action}
+                      actor={active_actor}
+                      disabled={remaining_ap === 0 || active_actor.is_stunned}
+                    />
+                  </DialogTrigger>
+                </ActionContextDialog>
+              ))}
+          </div>
+        </TabsContent>
+        <TabsContent value="info" className="relative w-full">
+          <ActorLore actor={active_actor} className="" />
+        </TabsContent>
+      </Tabs>
     </GothicCard>
   )
 }
