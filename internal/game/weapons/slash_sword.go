@@ -14,7 +14,7 @@ var SlashSword = game.Weapon{
 		Description: "A large sword, designed for slashing.",
 		Effects:     []game.Effect{},
 	},
-	Actions: []game.Action{actions.Slash, actions.Blast, actions.SwordsDance},
+	Actions: []game.Action{actions.Slash, actions.SwordsDance},
 	OffsetStats: map[game.Stat]float64{
 		game.Melee: 20,
 	},

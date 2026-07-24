@@ -35,6 +35,7 @@ function WeaponsConfig({
       <div className="grid grid-cols-1">
         {entries(value.weapons).map(([slot, weapon]) => (
           <WeaponCombobox
+            key={slot}
             options={actor_class.options.weapons}
             value={weapon}
             remaining_weight={remaining_weight}

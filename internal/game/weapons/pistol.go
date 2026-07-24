@@ -17,7 +17,7 @@ var Pistol = game.Weapon{
 	},
 	Actions: []game.Action{
 		actions.BurstFire,
-		actions.EdictOfSpeed,
+		actions.FiftyFifty,
 		actions.CalledShot,
 	},
 	OffsetStats: map[game.Stat]float64{

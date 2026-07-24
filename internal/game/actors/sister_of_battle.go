@@ -42,7 +42,7 @@ func newSisterOfBattle() game.Class {
 			items.TestItem,
 		},
 		Weapons: []game.Weapon{
-			weapons.SlashSword,
+			weapons.FireTome,
 			weapons.Greatsword,
 			weapons.Pistol,
 		},

@@ -29,21 +29,35 @@ function ActionTooltip({
         <div
           className={statVariants({
             stat: action.config.stat,
-            className: 'font-semibold text-foreground/80 px-1',
+            className: 'font-semibold text-lg text-foreground/80 px-1',
           })}
         >
           {action.config.name}
         </div>
-        <div className="grid grid-cols-2 text-center pr-14">
-          <span>{action.config.power || '-'}</span>
-          <span>
-            {action.config.accuracy ? action.config.accuracy * 100 + '%' : '-'}
-          </span>
+        <div className="flex flex-col px-1 gap-0 pr-14 text-sm leading-4">
+          {!!action.config.power && (
+            <div>
+              <span className="text-foreground/50 text-xs">Power:</span>{' '}
+              <span className="font-bold">{action.config.power}</span>
+            </div>
+          )}
+          {action.config.accuracy && (
+            <div>
+              <span className="text-foreground/50 text-xs">Accuracy:</span>{' '}
+              <span className="font-bold">
+                {action.config.accuracy * 100 + '%'}
+              </span>
+            </div>
+          )}
         </div>
         <div className="text-xs p-1">
           {action.config.description}
           {action.config.range && (
-            <span> Range of {action.config.range} tile.</span>
+            <span>
+              {' '}
+              Range of {action.config.range} tile
+              {action.config.range != 1 && 's'}.
+            </span>
           )}
           {action.config.cooldown > 0 && (
             <span>{` ${action.config.cooldown} turn cooldown.`}</span>

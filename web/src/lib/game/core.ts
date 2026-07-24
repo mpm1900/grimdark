@@ -33,7 +33,7 @@ export type Phase = 'init' | 'start' | 'main' | 'end' | 'cleanup'
 
 export type Status = 'idle' | 'running' | 'waiting'
 
-export type WeaponType = 'sword' | 'big-sword' | 'pistol' | 'rifle'
+export type WeaponType = 'sword' | 'big-sword' | 'pistol' | 'rifle' | 'tome'
 
 export type Bindable<T> = {
   ID: ID

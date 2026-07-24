@@ -1,5 +1,5 @@
 import type { WeaponType } from '#/lib/game/core'
-import { GiKatana, GiWinchesterRifle } from 'react-icons/gi'
+import { GiBookmarklet, GiKatana, GiWinchesterRifle } from 'react-icons/gi'
 import type { IconType } from 'react-icons/lib'
 
 const BigSword: IconType = (props) => {
@@ -67,4 +67,5 @@ export const WEAPON_ICONS: Record<WeaponType, IconType> = {
   pistol: Pistol,
   sword: GiKatana,
   rifle: GiWinchesterRifle,
+  tome: GiBookmarklet,
 }
