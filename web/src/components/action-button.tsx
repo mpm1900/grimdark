@@ -107,7 +107,7 @@ function ActionButton({
         <ItemDescription className="block min-w-0 max-w-full overflow-hidden text-ellipsis whitespace-nowrap text-left font-serif text-foreground/70">
           {!!actor_command && status === 'idle' && (
             <span
-              className="hover:underline isolate p-0 min-h-9 cursor-pointer"
+              className="hover:underline isolate p-0 min-h-9 cursor-pointer text-white"
               onClick={() => {
                 sendContextMessage({
                   request_ID: v4(),
@@ -117,7 +117,7 @@ function ActionButton({
                 })
               }}
             >
-              [Cancel]
+              {'('}Cancel{')'}
             </span>
           )}{' '}
           {!action.config.power && (

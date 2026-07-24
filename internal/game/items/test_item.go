@@ -12,7 +12,7 @@ func testItem() game.Item {
 		a.Stages[game.Accuracy] = a.Stages[game.Accuracy] + 1
 		a.Stages[game.CriticalChance] = a.Stages[game.CriticalChance] + 1
 		a.Stages[game.CriticalDamage] = a.Stages[game.CriticalDamage] - 1
-		a.AffinityResistance[game.Kinetic] += 1
+		a.AffinityResistance[game.Physical] += 1
 		return a
 	})
 	effect.Triggers = []game.Trigger{

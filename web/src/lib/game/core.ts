@@ -9,7 +9,14 @@ function isIdNull(id: ID | null | undefined): boolean {
 }
 
 export type Affinity =
-  'arcane' | 'cryo' | 'fire' | 'kinetic' | 'lightning' | 'poison' | 'psychic'
+  | 'arcane'
+  | 'blood'
+  | 'holy'
+  | 'fire'
+  | 'physical'
+  | 'lightning'
+  | 'poison'
+  | 'psychic'
 
 export type Stat =
   | 'health'
@@ -113,9 +120,10 @@ export const STAT_SLUGS: Record<Stat, string> = {
 
 export const AFFINITIES: Affinity[] = [
   'arcane',
-  'cryo',
+  'blood',
+  'holy',
   'fire',
-  'kinetic',
+  'physical',
   'lightning',
   'poison',
   'psychic',
@@ -126,53 +134,38 @@ export const AFFINITY_MATRIX: Record<
   Partial<Record<Affinity, number>>
 > = {
   arcane: {
-    arcane: 2,
-    fire: 2,
-    lightning: 2,
-    poison: -2,
-    psychic: -2,
-  },
-  cryo: {
-    cryo: -2,
+    holy: 2,
     fire: -2,
-    kinetic: -2,
-    lightning: 2,
+  },
+  blood: {
+    fire: 2,
+    lightning: -2,
+  },
+  holy: {
+    arcane: -2,
     poison: 2,
   },
   fire: {
-    arcane: -2,
-    cryo: 2,
+    arcane: 2,
+    blood: -2,
     fire: -2,
-    poison: 2,
-    psychic: -2,
+    poison: -2,
+    psychic: 2,
   },
-  kinetic: {
-    cryo: 2,
-    lightning: -2,
-    poison: 2,
+  physical: {
     psychic: -2,
   },
   lightning: {
-    arcane: -2,
-    cryo: -2,
-    kinetic: 2,
-    lightning: -2,
-    psychic: 2,
+    blood: 2,
+    physical: -2,
   },
   poison: {
-    arcane: 2,
-    cryo: -2,
+    holy: -2,
     fire: 2,
-    kinetic: -2,
     poison: -2,
   },
   psychic: {
-    arcane: 2,
-    fire: 2,
-    kinetic: 2,
-    lightning: 2,
-    poison: -2,
-    psychic: -2,
+    physical: 2,
   },
 }
 

@@ -1,5 +1,4 @@
 import type { Affinity } from '#/lib/game/core'
-import { FaBiohazard } from 'react-icons/fa6'
 import {
   GiPowerLightning,
   GiSmallFire,
@@ -8,14 +7,17 @@ import {
   GiBleedingEye,
   GiPerpendicularRings,
   GiFly,
+  GiDeathJuice,
+  GiHolySymbol,
 } from 'react-icons/gi'
 import type { IconType } from 'react-icons/lib'
 
 export const AFFINITY_ICONS: Record<Affinity, IconType> = {
   arcane: GiHadesSymbol,
-  cryo: GiBeveledStar,
+  blood: GiDeathJuice,
+  holy: GiHolySymbol,
   fire: GiSmallFire,
-  kinetic: GiPerpendicularRings,
+  physical: GiPerpendicularRings,
   lightning: GiPowerLightning,
   poison: GiFly,
   psychic: GiBleedingEye,

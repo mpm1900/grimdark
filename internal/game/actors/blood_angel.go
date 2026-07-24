@@ -15,8 +15,8 @@ func newBloodAngel() game.Class {
 	class.Name = "Blood Angel"
 	class.SpriteURL = "/img/spm2.png"
 	class.Affinities = map[game.Affinity]struct{}{
-		game.Arcane:  {},
-		game.Kinetic: {},
+		game.Arcane:   {},
+		game.Physical: {},
 	}
 	class.Stats = map[game.Stat]float64{
 		game.Health:         100,

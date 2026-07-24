@@ -4,9 +4,10 @@ type Affinity string
 
 const (
 	Arcane    Affinity = "arcane"
-	Cryo      Affinity = "cryo"
+	Blood     Affinity = "blood"
+	Holy      Affinity = "holy"
 	Fire      Affinity = "fire"
-	Kinetic   Affinity = "kinetic"
+	Physical  Affinity = "physical"
 	Lightning Affinity = "lightning"
 	Poison    Affinity = "poison"
 	Psychic   Affinity = "psychic"
@@ -14,53 +15,84 @@ const (
 
 var AFFINITY_MATRIX = map[Affinity]map[Affinity]int{
 	Arcane: {
-		Arcane:    2,
-		Fire:      2,
-		Lightning: 2,
-		Poison:    -2,
-		Psychic:   -2,
-	},
-	Cryo: {
-		Cryo:      -2,
+		Arcane:    0,
+		Blood:     0,
+		Holy:      2,
 		Fire:      -2,
-		Kinetic:   -2,
-		Lightning: 2,
+		Physical:  0,
+		Lightning: 0,
+		Poison:    0,
+		Psychic:   0,
+	},
+	Blood: {
+		Arcane:    0,
+		Blood:     0,
+		Holy:      0,
+		Fire:      2,
+		Physical:  0,
+		Lightning: -2,
+		Poison:    0,
+		Psychic:   0,
+	},
+	Holy: {
+		Arcane:    -2,
+		Blood:     0,
+		Holy:      0,
+		Fire:      0,
+		Physical:  0,
+		Lightning: 0,
 		Poison:    2,
+		Psychic:   0,
 	},
 	Fire: {
-		Arcane:  -2,
-		Cryo:    2,
-		Fire:    -2,
-		Poison:  2,
-		Psychic: -2,
+		Arcane:    2,
+		Blood:     -2,
+		Holy:      0,
+		Fire:      -2,
+		Physical:  0,
+		Lightning: 0,
+		Poison:    -2,
+		Psychic:   2,
 	},
-	Kinetic: {
-		Cryo:      2,
-		Lightning: -2,
-		Poison:    2,
+	Physical: {
+		Arcane:    0,
+		Blood:     0,
+		Holy:      0,
+		Fire:      0,
+		Physical:  0,
+		Lightning: 0,
+		Poison:    0,
 		Psychic:   -2,
 	},
 	Lightning: {
-		Arcane:    -2,
-		Cryo:      -2,
-		Kinetic:   2,
-		Lightning: -2,
-		Psychic:   2,
+		Arcane:    0,
+		Blood:     2,
+		Holy:      0,
+		Fire:      0,
+		Physical:  -2,
+		Lightning: 0,
+		Poison:    0,
+		Psychic:   0,
 	},
 	Poison: {
-		Arcane:  2,
-		Cryo:    -2,
-		Fire:    2,
-		Kinetic: -2,
-		Poison:  -2,
+		Arcane:    0,
+		Blood:     0,
+		Holy:      -2,
+		Fire:      2,
+		Physical:  0,
+		Lightning: 0,
+		Poison:    -2,
+		Psychic:   0,
 	},
 	Psychic: {
-		Arcane:    2,
-		Fire:      2,
-		Kinetic:   2,
-		Lightning: -2,
-		Poison:    -2,
-		Psychic:   -2,
+		Arcane:    0,
+		Blood:     0,
+		Holy:      0,
+		Fire:      0,
+		Physical:  2,
+		Lightning: 0,
+		Poison:    0,
+		Psychic:   0,
 	},
 }
 

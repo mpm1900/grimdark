@@ -12,7 +12,7 @@ var BurstFire = game.Action{
 	Config: game.ActionConfig{
 		Name:         "Burst Fire",
 		Description:  "Hits 8 times, but has low accuracy.",
-		Affinity:     game.Kinetic,
+		Affinity:     game.Physical,
 		Stat:         game.Ranged,
 		Accuracy:     game.P(0.40),
 		Power:        20,

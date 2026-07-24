@@ -13,7 +13,7 @@ var SwordsDance = game.Action{
 	Config: game.ActionConfig{
 		Name:        "Swords Dance",
 		Description: "Raises user's Melee and Speed.",
-		Affinity:    game.Kinetic,
+		Affinity:    game.Physical,
 		TargetCount: 0,
 	},
 	Resolve: game.AddSourceEffects(

@@ -12,7 +12,7 @@ var PiercingShot = game.Action{
 	Config: game.ActionConfig{
 		Name:         "Piercing Shot",
 		Description:  "Damages all enemy actors positioned behind the target. This action is only usable from 2nd or 3rd position.",
-		Affinity:     game.Kinetic,
+		Affinity:     game.Physical,
 		Stat:         game.Ranged,
 		Accuracy:     game.P(0.80),
 		Power:        85,

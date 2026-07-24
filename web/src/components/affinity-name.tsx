@@ -9,16 +9,18 @@ const affinityVariants = cva('capitalize', {
   variants: {
     affinity: {
       arcane: 'text-arcane',
+      blood: 'text-blood',
       cryo: 'text-cryo',
+      holy: 'text-holy',
       fire: 'text-fire',
-      kinetic: 'text-kinetic',
+      physical: 'text-physical',
       lightning: 'text-lightning',
       poison: 'text-poison',
       psychic: 'text-psychic',
     },
   },
   defaultVariants: {
-    affinity: 'kinetic',
+    affinity: 'physical',
   },
 })
 

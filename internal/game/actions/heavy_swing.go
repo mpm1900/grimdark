@@ -13,7 +13,7 @@ var HeavySwing = game.Action{
 	Config: game.ActionConfig{
 		Name:         "Heavy Swing",
 		Description:  "This action lowers the user's Martial Defense stat. This action is only usable from 1st position.",
-		Affinity:     game.Kinetic,
+		Affinity:     game.Physical,
 		Stat:         game.Melee,
 		Power:        120,
 		Accuracy:     game.P(0.9),

@@ -12,7 +12,7 @@ var Cleave = game.Action{
 	Config: game.ActionConfig{
 		Name:         "Cleave",
 		Description:  "Damages all enemy actors in 1st and 2nd position.",
-		Affinity:     game.Kinetic,
+		Affinity:     game.Physical,
 		Stat:         game.Melee,
 		Accuracy:     game.P(0.90),
 		Power:        70,

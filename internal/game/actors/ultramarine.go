@@ -53,7 +53,7 @@ func newUltramarine() game.Class {
 	class.Name = "Storm Warden"
 	class.SpriteURL = "/img/spm.png"
 	class.Affinities = map[game.Affinity]struct{}{
-		game.Kinetic: {},
+		game.Physical: {},
 	}
 	class.Stats = map[game.Stat]float64{
 		game.Health:         100,

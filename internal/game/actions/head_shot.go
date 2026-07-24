@@ -12,7 +12,7 @@ var Headshot = game.Action{
 	Config: game.ActionConfig{
 		Name:         "Headshot",
 		Description:  "This action always results in a critical hit. This action is only usable from 2nd or 3rd position.",
-		Affinity:     game.Kinetic,
+		Affinity:     game.Physical,
 		Stat:         game.Ranged,
 		Power:        75,
 		Accuracy:     game.P(0.90),

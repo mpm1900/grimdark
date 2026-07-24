@@ -12,7 +12,7 @@ var Charge = game.Action{
 	Config: game.ActionConfig{
 		Name:         "Charge",
 		Description:  "Charges forward to 1st position to attack. This action is only usable from 3rd or 2nd position.",
-		Affinity:     game.Kinetic,
+		Affinity:     game.Physical,
 		Stat:         game.Melee,
 		Power:        90,
 		Accuracy:     game.P(1.0),

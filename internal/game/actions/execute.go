@@ -13,7 +13,7 @@ var Execute = game.Action{
 	Config: game.ActionConfig{
 		Name:         "Execute",
 		Description:  "Deals massive damage. User is stunned next turn unless this action killed the target. This action is only usable from 1st position.",
-		Affinity:     game.Kinetic,
+		Affinity:     game.Physical,
 		Stat:         game.Melee,
 		Power:        120,
 		Accuracy:     game.P(0.9),

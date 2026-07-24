@@ -12,7 +12,7 @@ var FiftyFifty = game.Action{
 	Config: game.ActionConfig{
 		Name:         "Fifty Fifty",
 		Description:  "Hits 2 times, but has low accuracy.",
-		Affinity:     game.Kinetic,
+		Affinity:     game.Physical,
 		Stat:         game.Ranged,
 		Accuracy:     game.P(0.50),
 		Power:        72,

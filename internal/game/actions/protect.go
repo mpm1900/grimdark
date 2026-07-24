@@ -16,7 +16,7 @@ func protect() game.Action {
 		Config: game.ActionConfig{
 			Name:        "Protect",
 			Description: "User is protected from attacks and actions.",
-			Affinity:    game.Kinetic,
+			Affinity:    game.Physical,
 			TargetCount: 0,
 			Priority:    game.ActionPriorityProtect,
 			Cooldown:    1,

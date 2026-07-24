@@ -91,11 +91,13 @@
   --martial: oklch(91% 0.096 180.426);
   --special: oklch(82.7% 0.119 306.383);
 
-  --arcane: oklch(63.7% 0.237 25.331);
+  --arcane: oklch(55.4% 0.046 257.417);
+  --blood: oklch(44.4% 0.177 26.899);
   --cryo: oklch(70.7% 0.165 254.624);
+  --holy: oklch(97.3% 0.071 103.193);
   --fire: oklch(70.5% 0.213 47.604);
-  --kinetic: oklch(95.4% 0.038 75.164);
-  --lightning: oklch(94.5% 0.129 101.54);
+  --physical: oklch(95.4% 0.038 75.164);
+  --lightning: oklch(92.4% 0.12 95.746);
   --poison: oklch(76.8% 0.233 130.85);
   --psychic: oklch(70.2% 0.183 293.541);
 }
@@ -157,9 +159,10 @@
   --color-martial: var(--martial);
 
   --color-arcane: var(--arcane);
+  --color-blood: var(--blood);
   --color-cryo: var(--cryo);
   --color-fire: var(--fire);
-  --color-kinetic: var(--kinetic);
+  --color-physical: var(--physical);
   --color-lightning: var(--lightning);
   --color-poison: var(--poison);
   --color-psychic: var(--psychic);

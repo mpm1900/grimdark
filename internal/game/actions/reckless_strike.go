@@ -12,7 +12,7 @@ var RecklessStrike = game.Action{
 	Config: game.ActionConfig{
 		Name:         "Reckless Strike",
 		Description:  "Deals heavy damage, but user takes 1/3 of damage dealt as recoil. This action is only usable in 1st position.",
-		Affinity:     game.Kinetic,
+		Affinity:     game.Physical,
 		Stat:         game.Melee,
 		Accuracy:     game.P(0.90),
 		Power:        130,

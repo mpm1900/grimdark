@@ -15,7 +15,7 @@ func newTechPriest() game.Class {
 	class.Name = "Tech Priest"
 	class.SpriteURL = "/img/thp.png"
 	class.Affinities = map[game.Affinity]struct{}{
-		game.Kinetic:   {},
+		game.Physical:  {},
 		game.Lightning: {},
 	}
 	class.Stats = map[game.Stat]float64{

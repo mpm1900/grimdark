@@ -13,7 +13,7 @@ var LockOn = game.Action{
 	Config: game.ActionConfig{
 		Name:        "Lock On",
 		Description: "Raises users's ranged and accuracy stats by 1 stage.",
-		Affinity:    game.Kinetic,
+		Affinity:    game.Physical,
 		TargetCount: 0,
 	},
 	Resolve: game.AddSourceEffects(

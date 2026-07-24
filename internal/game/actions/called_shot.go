@@ -12,7 +12,7 @@ var CalledShot = game.Action{
 	Config: game.ActionConfig{
 		Name:         "Called Shot",
 		Description:  "This action cannot miss but is -1 priority. This action is only usable from the 3rd position.",
-		Affinity:     game.Kinetic,
+		Affinity:     game.Physical,
 		Stat:         game.Ranged,
 		Power:        95,
 		Lifesteal:    0,
