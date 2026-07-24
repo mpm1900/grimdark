@@ -35,6 +35,15 @@ type ActionConfig struct {
 	pending_damage map[uuid.UUID]float64
 }
 
+type DamageConfig struct {
+	Source          Actor
+	Target          Actor
+	Context         Context
+	RandomRoll      float64
+	PendingDamage   float64
+	UseBaseAccuracy bool
+}
+
 /**
  * notes about AccuracyResults
  *  - actor.IsProtected is checked for every action that goes through accuracy checks
@@ -62,30 +71,30 @@ type DamageResult struct {
 	Raw               float64
 }
 
-func (ac *ActionConfig) GetBaseDamage(source, target Actor, useBaseStats bool) float64 {
-	adp_ratio := ac.Stat.GetRatio(source, target, useBaseStats) * ac.Power
+func (ac *ActionConfig) GetBaseDamage(source, target Actor, use_base_stats bool) float64 {
+	adp_ratio := ac.Stat.GetRatio(source, target, use_base_stats) * ac.Power
 	level_mod := float64(source.Level*2)/5 + 2
 	base := (adp_ratio*level_mod)/50 + 2
 	return base
 }
 
-func (ac *ActionConfig) GetAccuracy(source, target Actor, useBaseStats bool) float64 {
+func (ac *ActionConfig) GetAccuracy(source, target Actor, use_base_stats bool) float64 {
 	if ac.Accuracy == nil {
 		return 1.0
 	}
 
-	ratio := Accuracy.GetRatio(source, target, useBaseStats)
+	ratio := Accuracy.GetRatio(source, target, use_base_stats)
 	return ratio * *ac.Accuracy
 }
 
-func (ac *ActionConfig) GetAccuracyResult(source, target Actor) AccuracyResult {
+func (ac *ActionConfig) GetAccuracyResult(source, target Actor, use_base_stats bool) AccuracyResult {
 	accuracy_roll := rand.Float64()
 	critical_roll := rand.Float64()
 	critical_stage := ac.CritStage + source.Stages[CriticalChance]
 	critical_chance := GetCriticalChance(critical_stage)
 	critical := critical_chance > critical_roll
 
-	accuracy := ac.GetAccuracy(source, target, critical)
+	accuracy := ac.GetAccuracy(source, target, critical || use_base_stats)
 	success := ac.Accuracy == nil || accuracy > accuracy_roll
 
 	if !success {
@@ -111,20 +120,20 @@ const MULTI_TARGET_MODIFIER = 0.75
 const DAMAGE_RAND_MIN = 0.8
 const DAMAGE_RAND_MAX = 1.05
 
-func (ac *ActionConfig) GetDamageResult(source, target Actor, context Context, random_roll float64, pending_damage float64) DamageResult {
+func (ac *ActionConfig) GetDamageResult(config DamageConfig) DamageResult {
 	multipliers := 1.0
-	accuracy := ac.GetAccuracyResult(source, target)
-	affinity, total_stage, base_stage := ac.Affinity.GetAffinityModifier(source, target)
-	base := ac.GetBaseDamage(source, target, accuracy.Critical)
+	accuracy := ac.GetAccuracyResult(config.Source, config.Target, config.UseBaseAccuracy)
+	affinity, total_stage, base_stage := ac.Affinity.GetAffinityModifier(config.Source, config.Target)
+	base := ac.GetBaseDamage(config.Source, config.Target, accuracy.Critical)
 	raw := base * affinity
 	multipliers *= affinity
 
 	if accuracy.Critical {
-		raw = raw * ac.CritModifier * source.Stats[CriticalDamage]
-		multipliers *= ac.CritModifier * source.Stats[CriticalDamage]
+		raw = raw * ac.CritModifier * config.Source.Stats[CriticalDamage]
+		multipliers *= ac.CritModifier * config.Source.Stats[CriticalDamage]
 	}
 
-	if context.GetTargetCount() > 1 {
+	if config.Context.GetTargetCount() > 1 {
 		raw = raw * MULTI_TARGET_MODIFIER
 		multipliers *= MULTI_TARGET_MODIFIER
 	}
@@ -133,9 +142,9 @@ func (ac *ActionConfig) GetDamageResult(source, target Actor, context Context, r
 		raw = 0.0
 	}
 
-	random := random_roll*(DAMAGE_RAND_MAX-DAMAGE_RAND_MIN) + DAMAGE_RAND_MIN
+	random := config.RandomRoll*(DAMAGE_RAND_MAX-DAMAGE_RAND_MIN) + DAMAGE_RAND_MIN
 	damage := raw * random
-	health := target.GetRemainingHealth() - pending_damage
+	health := config.Target.GetRemainingHealth() - config.PendingDamage
 	if health < 0 {
 		health = 0
 	}

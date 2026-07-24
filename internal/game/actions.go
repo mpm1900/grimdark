@@ -23,11 +23,14 @@ func MakeAttack(config AttackConfig) ActionResolver {
 
 			for _, target := range targets {
 				result := this.Action.Config.GetDamageResult(
-					this.Source,
-					target,
-					context,
-					rand.Float64(),
-					this.PendingDamage(target.ID),
+					DamageConfig{
+						Source: this.Source,
+						Target: target,
+						Context: context,
+						RandomRoll: rand.Float64(),
+						PendingDamage: this.PendingDamage(target.ID),
+						UseBaseAccuracy: false,
+					},
 				)
 				result.Print(this.Source)
 				success = success && result.Success()
@@ -165,7 +168,7 @@ func AddTargetsEffects(config StatusConfig, modifier_context Context, effects ..
 		targets := g.GetTargets(ctx)
 		success := false
 		for _, target := range targets {
-			result := this.Action.Config.GetAccuracyResult(this.Source, target)
+			result := this.Action.Config.GetAccuracyResult(this.Source, target, false)
 			_, immune_affinity := target.AffinityImmunities[this.Action.Config.Affinity]
 			if immune_affinity {
 				this.Push(PushLog(NewLog(
