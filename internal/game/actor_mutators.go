@@ -3,7 +3,9 @@ package game
 import "github.com/google/uuid"
 
 func (a *Actor) ApplyDamage(damage float64, resolved Actor) {
-	a.Stacks[Wounds] = a.Stacks[Wounds] + damage
+	a.Stacks[Wounds] += damage
+	a.Meta.ActiveDamage += damage
+	a.Meta.TurnDamage += damage
 	if a.Stacks[Wounds] < 0 {
 		a.Stacks[Wounds] = 0
 	}
@@ -14,6 +16,7 @@ func (a *Actor) ApplyDamage(damage float64, resolved Actor) {
 func (a *Actor) NextTurn() {
 	if a.Active() {
 		a.Meta.ActiveTurns++
+		a.Meta.TurnDamage = 0
 	} else {
 		a.Meta.InactiveTurns++
 	}
@@ -42,12 +45,14 @@ func (a *Actor) SetPosition(position_id uuid.UUID) {
 	if position_id == uuid.Nil {
 		a.Meta.InactiveTurns = 0
 		a.Meta.LastUsedActionID = uuid.Nil
+		a.Meta.TurnDamage = 0
 	} else {
 		a.Meta.Seen = true
 	}
 	if a.PositionID == uuid.Nil {
 		a.Meta.ActiveTurns = 0
 		a.Meta.ActiveHits = 0
+		a.Meta.ActiveDamage = 0
 	}
 	a.PositionID = position_id
 }

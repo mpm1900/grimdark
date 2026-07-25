@@ -1,7 +1,7 @@
 import type { Action } from './action'
 import type { Actor } from './actor'
 import type { Context } from './context'
-import type { Bindable, ID, Phase, Status } from './core'
+import type { Bindable, ID, Phase, GameStatus } from './core'
 import type { Effect, Modifier } from './effect'
 import type { Log } from './log'
 import type { Player } from './player'
@@ -20,7 +20,7 @@ export type Game = {
   players: Player[]
   prompts: Bindable<Action>[]
   ready: boolean
-  status: Status
+  status: GameStatus
   turn: number
 }
 

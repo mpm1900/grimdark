@@ -2,7 +2,7 @@ import type { ComponentProps } from 'react'
 import { cn } from '#/lib/utils'
 import { cva, type VariantProps } from 'class-variance-authority'
 import type { Ui } from '#/lib/stores/ui'
-import type { Status } from '#/lib/game/core'
+import type { GameStatus } from '#/lib/game/core'
 import type { Position } from '#/lib/game/position'
 
 function PlatformParent({
@@ -52,7 +52,7 @@ function getVariant(
   store: Ui,
   client_ID: string,
   position: Position,
-  status: Status
+  status: GameStatus
 ): VariantProps<typeof platformVariants>['variant'] {
   if (status === 'waiting') {
     if (position.player_ID === client_ID) {

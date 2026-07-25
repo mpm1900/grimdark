@@ -159,7 +159,13 @@ function ActorStats({ actor }: { actor: Actor }) {
 function ActorWeaponsAndActions({ actor }: { actor: Actor }) {
   return (
     <div className="flex min-w-0 flex-col">
-      {actor.weapon && <WeaponDetails weapon={actor.weapon} />}
+      {actor.weapons && (
+        <div>
+          {Object.values(actor.weapons).map((weapon) => (
+            <WeaponDetails weapon={weapon} />
+          ))}
+        </div>
+      )}
       <Marker variant="separator" className="hidden">
         <MarkerContent>Actions</MarkerContent>
       </Marker>

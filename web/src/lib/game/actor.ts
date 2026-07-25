@@ -1,5 +1,5 @@
 import type { Action } from './action'
-import type { Affinity, ID, Stack, Stat } from './core'
+import type { ActorStatus, Affinity, ID, Stack, Stat } from './core'
 import type { Effect } from './effect'
 import type { Item, Weapon } from './weapon'
 
@@ -33,7 +33,7 @@ export type Actor = {
   stages: Record<Stat, number>
   state: string
   stats: Record<Stat, number>
-  status: string
+  status: ActorStatus
   unmodified_stats: Record<Stat, number>
   weapons: Record<ID, Weapon>
 }

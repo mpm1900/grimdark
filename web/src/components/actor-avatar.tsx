@@ -44,6 +44,14 @@ function ActorAvatar({ actor }: { actor: Actor }) {
           <div className="truncate text-foreground">{actor.name}</div>
           <div className="text-xs text-foreground/40">{actor.level}</div>
           <div className="absolute -right-5 top-15 flex flex-col items-end gap-px pr-2 text-center capitalize font-cinzel">
+            {actor.status !== 'none' && (
+              <TinyBadge
+                variant={actor.status as any}
+                className="pr-5 text-center capitalize font-cinzel"
+              >
+                {actor.status}
+              </TinyBadge>
+            )}
             {applied_effects.map((effect) => (
               <EffectTooltip key={effect.ID} effect={effect} asChild>
                 <TinyBadge className="pr-3 text-center capitalize font-cinzel">

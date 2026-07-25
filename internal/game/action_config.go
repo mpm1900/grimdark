@@ -24,6 +24,7 @@ type ActionConfig struct {
 	Lifesteal    float64  `json:"lifesteal"`
 	Name         string   `json:"name"`
 	Power        float64  `json:"power"`
+	Ratio        float64  `json:"ratio"`
 	Priority     int      `json:"priority"`
 	Range        *int     `json:"range"`
 	Recoil       float64  `json:"recoil"`
@@ -68,6 +69,7 @@ type DamageResult struct {
 	Multipliers       float64
 	Damage            float64
 	Random            float64
+	Ratio             float64
 	Raw               float64
 }
 
@@ -124,32 +126,78 @@ func (ac *ActionConfig) GetDamageResult(config DamageConfig) DamageResult {
 	multipliers := 1.0
 	accuracy := ac.GetAccuracyResult(config.Source, config.Target, config.UseBaseAccuracy)
 	affinity, total_stage, base_stage := ac.Affinity.GetAffinityModifier(config.Source, config.Target)
-	base := ac.GetBaseDamage(config.Source, config.Target, accuracy.Critical)
-	raw := base * affinity
-	multipliers *= affinity
 
-	if accuracy.Critical {
-		raw = raw * ac.CritModifier * config.Source.Stats[CriticalDamage]
-		multipliers *= ac.CritModifier * config.Source.Stats[CriticalDamage]
+	if ac.Ratio != 0 {
+		base := 0.0
+		health := config.Target.GetRemainingHealth() - config.PendingDamage
+		damage := health * ac.Ratio
+
+		if health < 0 {
+			health = 0
+		}
+		if damage > health {
+			damage = health
+		}
+
+		if !accuracy.Success() || affinity == 0 {
+			damage = 0.0
+		}
+
+		return DamageResult{
+			AccuracyResult:    accuracy,
+			Affinity:          affinity,
+			AffinityStage:     total_stage,
+			BaseAffinityStage: base_stage,
+			BaseDamage:        base,
+			Multipliers:       multipliers,
+			Raw:               damage,
+			Random:            1,
+			Ratio:             ac.Ratio,
+			Damage:            damage,
+		}
 	}
 
-	if config.Context.GetTargetCount() > 1 {
-		raw = raw * MULTI_TARGET_MODIFIER
-		multipliers *= MULTI_TARGET_MODIFIER
-	}
+	if ac.Power != 0 {
 
-	if !accuracy.Success() {
-		raw = 0.0
-	}
+		base := ac.GetBaseDamage(config.Source, config.Target, accuracy.Critical)
+		raw := base * affinity
+		multipliers *= affinity
 
-	random := config.RandomRoll*(DAMAGE_RAND_MAX-DAMAGE_RAND_MIN) + DAMAGE_RAND_MIN
-	damage := raw * random
-	health := config.Target.GetRemainingHealth() - config.PendingDamage
-	if health < 0 {
-		health = 0
-	}
-	if damage > health {
-		damage = health
+		if accuracy.Critical {
+			raw = raw * ac.CritModifier * config.Source.Stats[CriticalDamage]
+			multipliers *= ac.CritModifier * config.Source.Stats[CriticalDamage]
+		}
+
+		if config.Context.GetTargetCount() > 1 {
+			raw = raw * MULTI_TARGET_MODIFIER
+			multipliers *= MULTI_TARGET_MODIFIER
+		}
+
+		if !accuracy.Success() {
+			raw = 0.0
+		}
+
+		random := config.RandomRoll*(DAMAGE_RAND_MAX-DAMAGE_RAND_MIN) + DAMAGE_RAND_MIN
+		damage := raw * random
+		health := config.Target.GetRemainingHealth() - config.PendingDamage
+		if health < 0 {
+			health = 0
+		}
+		if damage > health {
+			damage = health
+		}
+
+		return DamageResult{
+			AccuracyResult:    accuracy,
+			Affinity:          affinity,
+			AffinityStage:     total_stage,
+			BaseAffinityStage: base_stage,
+			BaseDamage:        base,
+			Multipliers:       multipliers,
+			Raw:               raw,
+			Random:            random,
+			Damage:            damage,
+		}
 	}
 
 	return DamageResult{
@@ -157,11 +205,7 @@ func (ac *ActionConfig) GetDamageResult(config DamageConfig) DamageResult {
 		Affinity:          affinity,
 		AffinityStage:     total_stage,
 		BaseAffinityStage: base_stage,
-		BaseDamage:        base,
 		Multipliers:       multipliers,
-		Raw:               raw,
-		Random:            random,
-		Damage:            damage,
 	}
 }
 

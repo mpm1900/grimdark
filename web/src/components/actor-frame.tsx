@@ -19,6 +19,7 @@ import { ActorStatsPanel } from './panels/actor-stats'
 import { ActorPortrait } from './actor-portrait'
 import { lobbyStore } from '#/lib/stores/clients'
 import { IsActorActive, uiStore } from '#/lib/stores/ui'
+import { STATUS_ICON } from '#/icons/status'
 
 function StatMultBadge({ actor, stat }: { actor: Actor; stat: Stat }) {
   const stage = actor.stages[stat]
@@ -87,9 +88,11 @@ function ActorFrameSlim({
   const client = useSelector(lobbyStore, (s) => s.client)
   const ui = useSelector(uiStore, (s) => s)
   const status = useSelector(gameStore, (g) => g.status)
+  const StatusIcon = STATUS_ICON[actor.status]
   return (
     <div className={cn('relative mt-4', className)} {...props}>
-      <div className="flex flex-row justify-between items-end mb-1 gap-1 min-w-0">
+      <div className="flex flex-row justify-between items-end mb-1 gap-1 min-w-0 h-5">
+        {StatusIcon && <StatusIcon />}
         <Popover>
           <PopoverTrigger
             className="flex min-w-0 flex-1 items-end gap-1 cursor-pointer -mr-1"
@@ -118,12 +121,6 @@ function ActorFrameSlim({
             <ActorStatsPanel actor={actor} />
           </GothicPopoverContent>
         </Popover>
-
-        <div className="flex items-center gap-0">
-          {AFFINITIES.filter((a) => actor.affinities.includes(a)).map((a) => (
-            <AffinityIcon key={a} affinity={a} className="size-5" />
-          ))}
-        </div>
       </div>
       <div
         className={cn(

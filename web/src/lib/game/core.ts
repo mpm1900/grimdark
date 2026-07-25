@@ -36,9 +36,11 @@ export type Stat =
 
 export type Stack = 'wounds'
 
+export type ActorStatus = 'none' | 'burned' | 'sleeping'
+
 export type Phase = 'init' | 'start' | 'main' | 'end' | 'cleanup'
 
-export type Status = 'idle' | 'running' | 'waiting'
+export type GameStatus = 'idle' | 'running' | 'waiting'
 
 export type WeaponType = 'sword' | 'big-sword' | 'pistol' | 'rifle' | 'tome'
 

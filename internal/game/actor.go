@@ -39,11 +39,13 @@ type ActionState struct {
 }
 
 type ActorMeta struct {
+	ActiveDamage     float64
 	ActiveHits       int
 	ActiveTurns      int
 	InactiveTurns    int
 	LastUsedActionID uuid.UUID
 	Seen             bool
+	TurnDamage       float64
 }
 
 type ActorStack = string
