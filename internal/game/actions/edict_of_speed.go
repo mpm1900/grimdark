@@ -46,7 +46,7 @@ func edictOfSpeedEffect() game.Effect {
 	effect := game.EffectAllies(game.EffectPriorityPostStagesStats, speedUp)
 	effect.ID = uuid.MustParse("019f80fe-f95c-7214-93f9-3415769f408b")
 	effect.Name = "Edict Of Speed"
-	effect.Description = "Speed x2.0."
+	effect.Description = "Doubles speed."
 	effect.Duration = game.P(6)
 	effect.CheckSuccess = game.EffectGainWhereOnSuccess(
 		game.CombineFilters(game.Allies, game.ActiveActors),
