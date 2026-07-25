@@ -105,25 +105,25 @@ function ActionButton({
           {action.config.name}
         </ItemTitle>
         <ItemDescription className="block min-w-0 max-w-full overflow-hidden text-ellipsis whitespace-nowrap text-left font-serif text-foreground/70">
-          {!!actor_command && status === 'idle' && (
-            <span
-              className="hover:underline isolate p-0 min-h-9 cursor-pointer text-white"
-              onClick={() => {
-                sendContextMessage({
-                  request_ID: v4(),
-                  type: 'cancel-action',
-                  client_ID: client?.ID!,
-                  context: actor_command.context,
-                })
-              }}
-            >
-              {'('}Cancel{')'}
-            </span>
-          )}{' '}
           {!action.config.power && (
             <span className="block truncate">
+              {!!actor_command && status === 'idle' && (
+                <span
+                  className="hover:underline isolate p-0 min-h-9 cursor-pointer text-white"
+                  onClick={() => {
+                    sendContextMessage({
+                      request_ID: v4(),
+                      type: 'cancel-action',
+                      client_ID: client?.ID!,
+                      context: actor_command.context,
+                    })
+                  }}
+                >
+                  {'['}Cancel{'] '}
+                </span>
+              )}
               {action.is_disabled && (
-                <span className="text-red-300/40 font-serif">
+                <span className="text-red-400 font-serif">
                   [
                   {action.cooldown > 0
                     ? `Cooldown:${action.cooldown}`
@@ -135,9 +135,9 @@ function ActionButton({
             </span>
           )}
           {!!action.config.power && (
-            <span className="font-cinzel text-white/50">
+            <span className="font-cinzel text-foreground/80">
               {action.is_disabled && (
-                <span className="text-red-300/40 font-serif">
+                <span className="text-red-400 font-serif">
                   [
                   {action.cooldown > 0
                     ? `Cooldown ${action.cooldown}`
