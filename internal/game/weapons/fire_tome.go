@@ -19,6 +19,7 @@ var FireTome = game.Weapon{
 	},
 	Actions: []game.Action{
 		actions.EdictOfSpeed,
+		actions.Firestorm,
 		actions.Immolate,
 		actions.Protect,
 		actions.SacredFlame,
