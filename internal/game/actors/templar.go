@@ -15,8 +15,8 @@ func newTemplar() game.Class {
 	class.Name = "Templar"
 	class.SpriteURL = "/actors/386_crop.png"
 	class.Affinities = map[game.Affinity]struct{}{
-		game.Arcane:   {},
-		game.Physical: {},
+		game.Lightning: {},
+		game.Physical:  {},
 	}
 	class.Stats = map[game.Stat]float64{
 		game.Health:         75,

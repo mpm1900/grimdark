@@ -7,25 +7,25 @@ import (
 	"github.com/google/uuid"
 )
 
-var Cultist = newCultist()
+var Paladin = newPaladin()
 
-func newCultist() game.Class {
+func newPaladin() game.Class {
 	class := game.NewClass()
-	class.ID = uuid.MustParse("019f5f12-29e1-7cc9-bfeb-468df5c53990")
-	class.Name = "Cultist"
-	class.SpriteURL = "/actors/373_crop.png"
+	class.ID = uuid.MustParse("019f9f6e-520e-74cb-a474-48bdd6ee60cc")
+	class.Name = "Paladin"
+	class.SpriteURL = "/actors/55_crop.png"
 	class.Affinities = map[game.Affinity]struct{}{
-		game.Arcane: {},
-		game.Blood:  {},
+		game.Holy:     {},
+		game.Physical: {},
 	}
 	class.Stats = map[game.Stat]float64{
-		game.Health:         76,
-		game.Speed:          108,
-		game.Melee:          71,
-		game.Ranged:         108,
-		game.Special:        108,
-		game.MartialDefense: 71,
-		game.SpecialDefense: 71,
+		game.Health:         91,
+		game.Speed:          80,
+		game.Melee:          134,
+		game.Ranged:         80,
+		game.Special:        110,
+		game.MartialDefense: 95,
+		game.SpecialDefense: 100,
 		game.Accuracy:       1,
 		game.Evasion:        1,
 
@@ -39,9 +39,8 @@ func newCultist() game.Class {
 	class.Options = game.ClassOptions{
 		Items: []game.Item{},
 		Weapons: []game.Weapon{
-			weapons.SlashSword,
+			weapons.FireTome,
 			weapons.Greatsword,
-			weapons.SniperRifle(),
 		},
 	}
 

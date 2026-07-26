@@ -9,6 +9,7 @@ import (
 var All = map[uuid.UUID]game.Class{
 	Templar.ID:      Templar,
 	Prophet.ID:      Prophet,
+	Paladin.ID:      Paladin,
 	SisterOfFire.ID: SisterOfFire,
 	Cultist.ID:      Cultist,
 	Champion.ID:     Champion,
