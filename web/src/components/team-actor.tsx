@@ -27,7 +27,7 @@ function ClassSprite({
       )}
       {...props}
     >
-      <div className="relative flex h-80 w-full min-w-0 items-end justify-center pb-13">
+      <div className="relative flex h-80 w-full min-w-0 items-end justify-center pb-13 max-[950px]:h-56 max-[950px]:pb-10">
         <img
           src={actor_class?.sprite_url ?? '/gothic/CharSHRef.png'}
           className={cn(
@@ -74,7 +74,7 @@ function TeamActor({
     >
       <div className="relative h-full">
         <ClassSprite actor_class_id={config?.class} index={index} />
-        <div className="absolute bottom-0 inset-x-0 text-center h-12 leading-9 mx-1 z-10">
+        <div className="absolute bottom-0 inset-x-0 text-center h-12 leading-9 mx-1 z-10 max-[950px]:h-10 max-[950px]:leading-7 max-[950px]:text-sm">
           <div className="flex gap-1 justify-center">
             {AFFINITIES.filter((a) => actor_class?.affinities.includes(a)).map(
               (a) => (
@@ -91,7 +91,7 @@ function TeamActor({
             >
               {config.name || actor_class?.name}
             </span>
-          </div>  
+          </div>
         </div>
       </div>
       {Object.values(config.weapons).some((id) => id !== null) ? (
