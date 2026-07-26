@@ -262,6 +262,12 @@ func CtxToAllActiveTargets() func(g *Game, ctx Context, this ActionContext) Cont
 		return c
 	}
 }
+func CtxToAllEnemies() func(g *Game, ctx Context, this ActionContext) Context {
+	return func(g *Game, ctx Context, this ActionContext) Context {
+		c := ctx.CloneWithTargets(g.FindActors(CombineFilters(ActiveActors, Enemies), ctx))
+		return c
+	}
+}
 func CtxToRangeEnemies(action_range int) func(g *Game, ctx Context, this ActionContext) Context {
 	return func(g *Game, ctx Context, this ActionContext) Context {
 		c := ctx.CloneWithTargets(g.FindActors(CombineFilters(Enemies, ActionRange(action_range)), ctx))

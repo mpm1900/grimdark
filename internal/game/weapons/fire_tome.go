@@ -18,6 +18,8 @@ var FireTome = game.Weapon{
 		actions.EdictOfSpeed,
 		actions.Immolate,
 		actions.Protect,
+		actions.SacredFlame,
+		actions.Wildfire,
 	},
 	OffsetStats: map[game.Stat]float64{
 		game.Special:        32,

@@ -7,16 +7,16 @@ import (
 	"github.com/google/uuid"
 )
 
-var Immolate = game.Action{
-	ID:   uuid.MustParse("019f8fe9-4e63-7343-8c21-94bca920fc18"),
+var SacredFlame = game.Action{
+	ID:   uuid.MustParse("019f9c82-435c-7f98-83b9-fed6b1f23ec4"),
 	Tags: []game.ActionTag{game.ATActor, game.ATWeapon},
 	Config: game.ActionConfig{
-		Name:         "Immolate",
-		Description:  "20% chance to apply Burned target. This action is not usable from 1st position.",
+		Name:         "Sacred Flame",
+		Description:  "50% chance to apply Burned target. This action is not usable from 1st position.",
 		Affinity:     game.Fire,
 		Stat:         game.Special,
-		Accuracy:     game.P(1.0),
-		Power:        80,
+		Accuracy:     game.P(0.7),
+		Power:        120,
 		Lifesteal:    0,
 		Recoil:       0,
 		Hits:         1,
@@ -27,7 +27,7 @@ var Immolate = game.Action{
 	Resolve: game.MakeAttack(game.AttackConfig{
 		OnSuccessResult: func(g *game.Game, context game.Context, this *game.ActionContext, result game.DamageResult) {
 			game.AddResultEffects(
-				0.2,
+				0.5,
 				effects.Burned(),
 			)(g, context, this, result)
 		},
