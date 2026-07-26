@@ -15,7 +15,7 @@ var Wildfire = game.Action{
 		Affinity:     game.Fire,
 		Stat:         game.Special,
 		Accuracy:     game.P(0.9),
-		Power:        65,
+		Power:        60,
 		Lifesteal:    0,
 		Recoil:       0,
 		Hits:         1,
