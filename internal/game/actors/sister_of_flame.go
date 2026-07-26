@@ -7,25 +7,25 @@ import (
 	"github.com/google/uuid"
 )
 
-var BloodAngel = newBloodAngel()
+var SisterOfFire = newSisterOfFire()
 
-func newBloodAngel() game.Class {
+func newSisterOfFire() game.Class {
 	class := game.NewClass()
-	class.ID = uuid.MustParse("019f5f10-f5c1-7fd6-a1df-98644956735e")
-	class.Name = "Blood Angel"
-	class.SpriteURL = "/img/spm2.png"
+	class.ID = uuid.MustParse("019f5f11-933a-7cd3-bac9-5133bba94c7b")
+	class.Name = "Sister of Fire"
+	class.SpriteURL = "/actors/230_crop.png"
 	class.Affinities = map[game.Affinity]struct{}{
-		game.Arcane:   {},
-		game.Physical: {},
+		game.Fire:      {},
+		game.Lightning: {},
 	}
 	class.Stats = map[game.Stat]float64{
-		game.Health:         100,
-		game.Speed:          61,
-		game.Melee:          130,
-		game.Ranged:         95,
-		game.Special:        90,
+		game.Health:         71,
+		game.Speed:          70,
+		game.Melee:          60,
+		game.Ranged:         60,
+		game.Special:        121,
 		game.MartialDefense: 80,
-		game.SpecialDefense: 80,
+		game.SpecialDefense: 106,
 		game.Accuracy:       1,
 		game.Evasion:        1,
 
@@ -39,8 +39,9 @@ func newBloodAngel() game.Class {
 	class.Options = game.ClassOptions{
 		Items: []game.Item{},
 		Weapons: []game.Weapon{
-			weapons.SlashSword,
+			weapons.FireTome,
 			weapons.Greatsword,
+			weapons.Pistol,
 		},
 	}
 

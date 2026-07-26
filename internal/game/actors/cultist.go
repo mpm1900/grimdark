@@ -7,25 +7,25 @@ import (
 	"github.com/google/uuid"
 )
 
-var NecronWarrior = newNecronWarrior()
+var Cultist = newCultist()
 
-func newNecronWarrior() game.Class {
+func newCultist() game.Class {
 	class := game.NewClass()
-	class.ID = uuid.MustParse("019f5f11-626c-7b69-a0f9-8115db2e2c8c")
-	class.Name = "Necron Warrior"
-	class.SpriteURL = "/img/nec.png"
+	class.ID = uuid.MustParse("019f5f12-29e1-7cc9-bfeb-468df5c53990")
+	class.Name = "Cultist"
+	class.SpriteURL = "/actors/373_crop.png"
 	class.Affinities = map[game.Affinity]struct{}{
-		game.Arcane:    {},
+		game.Physical:  {},
 		game.Lightning: {},
 	}
 	class.Stats = map[game.Stat]float64{
-		game.Health:         100,
-		game.Speed:          75,
-		game.Melee:          75,
-		game.Ranged:         75,
-		game.Special:        75,
-		game.MartialDefense: 90,
-		game.SpecialDefense: 90,
+		game.Health:         76,
+		game.Speed:          108,
+		game.Melee:          71,
+		game.Ranged:         108,
+		game.Special:        108,
+		game.MartialDefense: 71,
+		game.SpecialDefense: 71,
 		game.Accuracy:       1,
 		game.Evasion:        1,
 
@@ -41,6 +41,7 @@ func newNecronWarrior() game.Class {
 		Weapons: []game.Weapon{
 			weapons.SlashSword,
 			weapons.Greatsword,
+			weapons.SniperRifle(),
 		},
 	}
 

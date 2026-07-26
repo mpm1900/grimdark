@@ -7,11 +7,11 @@ import (
 )
 
 var All = map[uuid.UUID]game.Class{
-	BloodAngel.ID:     BloodAngel,
-	NecronWarrior.ID:  NecronWarrior,
-	SisterOfBattle.ID: SisterOfBattle,
-	TechPriest.ID:     TechPriest,
-	Ultramarine.ID:    Ultramarine,
+	Templar.ID:      Templar,
+	Prophet.ID:      Prophet,
+	SisterOfFire.ID: SisterOfFire,
+	Cultist.ID:      Cultist,
+	Champion.ID:     Champion,
 }
 
 func HydrateActorClass(id uuid.UUID) (game.Class, bool) {

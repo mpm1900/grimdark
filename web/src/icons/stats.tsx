@@ -1,8 +1,10 @@
 import type { Stat } from '#/lib/game/core'
 import {
+  GiArrowCluster,
   GiBookmarklet,
   GiCrossedSwords,
   GiHealthNormal,
+  GiHighShot,
   GiSpectreM4,
   GiSprint,
 } from 'react-icons/gi'
@@ -148,7 +150,7 @@ const SpecialDefense: IconType = ({ className, ...props }) => {
 export const STAT_ICONS: Partial<Record<Stat, IconType>> = {
   health: GiHealthNormal,
   melee: GiCrossedSwords,
-  ranged: GiSpectreM4,
+  ranged: GiHighShot,
   special: GiBookmarklet,
   speed: GiSprint,
   'martial-defense': MartialDefense,

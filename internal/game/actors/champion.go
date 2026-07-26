@@ -8,9 +8,9 @@ import (
 	"github.com/google/uuid"
 )
 
-var Ultramarine = newUltramarine()
+var Champion = newChampion()
 
-func newUltramarine() game.Class {
+func newChampion() game.Class {
 	_ = effects.ProtectedWhere(func(g *game.Game, a game.Actor, ctx game.Context) bool {
 		active_context := g.State().ActiveContext
 		if active_context == nil {
@@ -50,19 +50,19 @@ func newUltramarine() game.Class {
 
 	class := game.NewClass()
 	class.ID = uuid.MustParse("019f5f12-6e78-7eda-b638-980453e3eaba")
-	class.Name = "Storm Warden"
-	class.SpriteURL = "/img/spm.png"
+	class.Name = "Champion"
+	class.SpriteURL = "/actors/402_crop.png"
 	class.Affinities = map[game.Affinity]struct{}{
 		game.Physical: {},
 	}
 	class.Stats = map[game.Stat]float64{
-		game.Health:         100,
-		game.Speed:          61,
+		game.Health:         90,
+		game.Speed:          72,
 		game.Melee:          134,
-		game.Ranged:         95,
-		game.Special:        60,
-		game.MartialDefense: 100,
-		game.SpecialDefense: 110,
+		game.Ranged:         80,
+		game.Special:        70,
+		game.MartialDefense: 110,
+		game.SpecialDefense: 81,
 		game.Accuracy:       1,
 		game.Evasion:        1,
 
