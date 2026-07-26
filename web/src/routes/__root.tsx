@@ -39,7 +39,7 @@ export const Route = createRootRouteWithContext<RouterContext>()({
       },
       {
         name: 'viewport',
-        content: 'width=device-width, initial-scale=1',
+        content: 'width=720, viewport-fit=cover',
       },
       {
         title: 'GrimDark',
