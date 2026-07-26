@@ -17,8 +17,9 @@ const (
 )
 
 const (
-	StatusNone   ActorStatus = "none"
-	StatusBurned ActorStatus = "burned"
+	StatusNone     ActorStatus = "none"
+	StatusBurned   ActorStatus = "burned"
+	StatusSleeping ActorStatus = "sleeping"
 )
 
 const (

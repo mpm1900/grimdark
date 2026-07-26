@@ -27,18 +27,5 @@ var SwordsDance = game.Action{
 	DisabledCheck: func(g *game.Game, source game.Actor) bool {
 		return source.Meta.ActiveTurns > 1
 	},
-	ActiveCheck: func(source game.Actor) bool {
-		found := uuid.Nil
-		for _, w := range source.Weapons {
-			if found == uuid.Nil {
-				found = w.Item.ID
-				continue
-			}
-
-			if w.Item.ID != found {
-				return false
-			}
-		}
-		return true
-	},
+	ActiveCheck: game.IsDualWielding,
 }

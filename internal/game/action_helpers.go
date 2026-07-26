@@ -173,6 +173,22 @@ func DamageSideEffects(g *Game, context Context, result DamageResult, this *Acti
 	}
 }
 
+// action helpers
+func IsDualWielding(source Actor) bool {
+	found := uuid.Nil
+	for _, w := range source.Weapons {
+		if found == uuid.Nil {
+			found = w.Item.ID
+			continue
+		}
+
+		if w.Item.ID != found {
+			return false
+		}
+	}
+	return true
+}
+
 // effect helpers
 func EffectGainSourceOnSuccess(g *Game, e Effect, ctx Context) {
 	source, ok := g.GetSource(ctx)

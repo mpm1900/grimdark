@@ -2,6 +2,17 @@ package effects
 
 import "grimdark/internal/game"
 
+func statusCheck(g *game.Game, ctx game.Context) bool {
+	targets := g.GetTargets(ctx)
+	for _, target := range targets {
+		if target.Status != game.StatusNone {
+			return false
+		}
+	}
+
+	return true
+}
+
 func Burned() game.Effect {
 	effect := game.EffectTargets(
 		game.EffectPriorityStatus,
@@ -28,16 +39,25 @@ func Burned() game.Effect {
 			},
 		},
 	})
-	effect.Check = func(g *game.Game, ctx game.Context) bool {
-		targets := g.GetTargets(ctx)
-		for _, target := range targets {
-			if target.Status != game.StatusNone {
-				return false
-			}
-		}
+	effect.Check = statusCheck
 
-		return true
-	}
+	return effect
+}
+
+func Sleeping(duration int) game.Effect {
+	effect := game.EffectTargets(
+		game.EffectPriorityStatus,
+		func(g *game.Game, a game.Actor, ctx game.Context) game.Actor {
+			a.Status = game.StatusSleeping
+			a.IsStunned = true
+			return a
+		},
+	)
+	effect.Name = "Sleeping"
+	effect.Description = "Cannot act."
+	effect.CheckSuccess = game.EffectGainTargetsOnSuccess
+	effect.Check = statusCheck
+	effect.Duration = &duration
 
 	return effect
 }

@@ -11,7 +11,7 @@ var FireTome = game.Weapon{
 	Item: game.Item{
 		ID:          uuid.MustParse("019f90ba-d85c-7a42-b2be-223a79131c2b"),
 		Name:        "Fire Tome",
-		Description: "A tome of prayers to the god-king.",
+		Description: "A tome of prayers to the first flame, Gabriel.",
 		Effects:     []game.Effect{},
 	},
 	Actions: []game.Action{

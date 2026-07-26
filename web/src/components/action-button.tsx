@@ -30,6 +30,7 @@ import { DNumber } from './dnumber'
 import { sendContextMessage } from '#/lib/stores/socket'
 import { lobbyStore } from '#/lib/stores/clients'
 import { v4 } from 'uuid'
+import { ActionTooltip } from './action-tooltip'
 
 function ActionButton({
   action,
@@ -93,17 +94,19 @@ function ActionButton({
         </ItemMedia>
       )}
       <ItemContent className="gap-0 py-0.5 min-w-0 overflow-hidden">
-        <ItemTitle
-          className={cn(
-            'text-white gap-1 font-serif',
-            action.is_disabled && 'text-white/60',
-            statVariants({
-              stat: action.config.stat,
-            })
-          )}
-        >
-          {action.config.name}
-        </ItemTitle>
+        <ActionTooltip action={action} card_content={{ side: 'top' }}>
+          <ItemTitle
+            className={cn(
+              'text-white gap-1 font-serif hover:underline',
+              action.is_disabled && 'text-white/60',
+              statVariants({
+                stat: action.config.stat,
+              })
+            )}
+          >
+            {action.config.name}
+          </ItemTitle>
+        </ActionTooltip>
         <ItemDescription className="block min-w-0 max-w-full overflow-hidden text-ellipsis whitespace-nowrap text-left font-serif text-foreground/70">
           {!action.config.power && (
             <span className="block truncate">
