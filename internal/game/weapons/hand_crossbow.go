@@ -3,17 +3,16 @@ package weapons
 import (
 	"grimdark/internal/game"
 	"grimdark/internal/game/actions"
-	"grimdark/internal/game/effects"
 
 	"github.com/google/uuid"
 )
 
-var Pistol = game.Weapon{
+var HandCrossbow = game.Weapon{
 	Item: game.Item{
 		ID:          uuid.MustParse("019f5319-dffb-7d06-b6f3-af8dca62bffd"),
-		Name:        "Pistol",
-		Description: "A bolter pistol. Pew pew.",
-		Effects:     []game.Effect{effects.AuraOfWeakness},
+		Name:        "Hand Crossbow",
+		Description: "A compact, one-handed mechanical weapon commonly utilized by rogues, spies, and scoundrels for silent or sudden strikes.",
+		Effects:     []game.Effect{},
 	},
 	Actions: []game.Action{
 		actions.BurstFire,
@@ -24,5 +23,5 @@ var Pistol = game.Weapon{
 		game.Ranged: 20,
 	},
 	Weight:     1,
-	WeaponType: game.WeaponTypePistol,
+	WeaponType: game.WeaponTypeCrossBow,
 }

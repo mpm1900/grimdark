@@ -1,4 +1,4 @@
-import type { Action } from '#/lib/game/action'
+import { getActionPower, type Action } from '#/lib/game/action'
 import { cn } from '#/lib/utils'
 import { AffinityIcon } from './affinity-name'
 import { GothicHoverCardContent } from './gothic-ui/hover-card'
@@ -70,6 +70,16 @@ function ActionTooltip({
             </span>
           )}
         </div>
+        <div className="text-xs p-1">
+          {action.tags.includes('conditional') && (
+            <span>* This action requires dual wielding.</span>
+          )}
+        </div>
+        {!!action.config.power && (
+          <div className="text-xs p-1">
+            Power Rating: {getActionPower(action)}
+          </div>
+        )}
       </GothicHoverCardContent>
     </HoverCard>
   )

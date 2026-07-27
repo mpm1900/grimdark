@@ -28,3 +28,16 @@ export type Action = {
   tags: Array<string>
   uses: number
 }
+
+export function getActionPower(action: Action): number {
+  let power_rating = action.config.power ?? 0
+  power_rating *= action.config.accuracy ?? 1
+  power_rating *= 1 + action.config.crit_chance
+  power_rating *= 1 + action.config.crit_modifier
+  power_rating *= action.config.target_count
+  if (action.config.target_count > 1) {
+    power_rating *= 0.75
+  }
+  power_rating *= action.config.hits
+  return power_rating
+}

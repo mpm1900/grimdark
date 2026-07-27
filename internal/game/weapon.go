@@ -12,7 +12,7 @@ type WeaponType string
 const (
 	WeaponTypeSword    WeaponType = "sword"
 	WeaponTypeBigSword WeaponType = "big-sword"
-	WeaponTypePistol   WeaponType = "pistol"
+	WeaponTypeCrossBow WeaponType = "cross-bow"
 	WeaponTypeLongBow  WeaponType = "long-bow"
 	WeaponTypeTome     WeaponType = "tome"
 	WeaponTypeDagger   WeaponType = "dagger"

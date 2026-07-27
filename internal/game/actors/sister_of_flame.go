@@ -40,7 +40,7 @@ func newSisterOfFire() game.Class {
 		Weapons: []game.Weapon{
 			weapons.FireTome,
 			weapons.Greatsword,
-			weapons.Pistol,
+			weapons.HandCrossbow,
 		},
 	}
 
