@@ -41,7 +41,8 @@ func newCultist() game.Class {
 		Weapons: []game.Weapon{
 			weapons.SlashSword,
 			weapons.Greatsword,
-			weapons.SniperRifle(),
+			weapons.LongBow(),
+			weapons.Dagger,
 		},
 	}
 

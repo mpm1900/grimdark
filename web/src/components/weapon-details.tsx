@@ -76,7 +76,7 @@ const weaponIcon = cva('absolute top-1 h-auto block', {
       sword: 'size-24 top-4 rotate-135',
       'big-sword': 'size-9 top-2',
       pistol: 'size-14 left-1/2 top-4',
-      rifle: 'size-32 top-3 rotate-130',
+      'long-bow': 'size-24 top-8 rotate-45',
       tome: 'size-28 top-3 left-1',
     },
   },
@@ -132,6 +132,7 @@ function WeaponDetails({ weapon }: { weapon: Weapon }) {
                   })}
                 >
                   {a.config.name}
+                  {a.tags.includes('conditional') && '*'}
                 </ActionTooltip>
               ))}
             </span>

@@ -104,7 +104,7 @@ func NewActor(class Class, config ActorConfig) *Actor {
 				clone := w.Clone()
 				clone.Slot = slot
 				clone.BindActions()
-				stacks[slot.String()] = float64(clone.Clip)
+				stacks[slot.String()] = float64(clone.Uses)
 				weapons[slot] = clone
 			}
 		}

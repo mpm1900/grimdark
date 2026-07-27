@@ -13,14 +13,15 @@ const (
 	WeaponTypeSword    WeaponType = "sword"
 	WeaponTypeBigSword WeaponType = "big-sword"
 	WeaponTypePistol   WeaponType = "pistol"
-	WeaponTypeRifle    WeaponType = "rifle"
+	WeaponTypeLongBow  WeaponType = "long-bow"
 	WeaponTypeTome     WeaponType = "tome"
+	WeaponTypeDagger   WeaponType = "dagger"
 )
 
 type Weapon struct {
 	Item
 	Actions     []Action
-	Clip        int
+	Uses        int
 	OffsetStats map[Stat]float64
 	Reload      func(g *Game, parent *Actor, slot uuid.UUID)
 	Slot        uuid.UUID
@@ -43,7 +44,7 @@ func (w Weapon) Clone() Weapon {
 	clone := Weapon{
 		Item:        w.Item.Clone(),
 		Actions:     slices.Clone(w.Actions),
-		Clip:        w.Clip,
+		Uses:        w.Uses,
 		OffsetStats: maps.Clone(w.OffsetStats),
 		Reload:      w.Reload,
 		Slot:        w.Slot,

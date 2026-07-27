@@ -41,6 +41,7 @@ func newRogue() game.Class {
 		Weapons: []game.Weapon{
 			weapons.FireTome,
 			weapons.Greatsword,
+			weapons.Dagger,
 		},
 	}
 

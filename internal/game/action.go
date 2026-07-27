@@ -9,10 +9,13 @@ type ActionResolver func(g *Game, ctx Context, this ActionContext) []Transaction
 type ActionTag string
 
 const (
-	ATSystem   ActionTag = "system"
-	ATActor    ActionTag = "actor"
-	ATItem     ActionTag = "item"
-	ATWeapon   ActionTag = "weapon"
+	ATSystem ActionTag = "system"
+	ATActor  ActionTag = "actor"
+
+	ATItem        ActionTag = "item"
+	ATWeapon      ActionTag = "weapon"
+	ATConditional ActionTag = "conditional"
+
 	ATRetreat  ActionTag = "retreat"
 	ATMovement ActionTag = "movement"
 	ATSwap     ActionTag = "swap"
