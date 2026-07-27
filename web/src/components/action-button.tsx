@@ -94,17 +94,19 @@ function ActionButton({
         </ItemMedia>
       )}
       <ItemContent className="gap-0 py-0.5 min-w-0 overflow-hidden">
-        <ActionTooltip action={action} card_content={{ side: 'top' }}>
+        <ActionTooltip action={action} card_content={{ side: 'top' }} asChild>
           <ItemTitle
             className={cn(
-              'text-white gap-1 font-serif hover:underline',
+              'w-full min-w-0 overflow-hidden text-white gap-1 font-serif hover:underline',
               action.is_disabled && 'text-white/60',
               statVariants({
                 stat: action.config.stat,
               })
             )}
           >
-            {action.config.name}
+            <span className="block min-w-0 flex-1 truncate text-left">
+              {action.config.name}
+            </span>
           </ItemTitle>
         </ActionTooltip>
         <ItemDescription className="block min-w-0 max-w-full overflow-hidden text-ellipsis whitespace-nowrap text-left font-serif text-foreground/70">
