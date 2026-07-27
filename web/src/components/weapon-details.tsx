@@ -193,13 +193,15 @@ function WeaponFrame({
                 ),
               })}
             >
-              <Icon
-                className={weaponIcon({
-                  rarity,
-                  weapon_type: weapon.weapon_type,
-                  className: 'left-1/2 -translate-x-1/2',
-                })}
-              />
+              {Icon && (
+                <Icon
+                  className={weaponIcon({
+                    rarity,
+                    weapon_type: weapon.weapon_type,
+                    className: 'left-1/2 -translate-x-1/2',
+                  })}
+                />
+              )}
               {disabled && (
                 <div className="absolute inset-0 bg-neutral-300/30" />
               )}

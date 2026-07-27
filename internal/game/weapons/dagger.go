@@ -15,6 +15,7 @@ var Dagger = game.Weapon{
 		Effects:     []game.Effect{},
 	},
 	Actions: []game.Action{
+		actions.BackStrike,
 		actions.Protect,
 		actions.QuickStrike,
 		actions.RecklessStrike,
