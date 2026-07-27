@@ -64,7 +64,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
         <HeadContent />
       </head>
       <body>
-        <div className="absolute overflow-hidden inset-0 bottom-3/5 bg-neutral-900 z-0"></div>
+        <div className="absolute overflow-hidden inset-0 bottom-3/5 bg-neutral-900  bg-repeat-x bg-cover bg-bottom z-0"></div>
         <TooltipProvider>{children}</TooltipProvider>
         <Toaster position="bottom-center" />
         <Scripts />
