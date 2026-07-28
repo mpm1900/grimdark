@@ -21,7 +21,7 @@ const (
 )
 
 // mapped stats are piped through the funciton that factors in level and other factors
-var mappedStats map[Stat]struct{} = map[Stat]struct{}{
+var mappedStats = Set[Stat]{
 	Health:         {},
 	Speed:          {},
 	Melee:          {},
@@ -32,7 +32,7 @@ var mappedStats map[Stat]struct{} = map[Stat]struct{}{
 }
 
 // percent stats are x100 before sent to clients
-var percentStats map[Stat]struct{} = map[Stat]struct{}{
+var percentStats = Set[Stat]{
 	Accuracy:       {},
 	Evasion:        {},
 	CriticalChance: {},

@@ -16,7 +16,7 @@ const (
 )
 
 type gamemeta struct {
-	applied_modifiers map[uuid.UUID]map[uuid.UUID]struct{}
+	applied_modifiers map[uuid.UUID]Set[uuid.UUID]
 	log_depth         int
 	modifiers         []Modifier
 }
@@ -24,10 +24,10 @@ type gamemeta struct {
 func (gm *gamemeta) apply(modifierID uuid.UUID, actorID uuid.UUID) {
 	_, ok := gm.applied_modifiers[modifierID]
 	if !ok {
-		gm.applied_modifiers[modifierID] = map[uuid.UUID]struct{}{}
+		gm.applied_modifiers[modifierID] = make(Set[uuid.UUID])
 	}
 
-	gm.applied_modifiers[modifierID][actorID] = struct{}{}
+	gm.applied_modifiers[modifierID].Push(actorID)
 }
 
 type GameStatus string
@@ -95,7 +95,7 @@ func NewGame(instanceID uuid.UUID, onComplete func()) *Game {
 		resolved:  state,
 		gamestate: unresolved,
 		meta: gamemeta{
-			applied_modifiers: map[uuid.UUID]map[uuid.UUID]struct{}{},
+			applied_modifiers: map[uuid.UUID]Set[uuid.UUID]{},
 		},
 		onComplete: onComplete,
 		InstanceID: instanceID,
@@ -149,12 +149,12 @@ func (g *Game) State() State {
 
 	return g.resolved
 }
-func (g *Game) AppliedModifiers(actor_id uuid.UUID) map[uuid.UUID]struct{} {
-	effect_ids := map[uuid.UUID]struct{}{}
+func (g *Game) AppliedModifiers(actor_id uuid.UUID) Set[uuid.UUID] {
+	effect_ids := make(Set[uuid.UUID])
 	for modifier_id, actors := range g.meta.applied_modifiers {
 		_, ok := actors[actor_id]
 		if ok {
-			effect_ids[modifier_id] = struct{}{}
+			effect_ids.Push(modifier_id)
 		}
 	}
 
@@ -268,7 +268,7 @@ func (g *Game) PromptsReady() bool {
 func (g *Game) resolve() {
 	g.gamestate = resolving
 	g.resolved = g.state.Clone()
-	g.meta.applied_modifiers = map[uuid.UUID]map[uuid.UUID]struct{}{}
+	g.meta.applied_modifiers = map[uuid.UUID]Set[uuid.UUID]{}
 
 	modifiers := g.GetModifiers()
 	g.meta.modifiers = modifiers

@@ -70,7 +70,7 @@ type Actor struct {
 	AffinityDamage     map[Affinity]int
 	AffinityResistance map[Affinity]int
 	AffinityImmunities map[Affinity]float64
-	EffectImmunities   map[uuid.UUID]struct{}
+	EffectImmunities   Set[uuid.UUID]
 	effectStates       map[uuid.UUID]EffectState
 	OffsetStats        map[Stat]float64
 	Stages             map[Stat]int
@@ -128,7 +128,7 @@ func NewActor(class Class, config ActorConfig) *Actor {
 		AffinityDamage:     map[Affinity]int{},
 		AffinityImmunities: map[Affinity]float64{},
 		AffinityResistance: map[Affinity]int{},
-		EffectImmunities:   map[uuid.UUID]struct{}{},
+		EffectImmunities:   make(Set[uuid.UUID]),
 		OffsetStats:        map[Stat]float64{},
 		Stacks:             stacks,
 		Stages:             map[Stat]int{},
@@ -267,8 +267,7 @@ func (a *Actor) GetEffects() []Effect {
 }
 
 func (a *Actor) HasEffectImmunity(tag uuid.UUID) bool {
-	_, ok := a.EffectImmunities[tag]
-	return ok
+	return a.EffectImmunities.Has(tag)
 }
 
 func (a *Actor) FilterEffectImmunities(effects []Effect) ([]Effect, []Effect) {
@@ -302,7 +301,7 @@ func (a *Actor) GetModifiers() []Modifier {
 
 func (a *Actor) GetActions() []Action {
 	actions := []Action{}
-	seen := map[uuid.UUID]struct{}{}
+	seen := make(Set[uuid.UUID])
 
 	addActions := func(next []Action) {
 		for _, action := range next {
@@ -310,7 +309,7 @@ func (a *Actor) GetActions() []Action {
 				continue
 			}
 
-			seen[action.ID] = struct{}{}
+			seen.Push(action.ID)
 			actions = append(actions, action)
 		}
 	}

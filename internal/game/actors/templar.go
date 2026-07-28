@@ -14,7 +14,7 @@ func newTemplar() game.Class {
 	class.ID = uuid.MustParse("019f5f10-f5c1-7fd6-a1df-98644956735e")
 	class.Name = "Templar"
 	class.SpriteURL = "/actors/386_crop.png"
-	class.Affinities = map[game.Affinity]struct{}{
+	class.Affinities = game.Set[game.Affinity]{
 		game.Lightning: {},
 		game.Physical:  {},
 	}

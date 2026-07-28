@@ -14,7 +14,7 @@ func newCultist() game.Class {
 	class.ID = uuid.MustParse("019f5f12-29e1-7cc9-bfeb-468df5c53990")
 	class.Name = "Cultist"
 	class.SpriteURL = "/actors/373_crop.png"
-	class.Affinities = map[game.Affinity]struct{}{
+	class.Affinities = game.Set[game.Affinity]{
 		game.Arcane: {},
 		game.Blood:  {},
 	}

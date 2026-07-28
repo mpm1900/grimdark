@@ -14,7 +14,7 @@ func newProphet() game.Class {
 	class.ID = uuid.MustParse("019f5f11-626c-7b69-a0f9-8115db2e2c8c")
 	class.Name = "Prophet"
 	class.SpriteURL = "/actors/81_crop.png"
-	class.Affinities = map[game.Affinity]struct{}{
+	class.Affinities = game.Set[game.Affinity]{
 		game.Blood: {},
 		game.Holy:  {},
 	}

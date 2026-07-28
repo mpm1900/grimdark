@@ -14,7 +14,7 @@ func newSisterOfFire() game.Class {
 	class.ID = uuid.MustParse("019f5f11-933a-7cd3-bac9-5133bba94c7b")
 	class.Name = "Sister of Fire"
 	class.SpriteURL = "/actors/230_crop.png"
-	class.Affinities = map[game.Affinity]struct{}{
+	class.Affinities = game.Set[game.Affinity]{
 		game.Fire: {},
 	}
 	class.Stats = map[game.Stat]float64{

@@ -44,7 +44,7 @@ func newChampion() game.Class {
 	})
 
 	weakness_immune := game.EffectSource(game.EffectPriorityImmunities, func(g *game.Game, a game.Actor, ctx game.Context) game.Actor {
-		a.EffectImmunities[effects.Weakened().ID] = struct{}{}
+		a.EffectImmunities.Push(effects.Weakened().ID)
 		return a
 	})
 
@@ -52,7 +52,7 @@ func newChampion() game.Class {
 	class.ID = uuid.MustParse("019f5f12-6e78-7eda-b638-980453e3eaba")
 	class.Name = "Champion"
 	class.SpriteURL = "/actors/402_crop.png"
-	class.Affinities = map[game.Affinity]struct{}{
+	class.Affinities = game.Set[game.Affinity]{
 		game.Physical: {},
 	}
 	class.Stats = map[game.Stat]float64{

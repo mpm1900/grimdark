@@ -16,7 +16,7 @@ type ClassOptions struct {
 type Class struct {
 	ID         uuid.UUID
 	Actions    []Action
-	Affinities map[Affinity]struct{}
+	Affinities Set[Affinity]
 	Arms       int // the amount of weapons that can be equipped
 	Effects    []Effect
 	Faction    ActorFaction
@@ -51,7 +51,7 @@ func NewClass() Class {
 	return Class{
 		ID:         uuid.New(),
 		Actions:    []Action{},
-		Affinities: map[Affinity]struct{}{},
+		Affinities: make(Set[Affinity]),
 		Arms:       2,
 		Effects:    []Effect{},
 		Faction:    FactionImperium,
@@ -119,7 +119,7 @@ func (c Class) ToJSON() classJSON {
 	return classJSON{
 		ID:         c.ID,
 		Actions:    actions,
-		Affinities: slices.Collect(maps.Keys(c.Affinities)),
+		Affinities: c.Affinities.ToArray(),
 		Arms:       c.Arms,
 		Effects:    c.Effects,
 		Faction:    c.Faction,

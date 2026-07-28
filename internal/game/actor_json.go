@@ -2,7 +2,6 @@ package game
 
 import (
 	"maps"
-	"slices"
 
 	"github.com/google/uuid"
 )
@@ -47,7 +46,7 @@ type actorJSON struct {
 func (a Actor) ToJSON(g *Game) actorJSON {
 	stats := make(map[Stat]int, len(a.Stats))
 	unmodified_stats := make(map[Stat]int, len(a.UnmodifiedStats))
-	active_modifiers := slices.Collect(maps.Keys(g.AppliedModifiers(a.ID)))
+	active_modifiers := g.AppliedModifiers(a.ID).ToArray()
 	offset_stats := make(map[Stat]int)
 
 	for stat, v := range a.Stats {
@@ -105,7 +104,7 @@ func (a Actor) ToJSON(g *Game) actorJSON {
 		Weapons:            weapons,
 		Item:               a.Item,
 		Effects:            a.GetEffects(),
-		Affinities:         slices.Collect(maps.Keys(a.Class.Affinities)),
+		Affinities:         a.Class.Affinities.ToArray(),
 		AffinityDamage:     affinity_damage,
 		AffinityResistance: affinity_resistance,
 		AffinityImmunities: a.AffinityImmunities,

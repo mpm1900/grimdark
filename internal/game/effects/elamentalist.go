@@ -36,7 +36,7 @@ func Elamentalist() game.Effect {
 				return a
 			}
 
-			a.Class.Affinities = map[game.Affinity]struct{}{
+			a.Class.Affinities = game.Set[game.Affinity]{
 				action.Config.Affinity: {},
 			}
 

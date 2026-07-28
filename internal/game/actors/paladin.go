@@ -14,7 +14,7 @@ func newPaladin() game.Class {
 	class.ID = uuid.MustParse("019f9f6e-520e-74cb-a474-48bdd6ee60cc")
 	class.Name = "Paladin"
 	class.SpriteURL = "/actors/55_crop.png"
-	class.Affinities = map[game.Affinity]struct{}{
+	class.Affinities = game.Set[game.Affinity]{
 		game.Holy:     {},
 		game.Physical: {},
 	}

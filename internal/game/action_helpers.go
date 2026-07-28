@@ -109,12 +109,7 @@ func PostDamageLogs(result DamageResult, context Context, this *ActionContext) {
 				),
 			)).Bind(context))
 		}
-		if result.Target.IsProtected {
-			this.Push(PushLog(NewLog(
-				"$target$ was protected.",
-				TargetTerms(result.Target),
-			)).Bind(context))
-		}
+
 		if !result.AccuracyResult.Pass {
 			this.Push(PushLog(NewLog(
 				"$action$ missed $target$.",
@@ -122,6 +117,11 @@ func PostDamageLogs(result DamageResult, context Context, this *ActionContext) {
 					ActionTerms(this.Action),
 					TargetTerms(result.Target),
 				),
+			)).Bind(context))
+		} else if result.Target.IsProtected {
+			this.Push(PushLog(NewLog(
+				"$target$ was protected.",
+				TargetTerms(result.Target),
 			)).Bind(context))
 		}
 	}

@@ -1,6 +1,7 @@
 package security
 
 import (
+	"grimdark/internal/game"
 	"net/url"
 	"os"
 	"strings"
@@ -12,7 +13,7 @@ const (
 )
 
 type OriginPolicy struct {
-	allowed map[string]struct{}
+	allowed game.Set[string]
 }
 
 func NewOriginPolicyFromEnv() OriginPolicy {
@@ -22,13 +23,13 @@ func NewOriginPolicyFromEnv() OriginPolicy {
 	}
 
 	parts := strings.Split(rawOrigins, ",")
-	allowed := make(map[string]struct{}, len(parts))
+	allowed := make(game.Set[string], len(parts))
 	for _, part := range parts {
 		origin, ok := normalizeOrigin(part)
 		if !ok {
 			continue
 		}
-		allowed[origin] = struct{}{}
+		allowed.Push(origin)
 	}
 
 	return OriginPolicy{
