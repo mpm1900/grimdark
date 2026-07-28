@@ -6,19 +6,21 @@ import {
   GiBeveledStar,
   GiBleedingEye,
   GiPerpendicularRings,
-  GiFly,
   GiDeathJuice,
-  GiHolySymbol,
+  GiPoison,
+  GiLightningTree,
+  GiJerusalemCross,
+  GiHeptagram,
 } from 'react-icons/gi'
 import type { IconType } from 'react-icons/lib'
 
 export const AFFINITY_ICONS: Record<Affinity, IconType> = {
-  arcane: GiHadesSymbol,
+  arcane: GiHeptagram,
   blood: GiDeathJuice,
-  holy: GiHolySymbol,
+  holy: GiJerusalemCross,
   fire: GiSmallFire,
   physical: GiPerpendicularRings,
-  lightning: GiPowerLightning,
-  poison: GiFly,
+  lightning: GiLightningTree,
+  poison: GiPoison,
   psychic: GiBleedingEye,
 }

@@ -91,14 +91,14 @@
   --martial: oklch(91% 0.096 180.426);
   --special: oklch(82.7% 0.119 306.383);
 
-  --arcane: oklch(55.4% 0.046 257.417);
-  --blood: oklch(44.4% 0.177 26.899);
+  --arcane: oklch(65.4% 0.046 257.417);
+  --blood: oklch(54.4% 0.177 26.899);
   --cryo: oklch(70.7% 0.165 254.624);
   --holy: oklch(97.3% 0.071 103.193);
-  --fire: oklch(70.5% 0.213 47.604);
+  --fire: oklch(70.5% 0.113 47.604);
   --physical: oklch(95.4% 0.038 75.164);
   --lightning: oklch(92.4% 0.12 95.746);
-  --poison: oklch(76.8% 0.233 130.85);
+  --poison: oklch(76.8% 0.133 130.85);
   --psychic: oklch(70.2% 0.183 293.541);
 }
 

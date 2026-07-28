@@ -56,13 +56,13 @@ func newChampion() game.Class {
 		game.Physical: {},
 	}
 	class.Stats = map[game.Stat]float64{
-		game.Health:         90,
-		game.Speed:          72,
-		game.Melee:          134,
-		game.Ranged:         80,
-		game.Special:        70,
-		game.MartialDefense: 110,
-		game.SpecialDefense: 81,
+		game.Health:         110,
+		game.Speed:          90,
+		game.Melee:          115,
+		game.Ranged:         100,
+		game.Special:        50,
+		game.MartialDefense: 90,
+		game.SpecialDefense: 80,
 		game.Accuracy:       1,
 		game.Evasion:        1,
 

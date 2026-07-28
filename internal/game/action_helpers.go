@@ -20,6 +20,7 @@ type AttackConfig struct {
 	OnCriticalResult AttackEffectResult
 	OnSuccessResult  AttackEffectResult
 	OnFailureResult  AttackEffectResult
+	OnFinallyResult  AttackEffectResult
 	OnAttackSuccess  ActionEffect
 	OnAttackFailure  ActionEffect
 }
@@ -170,6 +171,9 @@ func DamageSideEffects(g *Game, context Context, result DamageResult, this *Acti
 		if config.OnFailureResult != nil {
 			config.OnFailureResult(g, context, this, result)
 		}
+	}
+	if config.OnFinallyResult != nil {
+		config.OnFinallyResult(g, context, this, result)
 	}
 }
 

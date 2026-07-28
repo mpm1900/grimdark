@@ -26,7 +26,7 @@ var Execute = game.Action{
 		Priority:     game.ActionPriorityDefault,
 	},
 	Resolve: game.MakeAttack(game.AttackConfig{
-		OnSuccessResult: func(g *game.Game, context game.Context, this *game.ActionContext, result game.DamageResult) {
+		OnFinallyResult: func(g *game.Game, context game.Context, this *game.ActionContext, result game.DamageResult) {
 			result_health := result.Target.GetRemainingHealth()
 			if result.Damage < result_health {
 				stun_ctx := game.MakeModifierContext(this.Source, this.Source)
