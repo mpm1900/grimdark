@@ -11,7 +11,7 @@ var Cleave = game.Action{
 	Tags: []game.ActionTag{game.ATActor, game.ATWeapon},
 	Config: game.ActionConfig{
 		Name:         "Cleave",
-		Description:  "Damages all enemy actors in 1st and 2nd position.",
+		Description:  "Damages all enemy actors in 1st and 2nd position. This action is only usable in 1st position.",
 		Affinity:     game.Physical,
 		Stat:         game.Melee,
 		Accuracy:     game.P(0.90),
@@ -35,3 +35,4 @@ var Cleave = game.Action{
 		return position.Rank != 0
 	},
 }
+   

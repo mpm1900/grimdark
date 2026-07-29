@@ -43,7 +43,14 @@ export type Phase = 'init' | 'start' | 'main' | 'end' | 'cleanup'
 export type GameStatus = 'idle' | 'running' | 'waiting'
 
 export type WeaponType =
-  'sword' | 'big-sword' | 'cross-bow' | 'long-bow' | 'tome' | 'dagger' | 'staff'
+  | 'sword'
+  | 'big-sword'
+  | 'cross-bow'
+  | 'long-bow'
+  | 'short-bow'
+  | 'tome'
+  | 'dagger'
+  | 'staff'
 
 export type Bindable<T> = {
   ID: ID

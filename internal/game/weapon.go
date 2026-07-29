@@ -14,6 +14,7 @@ const (
 	WeaponTypeBigSword WeaponType = "big-sword"
 	WeaponTypeCrossBow WeaponType = "cross-bow"
 	WeaponTypeLongBow  WeaponType = "long-bow"
+	WeaponTypeShortBow WeaponType = "short-bow"
 	WeaponTypeTome     WeaponType = "tome"
 	WeaponTypeDagger   WeaponType = "dagger"
 	WeaponTypeStaff    WeaponType = "staff"

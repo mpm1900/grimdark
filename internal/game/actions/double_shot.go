@@ -6,24 +6,24 @@ import (
 	"github.com/google/uuid"
 )
 
-var FiftyFifty = game.Action{
-	ID:   uuid.MustParse("019f91fa-3962-7986-838c-95308827ae2a"),
+var DoubleShot = game.Action{
+	ID:   uuid.MustParse("019faf7f-db18-73c9-bc20-7dcbd86240e1"),
 	Tags: []game.ActionTag{game.ATActor, game.ATWeapon},
 	Config: game.ActionConfig{
-		Name:         "Fifty Fifty",
-		Description:  "Hits 2 times, but has low accuracy.",
+		Name:         "Double Shot",
+		Description:  "Hits 2 targets.",
 		Affinity:     game.Physical,
 		Stat:         game.Ranged,
-		Accuracy:     game.P(0.50),
-		Power:        80,
+		Accuracy:     game.P(0.80),
+		Power:        50,
 		Lifesteal:    0,
-		Hits:         2,
+		Hits:         1,
 		CritStage:    0,
 		CritModifier: 1.5,
-		TargetCount:  1,
+		TargetCount:  2,
 		Range:        game.P(3),
 	},
 	Resolve:          game.MakeAttack(game.AttackConfig{}),
-	ValidateContext:  game.ContextTargetLength(1),
+	ValidateContext:  game.ContextTargetLength(2),
 	TargetsPredicate: game.CombineFilters(game.ActiveActors, game.OtherActors, game.ActionRange(3)),
 }

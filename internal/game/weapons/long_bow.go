@@ -31,7 +31,6 @@ func LongBow() game.Weapon {
 			game.Special:        16,
 			game.SpecialDefense: 16,
 		},
-		Uses:       4,
 		Weight:     2,
 		WeaponType: game.WeaponTypeLongBow,
 	}
