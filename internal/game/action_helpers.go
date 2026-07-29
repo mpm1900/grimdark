@@ -32,29 +32,29 @@ type StatusConfig struct {
 	OnFailureResult StatusEffectResult
 }
 
-func AddResultEffects(chance float64, effects ...Effect) AttackEffectResult {
-	return func(g *Game, context Context, this *ActionContext, result DamageResult) {
+func AddEffectsTarget(chance float64, target Actor, effects ...Effect) ActionEffect {
+	return func(g *Game, context Context, this *ActionContext) {
 		if !Chance(chance * this.Source.Stats[EffectChance]) {
 			return
 		}
 
 		// insulated actors are immune to the secondary effects of actions
-		if result.Target.IsInsulated {
+		if target.IsInsulated {
 			this.Push(PushLog(NewLog(
 				"$target$ was insulated from secondary effects.",
-				TargetTerms(result.Target),
+				TargetTerms(target),
 			)).Bind(context))
 			return
 		}
 
 		// actors are immune to the secondary effects of actions they are immune too as well
-		_, immune := result.Target.AffinityImmunities[this.Action.Config.Affinity]
+		_, immune := target.AffinityImmunities[this.Action.Config.Affinity]
 		if immune {
 			this.Push(PushLog(NewLog(
 				"$target$ was immune to $aff$.",
 				CombineTerms(
 					ActionTerms(this.Action),
-					TargetTerms(result.Target),
+					TargetTerms(target),
 				),
 			)).Bind(context))
 			return
@@ -62,11 +62,17 @@ func AddResultEffects(chance float64, effects ...Effect) AttackEffectResult {
 
 		modifiers := []Modifier{}
 		for _, effect := range effects {
-			modifiers = append(modifiers, effect.Bind(MakeModifierContext(this.Source, result.Target)))
+			modifiers = append(modifiers, effect.Bind(MakeModifierContext(this.Source, target)))
 		}
 
 		mutation := AddModifiers(modifiers...)
 		this.Push(mutation.Bind(NewContext()))
+	}
+}
+
+func AddResultEffects(chance float64, effects ...Effect) AttackEffectResult {
+	return func(g *Game, context Context, this *ActionContext, result DamageResult) {
+		AddEffectsTarget(chance, result.Target, effects...)(g, context, this)
 	}
 }
 
