@@ -14,7 +14,7 @@ var QuickStrike = game.Action{
 		Description:  "This action has +1 priority. This action is only usable from 1st position.",
 		Affinity:     game.Physical,
 		Stat:         game.Melee,
-		Power:        40,
+		Power:        55,
 		Accuracy:     game.P(1.0),
 		Lifesteal:    0,
 		Hits:         1,

@@ -39,8 +39,9 @@ func newTemplar() game.Class {
 	class.Options = game.ClassOptions{
 		Items: []game.Item{},
 		Weapons: []game.Weapon{
-			weapons.SlashSword,
 			weapons.Greatsword,
+			weapons.HandCrossbow,
+			weapons.PrayerStaff,
 		},
 	}
 

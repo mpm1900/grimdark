@@ -2,49 +2,29 @@ package actions
 
 import (
 	"grimdark/internal/game"
-	"grimdark/internal/game/effects"
 
 	"github.com/google/uuid"
 )
 
 var Slash = game.Action{
 	ID:   uuid.MustParse("019f0aec-8b34-72cc-bbcc-36350e9fa6fb"),
-	Tags: []game.ActionTag{game.ATActor, game.ATWeapon, game.ATMovement},
+	Tags: []game.ActionTag{game.ATActor, game.ATWeapon},
 	Config: game.ActionConfig{
 		Name:         "Slash",
-		Description:  "Slashes target and possibly applies Speed Down.",
+		Description:  "",
 		Affinity:     game.Psychic,
 		Stat:         game.Melee,
 		Accuracy:     game.P(0.90),
-		Power:        70,
+		Power:        90,
 		Lifesteal:    0.12,
 		Hits:         1,
-		Cooldown:     1,
+		Cooldown:     0,
 		CritStage:    0,
 		CritModifier: 1.5,
 		TargetCount:  1,
 		Range:        game.P(1),
-		Uses:         game.P(5),
 	},
-	LogTemplate: game.P(
-		"$source$ unleashed a flurry of $action$es.",
-	),
-	Resolve: game.MakeAttack(game.AttackConfig{
-		OnSuccessResult: func(g *game.Game, context game.Context, this *game.ActionContext, result game.DamageResult) {
-			game.AddResultEffects(
-				0.5,
-				effects.StatDownTargets(game.Speed, 1),
-			)(g, context, this, result)
-			game.AddResultEffects(
-				0.5,
-				effects.StaggerTargets,
-			)(g, context, this, result)
-
-			stun_ctx := game.MakeModifierContext(this.Source, this.Source)
-			this.Push(game.AddModifiers(effects.StunTargets.Bind(stun_ctx)).Bind(stun_ctx))
-			this.Push(game.PushSourceBackwards().Bind(context))
-		},
-	}),
+	Resolve:          game.MakeAttack(game.AttackConfig{}),
 	ValidateContext:  game.ContextTargetLength(1),
 	TargetsPredicate: game.CombineFilters(game.ActiveActors, game.NotSourceActor, game.ActionRange(1)),
 }

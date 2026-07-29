@@ -20,7 +20,7 @@ var Cleave = game.Action{
 		Hits:         1,
 		CritStage:    0,
 		CritModifier: 1.5,
-		TargetCount:  0,
+		TargetCount:  2,
 	},
 	Resolve:          game.MakeAttack(game.AttackConfig{}),
 	MapContext:       game.CtxToRangeEnemies(2),

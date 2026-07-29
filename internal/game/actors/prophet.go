@@ -40,8 +40,7 @@ func newProphet() game.Class {
 		Items: []game.Item{},
 		Weapons: []game.Weapon{
 			weapons.FireTome,
-			weapons.SlashSword,
-			weapons.Greatsword,
+			weapons.PrayerStaff,
 		},
 	}
 

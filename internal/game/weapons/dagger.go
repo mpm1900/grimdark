@@ -19,6 +19,7 @@ var Dagger = game.Weapon{
 		actions.Protect,
 		actions.QuickStrike,
 		actions.RecklessStrike,
+		actions.Slash,
 	},
 	OffsetStats: map[game.Stat]float64{
 		game.Melee: 16,

@@ -15,7 +15,7 @@ var HeavySwing = game.Action{
 		Description:  "This action lowers the user's Martial Defense stat. This action is only usable from 1st position.",
 		Affinity:     game.Physical,
 		Stat:         game.Melee,
-		Power:        120,
+		Power:        110,
 		Accuracy:     game.P(0.9),
 		Lifesteal:    0,
 		Hits:         1,

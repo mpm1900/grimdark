@@ -15,7 +15,7 @@ var RecklessStrike = game.Action{
 		Affinity:     game.Physical,
 		Stat:         game.Melee,
 		Accuracy:     game.P(0.90),
-		Power:        130,
+		Power:        110,
 		Lifesteal:    0,
 		Recoil:       1.0 / 3.0,
 		Hits:         1,
