@@ -15,7 +15,7 @@ var FiftyFifty = game.Action{
 		Affinity:     game.Physical,
 		Stat:         game.Ranged,
 		Accuracy:     game.P(0.50),
-		Power:        80,
+		Power:        75,
 		Lifesteal:    0,
 		Hits:         2,
 		CritStage:    0,

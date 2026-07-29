@@ -26,6 +26,7 @@ const affinityVariants = cva('capitalize', {
 
 function AffinityIcon({
   affinity,
+  children,
   className,
   ...props
 }: React.ComponentProps<IconType> & {
@@ -36,10 +37,16 @@ function AffinityIcon({
   return (
     <Tooltip delayDuration={1000}>
       <TooltipTrigger asChild>
-        <Icon
-          className={cn(affinityVariants({ affinity }), className)}
-          {...props}
-        />
+        {children ? (
+          <span className={cn(affinityVariants({ affinity }), className)}>
+            {children}
+          </span>
+        ) : (
+          <Icon
+            className={cn(affinityVariants({ affinity }), className)}
+            {...props}
+          />
+        )}
       </TooltipTrigger>
       <TooltipContent className="capitalize font-serif font-semibold text-sm">
         {affinity}

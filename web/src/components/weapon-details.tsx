@@ -12,6 +12,8 @@ import { DNumber } from './dnumber'
 import { WEAPON_ICONS } from '#/icons/weapons'
 import { EffectTooltip } from './effect-tooltip'
 import { ActionTooltip } from './action-tooltip'
+import { AffinityIcon } from './affinity-name'
+import { FaCircle } from 'react-icons/fa'
 
 function InlineOffsetStats({
   offset_stats,
@@ -131,9 +133,13 @@ function WeaponDetails({ weapon }: { weapon: Weapon }) {
                   action={a}
                   className={statVariants({
                     stat: a.config.stat,
-                    className: 'cursor-default hover:underline',
+                    className:
+                      'cursor-default hover:underline flex items-center gap-0.5',
                   })}
                 >
+                  <AffinityIcon affinity={a.config.affinity}>
+                    <FaCircle className="size-2" />
+                  </AffinityIcon>
                   {a.config.name}
                   {a.tags.includes('conditional') && '*'}
                 </ActionTooltip>
