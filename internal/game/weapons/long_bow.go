@@ -3,6 +3,7 @@ package weapons
 import (
 	"grimdark/internal/game"
 	"grimdark/internal/game/actions"
+	"grimdark/internal/game/effects"
 
 	"github.com/google/uuid"
 )
@@ -13,7 +14,9 @@ func LongBow() game.Weapon {
 			ID:          uuid.MustParse("019f859c-d25e-724c-aceb-bf82cf5c7389"),
 			Name:        "Long Bow",
 			Description: "A high-precision, long-range bow, widely used to pick off high value targets. Expensive and rare, they are given to the best marksmen and sharpshooters.",
-			Effects:     []game.Effect{},
+			Effects: []game.Effect{
+				effects.OtherEye,
+			},
 		},
 		Actions: []game.Action{
 			actions.CalledShot,
