@@ -21,6 +21,7 @@ func ShortBow() game.Weapon {
 			actions.LockOn,
 			actions.PinDown,
 			actions.Protect,
+			actions.SpreadShot,
 		},
 		OffsetStats: map[game.Stat]float64{
 			game.Ranged:         32,
