@@ -78,6 +78,7 @@ const weaponIcon = cva('absolute top-1 h-auto block', {
       'cross-bow': 'size-14 left-1/2 top-3',
       'long-bow': 'size-24 top-8 rotate-45',
       tome: 'size-28 top-3 left-1',
+      dagger: 'size-14 top-2',
     },
   },
   defaultVariants: {

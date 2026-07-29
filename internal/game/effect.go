@@ -140,7 +140,7 @@ func (e Effect) Bind(context Context) Modifier {
 	return mod
 }
 func (m *Modifier) Resolve(g *Game) []uuid.UUID {
-	actorIDs := resolveMutation(g, m.Context, m.Payload)
+	actorIDs := resolve(g, m.Context, m.Payload)
 	if len(actorIDs) > 0 {
 		for _, actorID := range actorIDs {
 			g.meta.apply(m.ID, actorID)

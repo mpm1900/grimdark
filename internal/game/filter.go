@@ -2,15 +2,12 @@ package game
 
 import (
 	"slices"
-
-	"github.com/google/uuid"
 )
 
 type Filter[T any] func(*Game, T, Context) bool
 type Updater[T any] func(*Game, T, Context) T
 
 type GameFilter func(*Game, Context) bool
-type Mutator func(*Game, Context) []uuid.UUID
 
 func CombineFilters[T any](
 	filters ...Filter[T],

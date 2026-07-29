@@ -1,6 +1,7 @@
 import type { WeaponType } from '#/lib/game/core'
 import {
   GiBookmarklet,
+  GiBowieKnife,
   GiCrossbow,
   GiHeavyArrow,
   GiKatana,
@@ -70,6 +71,7 @@ const Sword: IconType = (props) => {
 export const WEAPON_ICONS: Record<WeaponType, IconType> = {
   'big-sword': Sword,
   'cross-bow': GiCrossbow,
+  dagger: GiBowieKnife,
   sword: GiKatana,
   ['long-bow']: GiHeavyArrow,
   tome: GiBookmarklet,

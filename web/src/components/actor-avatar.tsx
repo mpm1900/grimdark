@@ -14,6 +14,8 @@ function ActorAvatar({ actor }: { actor: Actor }) {
   )
   const position = game.positions.find((p) => p.actor_ID === actor.ID)
   const ratio = 100 - Math.max(0, Math.min(getHealthRatio(actor), 100))
+  actor.affinities = actor.affinities.sort((a, b) => a.localeCompare(b))
+
   return (
     <div className="relative h-48 w-52">
       <div className="absolute size-42 left-6 mt-13 rounded-full overflow-hidden bg-linear-to-b from-emerald-950/0 to-emerald-950">

@@ -4,36 +4,15 @@ import (
 	"github.com/google/uuid"
 )
 
-type Bindable[P any] struct {
-	ID      uuid.UUID `json:"ID"`
-	Context Context   `json:"context"`
-	Payload P         `json:"payload"`
-}
-
+// types
 type Mutation struct {
 	filter GameFilter
-	delta  Mutator
+	delta  func(*Game, Context) []uuid.UUID
 }
+
 type Transaction Bindable[Mutation]
 
-func bind[P any](payload P, context Context) Bindable[P] {
-	return Bindable[P]{
-		ID:      uuid.New(),
-		Context: context,
-		Payload: payload,
-	}
-}
-
-func NewMutation(filter GameFilter, delta Mutator) Mutation {
-	return Mutation{
-		filter,
-		delta,
-	}
-}
-
-func (m *Mutation) SetFilter(filter GameFilter) {
-	m.filter = filter
-}
+// methods
 func (m Mutation) Filter(g *Game, context Context) bool {
 	if m.filter == nil {
 		return true
@@ -41,7 +20,6 @@ func (m Mutation) Filter(g *Game, context Context) bool {
 
 	return m.filter(g, context)
 }
-
 func (m Mutation) Delta(g *Game, context Context) []uuid.UUID {
 	if m.delta == nil {
 		return []uuid.UUID{}
@@ -54,22 +32,11 @@ func (m Mutation) Bind(context Context) Transaction {
 	return Transaction(bind(m, context))
 }
 
-type resolvableMutation interface {
-	Filter(*Game, Context) bool
-	Delta(*Game, Context) []uuid.UUID
-}
-
-func resolveMutation(g *Game, context Context, mutation resolvableMutation) []uuid.UUID {
-	if !mutation.Filter(g, context) {
-		return []uuid.UUID{}
-	}
-
-	return mutation.Delta(g, context)
-}
 func (tx *Transaction) Resolve(g *Game) []uuid.UUID {
-	return resolveMutation(g, tx.Context, tx.Payload)
+	return resolve(g, tx.Context, tx.Payload)
 }
 
+// funcions
 func AddModifiers(modifiers ...Modifier) Mutation {
 	return Mutation{
 		delta: func(g *Game, ctx Context) []uuid.UUID {
