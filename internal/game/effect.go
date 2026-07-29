@@ -5,6 +5,7 @@ import (
 )
 
 const EffectPriorityImmunities = -1
+const EffectPriorityActions = 0
 const EffectPriorityAffinities = 0
 const EffectPriorityBaseStats = 0
 const EffectPriorityOffsetStats = 0
