@@ -19,6 +19,7 @@ var PrayerStaff = game.Weapon{
 	},
 	Actions: []game.Action{
 		actions.BlessingOfMichael,
+		actions.HealingBlessing,
 		actions.HealingPrayer,
 	},
 	OffsetStats: map[game.Stat]float64{

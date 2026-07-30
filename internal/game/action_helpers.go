@@ -186,6 +186,7 @@ func DamageSideEffects(g *Game, context Context, result DamageResult, this *Acti
 // action helpers
 func IsDualWielding(source Actor) bool {
 	found := uuid.Nil
+	success := false
 	for _, w := range source.Weapons {
 		if found == uuid.Nil {
 			found = w.Item.ID
@@ -194,9 +195,12 @@ func IsDualWielding(source Actor) bool {
 
 		if w.Item.ID != found {
 			return false
+		} else {
+			success = true
 		}
 	}
-	return true
+
+	return success
 }
 
 // effect helpers
@@ -275,6 +279,12 @@ func CtxToAllActiveTargets() func(g *Game, ctx Context, this ActionContext) Cont
 func CtxToAllEnemies() func(g *Game, ctx Context, this ActionContext) Context {
 	return func(g *Game, ctx Context, this ActionContext) Context {
 		c := ctx.CloneWithTargets(g.FindActors(CombineFilters(ActiveActors, Enemies), ctx))
+		return c
+	}
+}
+func CtxToAllies() func(g *Game, ctx Context, this ActionContext) Context {
+	return func(g *Game, ctx Context, this ActionContext) Context {
+		c := ctx.CloneWithTargets(g.FindActors(CombineFilters(ActiveActors, Allies), ctx))
 		return c
 	}
 }

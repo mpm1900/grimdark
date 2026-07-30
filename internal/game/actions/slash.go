@@ -12,7 +12,7 @@ var Slash = game.Action{
 	Config: game.ActionConfig{
 		Name:         "Slash",
 		Description:  "",
-		Affinity:     game.Psychic,
+		Affinity:     game.Physical,
 		Stat:         game.Melee,
 		Accuracy:     game.P(0.90),
 		Power:        90,

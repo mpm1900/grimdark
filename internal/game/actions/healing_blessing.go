@@ -6,22 +6,22 @@ import (
 	"github.com/google/uuid"
 )
 
-var HealingPrayer = game.Action{
-	ID:   uuid.MustParse("019fae66-768a-736e-b01e-3ed0699d3f19"),
+var HealingBlessing = game.Action{
+	ID:   uuid.MustParse("019fb154-1ee5-74bd-8212-58e30a719886"),
 	Tags: []game.ActionTag{game.ATActor, game.ATWeapon},
 	Config: game.ActionConfig{
-		Name:        "Healing Prayer",
-		Description: "Heals the user for up-to 50% health.",
+		Name:        "Healing Blessing",
+		Description: "Heals all active allies for up-to 25% health.",
 		Affinity:    game.Holy,
 		TargetCount: 0,
 		Uses:        game.P(2),
 	},
 	Resolve: func(g *game.Game, ctx game.Context, this game.ActionContext) []game.Transaction {
-		mut := game.HealRatioTargets(0.50)
-		heal_ctx := game.MakeContextFor(this.Source, this.Source)
-		this.Push(mut.Bind(heal_ctx))
+		mut := game.HealRatioTargets(0.25)
+		this.Push(mut.Bind(ctx))
 		return this.Done()
 	},
+	MapContext:       game.CtxToAllies(),
 	ValidateContext:  game.TrueGameFilter,
 	TargetsPredicate: game.NoneActors,
 }
