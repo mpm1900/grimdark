@@ -28,7 +28,3 @@ var Dagger = game.Weapon{
 	Weight:     1,
 	WeaponType: game.WeaponTypeDagger,
 }
-
-// quick attack
-// retreating attack
-// dagger throw (2 range)

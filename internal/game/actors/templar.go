@@ -42,7 +42,7 @@ func newTemplar() game.Class {
 			weapons.Greatsword,
 			weapons.HandCrossbow,
 			weapons.PrayerStaff,
-			weapons.ShortBow(),
+			weapons.ShortBow,
 		},
 	}
 

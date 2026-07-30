@@ -42,7 +42,7 @@ func newRogue() game.Class {
 			weapons.FireTome,
 			weapons.Greatsword,
 			weapons.Dagger,
-			weapons.ShortBow(),
+			weapons.ShortBow,
 			weapons.HandCrossbow,
 		},
 	}

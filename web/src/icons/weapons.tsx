@@ -6,6 +6,7 @@ import {
   GiHeavyArrow,
   GiKatana,
   GiPocketBow,
+  GiStoneSpear,
   GiWizardStaff,
 } from 'react-icons/gi'
 import type { IconType } from 'react-icons/lib'
@@ -79,4 +80,5 @@ export const WEAPON_ICONS: Record<WeaponType, IconType> = {
   ['short-bow']: GiPocketBow,
   tome: GiBookmarklet,
   staff: GiWizardStaff,
+  spear: GiStoneSpear,
 }

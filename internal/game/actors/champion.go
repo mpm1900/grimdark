@@ -78,7 +78,8 @@ func newChampion() game.Class {
 		Weapons: []game.Weapon{
 			weapons.Greatsword,
 			weapons.HandCrossbow,
-			weapons.ShortBow(),
+			weapons.ShortBow,
+			weapons.Spear,
 		},
 	}
 

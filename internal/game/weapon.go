@@ -18,6 +18,7 @@ const (
 	WeaponTypeTome     WeaponType = "tome"
 	WeaponTypeDagger   WeaponType = "dagger"
 	WeaponTypeStaff    WeaponType = "staff"
+	WeaponTypeSpear    WeaponType = "spear"
 )
 
 type Weapon struct {
