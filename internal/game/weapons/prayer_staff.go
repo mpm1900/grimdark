@@ -19,13 +19,13 @@ var PrayerStaff = game.Weapon{
 	},
 	Actions: []game.Action{
 		actions.BlessingOfMichael,
+		actions.CommandRepeat,
 		actions.HealingBlessing,
 		actions.HealingPrayer,
 	},
 	OffsetStats: map[game.Stat]float64{
-		game.Health:         32,
 		game.SpecialDefense: 32,
 	},
-	Weight:     2,
+	Weight:     1,
 	WeaponType: game.WeaponTypeStaff,
 }

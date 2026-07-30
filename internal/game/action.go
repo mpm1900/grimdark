@@ -12,6 +12,7 @@ const (
 	ATSystem ActionTag = "system"
 	ATActor  ActionTag = "actor"
 
+	ATStruggle    ActionTag = "struggle"
 	ATItem        ActionTag = "item"
 	ATWeapon      ActionTag = "weapon"
 	ATConditional ActionTag = "conditional"
