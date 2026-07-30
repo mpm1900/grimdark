@@ -52,6 +52,7 @@ export type WeaponType =
   | 'dagger'
   | 'staff'
   | 'spear'
+  | 'shield'
 
 export type Bindable<T> = {
   ID: ID

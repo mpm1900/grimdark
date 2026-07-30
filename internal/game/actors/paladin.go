@@ -42,6 +42,7 @@ func newPaladin() game.Class {
 			weapons.FireTome,
 			weapons.Greatsword,
 			weapons.PrayerStaff,
+			weapons.RoundShield,
 		},
 	}
 

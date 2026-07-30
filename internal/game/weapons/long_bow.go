@@ -24,7 +24,6 @@ func LongBow() game.Weapon {
 			actions.Headshot,
 			actions.LockOn,
 			actions.PiercingShot,
-			actions.Protect,
 		},
 		OffsetStats: map[game.Stat]float64{
 			game.Ranged:         32,

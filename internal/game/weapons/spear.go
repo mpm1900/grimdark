@@ -16,6 +16,7 @@ var Spear = game.Weapon{
 	},
 	Actions: []game.Action{
 		actions.BackStrike,
+		actions.Cleave,
 		actions.Poke,
 	},
 	OffsetStats: map[game.Stat]float64{
