@@ -9,6 +9,7 @@ import (
 
 const ActionPriorityMovement = 5
 const ActionPriorityProtect = 4
+const ActionPrioritySpecial = 3
 const ActionPriorityQuick = 1
 const ActionPriorityDefault = 0
 const ActionPriorityDelayed = -1

@@ -17,10 +17,9 @@ var ShortBow = game.Weapon{
 	Actions: []game.Action{
 		actions.DoubleShot,
 		actions.FiftyFifty,
-		actions.LockOn,
 		actions.PinDown,
-		actions.Protect,
 		actions.SpreadShot,
+		actions.StunningShot,
 	},
 	OffsetStats: map[game.Stat]float64{
 		game.Ranged:         32,
