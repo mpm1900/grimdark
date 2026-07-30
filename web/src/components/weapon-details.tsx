@@ -84,7 +84,7 @@ const weaponIcon = cva('absolute top-1 h-auto block', {
       dagger: 'size-14 top-2',
       staff: 'size-20 top-6 -rotate-45',
       spear: 'size-16 top-3',
-      shield: 'size-16 top-3',
+      shield: 'size-16 top-1',
     },
   },
   defaultVariants: {
