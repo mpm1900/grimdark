@@ -11,7 +11,7 @@ func AffinityImmunity(affinity game.Affinity) game.Effect {
 		return a
 	})
 	effect.Name = fmt.Sprintf("%s Immunity", affinity)
-	effect.Description = fmt.Sprintf("Immunity to all %s actions.", affinity)
+	effect.Description = fmt.Sprintf("Immunity to all %s actions and damage.", affinity)
 
 	return effect
 }
