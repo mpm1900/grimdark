@@ -15,7 +15,7 @@ func newVicar() game.Class {
 	class.Name = "Vicar"
 	class.SpriteURL = "/actors/298_crop.png"
 	class.Affinities = game.Set[game.Affinity]{
-		game.Fire: {},
+		game.Holy: {},
 	}
 	class.Stats = map[game.Stat]float64{
 		game.Health:         60,
