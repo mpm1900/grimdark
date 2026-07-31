@@ -23,8 +23,8 @@ func newVicar() game.Class {
 		game.Melee:          60,
 		game.Ranged:         70,
 		game.Special:        144,
-		game.MartialDefense: 114,
-		game.SpecialDefense: 64,
+		game.MartialDefense: 64,
+		game.SpecialDefense: 114,
 		game.Accuracy:       1,
 		game.Evasion:        1,
 

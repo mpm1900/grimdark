@@ -136,7 +136,7 @@ function WeaponDetails({ weapon }: { weapon: Weapon }) {
                   className={statVariants({
                     stat: a.config.stat,
                     className:
-                      'cursor-default hover:underline flex items-center gap-0.5',
+                      'cursor-default hover:underline capitalize flex items-center gap-0.5',
                   })}
                 >
                   <AffinityIcon affinity={a.config.affinity}>
@@ -158,7 +158,7 @@ function WeaponDetails({ weapon }: { weapon: Weapon }) {
                   <EffectTooltip
                     key={e.ID}
                     effect={e}
-                    className="cursor-default hover:underline"
+                    className="cursor-default hover:underline capitalize"
                   >
                     {e.name}
                   </EffectTooltip>

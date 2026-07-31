@@ -1,0 +1,17 @@
+package effects
+
+import (
+	"fmt"
+	"grimdark/internal/game"
+)
+
+func AffinityImmunity(affinity game.Affinity) game.Effect {
+	effect := game.EffectParent(game.EffectPriorityImmunities, func(g *game.Game, a game.Actor, ctx game.Context) game.Actor {
+		a.AffinityImmunities[affinity] = 0
+		return a
+	})
+	effect.Name = fmt.Sprintf("%s Immunity", affinity)
+	effect.Description = fmt.Sprintf("Immunity to all %s actions.", affinity)
+
+	return effect
+}

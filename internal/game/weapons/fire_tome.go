@@ -15,11 +15,12 @@ var FireTome = game.Weapon{
 		Description: "A tome of prayers to the first flame, Gabriel.",
 		Effects: []game.Effect{
 			effects.Elamentalist(),
+			effects.AffinityImmunity(game.Fire),
 		},
 	},
 	Actions: []game.Action{
-		actions.EdictOfSpeed,
 		actions.Firestorm,
+		actions.Ignite,
 		actions.Immolate,
 		actions.Protect,
 		actions.SacredFlame,

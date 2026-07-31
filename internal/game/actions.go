@@ -24,11 +24,11 @@ func MakeAttack(config AttackConfig) ActionResolver {
 			for _, target := range targets {
 				result := this.Action.Config.GetDamageResult(
 					DamageConfig{
-						Source: this.Source,
-						Target: target,
-						Context: context,
-						RandomRoll: rand.Float64(),
-						PendingDamage: this.PendingDamage(target.ID),
+						Source:          this.Source,
+						Target:          target,
+						Context:         context,
+						RandomRoll:      rand.Float64(),
+						PendingDamage:   this.PendingDamage(target.ID),
 						UseBaseAccuracy: false,
 					},
 				)
@@ -203,8 +203,17 @@ func AddTargetsEffects(config StatusConfig, modifier_context Context, effects ..
 			config.OnSuccess(g, ctx, &this)
 		}
 
-		if !success && config.OnFailure != nil {
-			config.OnFailure(g, ctx, &this)
+		if !success {
+			this.Push(PushLog(NewLog(
+				"$action$ failed.",
+				CombineTerms(
+					ActionTerms(this.Action),
+				),
+			)).Bind(ctx))
+
+			if config.OnFailure != nil {
+				config.OnFailure(g, ctx, &this)
+			}
 		}
 
 		return this.Done()

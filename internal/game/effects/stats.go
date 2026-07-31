@@ -39,6 +39,7 @@ var StatChangeTag game.EffectTag = "stat-change"
 var StatUpTag game.EffectTag = "stat-up"
 var StatDownTag game.EffectTag = "stat-down"
 
+// consider refactoring these to xyzParent
 func StatUpSource(stat game.Stat, amount int) game.Effect {
 	effect := game.EffectSource(game.EffectPriorityStages, StatChangeActor(stat, amount))
 	effect.Name = fmt.Sprintf("%s up", stat)
