@@ -101,8 +101,10 @@ function TeamActor({
             .map((wid) =>
               actor_class?.options.weapons.find((w) => w.ID === wid)
             )
-            .map((w) => (
-              <WeaponTooltip weapon={w}>{w?.name}</WeaponTooltip>
+            .map((w, i) => (
+              <WeaponTooltip key={i + (w?.ID ?? '')} weapon={w}>
+                {w?.name}
+              </WeaponTooltip>
             ))}
         </div>
       ) : (
