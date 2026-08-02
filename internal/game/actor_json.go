@@ -23,7 +23,7 @@ type actorJSON struct {
 	IsInsulated        bool                      `json:"is_insulated"`
 	IsPlayer           bool                      `json:"is_player"`
 	IsProtected        bool                      `json:"is_protected"`
-	IsStunned          bool                      `json:"is_stunned"`
+	IsDisabled         bool                      `json:"is_disabled"`
 	Item               *Item                     `json:"item"`
 	Level              int                       `json:"level"`
 	Name               string                    `json:"name"`
@@ -124,6 +124,6 @@ func (a Actor) ToJSON(g *Game) actorJSON {
 		IsHidden:           a.IsHidden,
 		IsInsulated:        a.IsInsulated,
 		IsProtected:        a.IsProtected,
-		IsStunned:          a.IsStunned,
+		IsDisabled:         a.IsDisabled,
 	}
 }

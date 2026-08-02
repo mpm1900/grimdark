@@ -20,7 +20,7 @@ export type Actor = {
   is_insulated: boolean
   is_player: boolean
   is_protected: boolean
-  is_stunned: boolean
+  is_disabled: boolean
   item: Item | null
   level: number
   name: string

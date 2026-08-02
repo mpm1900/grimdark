@@ -72,7 +72,7 @@ func (a Action) CanResolve(g *Game, context Context, this *ActionContext) bool {
 	valid := action_valid && runtime_valid && source_valid
 
 	if this != nil {
-		if source.IsStunned {
+		if source.IsDisabled {
 			this.Push(PushLog(NewLog("$source$ was stunned.", SourceTerms(source))).Bind(context))
 		}
 		if !action_valid {

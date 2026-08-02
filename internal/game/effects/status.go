@@ -49,7 +49,7 @@ func Sleeping(duration int) game.Effect {
 		game.EffectPriorityStatus,
 		func(g *game.Game, a game.Actor, ctx game.Context) game.Actor {
 			a.Status = game.StatusSleeping
-			a.IsStunned = true
+			a.IsDisabled = true
 			return a
 		},
 	)

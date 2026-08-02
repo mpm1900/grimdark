@@ -57,7 +57,7 @@ func DeadActors(g *Game, actor Actor, context Context) bool {
 	return !actor.IsAlive
 }
 func NonStunnedActors(g *Game, actor Actor, context Context) bool {
-	return !actor.IsStunned
+	return !actor.IsDisabled
 }
 func Allies(g *Game, actor Actor, context Context) bool {
 	return actor.PlayerID == context.PlayerID

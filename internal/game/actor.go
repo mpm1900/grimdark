@@ -86,7 +86,7 @@ type Actor struct {
 	IsHidden    bool // cannot be targeted by single-target actions (unimplemented)
 	IsInsulated bool // is immune from the secondary effects of attacking attacks (ie through AddResultEffects())
 	IsProtected bool // protected from actions that check accuracy
-	IsStunned   bool // cannot act and cannot queue commands (may not be needed)
+	IsDisabled  bool // cannot act and cannot queue commands (may not be needed)
 
 	Meta ActorMeta
 }
@@ -142,7 +142,7 @@ func NewActor(class Class, config ActorConfig) *Actor {
 		IsHidden:    false,
 		IsInsulated: false,
 		IsProtected: false,
-		IsStunned:   false,
+		IsDisabled:  false,
 
 		ActionStates: map[uuid.UUID]ActionState{},
 		effectStates: map[uuid.UUID]EffectState{},
@@ -196,7 +196,7 @@ func (a *Actor) Clone() *Actor {
 		IsHidden:    a.IsHidden,
 		IsInsulated: a.IsInsulated,
 		IsProtected: a.IsProtected,
-		IsStunned:   a.IsStunned,
+		IsDisabled:  a.IsDisabled,
 
 		ActionStates: maps.Clone(a.ActionStates),
 		effectStates: maps.Clone(a.effectStates),
@@ -207,7 +207,7 @@ func (a *Actor) Clone() *Actor {
 
 // getters
 func (a *Actor) CanAct() bool {
-	return !a.IsStunned
+	return !a.IsDisabled
 }
 
 func (a *Actor) GetAffinityDamage(affinity Affinity) int {

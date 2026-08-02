@@ -138,7 +138,7 @@ function ActionsPanel({ active_actor }: { active_actor: Actor }) {
                             action={action}
                             actor={active_actor}
                             disabled={
-                              remaining_ap === 0 || active_actor.is_stunned
+                              remaining_ap === 0 || active_actor.is_disabled
                             }
                           />
                         </DialogTrigger>
@@ -181,7 +181,7 @@ function ActionsPanel({ active_actor }: { active_actor: Actor }) {
                     <SystemActionButton
                       action={action}
                       actor={active_actor}
-                      disabled={remaining_ap === 0 || active_actor.is_stunned}
+                      disabled={remaining_ap === 0 || active_actor.is_disabled}
                     />
                   </DialogTrigger>
                 </ActionContextDialog>
@@ -207,7 +207,9 @@ function BattlePanel() {
     (c) => c.context.player_ID === client?.ID
   )
   const actions = game.actors
-    .filter((a) => !a.is_stunned && a.player_ID === client?.ID && a.position_ID)
+    .filter(
+      (a) => !a.is_disabled && a.player_ID === client?.ID && a.position_ID
+    )
     .map((a) => a.stats.actions)
     .reduce((sum, c) => sum + c, 0)
 
