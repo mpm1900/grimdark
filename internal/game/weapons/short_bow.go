@@ -15,6 +15,7 @@ var ShortBow = game.Weapon{
 		Effects:     []game.Effect{},
 	},
 	Actions: []game.Action{
+		actions.Barage,
 		actions.DoubleShot,
 		actions.FiftyFifty,
 		actions.PinDown,
