@@ -137,6 +137,9 @@ function WeaponDetails({ weapon }: { weapon: Weapon }) {
                     className:
                       'cursor-default hover:underline capitalize flex items-center gap-0.5',
                   })}
+                  card_content={{
+                    side: 'right',
+                  }}
                 >
                   <AffinityIcon affinity={a.config.affinity}>
                     <FaCircle className="size-2" />

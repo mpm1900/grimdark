@@ -11,42 +11,12 @@ import (
 var Champion = newChampion()
 
 func newChampion() game.Class {
-	_ = effects.ProtectedWhere(func(g *game.Game, a game.Actor, ctx game.Context) bool {
-		active_context := g.State().ActiveContext
-		if active_context == nil {
-			return false
-		}
-
-		parent, ok := g.GetParent(ctx)
-		if !ok {
-			return false
-		}
-
-		if active_context.ActionID == uuid.Nil {
-			return false
-		}
-
-		if !active_context.HasTarget(parent) {
-			return false
-		}
-
-		source, ok := g.GetSource(*active_context)
-		if !ok {
-			return false
-		}
-
-		action, ok := source.GetActionByID(active_context.ActionID)
-		if !ok {
-			return false
-		}
-
-		return action.Config.Affinity == game.Psychic
-	})
-
 	weakness_immune := game.EffectSource(game.EffectPriorityImmunities, func(g *game.Game, a game.Actor, ctx game.Context) game.Actor {
 		a.EffectImmunities.Push(effects.Weakened().ID)
 		return a
 	})
+	weakness_immune.Name = "Weakness Immune"
+	weakness_immune.Description = "Immunity from 'Weakness'"
 
 	class := game.NewClass()
 	class.ID = uuid.MustParse("019f5f12-6e78-7eda-b638-980453e3eaba")

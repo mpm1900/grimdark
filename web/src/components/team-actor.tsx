@@ -102,7 +102,7 @@ function TeamActor({
               actor_class?.options.weapons.find((w) => w.ID === wid)
             )
             .map((w, i) => (
-              <WeaponTooltip key={i} weapon={w}>
+              <WeaponTooltip key={i} weapon={w} content_props={{ side: 'top' }}>
                 {w?.name}
               </WeaponTooltip>
             ))}

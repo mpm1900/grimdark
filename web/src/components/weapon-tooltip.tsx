@@ -18,7 +18,7 @@ function WeaponTooltip({
   return (
     <HoverCard {...hover_card}>
       <HoverCardTrigger
-        className={cn('hover:underline cursor-default', className)}
+        className={cn(weapon && 'hover:underline cursor-default', className)}
         {...props}
       />
       <GothicHoverCardContent

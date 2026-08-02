@@ -3,9 +3,10 @@ import { cn } from '#/lib/utils'
 import { FaCircle } from 'react-icons/fa'
 import { ActionTooltip } from './action-tooltip'
 import { AffinityIcon } from './affinity-name'
-import { statVariants } from './stat-name'
+import { StatIcon, statVariants } from './stat-name'
 import { ItemDescription } from './ui/item'
 import { EffectTooltip } from './effect-tooltip'
+import { CLASS_STATS } from '#/lib/game/core'
 
 function ClassDetails({
   actor_class,
@@ -14,8 +15,18 @@ function ClassDetails({
 }: React.ComponentProps<'div'> & { actor_class?: ActorClass }) {
   if (!actor_class) return null
   return (
-    <div className={cn(className)} {...props}>
-      <div>{actor_class.name}</div>
+    <div className={cn(className, 'font-serif p-1')} {...props}>
+      <div className="font-cinzel-dec font-semibold mb-2">
+        {actor_class.name}
+      </div>
+      <div className="flex gap-1">
+        {CLASS_STATS.map((stat) => (
+          <div key={stat} className="flex-1 flex flex-col items-center gap-0">
+            <StatIcon stat={stat} className="size-5" />
+            <div>{actor_class.stats[stat]}</div>
+          </div>
+        ))}
+      </div>
       <ItemDescription className="text-foreground/80">
         <span className="text-foreground/40 block font-cinzel font-semibold">
           Actions
@@ -39,6 +50,7 @@ function ClassDetails({
             </ActionTooltip>
           ))}
         </span>
+        {actor_class.actions.length == 0 && <span>None</span>}
       </ItemDescription>
       <ItemDescription className="text-foreground/80">
         <span className="text-foreground/40 block font-cinzel font-semibold">
@@ -57,6 +69,7 @@ function ClassDetails({
             ))}
           </span>
         )}
+        {actor_class.effects.length == 0 && <span>None</span>}
       </ItemDescription>
     </div>
   )
