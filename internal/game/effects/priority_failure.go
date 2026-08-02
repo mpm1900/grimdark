@@ -24,7 +24,7 @@ func PriorityFailure() game.Effect {
 		return a
 	})
 	effect.Name = "Priority Failure"
-	effect.Description = "All actors cannot use attacks with greater than 0 priority."
+	effect.Description = "All actions with greater than priority 0 are disabled."
 
 	return effect
 }
