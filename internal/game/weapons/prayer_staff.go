@@ -15,6 +15,7 @@ var PrayerStaff = game.Weapon{
 		Description: "A prayer staff of the Greater Will, used as a means to better commune with the divne.",
 		Effects: []game.Effect{
 			effects.Devout(),
+			effects.DivineBlessing(),
 		},
 	},
 	Actions: []game.Action{

@@ -20,6 +20,7 @@ const EffectPriorityStagesOverwrite = 4
 const EffectPriorityMapStages = 5
 const EffectPriorityPostStagesStats = 6
 const EffectPriorityActionState = 6
+const EffectPriorityNegations = 7
 
 type EffectState struct {
 	Delay    *int

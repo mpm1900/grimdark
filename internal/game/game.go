@@ -7,12 +7,12 @@ import (
 	"github.com/google/uuid"
 )
 
-type gamestate uint8
+type resolve_state uint8
 
 const (
-	unresolved gamestate = 0
-	resolving  gamestate = 1
-	resolved   gamestate = 2
+	unresolved resolve_state = 0
+	resolving  resolve_state = 1
+	resolved   resolve_state = 2
 )
 
 type gamemeta struct {
@@ -53,7 +53,7 @@ type Game struct {
 	state    State
 	resolved State
 
-	gamestate  gamestate
+	resolving  resolve_state
 	meta       gamemeta
 	onComplete func()
 
@@ -93,7 +93,7 @@ func NewGame(instanceID uuid.UUID, onComplete func()) *Game {
 	return &Game{
 		state:     state,
 		resolved:  state,
-		gamestate: unresolved,
+		resolving: unresolved,
 		meta: gamemeta{
 			applied_modifiers: map[uuid.UUID]Set[uuid.UUID]{},
 		},
@@ -108,16 +108,16 @@ func NewGame(instanceID uuid.UUID, onComplete func()) *Game {
 
 // setters
 func (g *Game) mutate(updater func(*State)) {
-	if g.gamestate == resolving {
+	if g.resolving == resolving {
 		fmt.Println("!!! Tried to mutate state inside of resolve()")
 		return
 	}
 
 	updater(&g.state)
-	g.gamestate = unresolved
+	g.resolving = unresolved
 }
 func (g *Game) modify(updater func(*State)) {
-	if g.gamestate != resolving {
+	if g.resolving != resolving {
 		fmt.Println("!!! Tried to modify state outside of resolve()")
 		return
 	}
@@ -143,7 +143,7 @@ func (g *Game) Base() State {
 	return g.state
 }
 func (g *Game) State() State {
-	if g.gamestate == unresolved {
+	if g.resolving == unresolved {
 		g.resolve()
 	}
 
@@ -266,7 +266,7 @@ func (g *Game) PromptsReady() bool {
 }
 
 func (g *Game) resolve() {
-	g.gamestate = resolving
+	g.resolving = resolving
 	g.resolved = g.state.Clone()
 	g.meta.applied_modifiers = map[uuid.UUID]Set[uuid.UUID]{}
 
@@ -276,7 +276,7 @@ func (g *Game) resolve() {
 		mod.Resolve(g)
 	}
 
-	g.gamestate = resolved
+	g.resolving = resolved
 }
 
 func (g *Game) On(on TriggerOn, context Context) {
