@@ -49,14 +49,14 @@ func (g *Game) SetPosition(actor_id uuid.UUID, position_id uuid.UUID) {
 		}
 
 		//join
-		if actor.PositionID == uuid.Nil {
+		if !actor.Active() {
 			log := NewLog("$source$ joined the battle.", SourceTerms(actor))
 			g.PushLogMeta(log.Bind(trigger_context))
 			g.On(OnActorEnter, trigger_context)
 		}
 
 		//move
-		if actor.PositionID != uuid.Nil && position_id != uuid.Nil {
+		if actor.Active() && position_id != uuid.Nil {
 			g.On(OnActorMove, trigger_context)
 		}
 	})

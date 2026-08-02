@@ -49,7 +49,7 @@ func (a *Actor) SetPosition(position_id uuid.UUID) {
 	} else {
 		a.Meta.Seen = true
 	}
-	if a.PositionID == uuid.Nil {
+	if !a.Active() {
 		a.Meta.ActiveTurns = 0
 		a.Meta.ActiveHits = 0
 		a.Meta.ActiveDamage = 0

@@ -17,7 +17,10 @@ function WeaponTooltip({
 }) {
   return (
     <HoverCard {...hover_card}>
-      <HoverCardTrigger className={cn(className)} {...props} />
+      <HoverCardTrigger
+        className={cn('hover:underline cursor-default', className)}
+        {...props}
+      />
       <GothicHoverCardContent
         sideOffset={0}
         side="left"

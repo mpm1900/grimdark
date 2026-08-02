@@ -9,6 +9,7 @@ import { StatIcon } from './stat-name'
 import { useSelector } from '@tanstack/react-store'
 import { motion } from 'motion/react'
 import { AffinityIcon } from './affinity-name'
+import { WeaponTooltip } from './weapon-tooltip'
 
 function ClassSprite({
   index,
@@ -95,7 +96,15 @@ function TeamActor({
         </div>
       </div>
       {Object.values(config.weapons).some((id) => id !== null) ? (
-        <div className="text-center text-positive font-serif">Ready</div>
+        <div className="text-center text-positive font-serif flex gap-2 justify-center">
+          {Object.values(config.weapons)
+            .map((wid) =>
+              actor_class?.options.weapons.find((w) => w.ID === wid)
+            )
+            .map((w) => (
+              <WeaponTooltip weapon={w}>{w?.name}</WeaponTooltip>
+            ))}
+        </div>
       ) : (
         <div className="text-center text-negative font-serif">
           Requires a weapon
