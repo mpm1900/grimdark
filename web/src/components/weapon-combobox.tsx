@@ -11,9 +11,7 @@ import {
   ComboboxValue,
 } from './ui/combobox'
 import { GothicFramedButton } from './gothic-ui/button'
-import { HoverCard, HoverCardTrigger } from './ui/hover-card'
-import { GothicHoverCardContent } from './gothic-ui/hover-card'
-import { WeaponDetails } from './weapon-details'
+import { WeaponTooltip } from './weapon-tooltip'
 
 function WeaponCombobox({
   remaining_weight,
@@ -39,50 +37,40 @@ function WeaponCombobox({
       }
       disabled={disabled || (remaining_weight <= 0 && !weapon)}
     >
-      <HoverCard open={!weapon ? false : undefined}>
-        <HoverCardTrigger asChild>
-          <ComboboxTrigger
-            render={
-              <GothicFramedButton className="justify-between">
-                <ComboboxValue>
-                  {weapon ? (
-                    <div className="flex items-center gap-2 truncate">
-                      <div className="truncate">{weapon.name}</div>
-                    </div>
-                  ) : (
-                    <span className="text-foreground/60">Select Weapon</span>
-                  )}
-                </ComboboxValue>
-              </GothicFramedButton>
-            }
-          />
-        </HoverCardTrigger>
-        <GothicHoverCardContent sideOffset={0} side="left" className="w-80">
-          {weapon && <WeaponDetails weapon={weapon} />}
-        </GothicHoverCardContent>
-      </HoverCard>
+      <WeaponTooltip
+        weapon={weapon}
+        hover_card={{ open: !weapon ? false : undefined }}
+        asChild
+      >
+        <ComboboxTrigger
+          render={
+            <GothicFramedButton className="justify-between">
+              <ComboboxValue>
+                {weapon ? (
+                  <div className="flex items-center gap-2 truncate">
+                    <div className="truncate">{weapon.name}</div>
+                  </div>
+                ) : (
+                  <span className="text-foreground/60">Select Weapon</span>
+                )}
+              </ComboboxValue>
+            </GothicFramedButton>
+          }
+        />
+      </WeaponTooltip>
       <ComboboxContent>
         <ComboboxInput showTrigger={false} placeholder="Search" />
         <ComboboxEmpty>No weapons found.</ComboboxEmpty>
         <ComboboxList>
           {(w: Weapon) => (
-            <HoverCard key={w.ID}>
-              <HoverCardTrigger asChild>
-                <ComboboxItem
-                  value={w.ID}
-                  disabled={w.weight > available_weight && w.ID !== weapon?.ID}
-                >
-                  {w.name}
-                </ComboboxItem>
-              </HoverCardTrigger>
-              <GothicHoverCardContent
-                sideOffset={0}
-                side="left"
-                className="w-80"
+            <WeaponTooltip key={w.ID} weapon={w}>
+              <ComboboxItem
+                value={w.ID}
+                disabled={w.weight > available_weight && w.ID !== weapon?.ID}
               >
-                <WeaponDetails weapon={w} />
-              </GothicHoverCardContent>
-            </HoverCard>
+                {w.name}
+              </ComboboxItem>
+            </WeaponTooltip>
           )}
         </ComboboxList>
       </ComboboxContent>

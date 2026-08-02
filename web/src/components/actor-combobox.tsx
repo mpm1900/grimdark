@@ -13,6 +13,7 @@ import {
 } from './ui/combobox'
 import type { ActorClass } from '#/lib/game/actor-class'
 import { GothicBigButton } from './gothic-ui/button'
+import { ClassTooltip } from './class-tooltip'
 
 function ActorCombobox({
   value,
@@ -37,15 +38,20 @@ function ActorCombobox({
     >
       <ComboboxTrigger
         render={
-          <GothicBigButton>
-            <ComboboxValue>
-              {(value) =>
-                query.data?.find((a) => a.ID === value)?.name ?? (
-                  <span className="text-foreground/60">Select a Class</span>
-                )
-              }
-            </ComboboxValue>
-          </GothicBigButton>
+          <ClassTooltip
+            actor_class={query.data?.find((a) => a.ID === value)}
+            asChild
+          >
+            <GothicBigButton>
+              <ComboboxValue>
+                {(value) =>
+                  query.data?.find((a) => a.ID === value)?.name ?? (
+                    <span className="text-foreground/60">Select a Class</span>
+                  )
+                }
+              </ComboboxValue>
+            </GothicBigButton>
+          </ClassTooltip>
         }
       />
       <ComboboxContent>
@@ -53,9 +59,9 @@ function ActorCombobox({
         <ComboboxEmpty>No classes found.</ComboboxEmpty>
         <ComboboxList>
           {(item: ActorClass) => (
-            <ComboboxItem key={item.ID} value={item.ID}>
-              {item.name}
-            </ComboboxItem>
+            <ClassTooltip key={item.ID} actor_class={item} asChild>
+              <ComboboxItem value={item.ID}>{item.name}</ComboboxItem>
+            </ClassTooltip>
           )}
         </ComboboxList>
       </ComboboxContent>

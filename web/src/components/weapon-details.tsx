@@ -6,14 +6,13 @@ import { cva } from 'class-variance-authority'
 import { GothicFrame, GothicShadowFrame } from './gothic-ui/frame'
 import { ItemDescription } from './ui/item'
 import { statVariants } from './stat-name'
-import { HoverCard, HoverCardTrigger } from './ui/hover-card'
-import { GothicHoverCardContent } from './gothic-ui/hover-card'
 import { DNumber } from './dnumber'
 import { WEAPON_ICONS } from '#/icons/weapons'
 import { EffectTooltip } from './effect-tooltip'
 import { ActionTooltip } from './action-tooltip'
 import { AffinityIcon } from './affinity-name'
 import { FaCircle } from 'react-icons/fa'
+import { WeaponTooltip } from './weapon-tooltip'
 
 function InlineOffsetStats({
   offset_stats,
@@ -183,48 +182,39 @@ function WeaponFrame({
   const rarity = 'rare'
   const Icon = WEAPON_ICONS[weapon.weapon_type]
   return (
-    <HoverCard>
-      <HoverCardTrigger asChild>
-        <GothicFrame
-          className={cn(
-            'relative w-20 overflow-visible',
-            weapon.weight === 2 && 'z-10',
-            disabled && 'pointer-events-none'
-          )}
-        >
+    <WeaponTooltip weapon={weapon}>
+      <GothicFrame
+        className={cn(
+          'relative w-20 overflow-visible flex-1 h-full',
+          weapon.weight === 2 && 'z-10',
+          disabled && 'pointer-events-none'
+        )}
+      >
+        <div className={weaponWrapper({ rarity: rarity, className: 'h-full' })}>
           <div
-            className={weaponWrapper({ rarity: rarity, className: 'h-full' })}
+            className={weaponBody({
+              rarity: rarity,
+              className: cn(
+                'h-full relative',
+                weapon.weight === 2 ? 'overflow-visible' : 'overflow-hidden'
+              ),
+            })}
           >
-            <div
-              className={weaponBody({
-                rarity: rarity,
-                className: cn(
-                  'h-full relative',
-                  weapon.weight === 2 ? 'overflow-visible' : 'overflow-hidden'
-                ),
-              })}
-            >
-              {Icon && (
-                <Icon
-                  className={weaponIcon({
-                    rarity,
-                    weapon_type: weapon.weapon_type,
-                    className: 'left-1/2 -translate-x-1/2',
-                  })}
-                />
-              )}
-              {disabled && (
-                <div className="absolute inset-0 bg-neutral-300/30" />
-              )}
-            </div>
+            {Icon && (
+              <Icon
+                className={weaponIcon({
+                  rarity,
+                  weapon_type: weapon.weapon_type,
+                  className: 'left-1/2 -translate-x-1/2',
+                })}
+              />
+            )}
+            {disabled && <div className="absolute inset-0 bg-neutral-300/30" />}
           </div>
-          <GothicFrame className="pointer-events-none absolute inset-0 z-10 bg-transparent [border-image-slice:22]" />
-        </GothicFrame>
-      </HoverCardTrigger>
-      <GothicHoverCardContent sideOffset={0}>
-        <WeaponDetails weapon={weapon} />
-      </GothicHoverCardContent>
-    </HoverCard>
+        </div>
+        <GothicFrame className="pointer-events-none absolute inset-0 z-10 bg-transparent [border-image-slice:22]" />
+      </GothicFrame>
+    </WeaponTooltip>
   )
 }
 
