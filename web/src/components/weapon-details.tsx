@@ -81,7 +81,7 @@ const weaponIcon = cva('absolute top-1 h-auto block', {
       'short-bow': 'size-20 top-9 rotate-45',
       tome: 'size-28 top-3 left-1',
       dagger: 'size-14 top-2',
-      staff: 'size-20 top-6 -rotate-45',
+      staff: 'size-14 top-3 -rotate-45',
       spear: 'size-16 top-3',
       shield: 'size-16 top-1',
     },

@@ -42,4 +42,5 @@ var Immolate = game.Action{
 
 		return position.Rank == 0
 	},
+	Uncancelable: true,
 }

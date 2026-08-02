@@ -104,6 +104,10 @@ func pushAction(instance *Instance, request Request) {
 }
 func cancelAction(instance *Instance, request Request) {
 	instance.Game.DeleteCommandWhere(func(cmd game.Command) bool {
+		if cmd.Payload.Uncancelable {
+			return false
+		}
+
 		if cmd.Context.PlayerID == request.ClientID {
 			return cmd.Payload.ID == request.Context.ActionID
 		}

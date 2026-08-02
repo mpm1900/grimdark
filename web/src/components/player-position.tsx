@@ -65,7 +65,8 @@ function PlayerSprite({
             <GothicBigButton
               key={actor_command.ID}
               className="p-0 min-h-9"
-              variant="red"
+              variant={actor_command.payload.uncancelable ? 'basic' : 'red'}
+              disabled={actor_command.payload.uncancelable}
               onClick={() => {
                 sendContextMessage({
                   request_ID: v4(),
@@ -75,7 +76,8 @@ function PlayerSprite({
                 })
               }}
             >
-              Cancel {actor_command.payload.config.name}
+              {!actor_command.payload.uncancelable && 'Cancel'}{' '}
+              {actor_command.payload.config.name}
             </GothicBigButton>
           ))}
         </div>

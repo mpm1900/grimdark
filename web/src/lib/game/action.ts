@@ -26,6 +26,7 @@ export type Action = {
   cooldown: number
   is_disabled: boolean
   tags: Array<string>
+  uncancelable: boolean
   uses: number
 }
 

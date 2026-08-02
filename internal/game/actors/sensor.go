@@ -21,8 +21,8 @@ func newSensor() game.Class {
 	class.Stats = map[game.Stat]float64{
 		game.Health:         120,
 		game.Speed:          60,
-		game.Melee:          90,
-		game.Ranged:         90,
+		game.Melee:          50,
+		game.Ranged:         50,
 		game.Special:        110,
 		game.MartialDefense: 70,
 		game.SpecialDefense: 70,
@@ -36,7 +36,7 @@ func newSensor() game.Class {
 		game.EffectChance:   1,
 	}
 	class.Effects = []game.Effect{
-		effects.DivineBlessing(),
+		effects.PriorityFailure(),
 	}
 	class.Options = game.ClassOptions{
 		Items: []game.Item{},

@@ -35,6 +35,7 @@ type Action struct {
 	Resolve          ActionResolver
 	Tags             []ActionTag
 	TargetsPredicate Filter[Actor]
+	Uncancelable     bool
 	ValidateRuntime  GameFilter
 	ValidateContext  GameFilter
 	Weapon           *Weapon
