@@ -19,13 +19,13 @@ func newTemplar() game.Class {
 		game.Physical:  {},
 	}
 	class.Stats = map[game.Stat]float64{
-		game.Health:         75,
+		game.Health:         90,
 		game.Speed:          65,
-		game.Melee:          130,
+		game.Melee:          70,
 		game.Ranged:         60,
-		game.Special:        110,
-		game.MartialDefense: 60,
-		game.SpecialDefense: 110,
+		game.Special:        130,
+		game.MartialDefense: 110,
+		game.SpecialDefense: 85,
 		game.Accuracy:       1,
 		game.Evasion:        1,
 

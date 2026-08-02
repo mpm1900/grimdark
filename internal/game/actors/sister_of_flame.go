@@ -18,13 +18,13 @@ func newSisterOfFire() game.Class {
 		game.Fire: {},
 	}
 	class.Stats = map[game.Stat]float64{
-		game.Health:         71,
-		game.Speed:          70,
-		game.Melee:          60,
-		game.Ranged:         60,
-		game.Special:        121,
-		game.MartialDefense: 80,
-		game.SpecialDefense: 106,
+		game.Health:         65,
+		game.Speed:          110,
+		game.Melee:          55,
+		game.Ranged:         65,
+		game.Special:        130,
+		game.MartialDefense: 60,
+		game.SpecialDefense: 105,
 		game.Accuracy:       1,
 		game.Evasion:        1,
 

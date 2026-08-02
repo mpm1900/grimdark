@@ -106,7 +106,7 @@ function TeamActor({
           <div key={stat} className="flex items-center gap-2">
             <StatIcon stat={stat} className="size-5" />
             <Gauge
-              value={((actor_class?.stats[stat] ?? 0) * 100) / 255}
+              value={((actor_class?.stats[stat] ?? 0) * 100) / 180}
               className="h-5"
             >
               {actor_class?.stats[stat]}
