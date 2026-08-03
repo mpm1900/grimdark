@@ -122,7 +122,7 @@ function TeamActor({
                 (actor_class?.stats[stat] ?? 0) * (100 / 180),
                 100
               )}
-              className="h-5"
+              className="h-5 [text-shadow:1px_1px_0_var(--color-foreground)]"
             >
               {actor_class?.stats[stat]}
             </Gauge>

@@ -15,7 +15,7 @@ func newSisterOfLight() game.Class {
 	class.Name = "Sister of Light"
 	class.SpriteURL = "/actors/236_crop.png"
 	class.Affinities = game.Set[game.Affinity]{
-		game.Fire: {},
+		game.Holy: {},
 	}
 	class.Stats = map[game.Stat]float64{
 		game.Health:         255,
