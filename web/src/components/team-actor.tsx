@@ -56,6 +56,10 @@ function TeamActor({
   const actors_query = useQuery(actorsQuery)
   const active_index = useSelector(teamStore, (s) => s.active_actor)
   const actor_class = actors_query.data?.find((a) => a.ID === config.class)
+  console.log(
+    actor_class?.stats.health,
+    Math.min((actor_class?.stats.health ?? 0) * (100 / 180), 100)
+  )
   return (
     <motion.div
       layout="position"
@@ -117,7 +121,10 @@ function TeamActor({
           <div key={stat} className="flex items-center gap-2">
             <StatIcon stat={stat} className="size-5" />
             <Gauge
-              value={((actor_class?.stats[stat] ?? 0) * 100) / 180}
+              value={Math.min(
+                (actor_class?.stats[stat] ?? 0) * (100 / 180),
+                100
+              )}
               className="h-5"
             >
               {actor_class?.stats[stat]}
