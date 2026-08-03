@@ -56,10 +56,7 @@ function TeamActor({
   const actors_query = useQuery(actorsQuery)
   const active_index = useSelector(teamStore, (s) => s.active_actor)
   const actor_class = actors_query.data?.find((a) => a.ID === config.class)
-  console.log(
-    actor_class?.stats.health,
-    Math.min((actor_class?.stats.health ?? 0) * (100 / 180), 100)
-  )
+
   return (
     <motion.div
       layout="position"

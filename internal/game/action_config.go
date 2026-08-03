@@ -182,9 +182,10 @@ func (ac *ActionConfig) GetDamageResult(config DamageConfig) DamageResult {
 		random := config.RandomRoll*(DAMAGE_RAND_MAX-DAMAGE_RAND_MIN) + DAMAGE_RAND_MIN
 		damage := raw * random
 		health := config.Target.GetRemainingHealth() - config.PendingDamage
-		if health < 0 {
-			health = 0
+		if health < config.Target.MinHP {
+			health = config.Target.MinHP
 		}
+
 		if damage > health {
 			damage = health
 		}

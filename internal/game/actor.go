@@ -87,6 +87,7 @@ type Actor struct {
 	IsInsulated bool // is immune from the secondary effects of attacking attacks (ie through AddResultEffects())
 	IsProtected bool // protected from actions that check accuracy
 	IsDisabled  bool // cannot act and cannot queue commands (may not be needed)
+	MinHP       float64
 
 	Meta ActorMeta
 }
@@ -143,6 +144,7 @@ func NewActor(class Class, config ActorConfig) *Actor {
 		IsInsulated: false,
 		IsProtected: false,
 		IsDisabled:  false,
+		MinHP:       0,
 
 		ActionStates: map[uuid.UUID]ActionState{},
 		effectStates: map[uuid.UUID]EffectState{},
@@ -197,6 +199,7 @@ func (a *Actor) Clone() *Actor {
 		IsInsulated: a.IsInsulated,
 		IsProtected: a.IsProtected,
 		IsDisabled:  a.IsDisabled,
+		MinHP:       a.MinHP,
 
 		ActionStates: maps.Clone(a.ActionStates),
 		effectStates: maps.Clone(a.effectStates),

@@ -96,8 +96,9 @@ func (g *Game) DamageTargets(context Context, damage float64, hit bool) {
 			}
 
 			target_damage := damage
-			if target_damage > resolved.GetRemainingHealth() {
-				target_damage = resolved.GetRemainingHealth()
+			health := resolved.GetRemainingHealth() - resolved.MinHP
+			if target_damage > health {
+				target_damage = health
 			}
 			if target_damage < -a.Stacks[Wounds] {
 				target_damage = -a.Stacks[Wounds]
