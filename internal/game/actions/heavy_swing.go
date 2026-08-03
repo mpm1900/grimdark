@@ -17,8 +17,6 @@ var HeavySwing = game.Action{
 		Stat:         game.Melee,
 		Power:        110,
 		Accuracy:     game.P(0.9),
-		Lifesteal:    0,
-		Hits:         1,
 		CritStage:    0,
 		CritModifier: 1.5,
 		TargetCount:  1,

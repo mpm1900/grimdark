@@ -16,8 +16,6 @@ var Charge = game.Action{
 		Stat:         game.Melee,
 		Power:        90,
 		Accuracy:     game.P(1.0),
-		Lifesteal:    0,
-		Hits:         1,
 		Cooldown:     1,
 		CritStage:    0,
 		CritModifier: 1.5,

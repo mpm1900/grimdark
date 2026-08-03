@@ -17,7 +17,6 @@ var Barage = game.Action{
 		Stat:         game.Ranged,
 		Accuracy:     game.P(0.80),
 		Power:        40,
-		Hits:         1,
 		CritStage:    0,
 		CritModifier: 1.5,
 		TargetCount:  3,

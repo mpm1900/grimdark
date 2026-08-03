@@ -16,8 +16,6 @@ var CollateralShot = game.Action{
 		Stat:         game.Ranged,
 		Accuracy:     game.P(0.80),
 		Power:        85,
-		Lifesteal:    0,
-		Hits:         1,
 		CritStage:    0,
 		CritModifier: 1.5,
 		TargetCount:  1,

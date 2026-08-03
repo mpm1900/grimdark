@@ -15,8 +15,6 @@ var CalledShot = game.Action{
 		Affinity:     game.Physical,
 		Stat:         game.Ranged,
 		Power:        95,
-		Lifesteal:    0,
-		Hits:         1,
 		CritStage:    0,
 		CritModifier: 2,
 		TargetCount:  1,

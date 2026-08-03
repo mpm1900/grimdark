@@ -16,8 +16,6 @@ var Headshot = game.Action{
 		Stat:         game.Ranged,
 		Power:        75,
 		Accuracy:     game.P(0.90),
-		Lifesteal:    0,
-		Hits:         1,
 		CritStage:    3,
 		CritModifier: 1.5,
 		TargetCount:  1,

@@ -16,8 +16,6 @@ var Cleave = game.Action{
 		Stat:         game.Melee,
 		Accuracy:     game.P(0.90),
 		Power:        70,
-		Lifesteal:    0,
-		Hits:         1,
 		CritStage:    0,
 		CritModifier: 1.5,
 		TargetCount:  2,
@@ -35,4 +33,3 @@ var Cleave = game.Action{
 		return position.Rank != 0
 	},
 }
-   

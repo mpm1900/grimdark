@@ -8,7 +8,7 @@ export type ActionConfig = {
   crit_chance: number
   crit_modifier: number
   description: string
-  hits: number
+  repeats: number
   lifesteal: number
   name: string
   power: number
@@ -39,6 +39,6 @@ export function getActionPower(action: Action): number {
   if (action.config.target_count > 1) {
     power_rating *= 0.75
   }
-  power_rating *= action.config.hits
+  power_rating *= action.config.repeats
   return power_rating
 }

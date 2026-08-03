@@ -16,8 +16,6 @@ var QuickStrike = game.Action{
 		Stat:         game.Melee,
 		Power:        55,
 		Accuracy:     game.P(1.0),
-		Lifesteal:    0,
-		Hits:         1,
 		CritStage:    0,
 		CritModifier: 1.5,
 		TargetCount:  1,

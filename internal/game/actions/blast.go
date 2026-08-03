@@ -16,8 +16,6 @@ var Blast = game.Action{
 		Stat:         game.Special,
 		Accuracy:     game.P(1.0),
 		Power:        80,
-		Lifesteal:    0,
-		Hits:         1,
 		CritStage:    0,
 		CritModifier: 1.5,
 		TargetCount:  1,

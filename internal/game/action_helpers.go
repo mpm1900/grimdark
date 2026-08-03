@@ -12,19 +12,6 @@ type ActionEffect func(g *Game, context Context, this *ActionContext)
 type AttackEffectResult func(g *Game, context Context, this *ActionContext, result DamageResult)
 type StatusEffectResult func(g *Game, context Context, this *ActionContext, result AccuracyResult)
 
-type AttackConfig struct {
-	BeforeAttack     ActionEffect
-	OnSuccess        ActionEffect
-	OnFailure        ActionEffect
-	OnFinally        ActionEffect
-	OnCriticalResult AttackEffectResult
-	OnSuccessResult  AttackEffectResult
-	OnFailureResult  AttackEffectResult
-	OnFinallyResult  AttackEffectResult
-	OnAttackSuccess  ActionEffect
-	OnAttackFailure  ActionEffect
-}
-
 type StatusConfig struct {
 	OnSuccess       ActionEffect
 	OnFailure       ActionEffect
@@ -77,7 +64,7 @@ func AddResultEffects(chance float64, effects ...Effect) AttackEffectResult {
 }
 
 func MultiHitLogs(result DamageResult, context Context, this *ActionContext, hit int) {
-	if result.Success() && this.Action.Config.Hits > 1 && this.Action.Config.StopOnMiss {
+	if result.Success() && this.Action.Config.Repeats > 1 && this.Action.Config.StopOnMiss {
 		this.Push(PushLog(NewLog(
 			"Hits $hit$ time(s)!",
 			map[string]string{

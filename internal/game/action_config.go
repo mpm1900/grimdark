@@ -22,7 +22,7 @@ type ActionConfig struct {
 	CritChance   float64  `json:"crit_chance"`
 	CritModifier float64  `json:"crit_modifier"`
 	Description  string   `json:"description"`
-	Hits         int      `json:"hits"`
+	Repeats      int      `json:"repeats"`
 	Lifesteal    float64  `json:"lifesteal"`
 	Name         string   `json:"name"`
 	Power        float64  `json:"power"`
