@@ -6,7 +6,6 @@ import { Marker, MarkerContent } from './ui/marker'
 import { useQuery } from '@tanstack/react-query'
 import { actorsQuery } from '#/lib/queries/get-actors'
 import { WeaponCombobox } from './weapon-combobox'
-import { GothicFrame } from './gothic-ui/frame'
 import type { ActorClass } from '#/lib/game/actor-class'
 import type { ActorConfig } from '#/lib/game/team'
 import { entries } from '#/utils/maps'
@@ -97,18 +96,21 @@ function TeamActorConfig() {
         {active_class && (
           <div className="flex flex-col gap-1">
             <Marker variant="separator">
-              <MarkerContent>Items</MarkerContent>
+              <MarkerContent>Item(s)</MarkerContent>
             </Marker>
-            <ItemCombobox
-              actor_class={active_class}
-              value={active_actor.items[0]}
-              onValueChange={(v) => {
-                updateActor(team.active_actor, (old) => ({
-                  ...old,
-                  items: v ? [v] : [],
-                }))
-              }}
-            />
+            {Array.from({ length: active_class.items_count }).map((_, i) => (
+              <ItemCombobox
+                key={i}
+                actor_class={active_class}
+                value={active_actor.items[i]}
+                onValueChange={(v) => {
+                  updateActor(team.active_actor, (old) => ({
+                    ...old,
+                    items: v ? [v] : [],
+                  }))
+                }}
+              />
+            ))}
           </div>
         )}
       </GothicCard>

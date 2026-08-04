@@ -20,6 +20,7 @@ type Class struct {
 	Arms       int // the amount of weapons that can be equipped
 	Effects    []Effect
 	Faction    ActorFaction
+	Items      int // number of items that can be equipped
 	Name       string
 	Options    ClassOptions
 	Race       ActorRace
@@ -39,6 +40,7 @@ type classJSON struct {
 	Arms       int              `json:"arms"`
 	Effects    []Effect         `json:"effects"`
 	Faction    ActorFaction     `json:"faction"`
+	Items      int              `json:"items_count"`
 	Name       string           `json:"name"`
 	Options    classOptionsJSON `json:"options"`
 	Race       ActorRace        `json:"race"`
@@ -55,6 +57,7 @@ func NewClass() Class {
 		Arms:       2,
 		Effects:    []Effect{},
 		Faction:    FactionImperium,
+		Items:      1,
 		Name:       "",
 		Race:       RaceHuman,
 		Stats: map[Stat]float64{
@@ -92,6 +95,7 @@ func (c Class) Clone() Class {
 		Effects:    slices.Clone(c.Effects),
 		Faction:    c.Faction,
 		Options:    c.Options.Clone(),
+		Items:      c.Items,
 		Name:       c.Name,
 		Race:       c.Race,
 		SpriteURL:  c.SpriteURL,
@@ -123,6 +127,7 @@ func (c Class) ToJSON() classJSON {
 		Arms:       c.Arms,
 		Effects:    c.Effects,
 		Faction:    c.Faction,
+		Items:      c.Items,
 		Name:       c.Name,
 		Options: classOptionsJSON{
 			Weapons: weapons,

@@ -27,7 +27,7 @@ function ActorCombobox({
 
   return (
     <Combobox
-      items={query.data}
+      items={query.data ?? []}
       value={value}
       onValueChange={(v) => {
         if (!v) {

@@ -10,6 +10,7 @@ export type ActorClass = {
   arms: number
   effects: Effect[]
   faction: string
+  items_count: number
   name: string
   options: {
     weapons: Weapon[]

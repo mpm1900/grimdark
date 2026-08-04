@@ -15,8 +15,8 @@ import { Table, TableBody, TableCell, TableRow } from './ui/table'
 function MainStatRow({ actor, stat }: { actor: Actor; stat: Stat }) {
   const stage = actor.stages[stat]
   const mult =
-    (actor.stats[stat] - (actor.offset_stats[stat] ?? 0)) /
-    actor.unmodified_stats[stat]
+    actor.stats[stat] /
+    (actor.unmodified_stats[stat] + (actor.offset_stats[stat] ?? 0))
   return (
     <TableRow>
       <TableCell className="capitalize font-cinzel">

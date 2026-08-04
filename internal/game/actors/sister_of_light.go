@@ -34,6 +34,7 @@ func newSisterOfLight() game.Class {
 		game.DamageReflect:  0,
 		game.EffectChance:   1,
 	}
+	class.Items = 2
 	class.Effects = []game.Effect{}
 	class.Options = game.ClassOptions{
 		Items: []game.Item{},

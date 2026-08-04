@@ -14,7 +14,7 @@ var Headshot = game.Action{
 		Description:  "This action always results in a critical hit. This action is only usable from 2nd or 3rd position.",
 		Affinity:     game.Physical,
 		Stat:         game.Ranged,
-		Power:        75,
+		Power:        55,
 		Accuracy:     game.P(0.90),
 		CritStage:    3,
 		CritModifier: 1.5,
