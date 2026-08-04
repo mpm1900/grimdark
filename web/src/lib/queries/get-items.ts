@@ -5,7 +5,6 @@ import type { Item } from '../game/weapon'
 
 const getItems = createServerFn().handler(async () => {
   const response = await api.get<Item[]>(`/api/items`)
-  console.log('data', response.data)
   return response.data
 })
 

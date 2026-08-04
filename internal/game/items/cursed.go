@@ -33,7 +33,6 @@ func cursedItem(effect game.Effect) game.Item {
 
 func cursedRing() game.Item {
 	effect := cursedBoost(game.Melee)
-
 	effect.Name = "Cursed Strength"
 	effect.Description = "This actor's Melee is increased by 1.5x."
 	item := cursedItem(effect)

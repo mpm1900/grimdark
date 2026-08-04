@@ -7,8 +7,10 @@ import (
 )
 
 var Global = map[uuid.UUID]game.Item{
-	CursedBoots.ID: CursedBoots,
-	CursedRing.ID:  CursedRing,
+	CorruptedNecklace.ID: CorruptedNecklace,
+	CursedBoots.ID:       CursedBoots,
+	CursedRing.ID:        CursedRing,
+	Rations.ID:           Rations,
 }
 
 func HydrateGlobalItem(id uuid.UUID) (game.Item, bool) {
