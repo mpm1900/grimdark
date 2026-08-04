@@ -33,8 +33,10 @@ func cursedItem(effect game.Effect) game.Item {
 func cursedRing() game.Item {
 	effect := cursedBoost(game.Melee)
 	effect.ID = uuid.MustParse("019fca3b-2cee-76f8-8f07-b576848c4026")
-	effect.Name = "Cursed Ring"
-	effect.Description = "This actor's Melee is increased by 1.5x but can only use a single action."
+	effect.Name = "Cursed Strength"
+	effect.Description = "This actor's Melee is increased by 1.5x."
 	item := cursedItem(effect)
+	item.Name = "Cursed Ring"
+	item.Description = "This actor's Melee is increased by 1.5x but can only use a single action."
 	return item
 }

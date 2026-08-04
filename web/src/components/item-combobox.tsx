@@ -14,6 +14,7 @@ import {
 } from './ui/combobox'
 import { GothicFramedButton } from './gothic-ui/button'
 import type { Item } from '#/lib/game/weapon'
+import { ItemTooltip } from './item-tooltip'
 
 function ItemCombobox({
   actor_class,
@@ -37,21 +38,27 @@ function ItemCombobox({
         v === value ? onValueChange(null) : onValueChange(v)
       }
     >
-      <ComboboxTrigger
-        render={
-          <GothicFramedButton className="justify-between">
-            <ComboboxValue>
-              {item ? (
-                <div className="flex items-center gap-2 truncate">
-                  <div className="truncate">{item.name}</div>
-                </div>
-              ) : (
-                <span className="text-foreground/60">Select Item</span>
-              )}
-            </ComboboxValue>
-          </GothicFramedButton>
-        }
-      />
+      <ItemTooltip
+        item={item}
+        hover_card={{ open: !item ? false : undefined }}
+        asChild
+      >
+        <ComboboxTrigger
+          render={
+            <GothicFramedButton className="justify-between">
+              <ComboboxValue>
+                {item ? (
+                  <div className="flex items-center gap-2 truncate">
+                    <div className="truncate">{item.name}</div>
+                  </div>
+                ) : (
+                  <span className="text-foreground/60">Select Item</span>
+                )}
+              </ComboboxValue>
+            </GothicFramedButton>
+          }
+        />
+      </ItemTooltip>
       <ComboboxContent>
         <ComboboxInput showTrigger={false} placeholder="Search" />
         <ComboboxEmpty>No items found.</ComboboxEmpty>

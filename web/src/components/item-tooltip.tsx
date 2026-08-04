@@ -1,28 +1,36 @@
-import type { ActorClass } from '#/lib/game/actor-class'
+import type { Item } from '#/lib/game/weapon'
 import { cn } from '#/lib/utils'
-import { ClassDetails } from './class-details'
 import { GothicHoverCardContent } from './gothic-ui/hover-card'
+import { ItemDetails } from './item-details'
 import { HoverCard, HoverCardTrigger } from './ui/hover-card'
 
-function ClassTooltip({
-  actor_class,
-  className,
+function ItemTooltip({
+  item,
   content_props = {},
+  className,
   hover_card = {},
   ...props
 }: React.ComponentProps<typeof HoverCardTrigger> & {
-  actor_class?: ActorClass
+  item?: Item
   content_props?: Partial<React.ComponentProps<typeof GothicHoverCardContent>>
   hover_card?: Partial<React.ComponentProps<typeof HoverCard>>
 }) {
   return (
     <HoverCard {...hover_card}>
-      <HoverCardTrigger className={cn(className)} {...props} />
-      <GothicHoverCardContent sideOffset={0} side="left" {...content_props}>
-        <ClassDetails actor_class={actor_class} />
+      <HoverCardTrigger
+        className={cn(item && 'hover:underline cursor-default', className)}
+        {...props}
+      />
+      <GothicHoverCardContent
+        sideOffset={0}
+        side="left"
+        {...content_props}
+        className={cn('w-80', content_props.className)}
+      >
+        {item && <ItemDetails item={item} />}
       </GothicHoverCardContent>
     </HoverCard>
   )
 }
 
-export { ClassTooltip }
+export { ItemTooltip }

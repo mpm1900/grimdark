@@ -23,6 +23,7 @@ function ActorCombobox({
   onValueChange: (value: ID) => void
 }) {
   const query = useQuery(actorsQuery)
+  const actor_class = query.data?.find((a) => a.ID === value)
 
   return (
     <Combobox
@@ -39,7 +40,8 @@ function ActorCombobox({
       <ComboboxTrigger
         render={
           <ClassTooltip
-            actor_class={query.data?.find((a) => a.ID === value)}
+            actor_class={actor_class}
+            hover_card={{ open: !actor_class ? false : undefined }}
             asChild
           >
             <GothicBigButton>
