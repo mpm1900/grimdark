@@ -14,6 +14,14 @@ func rations() game.Item {
 	})
 	effect.Triggers = append(effect.Triggers, game.Trigger{
 		On: game.OnTurnEnd,
+		Validate: func(g *game.Game, t_context, m_context game.Context) bool {
+			parent, ok := g.GetParent(m_context)
+			if !ok {
+				return false
+			}
+
+			return parent.Stacks[game.Wounds] != 0
+		},
 		Action: game.Action{
 			Config: game.ActionConfig{
 				Name: "Rations",
