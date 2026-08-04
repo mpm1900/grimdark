@@ -39,6 +39,6 @@ export function getActionPower(action: Action): number {
   if (action.config.target_count > 1) {
     power_rating *= 0.75
   }
-  power_rating *= action.config.repeats
+  power_rating *= action.config.repeats + 1
   return power_rating
 }
