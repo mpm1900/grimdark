@@ -236,6 +236,10 @@ func (a *Actor) GetEffectiveAffinityResistance(affinity Affinity) int {
 }
 
 func (a *Actor) GetRemainingHealth() float64 {
+	if !a.IsAlive {
+		return 0.0
+	}
+
 	health := a.Stats[Health]
 	return health - a.Stacks[Wounds]
 }

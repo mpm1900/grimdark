@@ -259,26 +259,31 @@ func EffectGainWhereOnSuccess(where Filter[Actor]) func(g *Game, e Effect, ctx C
 // context mappers
 func CtxToAllActiveTargets() func(g *Game, ctx Context, this ActionContext) Context {
 	return func(g *Game, ctx Context, this ActionContext) Context {
-		c := ctx.CloneWithTargets(g.FindActors(ActiveActors, ctx))
-		return c
+		return ctx.CloneWithTargets(g.FindActors(ActiveActors, ctx))
 	}
 }
 func CtxToAllEnemies() func(g *Game, ctx Context, this ActionContext) Context {
 	return func(g *Game, ctx Context, this ActionContext) Context {
-		c := ctx.CloneWithTargets(g.FindActors(CombineFilters(ActiveActors, Enemies), ctx))
-		return c
+		return ctx.CloneWithTargets(g.FindActors(CombineFilters(ActiveActors, Enemies), ctx))
 	}
 }
 func CtxToAllies() func(g *Game, ctx Context, this ActionContext) Context {
 	return func(g *Game, ctx Context, this ActionContext) Context {
-		c := ctx.CloneWithTargets(g.FindActors(CombineFilters(ActiveActors, Allies), ctx))
-		return c
+		return ctx.CloneWithTargets(g.FindActors(CombineFilters(ActiveActors, Allies), ctx))
+	}
+}
+func CtxToAliveInactiveAllies() func(g *Game, ctx Context, this ActionContext) Context {
+	return func(g *Game, ctx Context, this ActionContext) Context {
+		return ctx.CloneWithTargets(g.FindActors(CombineFilters(
+			InactiveActors,
+			AliveActors,
+			Allies,
+		), ctx))
 	}
 }
 func CtxToRangeEnemies(action_range int) func(g *Game, ctx Context, this ActionContext) Context {
 	return func(g *Game, ctx Context, this ActionContext) Context {
-		c := ctx.CloneWithTargets(g.FindActors(CombineFilters(Enemies, ActionRange(action_range)), ctx))
-		return c
+		return ctx.CloneWithTargets(g.FindActors(CombineFilters(Enemies, ActionRange(action_range)), ctx))
 	}
 }
 func CtxToAllOtherActiveTargets() func(g *Game, ctx Context, this ActionContext) Context {
