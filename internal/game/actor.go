@@ -292,7 +292,7 @@ func (a *Actor) GetModifiers() []Modifier {
 	modifiers := []Modifier{}
 	for _, effect := range a.GetEffects() {
 		if effect.Ready() {
-			context := MakeContextFrom(*a)
+			context := MakeContextFor(*a, *a)
 			context.EffectID = effect.ID
 			modifier := effect.Bind(context)
 			modifiers = append(modifiers, modifier)

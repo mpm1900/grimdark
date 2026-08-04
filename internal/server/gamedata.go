@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"grimdark/internal/game/actors"
+	"grimdark/internal/game/items"
 	"maps"
 	"net/http"
 	"slices"
@@ -29,6 +30,15 @@ func (dh *GamedataHandler) HandleGetActors(w http.ResponseWriter, r *http.Reques
 	actors := slices.Collect(maps.Values(actors.All))
 	w.Header().Set("Content-Type", "application/json")
 	if err := json.NewEncoder(w).Encode(actors); err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+}
+
+func (dh *GamedataHandler) HandleGetGlobalItems(w http.ResponseWriter, r *http.Request) {
+	items := slices.Collect(maps.Values(items.Global))
+	w.Header().Set("Content-Type", "application/json")
+	if err := json.NewEncoder(w).Encode(items); err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}

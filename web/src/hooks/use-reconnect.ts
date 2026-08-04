@@ -12,7 +12,9 @@ function useReconnect(gameID: string) {
       socket_status !== 'reconnecting'
 
     if (should_connect) {
-      connect(gameID)
+      void connect(gameID).catch(() => {
+        // The socket layer logs and schedules reconnects; avoid unhandled promise noise.
+      })
     }
   }, [gameID, socket_status])
 }

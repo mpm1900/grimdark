@@ -11,6 +11,7 @@ import type { ActorClass } from '#/lib/game/actor-class'
 import type { ActorConfig } from '#/lib/game/team'
 import { entries } from '#/utils/maps'
 import { v4 } from 'uuid'
+import { ItemCombobox } from './item-combobox'
 
 function WeaponsConfig({
   actor_class,
@@ -98,11 +99,16 @@ function TeamActorConfig() {
             <Marker variant="separator">
               <MarkerContent>Items</MarkerContent>
             </Marker>
-            <div className="flex justify-center [&>div]:size-16">
-              <GothicFrame></GothicFrame>
-              <GothicFrame></GothicFrame>
-              <GothicFrame></GothicFrame>
-            </div>
+            <ItemCombobox
+              actor_class={active_class}
+              value={active_actor.items[0]}
+              onValueChange={(v) => {
+                updateActor(team.active_actor, (old) => ({
+                  ...old,
+                  items: v ? [v] : [],
+                }))
+              }}
+            />
           </div>
         )}
       </GothicCard>

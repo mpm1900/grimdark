@@ -6,7 +6,6 @@ import {
   openSocket,
   resetReconnect,
   setSocket,
-  setSocketError,
   socketStore,
   startReconnect,
   type SocketResponse,
@@ -114,7 +113,6 @@ function connect(instanceID?: string | null): Promise<SocketResponse> {
       finishReject(new Error('WebSocket error during connect'))
       if (signal.aborted || !isCurrentSocket(socket)) return
       console.error('WebSocket error:', error)
-      setSocketError()
     }
 
     socket.onclose = (event) => {

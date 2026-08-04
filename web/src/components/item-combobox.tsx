@@ -1,0 +1,70 @@
+import type { ActorClass } from '#/lib/game/actor-class'
+import type { ID } from '#/lib/game/core'
+import { itemsQuery } from '#/lib/queries/get-items'
+import { useQuery } from '@tanstack/react-query'
+import {
+  Combobox,
+  ComboboxContent,
+  ComboboxEmpty,
+  ComboboxInput,
+  ComboboxItem,
+  ComboboxList,
+  ComboboxTrigger,
+  ComboboxValue,
+} from './ui/combobox'
+import { GothicFramedButton } from './gothic-ui/button'
+import type { Item } from '#/lib/game/weapon'
+
+function ItemCombobox({
+  actor_class,
+  value,
+  onValueChange,
+}: {
+  actor_class?: ActorClass
+  value: ID | null
+  onValueChange: (value: ID | null) => void
+}) {
+  const class_options = actor_class?.options.items ?? []
+  const query = useQuery(itemsQuery)
+  const options = [...class_options, ...(query.data ?? [])]
+  const item = options.find((o) => o.ID === value)
+
+  return (
+    <Combobox
+      items={options}
+      value={value}
+      onValueChange={(v) =>
+        v === value ? onValueChange(null) : onValueChange(v)
+      }
+    >
+      <ComboboxTrigger
+        render={
+          <GothicFramedButton className="justify-between">
+            <ComboboxValue>
+              {item ? (
+                <div className="flex items-center gap-2 truncate">
+                  <div className="truncate">{item.name}</div>
+                </div>
+              ) : (
+                <span className="text-foreground/60">Select Item</span>
+              )}
+            </ComboboxValue>
+          </GothicFramedButton>
+        }
+      />
+      <ComboboxContent>
+        <ComboboxInput showTrigger={false} placeholder="Search" />
+        <ComboboxEmpty>No items found.</ComboboxEmpty>
+        <ComboboxList>
+          {(item: Item) => (
+            <ComboboxItem key={item.ID} value={item.ID}>
+              {item.name}
+            </ComboboxItem>
+          )}
+        </ComboboxList>
+      </ComboboxContent>
+    </Combobox>
+  )
+}
+
+export { ItemCombobox }

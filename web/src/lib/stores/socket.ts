@@ -64,7 +64,7 @@ function closeSocketEmpty() {
     ...s,
     status: 'closed',
     instance_ID: null,
-    reconnectCount: 0,
+    reconnect_count: 0,
   }))
 }
 
@@ -86,7 +86,7 @@ function closeSocket(code: number, reason: string) {
     socket: null,
     status: 'closed',
     instance_ID: null,
-    reconnectCount: 0,
+    reconnect_count: 0,
   }))
   lobbyStore.setState((l) => ({
     ...l,
@@ -105,7 +105,7 @@ function deleteSocket() {
 function startReconnect() {
   socketStore.setState((s) => ({
     ...s,
-    reconnectCount: s.reconnect_count + 1,
+    reconnect_count: s.reconnect_count + 1,
     status: 'reconnecting',
   }))
 }
@@ -129,13 +129,6 @@ function resetReconnect(socket: WebSocket, signal: AbortSignal) {
   }, 5000)
 }
 
-function setSocketError() {
-  socketStore.setState((s) => ({
-    ...s,
-    status: 'error',
-  }))
-}
-
 export {
   closeSocketEmpty,
   closeSocket,
@@ -147,6 +140,5 @@ export {
   socketStore,
   startReconnect,
   setSocket,
-  setSocketError,
 }
 export type { SocketMessageSubscriber, SocketResponse }
