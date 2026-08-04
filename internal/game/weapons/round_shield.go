@@ -15,6 +15,7 @@ var RoundShield = game.Weapon{
 		Effects:     []game.Effect{},
 	},
 	Actions: []game.Action{
+		actions.ArmorUp,
 		actions.Protect,
 	},
 	OffsetStats: map[game.Stat]float64{
