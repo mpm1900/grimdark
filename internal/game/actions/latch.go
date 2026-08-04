@@ -16,6 +16,7 @@ var Latch = game.Action{
 		Stat:        game.Ranged,
 		Accuracy:    game.P(0.7),
 		TargetCount: 1,
+		Priority:    game.ActionPriorityDelayed,
 	},
 	Resolve: func(g *game.Game, ctx game.Context, this game.ActionContext) []game.Transaction {
 		source := g.GetSourceAction(ctx)
