@@ -187,6 +187,19 @@ func PushSourceToFront() Mutation {
 		},
 	}
 }
+func PushTargetsToFront() Mutation {
+	return Mutation{
+		delta: func(g *Game, ctx Context) []uuid.UUID {
+			targets := []uuid.UUID{}
+			for _, target := range g.GetTargets(ctx) {
+				g.PushToFront(target.ID)
+				targets = append(targets, target.ID)
+			}
+
+			return targets
+		},
+	}
+}
 func PushSourceBackwards() Mutation {
 	return Mutation{
 		delta: func(g *Game, ctx Context) []uuid.UUID {

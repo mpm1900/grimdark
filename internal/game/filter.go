@@ -92,6 +92,16 @@ func PositionRank(rank int) Filter[Actor] {
 		return position.Rank == rank
 	}
 }
+func NotPositionRank(rank int) Filter[Actor] {
+	return func(g *Game, a Actor, ctx Context) bool {
+		position, ok := g.GetPosition(a.PositionID)
+		if !ok {
+			return false
+		}
+
+		return position.Rank != rank
+	}
+}
 func ActionRange(action_range int) Filter[Actor] {
 	return func(g *Game, target Actor, ctx Context) bool {
 		source, ok := g.GetSource(ctx)

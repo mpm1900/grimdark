@@ -18,6 +18,7 @@ var Spear = game.Weapon{
 		actions.BackStrike,
 		actions.Cleave,
 		actions.Poke,
+		actions.Latch,
 	},
 	OffsetStats: map[game.Stat]float64{
 		game.Melee:  16,
