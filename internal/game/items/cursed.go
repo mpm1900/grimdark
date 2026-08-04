@@ -7,6 +7,7 @@ import (
 	"github.com/google/uuid"
 )
 
+var CursedBoots = cursedBoots()
 var CursedRing = cursedRing()
 
 func cursedBoost(stat game.Stat) game.Effect {
@@ -32,11 +33,23 @@ func cursedItem(effect game.Effect) game.Item {
 
 func cursedRing() game.Item {
 	effect := cursedBoost(game.Melee)
-	effect.ID = uuid.MustParse("019fca3b-2cee-76f8-8f07-b576848c4026")
+
 	effect.Name = "Cursed Strength"
 	effect.Description = "This actor's Melee is increased by 1.5x."
 	item := cursedItem(effect)
+	item.ID = uuid.MustParse("019fca3b-2cee-76f8-8f07-b576848c4026")
 	item.Name = "Cursed Ring"
 	item.Description = "This actor's Melee is increased by 1.5x but can only use a single action."
+	return item
+}
+
+func cursedBoots() game.Item {
+	effect := cursedBoost(game.Speed)
+	effect.Name = "Cursed Speed"
+	effect.Description = "This actor's Speed is increased by 1.5x."
+	item := cursedItem(effect)
+	item.ID = uuid.MustParse("019fca52-9a89-77f8-a58d-8e5933f5e291")
+	item.Name = "Cursed Boots"
+	item.Description = "This actor's Speed is increased by 1.5x but can only use a single action."
 	return item
 }

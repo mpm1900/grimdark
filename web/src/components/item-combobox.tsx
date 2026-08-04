@@ -64,9 +64,9 @@ function ItemCombobox({
         <ComboboxEmpty>No items found.</ComboboxEmpty>
         <ComboboxList>
           {(item: Item) => (
-            <ComboboxItem key={item.ID} value={item.ID}>
-              {item.name}
-            </ComboboxItem>
+            <ItemTooltip key={item.ID} item={item}>
+              <ComboboxItem value={item.ID}>{item.name}</ComboboxItem>
+            </ItemTooltip>
           )}
         </ComboboxList>
       </ComboboxContent>

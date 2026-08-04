@@ -7,7 +7,8 @@ import (
 )
 
 var Global = map[uuid.UUID]game.Item{
-	CursedRing.ID: CursedRing,
+	CursedBoots.ID: CursedBoots,
+	CursedRing.ID:  CursedRing,
 }
 
 func HydrateGlobalItem(id uuid.UUID) (game.Item, bool) {
