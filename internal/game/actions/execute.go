@@ -16,7 +16,7 @@ var Execute = game.Action{
 		Affinity:     game.Physical,
 		Stat:         game.Melee,
 		Power:        120,
-		Accuracy:     game.P(0.9),
+		Accuracy:     game.P(0.8),
 		CritStage:    0,
 		CritModifier: 1.5,
 		TargetCount:  1,
