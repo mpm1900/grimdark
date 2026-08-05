@@ -18,6 +18,7 @@ function TargetButton({
   is_done,
   is_selected,
   is_valid_target,
+  is_source,
   affinity,
   target,
   disabled,
@@ -25,6 +26,7 @@ function TargetButton({
 }: Omit<React.ComponentProps<typeof GothicBigButton>, 'onClick'> & {
   is_done: boolean
   is_selected: boolean
+  is_source: boolean
   is_valid_target: boolean
   affinity: Affinity | null
   target: Actor | undefined
@@ -44,7 +46,7 @@ function TargetButton({
   return (
     <GothicBigButton
       key={target.ID}
-      variant={is_selected ? 'red' : 'basic'}
+      variant={is_selected ? 'red' : is_source ? 'green' : 'basic'}
       disabled={is_disabled}
       className={cn('w-full min-w-0 flex-col gap-0 items-center p-0 text-xs')}
       onMouseEnter={() => setHoverPosition(target.position_ID)}
@@ -58,16 +60,22 @@ function TargetButton({
         indicator={{ className: 'bg-red-700/20' }}
       />
       <div className="h-3 w-full font-serif font-medium text-xs">
-        {affinity_immunity !== undefined && (
+        {is_source ? (
+          'You'
+        ) : (
           <span>
-            {affinity_immunity === 0 && <span>Immune to {affinity}</span>}
-            {affinity_immunity !== 0 && <span>Super immunity</span>}
-          </span>
-        )}
-        {affinity_immunity === undefined && !!affinity_ratio && (
-          <span>
-            {affinity_ratio <= -2 && <span>Not very effective</span>}
-            {affinity_ratio >= 2 && <span>Super effective</span>}
+            {affinity_immunity !== undefined && (
+              <span>
+                {affinity_immunity === 0 && <span>Immune to {affinity}</span>}
+                {affinity_immunity !== 0 && <span>Super immunity</span>}
+              </span>
+            )}
+            {affinity_immunity === undefined && !!affinity_ratio && (
+              <span>
+                {affinity_ratio <= -2 && <span>Not very effective</span>}
+                {affinity_ratio >= 2 && <span>Super effective</span>}
+              </span>
+            )}
           </span>
         )}
       </div>
@@ -137,6 +145,7 @@ function TargetsButtonGrid({
                   key={i}
                   is_done={selected.length === action.config.target_count}
                   is_selected={!!target && context.hasTarget(target)}
+                  is_source={target?.ID === actor?.ID}
                   is_valid_target={!!targets.find((t) => t.ID === target?.ID)}
                   affinity={action.config.affinity}
                   target={target}
@@ -154,6 +163,7 @@ function TargetsButtonGrid({
               key={target.ID}
               is_done={selected.length === action.config.target_count}
               is_selected={!!target && context.hasTarget(target)}
+              is_source={target?.ID === actor?.ID}
               is_valid_target={!!targets.find((t) => t.ID === target?.ID)}
               affinity={action.config.affinity}
               target={target}
