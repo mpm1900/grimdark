@@ -19,7 +19,6 @@ var FireTome = game.Weapon{
 		},
 	},
 	Actions: []game.Action{
-		actions.ArcaneRitual,
 		actions.Firestorm,
 		actions.Ignite,
 		actions.Immolate,

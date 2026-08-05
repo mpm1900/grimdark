@@ -11,6 +11,7 @@ var TomeOfSacrifice = game.Weapon{
 		Effects: []game.Effect{},
 	},
 	Actions: []game.Action{
+		actions.ArcaneRitual,
 		actions.Warp,
 	},
 	OffsetStats: map[game.Stat]float64{},

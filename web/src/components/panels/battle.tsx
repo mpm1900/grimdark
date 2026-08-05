@@ -34,6 +34,8 @@ import {
   CarouselItem,
 } from '../ui/carousel'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs'
+import { ITEM_ICONS } from '#/icons/items'
+import { ItemTooltip } from '../item-tooltip'
 
 const ACTIONS_PER_PAGE = 6
 
@@ -218,6 +220,7 @@ function BattlePanel() {
   )
   const main_weapon = weapons[0]
   const secondary_weapon = weapons[1]
+  const ItemIcon = ITEM_ICONS[active_actor?.item?.ID ?? '']
 
   return (
     <div className="h-48 absolute bottom-0 left-0 right-0 flex items-start justify-center z-10">
@@ -231,9 +234,15 @@ function BattlePanel() {
             >
               Items
             </TinyBadge>
-            <GothicFrame></GothicFrame>
-            <GothicFrame></GothicFrame>
-            <GothicFrame></GothicFrame>
+            {active_actor.item && (
+              <ItemTooltip item={active_actor.item} asChild>
+                <GothicFrame className="grid place-items-center">
+                  {ItemIcon && (
+                    <ItemIcon className="text-foreground/70 size-8" />
+                  )}
+                </GothicFrame>
+              </ItemTooltip>
+            )}
           </div>
           <div className="relative">
             <TinyBadge
