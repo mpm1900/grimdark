@@ -12,11 +12,13 @@ import { setHoverPosition } from '#/lib/stores/ui'
 import { lobbyStore } from '#/lib/stores/clients'
 import { Gauge } from './gothic-ui/progress'
 import { cn } from '#/lib/utils'
+import { AFFINITY_MATRIX, type Affinity } from '#/lib/game/core'
 
 function TargetButton({
   is_done,
   is_selected,
   is_valid_target,
+  affinity,
   target,
   disabled,
   onClick,
@@ -24,9 +26,18 @@ function TargetButton({
   is_done: boolean
   is_selected: boolean
   is_valid_target: boolean
+  affinity: Affinity | null
   target: Actor | undefined
   onClick: (actor: Actor, is_selected: boolean) => void
 }) {
+  const affinity_ratio = affinity
+    ? target?.affinities.reduce((prev, aff) => {
+        return prev + (AFFINITY_MATRIX[affinity][aff] ?? 0)
+      }, 0)
+    : 0
+  const affinity_immunity = affinity
+    ? target?.affinity_immunities[affinity]
+    : undefined
   const is_disabled =
     !is_valid_target || disabled || (!is_selected ? is_done : false)
   if (!target) return <div />
@@ -46,6 +57,20 @@ function TargetButton({
         className="ring ring-black"
         indicator={{ className: 'bg-red-700/20' }}
       />
+      <div className="h-3 w-full font-serif font-medium text-xs">
+        {affinity_immunity !== undefined && (
+          <span>
+            {affinity_immunity === 0 && <span>Immune to {affinity}</span>}
+            {affinity_immunity !== 0 && <span>Super immunity</span>}
+          </span>
+        )}
+        {affinity_immunity === undefined && !!affinity_ratio && (
+          <span>
+            {affinity_ratio <= -2 && <span>Not very effective</span>}
+            {affinity_ratio >= 2 && <span>Super effective</span>}
+          </span>
+        )}
+      </div>
     </GothicBigButton>
   )
 }
@@ -113,6 +138,7 @@ function TargetsButtonGrid({
                   is_done={selected.length === action.config.target_count}
                   is_selected={!!target && context.hasTarget(target)}
                   is_valid_target={!!targets.find((t) => t.ID === target?.ID)}
+                  affinity={action.config.affinity}
                   target={target}
                   onClick={(t, selected) =>
                     selected ? context.addTarget(t) : context.removeTarget(t)
@@ -129,6 +155,7 @@ function TargetsButtonGrid({
               is_done={selected.length === action.config.target_count}
               is_selected={!!target && context.hasTarget(target)}
               is_valid_target={!!targets.find((t) => t.ID === target?.ID)}
+              affinity={action.config.affinity}
               target={target}
               onClick={(t, selected) =>
                 selected ? context.addTarget(t) : context.removeTarget(t)
