@@ -219,5 +219,6 @@ func (dr *DamageResult) Success() bool {
 func (dr *DamageResult) Print(source Actor) {
 	fmt.Printf("DAMAGE RESULT: (%s@%s) => %s \n", source.Name, dr.Stat, dr.Target.Name)
 	fmt.Printf("SUCCESS: %t, ACC: %f, ROLL: %f \n", dr.Success(), dr.AccuracyResult.Accuracy, dr.AccuracyResult.AccuracyRoll)
+	fmt.Printf("ATK: %f, DEF: %f \n", source.Stats[dr.Stat], dr.Target.Stats[dr.Stat.GetDefense()])
 	fmt.Printf("DAMAGE = %f, BASE = %f, AFFINITY = %f, RAND = %f \n", dr.Damage, dr.BaseDamage, dr.Affinity, dr.Random)
 }
