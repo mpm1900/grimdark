@@ -59,7 +59,7 @@ func AddEffectsTarget(chance float64, target Actor, effects ...Effect) ActionEff
 
 func AddResultEffects(chance float64, effects ...Effect) AttackEffectResult {
 	return func(g *Game, context Context, this *ActionContext, result DamageResult) {
-		AddEffectsTarget(chance, result.Target, effects...)(g, context, this)
+		AddEffectsTarget(chance, result.AccuracyResult.Target, effects...)(g, context, this)
 	}
 }
 
@@ -74,6 +74,7 @@ func MultiHitLogs(result DamageResult, context Context, this *ActionContext, hit
 	}
 }
 func PostDamageLogs(result DamageResult, context Context, this *ActionContext) {
+	target := result.AccuracyResult.Target
 	if result.Success() {
 		if result.BaseAffinityStage >= 2 {
 			this.Push(PushLog(NewLog(
@@ -93,13 +94,13 @@ func PostDamageLogs(result DamageResult, context Context, this *ActionContext) {
 	}
 
 	if !result.Success() {
-		_, immune := result.Target.AffinityImmunities[this.Action.Config.Affinity]
+		_, immune := target.AffinityImmunities[this.Action.Config.Affinity]
 		if immune {
 			this.Push(PushLog(NewLog(
 				"$target$ was immune to $aff$.",
 				CombineTerms(
 					ActionTerms(this.Action),
-					TargetTerms(result.Target),
+					TargetTerms(target),
 				),
 			)).Bind(context))
 		}
@@ -109,19 +110,20 @@ func PostDamageLogs(result DamageResult, context Context, this *ActionContext) {
 				"$action$ missed $target$.",
 				CombineTerms(
 					ActionTerms(this.Action),
-					TargetTerms(result.Target),
+					TargetTerms(target),
 				),
 			)).Bind(context))
-		} else if result.Target.IsProtected {
+		} else if target.IsProtected {
 			this.Push(PushLog(NewLog(
 				"$target$ was protected.",
-				TargetTerms(result.Target),
+				TargetTerms(target),
 			)).Bind(context))
 		}
 	}
 }
 func DamageSideEffects(g *Game, context Context, result DamageResult, this *ActionContext, config AttackConfig) {
-	trigger_context := MakeContextFor(this.Source, result.Target)
+	target := result.AccuracyResult.Target
+	trigger_context := MakeContextFor(this.Source, target)
 	if result.Success() {
 		g.On(OnDamageSend, trigger_context)
 		g.On(OnDamageRecieve, trigger_context)
@@ -135,21 +137,21 @@ func DamageSideEffects(g *Game, context Context, result DamageResult, this *Acti
 		if this.Action.Config.Recoil > 0 {
 			recoil_ctx := MakeContextFor(this.Source, this.Source)
 			this.Push(
-				DamageTargets(result.Damage*this.Action.Config.Recoil, false).Bind(recoil_ctx),
+				DamageTargets(result.Damage*this.Action.Config.Recoil, false, false).Bind(recoil_ctx),
 			)
 		}
 
 		if this.Action.Config.Lifesteal > 0 {
 			lifesteal_ctx := MakeContextFor(this.Source, this.Source)
 			this.Push(
-				DamageTargets(result.Damage*this.Action.Config.Lifesteal*-1.0, false).Bind(lifesteal_ctx),
+				DamageTargets(result.Damage*this.Action.Config.Lifesteal*-1.0, true, false).Bind(lifesteal_ctx),
 			)
 		}
 
-		if result.Target.Stats[DamageReflect] > 0 {
-			reflect_ctx := MakeContextFor(result.Target, this.Source)
+		if target.Stats[DamageReflect] > 0 {
+			reflect_ctx := MakeContextFor(target, this.Source)
 			this.Push(
-				DamageTargets(result.Damage*result.Target.Stats[DamageReflect], false).Bind(reflect_ctx),
+				DamageTargets(result.Damage*target.Stats[DamageReflect], false, false).Bind(reflect_ctx),
 			)
 		}
 

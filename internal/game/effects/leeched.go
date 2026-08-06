@@ -35,11 +35,11 @@ func leeched() game.Effect {
 				health := parent.Stats[game.Health]
 				amount := health * 0.12
 				dmg_context := game.MakeContextFor(parent, parent)
-				this.Push(game.DamageTargets(amount, false).Bind(dmg_context))
+				this.Push(game.DamageTargets(amount, false, false).Bind(dmg_context))
 
 				for _, target := range g.GetTargets(modifier.Context) {
 					heal_context := game.MakeContextFor(parent, target)
-					this.Push(game.DamageTargets(-amount, false).Bind(heal_context))
+					this.Push(game.DamageTargets(-amount, true, false).Bind(heal_context))
 				}
 
 				return this.Done()

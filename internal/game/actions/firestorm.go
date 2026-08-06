@@ -34,7 +34,7 @@ func firestorm() game.Effect {
 					dmg_context := game.MakeContextFor(this.Source, target)
 					health := target.Stats[game.Health]
 					amount := health * 0.12
-					this.Push(game.DamageTargets(amount, false).Bind(dmg_context))
+					this.Push(game.DamageTargets(amount, false, false).Bind(dmg_context))
 				}
 
 				return this.Done()

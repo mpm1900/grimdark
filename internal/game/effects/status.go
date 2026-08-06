@@ -34,7 +34,7 @@ func Burned() game.Effect {
 				dmg_context := game.MakeContextFor(this.Source, this.Source)
 				health := this.Source.Stats[game.Health]
 				amount := health * 0.08
-				this.Push(game.DamageTargets(amount, false).Bind(dmg_context))
+				this.Push(game.DamageTargets(amount, false, false).Bind(dmg_context))
 				return this.Done()
 			},
 		},

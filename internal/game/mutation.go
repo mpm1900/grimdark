@@ -117,12 +117,12 @@ func ConsumeItem() Mutation {
 		},
 	}
 }
-func DamageTargets(damage float64, hit bool) Mutation {
+func DamageTargets(damage float64, direct bool, hit bool) Mutation {
 	return Mutation{
 		delta: func(g *Game, context Context) []uuid.UUID {
 			applied := []uuid.UUID{}
 
-			g.DamageTargets(context, damage, hit)
+			g.DamageTargets(context, damage, direct, hit)
 			for _, target := range g.GetTargets(context) {
 				applied = append(applied, target.ID)
 			}
@@ -131,7 +131,7 @@ func DamageTargets(damage float64, hit bool) Mutation {
 		},
 	}
 }
-func DamageRatioTargets(ratio float64) Mutation {
+func DamageRatioTargets(ratio float64, attack bool) Mutation {
 	return Mutation{
 		delta: func(g *Game, context Context) []uuid.UUID {
 			applied := []uuid.UUID{}
@@ -139,7 +139,7 @@ func DamageRatioTargets(ratio float64) Mutation {
 			for _, target := range g.GetTargets(context) {
 				target_context := context.CloneWithTarget(target)
 				damage := target.Stats[Health] * ratio
-				g.DamageTargets(target_context, damage, false)
+				g.DamageTargets(target_context, damage, attack, false)
 				applied = append(applied, target.ID)
 			}
 
@@ -148,7 +148,7 @@ func DamageRatioTargets(ratio float64) Mutation {
 	}
 }
 func HealRatioTargets(ratio float64) Mutation {
-	return DamageRatioTargets(-ratio)
+	return DamageRatioTargets(-ratio, false)
 }
 func SetPositionSource(position_id uuid.UUID) Mutation {
 	return Mutation{
@@ -156,6 +156,19 @@ func SetPositionSource(position_id uuid.UUID) Mutation {
 			g.SetPosition(ctx.SourceID, position_id)
 
 			return []uuid.UUID{ctx.SourceID}
+		},
+	}
+}
+func SetPositionTargets(position_id uuid.UUID) Mutation {
+	return Mutation{
+		delta: func(g *Game, ctx Context) []uuid.UUID {
+			targets := []uuid.UUID{}
+			for _, target := range g.GetTargets(ctx) {
+				g.SetPosition(target.ID, position_id)
+				targets = append(targets, target.ID)
+			}
+
+			return targets
 		},
 	}
 }

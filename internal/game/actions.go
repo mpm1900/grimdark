@@ -159,7 +159,7 @@ func Struggle() Action {
 				hp := this.Source.Stats[Health]
 				recoil := hp * 0.25
 				recoil_ctx := MakeContextFor(this.Source, this.Source)
-				this.Push(DamageTargets(recoil, false).Bind(recoil_ctx))
+				this.Push(DamageTargets(recoil, false, false).Bind(recoil_ctx))
 			},
 		}),
 		ValidateContext:  ContextTargetLength(1),

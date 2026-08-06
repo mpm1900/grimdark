@@ -81,13 +81,14 @@ type Actor struct {
 	State  ActorState
 	Status ActorStatus
 
-	IsAlive     bool
-	IsBulwark   bool // stops collateral penetration
-	IsHidden    bool // cannot be targeted by single-target actions (unimplemented)
-	IsInsulated bool // is immune from the secondary effects of attacking attacks (ie through AddResultEffects())
-	IsProtected bool // protected from actions that check accuracy
-	IsDisabled  bool // cannot act and cannot queue commands (may not be needed)
-	MinHP       float64
+	IsAlive           bool
+	IsCollateralBlock bool // stops collateral penetration
+	IsHidden          bool // cannot be targeted by single-target actions (unimplemented)
+	IsInsulated       bool // is immune from the secondary effects of attacking attacks (ie through AddResultEffects())
+	IsProtected       bool // protected from actions that check accuracy
+	IsShielded        bool // protected from non-attack damage
+	IsDisabled        bool // cannot act and cannot queue commands (may not be needed)
+	MinHP             float64
 
 	Meta ActorMeta
 }
@@ -138,13 +139,14 @@ func NewActor(class Class, config ActorConfig) *Actor {
 		State:  StateGrounded,
 		Status: StatusNone,
 
-		IsAlive:     true,
-		IsBulwark:   false,
-		IsHidden:    false,
-		IsInsulated: false,
-		IsProtected: false,
-		IsDisabled:  false,
-		MinHP:       0,
+		IsAlive:           true,
+		IsCollateralBlock: false,
+		IsHidden:          false,
+		IsInsulated:       false,
+		IsProtected:       false,
+		IsShielded:        false,
+		IsDisabled:        false,
+		MinHP:             0,
 
 		ActionStates: map[uuid.UUID]ActionState{},
 		effectStates: map[uuid.UUID]EffectState{},
@@ -193,13 +195,14 @@ func (a *Actor) Clone() *Actor {
 		State:  a.State,
 		Status: a.Status,
 
-		IsAlive:     a.IsAlive,
-		IsBulwark:   a.IsBulwark,
-		IsHidden:    a.IsHidden,
-		IsInsulated: a.IsInsulated,
-		IsProtected: a.IsProtected,
-		IsDisabled:  a.IsDisabled,
-		MinHP:       a.MinHP,
+		IsAlive:           a.IsAlive,
+		IsCollateralBlock: a.IsCollateralBlock,
+		IsHidden:          a.IsHidden,
+		IsInsulated:       a.IsInsulated,
+		IsProtected:       a.IsProtected,
+		IsShielded:        a.IsShielded,
+		IsDisabled:        a.IsDisabled,
+		MinHP:             a.MinHP,
 
 		ActionStates: maps.Clone(a.ActionStates),
 		effectStates: maps.Clone(a.effectStates),

@@ -15,25 +15,26 @@ const ActionPriorityDefault = 0
 const ActionPriorityDelayed = -1
 
 type ActionConfig struct {
-	Accuracy     *float64 `json:"accuracy"`
-	Affinity     Affinity `json:"affinity"`
-	Cooldown     int      `json:"cooldown"`
-	CritStage    int      `json:"crit_stage"`
-	CritChance   float64  `json:"crit_chance"`
-	CritModifier float64  `json:"crit_modifier"`
-	Description  string   `json:"description"`
-	Repeats      int      `json:"repeats"`
-	Lifesteal    float64  `json:"lifesteal"`
-	Name         string   `json:"name"`
-	Power        float64  `json:"power"`
-	Ratio        float64  `json:"ratio"`
-	Priority     int      `json:"priority"`
-	Range        *int     `json:"range"`
-	Recoil       float64  `json:"recoil"`
-	Stat         Stat     `json:"stat"`
-	StopOnMiss   bool     `json:"-"`
-	TargetCount  int      `json:"target_count"`
-	Uses         *int     `json:"uses"`
+	Accuracy        *float64 `json:"accuracy"`
+	Affinity        Affinity `json:"affinity"`
+	Cooldown        int      `json:"cooldown"`
+	CritStage       int      `json:"crit_stage"`
+	CritChance      float64  `json:"crit_chance"`
+	CritModifier    float64  `json:"crit_modifier"`
+	Description     string   `json:"description"`
+	Repeats         int      `json:"repeats"`
+	Lifesteal       float64  `json:"lifesteal"`
+	Name            string   `json:"name"`
+	Power           float64  `json:"power"`
+	Ratio           float64  `json:"ratio"`
+	Priority        int      `json:"priority"`
+	Range           *int     `json:"range"`
+	Recoil          float64  `json:"recoil"`
+	Stat            Stat     `json:"stat"`
+	DefenseOverride *Stat    `json:"-"`
+	StopOnMiss      bool     `json:"-"`
+	TargetCount     int      `json:"target_count"`
+	Uses            *int     `json:"uses"`
 
 	pending_damage map[uuid.UUID]float64
 }
@@ -64,10 +65,12 @@ type AccuracyResult struct {
 
 type DamageResult struct {
 	AccuracyResult
+	ActionConfig      ActionConfig
 	Affinity          float64
 	AffinityStage     int
 	BaseAffinityStage int
 	BaseDamage        float64
+	DamageConfig      DamageConfig
 	Multipliers       float64
 	Damage            float64
 	Random            float64
@@ -75,8 +78,16 @@ type DamageResult struct {
 	Raw               float64
 }
 
+func (ac *ActionConfig) GetDefense() Stat {
+	if ac.DefenseOverride != nil {
+		return *ac.DefenseOverride
+	}
+
+	return ac.Stat.GetDefense()
+}
+
 func (ac *ActionConfig) GetBaseDamage(source, target Actor, use_base_stats bool) float64 {
-	adp_ratio := ac.Stat.GetRatio(source, target, use_base_stats) * ac.Power
+	adp_ratio := ac.Stat.GetRatio(source, target, use_base_stats, ac.DefenseOverride) * ac.Power
 	level_mod := float64(source.Level*2)/5 + 2
 	base := (adp_ratio*level_mod)/50 + 2
 	return base
@@ -87,7 +98,7 @@ func (ac *ActionConfig) GetAccuracy(source, target Actor, use_base_stats bool) f
 		return 1.0
 	}
 
-	ratio := Accuracy.GetRatio(source, target, use_base_stats)
+	ratio := Accuracy.GetRatio(source, target, use_base_stats, nil)
 	return ratio * *ac.Accuracy
 }
 
@@ -146,21 +157,21 @@ func (ac *ActionConfig) GetDamageResult(config DamageConfig) DamageResult {
 		}
 
 		return DamageResult{
+			ActionConfig:      *ac,
 			AccuracyResult:    accuracy,
 			Affinity:          affinity,
 			AffinityStage:     total_stage,
 			BaseAffinityStage: base_stage,
 			BaseDamage:        base,
 			Multipliers:       multipliers,
-			Raw:               damage,
 			Random:            1,
+			Raw:               damage,
 			Ratio:             ac.Ratio,
 			Damage:            damage,
 		}
 	}
 
 	if ac.Power != 0 {
-
 		base := ac.GetBaseDamage(config.Source, config.Target, accuracy.Critical)
 		raw := base * affinity
 		multipliers *= affinity
@@ -191,11 +202,13 @@ func (ac *ActionConfig) GetDamageResult(config DamageConfig) DamageResult {
 		}
 
 		return DamageResult{
+			ActionConfig:      *ac,
 			AccuracyResult:    accuracy,
 			Affinity:          affinity,
 			AffinityStage:     total_stage,
 			BaseAffinityStage: base_stage,
 			BaseDamage:        base,
+			DamageConfig:      config,
 			Multipliers:       multipliers,
 			Raw:               raw,
 			Random:            random,
@@ -204,10 +217,12 @@ func (ac *ActionConfig) GetDamageResult(config DamageConfig) DamageResult {
 	}
 
 	return DamageResult{
+		ActionConfig:      *ac,
 		AccuracyResult:    accuracy,
 		Affinity:          affinity,
 		AffinityStage:     total_stage,
 		BaseAffinityStage: base_stage,
+		DamageConfig:      config,
 		Multipliers:       multipliers,
 	}
 }
@@ -216,9 +231,11 @@ func (dr *DamageResult) Success() bool {
 	return dr.AccuracyResult.Success() && dr.Damage > 0
 }
 
-func (dr *DamageResult) Print(source Actor) {
-	fmt.Printf("DAMAGE RESULT: (%s@%s) => %s \n", source.Name, dr.Stat, dr.Target.Name)
+func (dr *DamageResult) Print() {
+	source := dr.DamageConfig.Source
+	target := dr.AccuracyResult.Target
+	fmt.Printf("DAMAGE RESULT: (%s@%s) => %s \n", source.Name, dr.Stat, target.Name)
 	fmt.Printf("SUCCESS: %t, ACC: %f, ROLL: %f \n", dr.Success(), dr.AccuracyResult.Accuracy, dr.AccuracyResult.AccuracyRoll)
-	fmt.Printf("ATK: %f, DEF: %f \n", source.Stats[dr.Stat], dr.Target.Stats[dr.Stat.GetDefense()])
+	fmt.Printf("ATK: %f, DEF: %f \n", source.Stats[dr.Stat], target.Stats[dr.ActionConfig.GetDefense()])
 	fmt.Printf("DAMAGE = %f, BASE = %f, AFFINITY = %f, RAND = %f \n", dr.Damage, dr.BaseDamage, dr.Affinity, dr.Random)
 }

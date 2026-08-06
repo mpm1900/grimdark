@@ -87,8 +87,12 @@ func (g *Game) AddPlayers(players ...Player) {
 	})
 }
 
-func (g *Game) DamageTargets(context Context, damage float64, hit bool) {
+func (g *Game) DamageTargets(context Context, damage float64, direct bool, hit bool) {
 	for _, target := range g.GetTargets(context) {
+		if target.IsShielded && !direct {
+			continue
+		}
+
 		g.MutateActor(target.ID, func(a Actor) Actor {
 			resolved, ok := g.GetActor(target.ID)
 			if !ok || !resolved.IsAlive {

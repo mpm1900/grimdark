@@ -59,12 +59,17 @@ func (s Stat) GetDefense() Stat {
 	return defense
 }
 
-func (s Stat) GetRatio(source, target Actor, is_unmodified bool) float64 {
+func (s Stat) GetRatio(source, target Actor, is_unmodified bool, defense_override *Stat) float64 {
+	defense := s.GetDefense()
+	if defense_override != nil {
+		defense = *defense_override
+	}
+
 	source_value := source.Stats[s]
-	target_value := target.Stats[s.GetDefense()]
+	target_value := target.Stats[defense]
 
 	if is_unmodified {
-		base := target.UnmodifiedStats[s.GetDefense()]
+		base := target.UnmodifiedStats[defense]
 		if target_value > base {
 			target_value = base
 		}

@@ -27,10 +27,11 @@ func HandleAttackDamage(config AttackConfig, g *Game, context Context, this *Act
 			UseBaseAccuracy: false,
 		},
 	)
-	result.Print(this.Source)
+
+	result.Print()
 	dmg_ctx := MakeContextFor(this.Source, target)
 
-	this.Push(DamageTargets(result.Damage, true).Bind(dmg_ctx))
+	this.Push(DamageTargets(result.Damage, true, true).Bind(dmg_ctx))
 	this.RecordDamage(target.ID, result.Damage)
 
 	MultiHitLogs(result, context, this, hit)

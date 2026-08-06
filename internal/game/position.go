@@ -89,7 +89,7 @@ func (g *Game) GetEnemyPositionsByRank(player_ID uuid.UUID, rank int, direction 
 
 		target, ok := g.GetActor(position.ActorID)
 		if ok {
-			if target.IsBulwark {
+			if target.IsCollateralBlock {
 				break
 			}
 		}

@@ -25,7 +25,7 @@ func corruptedNecklace() game.Item {
 				dmg_context := game.MakeContextFor(this.Source, this.Source)
 				health := this.Source.Stats[game.Health]
 				amount := health * 0.10
-				this.Push(game.DamageTargets(amount, false).Bind(dmg_context))
+				this.Push(game.DamageTargets(amount, false, false).Bind(dmg_context))
 				return this.Done()
 			},
 		},
