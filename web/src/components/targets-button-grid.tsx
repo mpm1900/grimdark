@@ -59,7 +59,7 @@ function TargetButton({
         className="ring ring-black"
         indicator={{ className: 'bg-red-700/20' }}
       />
-      <div className="h-3 w-full font-serif font-medium text-xs">
+      <div className="h-3 w-full font-serif font-medium text-xs opacity-60">
         {is_source ? (
           'You'
         ) : (

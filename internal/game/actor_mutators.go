@@ -67,7 +67,7 @@ func (a *Actor) UpdateActionState(action_id uuid.UUID, updater func(ActionState)
 }
 
 func (g *Game) UpdatePromptCommand(context Context) {
-	g.mutate(func(s *State) {
+	g.state.Mutate(func(s *State) {
 		for i, cmd := range s.Prompts {
 			is_player := cmd.Context.PlayerID == context.PlayerID
 			is_source := cmd.Context.SourceID == context.SourceID

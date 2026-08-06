@@ -3,7 +3,7 @@ package game
 import "fmt"
 
 func (g *Game) NextPhase() {
-	g.mutate(func(s *State) {
+	g.state.Mutate(func(s *State) {
 		s.ActiveContext = nil
 	})
 
@@ -34,7 +34,7 @@ func (g *Game) EndPhase() {
 	}
 }
 func (g *Game) NextTransaction() {
-	tx, err := g.state.Transactions.Dequeue()
+	tx, err := g.state.value.Transactions.Dequeue()
 	if err != nil {
 		return
 	}
@@ -42,7 +42,7 @@ func (g *Game) NextTransaction() {
 	tx.Resolve(g)
 }
 func (g *Game) NextTrigger() {
-	trig, err := g.state.Triggers.Dequeue()
+	trig, err := g.state.value.Triggers.Dequeue()
 	if err != nil {
 		return
 	}
@@ -51,7 +51,7 @@ func (g *Game) NextTrigger() {
 }
 func (g *Game) NextCommand() {
 	g.SortCommands()
-	cmd, err := g.state.Commands.Dequeue()
+	cmd, err := g.state.value.Commands.Dequeue()
 	if err != nil {
 		return
 	}
@@ -74,7 +74,7 @@ func (g *Game) NextCommand() {
 	g.SetCooldown(cmd, state)
 }
 func (g *Game) NextPrompt() {
-	cmd, err := g.state.Prompts.Dequeue()
+	cmd, err := g.state.value.Prompts.Dequeue()
 	if err != nil {
 		return
 	}
@@ -83,12 +83,12 @@ func (g *Game) NextPrompt() {
 }
 
 func (g *Game) Next() bool {
-	if len(g.state.Transactions) > 0 {
+	if len(g.state.value.Transactions) > 0 {
 		g.NextTransaction()
 		return true
 	}
 
-	if len(g.state.Prompts) > 0 {
+	if len(g.state.value.Prompts) > 0 {
 		if g.PromptsReady() {
 			g.NextPrompt()
 			return true
@@ -100,12 +100,12 @@ func (g *Game) Next() bool {
 		return false
 	}
 
-	if len(g.state.Triggers) > 0 {
+	if len(g.state.value.Triggers) > 0 {
 		g.NextTrigger()
 		return true
 	}
 
-	if len(g.state.Commands) > 0 {
+	if len(g.state.value.Commands) > 0 {
 		g.NextCommand()
 		return true
 	}

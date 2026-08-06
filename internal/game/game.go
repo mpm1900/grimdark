@@ -1,18 +1,9 @@
 package game
 
 import (
-	"fmt"
 	"slices"
 
 	"github.com/google/uuid"
-)
-
-type resolve_state uint8
-
-const (
-	unresolved resolve_state = 0
-	resolving  resolve_state = 1
-	resolved   resolve_state = 2
 )
 
 type gamemeta struct {
@@ -50,10 +41,7 @@ const (
 const maxLogCount = 30
 
 type Game struct {
-	state    State
-	resolved State
-
-	resolving  resolve_state
+	state      Dynamic[State]
 	meta       gamemeta
 	onComplete func()
 
@@ -91,9 +79,7 @@ func NewGame(instanceID uuid.UUID, onComplete func()) *Game {
 	state.Modifiers = append(state.Modifiers, system_modifiers...)
 
 	return &Game{
-		state:     state,
-		resolved:  state,
-		resolving: unresolved,
+		state: NewDynamic(state),
 		meta: gamemeta{
 			applied_modifiers: map[uuid.UUID]Set[uuid.UUID]{},
 		},
@@ -106,24 +92,6 @@ func NewGame(instanceID uuid.UUID, onComplete func()) *Game {
 	}
 }
 
-// setters
-func (g *Game) mutate(updater func(*State)) {
-	if g.resolving == resolving {
-		fmt.Println("!!! Tried to mutate state inside of resolve()")
-		return
-	}
-
-	updater(&g.state)
-	g.resolving = unresolved
-}
-func (g *Game) modify(updater func(*State)) {
-	if g.resolving != resolving {
-		fmt.Println("!!! Tried to modify state outside of resolve()")
-		return
-	}
-
-	updater(&g.resolved)
-}
 func (g *Game) PushLog(log Bindable[Log]) {
 	g.Logs = append(g.Logs, log)
 	if len(g.Logs) > maxLogCount {
@@ -139,15 +107,8 @@ func (g *Game) PushLogMeta(log Bindable[Log]) {
 }
 
 // getters
-func (g *Game) Base() State {
-	return g.state
-}
 func (g *Game) State() State {
-	if g.resolving == unresolved {
-		g.resolve()
-	}
-
-	return g.resolved
+	return g.state.State(g.resolve)
 }
 func (g *Game) AppliedModifiers(actor_id uuid.UUID) Set[uuid.UUID] {
 	effect_ids := make(Set[uuid.UUID])
@@ -162,13 +123,13 @@ func (g *Game) AppliedModifiers(actor_id uuid.UUID) Set[uuid.UUID] {
 }
 func (g *Game) GetModifiers() []Modifier {
 	modifiers := []Modifier{}
-	for _, m := range g.state.Modifiers {
+	for _, m := range g.state.value.Modifiers {
 		if m.Payload.Ready() {
 			modifiers = append(modifiers, m)
 		}
 	}
 
-	for _, a := range g.state.Actors {
+	for _, a := range g.state.value.Actors {
 		if a.Active() && a.IsAlive {
 			modifiers = append(modifiers, a.GetModifiers()...)
 		}
@@ -256,7 +217,7 @@ func (g *Game) IsReadyToRun() bool {
 	return len(g.State().Commands) == len(g.GetActionableActors())
 }
 func (g *Game) PromptsReady() bool {
-	for _, prompt := range g.state.Prompts {
+	for _, prompt := range g.state.value.Prompts {
 		if !prompt.Ready {
 			return false
 		}
@@ -266,8 +227,7 @@ func (g *Game) PromptsReady() bool {
 }
 
 func (g *Game) resolve() {
-	g.resolving = resolving
-	g.resolved = g.state.Clone()
+	g.state.resolved = g.state.value.Clone()
 	g.meta.applied_modifiers = map[uuid.UUID]Set[uuid.UUID]{}
 
 	modifiers := g.GetModifiers()
@@ -275,8 +235,6 @@ func (g *Game) resolve() {
 	for _, mod := range modifiers {
 		mod.Resolve(g)
 	}
-
-	g.resolving = resolved
 }
 
 func (g *Game) On(on TriggerOn, context Context) {
@@ -296,7 +254,7 @@ func (g *Game) On(on TriggerOn, context Context) {
 		}
 	}
 
-	g.mutate(func(s *State) {
+	g.state.Mutate(func(s *State) {
 		s.Triggers = append(s.Triggers, triggers...)
 	})
 }

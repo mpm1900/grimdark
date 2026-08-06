@@ -26,13 +26,13 @@ func (g *Game) ActorNextTurnEffects() {
 }
 
 func (g *Game) AddActors(actors ...Actor) {
-	g.mutate(func(s *State) {
+	g.state.Mutate(func(s *State) {
 		s.Actors = append(s.Actors, actors...)
 	})
 }
 
 func (g *Game) AddModifiers(modifiers ...Modifier) {
-	g.mutate(func(s *State) {
+	g.state.Mutate(func(s *State) {
 		for _, mod := range modifiers {
 			success := true
 			if mod.Payload.Check != nil {
@@ -61,7 +61,7 @@ func (g *Game) AddModifiers(modifiers ...Modifier) {
 }
 
 func (g *Game) AddPlayers(players ...Player) {
-	g.mutate(func(s *State) {
+	g.state.Mutate(func(s *State) {
 		s.Players = append(s.Players, players...)
 		for _, p := range players {
 			s.Positions = append(s.Positions,
@@ -133,7 +133,7 @@ func (g *Game) DamageTargets(context Context, damage float64, hit bool) {
 }
 
 func (g *Game) DecrementModifiers() {
-	g.mutate(func(s *State) {
+	g.state.Mutate(func(s *State) {
 		for i, modifier := range s.Modifiers {
 			if modifier.Payload.Delay != nil {
 				*s.Modifiers[i].Payload.Delay--
@@ -150,23 +150,23 @@ func (g *Game) DecrementModifiers() {
 }
 
 func (g *Game) DeleteCommandWhere(where func(Command) bool) {
-	g.mutate(func(s *State) {
+	g.state.Mutate(func(s *State) {
 		s.Commands = slices.DeleteFunc(s.Commands, where)
 	})
 }
 
 func (g *Game) MutatePlayer(id uuid.UUID, updater func(Player) Player) {
-	g.mutate(func(s *State) {
+	g.state.Mutate(func(s *State) {
 		s.UpdatePlayer(id, updater)
 	})
 }
 func (g *Game) MutateActor(id uuid.UUID, updater func(Actor) Actor) {
-	g.mutate(func(s *State) {
+	g.state.Mutate(func(s *State) {
 		s.UpdateActor(id, updater)
 	})
 }
 func (g *Game) MutateActorWhere(where func(Actor) bool, updater func(Actor) Actor) {
-	g.mutate(func(s *State) {
+	g.state.Mutate(func(s *State) {
 		s.UpdateActorWhere(where, updater)
 	})
 }
@@ -181,31 +181,31 @@ func (g *Game) PushCommand(source Actor, command Command) {
 		return
 	}
 
-	g.mutate(func(s *State) {
+	g.state.Mutate(func(s *State) {
 		s.Commands = append(s.Commands, command)
 	})
 }
 
 func (g *Game) PushPromptCommand(command PromptCommand) {
-	g.mutate(func(s *State) {
+	g.state.Mutate(func(s *State) {
 		s.Prompts = append(s.Prompts, command)
 	})
 	g.Status = GameStatusWaiting
 }
 
 func (g *Game) PushTransaction(transaction Transaction) {
-	g.mutate(func(s *State) {
+	g.state.Mutate(func(s *State) {
 		s.Transactions = append(s.Transactions, transaction)
 	})
 }
 func (g *Game) PushTransactions(transactions []Transaction) {
-	g.mutate(func(s *State) {
+	g.state.Mutate(func(s *State) {
 		s.Transactions = append(s.Transactions, transactions...)
 	})
 }
 
 func (g *Game) RemoveModifiers(where Filter[Modifier], ctx Context) {
-	g.mutate(func(s *State) {
+	g.state.Mutate(func(s *State) {
 		s.Modifiers = slices.DeleteFunc(s.Modifiers, func(m Modifier) bool {
 			return where(g, m, ctx)
 		})
@@ -213,14 +213,14 @@ func (g *Game) RemoveModifiers(where Filter[Modifier], ctx Context) {
 }
 
 func (g *Game) SetActiveContext(context Context) {
-	g.mutate(func(s *State) {
+	g.state.Mutate(func(s *State) {
 		cloned := context.Clone()
 		s.ActiveContext = &cloned
 	})
 }
 
 func (g *Game) SetLastUsedAction(actor_id uuid.UUID, action_id uuid.UUID) {
-	g.mutate(func(s *State) {
+	g.state.Mutate(func(s *State) {
 		s.UpdateActor(actor_id, func(a Actor) Actor {
 			a.Meta.LastUsedActionID = action_id
 			return a
@@ -229,7 +229,7 @@ func (g *Game) SetLastUsedAction(actor_id uuid.UUID, action_id uuid.UUID) {
 }
 
 func (g *Game) SetCooldown(cmd Command, state ActionState) {
-	g.mutate(func(s *State) {
+	g.state.Mutate(func(s *State) {
 		s.UpdateActor(cmd.Context.SourceID, func(a Actor) Actor {
 			cooldown := cmd.Payload.Config.Cooldown + state.CooldownBonus
 			a.SetActionCooldown(cmd.Payload.ID, cooldown)
@@ -239,7 +239,7 @@ func (g *Game) SetCooldown(cmd Command, state ActionState) {
 }
 
 func (g *Game) SortCommands() {
-	g.mutate(func(s *State) {
+	g.state.Mutate(func(s *State) {
 		rand.Shuffle(len(s.Commands), func(i, j int) {
 			s.Commands[i], s.Commands[j] = s.Commands[j], s.Commands[i]
 		})
@@ -273,12 +273,12 @@ func (g *Game) SortCommands() {
 
 // modifiers
 func (g *Game) ModifyActor(id uuid.UUID, updater func(Actor) Actor) {
-	g.modify(func(s *State) {
+	g.state.Modify(func(s *State) {
 		s.UpdateActor(id, updater)
 	})
 }
 func (g *Game) ModifyActorWhere(where func(Actor) bool, updater func(Actor) Actor) {
-	g.modify(func(s *State) {
+	g.state.Modify(func(s *State) {
 		s.UpdateActorWhere(where, updater)
 	})
 }

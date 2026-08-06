@@ -14,7 +14,7 @@ func (g *Game) SetPosition(actor_id uuid.UUID, position_id uuid.UUID) {
 	}
 
 	var evicted_id uuid.UUID
-	g.mutate(func(s *State) {
+	g.state.Mutate(func(s *State) {
 		updated := false
 		evicted_id, updated = s.SetPosition(position_id, actor)
 
@@ -84,7 +84,7 @@ func (g *Game) moveActor(actor_id uuid.UUID, direction int) bool {
 	if !ok {
 		return false
 	}
-	position, ok := g.state.GetPositionByActorID(actor_id)
+	position, ok := g.state.value.GetPositionByActorID(actor_id)
 	if !ok {
 		return false
 	}

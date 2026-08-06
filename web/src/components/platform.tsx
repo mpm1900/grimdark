@@ -116,7 +116,7 @@ function Platform({
         })}
       >
         {children ?? (
-          <span className="text-7xl font-cinzel font-black">{rank + 1}</span>
+          <span className="text-7xl font-serif font-black">{rank + 1}</span>
         )}
       </div>
     </div>
