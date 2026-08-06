@@ -33,7 +33,7 @@ func (m Mutation) Bind(context Context) Transaction {
 }
 
 func (tx *Transaction) Resolve(g *Game) []uuid.UUID {
-	return resolve(g, tx.Context, tx.Payload)
+	return g.commit(tx.Context, tx.Payload)
 }
 
 // funcions

@@ -92,6 +92,14 @@ func NewGame(instanceID uuid.UUID, onComplete func()) *Game {
 	}
 }
 
+func (g *Game) commit(context Context, res Delta) []uuid.UUID {
+	if !res.Filter(g, context) {
+		return []uuid.UUID{}
+	}
+
+	return res.Delta(g, context)
+}
+
 func (g *Game) PushLog(log Bindable[Log]) {
 	g.Logs = append(g.Logs, log)
 	if len(g.Logs) > maxLogCount {
@@ -106,9 +114,17 @@ func (g *Game) PushLogMeta(log Bindable[Log]) {
 	g.PushLogDepth(log, g.meta.log_depth)
 }
 
-// getters
 func (g *Game) State() State {
-	return g.state.State(g.resolve)
+	return g.state.State(func() {
+		g.state.resolved = g.state.value.Clone()
+		g.meta.applied_modifiers = map[uuid.UUID]Set[uuid.UUID]{}
+
+		modifiers := g.GetModifiers()
+		g.meta.modifiers = modifiers
+		for _, mod := range modifiers {
+			mod.Resolve(g)
+		}
+	})
 }
 func (g *Game) AppliedModifiers(actor_id uuid.UUID) Set[uuid.UUID] {
 	effect_ids := make(Set[uuid.UUID])
@@ -224,17 +240,6 @@ func (g *Game) PromptsReady() bool {
 	}
 
 	return true
-}
-
-func (g *Game) resolve() {
-	g.state.resolved = g.state.value.Clone()
-	g.meta.applied_modifiers = map[uuid.UUID]Set[uuid.UUID]{}
-
-	modifiers := g.GetModifiers()
-	g.meta.modifiers = modifiers
-	for _, mod := range modifiers {
-		mod.Resolve(g)
-	}
 }
 
 func (g *Game) On(on TriggerOn, context Context) {

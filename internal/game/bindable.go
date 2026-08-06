@@ -10,11 +10,6 @@ type Bindable[P any] struct {
 	Payload P         `json:"payload"`
 }
 
-type Resolveable interface {
-	Filter(*Game, Context) bool
-	Delta(*Game, Context) []uuid.UUID
-}
-
 func bind[P any](payload P, context Context) Bindable[P] {
 	return Bindable[P]{
 		ID:      uuid.New(),
@@ -23,10 +18,7 @@ func bind[P any](payload P, context Context) Bindable[P] {
 	}
 }
 
-func resolve(g *Game, context Context, res Resolveable) []uuid.UUID {
-	if !res.Filter(g, context) {
-		return []uuid.UUID{}
-	}
-
-	return res.Delta(g, context)
+type Delta interface {
+	Filter(*Game, Context) bool
+	Delta(*Game, Context) []uuid.UUID
 }
