@@ -11,9 +11,10 @@ var Warp = game.Action{
 	Tags: []game.ActionTag{game.ATActor, game.ATWeapon},
 	Config: game.ActionConfig{
 		Name:        "Warp",
-		Description: "Exchanges positions of targets.",
+		Description: "Exchanges the positions of target enemies.",
 		Priority:    game.ActionPriorityDelayed,
 		TargetCount: 2,
+		Affinity:    game.Arcane,
 	},
 	ValidateContext:  game.ContextTargetLength(2),
 	TargetsPredicate: game.CombineFilters(game.Enemies, game.ActiveActors),
@@ -24,9 +25,7 @@ var Warp = game.Action{
 				this.Push(game.SwapPositions(*prev, target).Bind(game.NewContext()))
 			}
 
-			if prev == nil {
-				prev = &target
-			}
+			prev = &target
 		}
 		return this.Done()
 	},
