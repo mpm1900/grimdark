@@ -59,7 +59,7 @@ func AddEffectsTarget(chance float64, target Actor, effects ...Effect) ActionEff
 
 func AddResultEffects(chance float64, effects ...Effect) AttackEffectResult {
 	return func(g *Game, context Context, this *ActionContext, result DamageResult) {
-		AddEffectsTarget(chance, result.AccuracyResult.Target, effects...)(g, context, this)
+		AddEffectsTarget(chance, result.Target, effects...)(g, context, this)
 	}
 }
 
@@ -122,7 +122,7 @@ func PostDamageLogs(result DamageResult, context Context, this *ActionContext) {
 	}
 }
 func DamageSideEffects(g *Game, context Context, result DamageResult, this *ActionContext, config AttackConfig) {
-	target := result.AccuracyResult.Target
+	target := result.Target
 	trigger_context := MakeContextFor(this.Source, target)
 	if result.Success() {
 		g.On(OnDamageSend, trigger_context)

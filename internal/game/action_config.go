@@ -21,6 +21,7 @@ type ActionConfig struct {
 	CritStage       int      `json:"crit_stage"`
 	CritChance      float64  `json:"crit_chance"`
 	CritModifier    float64  `json:"crit_modifier"`
+	DefenseOverride *Stat    `json:"-"`
 	Description     string   `json:"description"`
 	Repeats         int      `json:"repeats"`
 	Lifesteal       float64  `json:"lifesteal"`
@@ -31,7 +32,6 @@ type ActionConfig struct {
 	Range           *int     `json:"range"`
 	Recoil          float64  `json:"recoil"`
 	Stat            Stat     `json:"stat"`
-	DefenseOverride *Stat    `json:"-"`
 	StopOnMiss      bool     `json:"-"`
 	TargetCount     int      `json:"target_count"`
 	Uses            *int     `json:"uses"`
