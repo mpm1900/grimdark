@@ -16,3 +16,6 @@ run:
 	go run cmd/server/main.go
 
 dev: up migrate run
+
+game:
+	go run cmd/game/main.go
