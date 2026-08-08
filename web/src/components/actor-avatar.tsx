@@ -50,9 +50,9 @@ function ActorAvatar({ actor }: { actor: Actor }) {
         >
           <ClassTooltip
             actor_class={actor_class}
-            className="hover:underline cursor-default"
+            className="hover:underline cursor-default leading-4"
           >
-            <div className="truncate text-foreground">{actor.name}</div>
+            <div className="truncate text-foreground pt-1">{actor.name}</div>
           </ClassTooltip>
           <div className="text-xs text-foreground/40">{actor.level}</div>
           <div className="absolute -right-5 top-15 flex flex-col items-end gap-px pr-2 text-center capitalize font-cinzel">
