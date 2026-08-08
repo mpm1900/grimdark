@@ -7,7 +7,7 @@ import (
 )
 
 var Cleave = game.Action{
-	ID:   uuid.MustParse("019f8b2e-55cb-7cc5-a83a-12ca212535f9"),
+	ID:   uuid.MustParse("019fe214-985a-775e-9d8f-21eaf072af7d"),
 	Tags: []game.ActionTag{game.ATActor, game.ATWeapon},
 	Config: game.ActionConfig{
 		Name:         "Cleave",

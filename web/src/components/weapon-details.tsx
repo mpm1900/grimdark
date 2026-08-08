@@ -128,9 +128,9 @@ function WeaponDetails({ weapon }: { weapon: Weapon }) {
               Actions
             </span>
             <span className="space-x-2 flex flex-wrap">
-              {weapon.actions.map((a) => (
+              {weapon.actions.map((a, i) => (
                 <ActionTooltip
-                  key={a.ID}
+                  key={`${a.ID}-${a.config.name}-${i}`}
                   action={a}
                   className={statVariants({
                     stat: a.config.stat,
@@ -156,9 +156,9 @@ function WeaponDetails({ weapon }: { weapon: Weapon }) {
             </span>
             {weapon.effects.length > 0 && (
               <span className="space-x-2 flex flex-wrap">
-                {weapon.effects.map((e) => (
+                {weapon.effects.map((e, i) => (
                   <EffectTooltip
-                    key={e.ID}
+                    key={`${e.ID}-${e.name}-${i}`}
                     effect={e}
                     className="cursor-default hover:underline capitalize"
                   >

@@ -15,9 +15,9 @@ function ItemDetails({ item }: { item: Item }) {
         </span>
         {item.effects.length > 0 && (
           <span className="space-x-2 flex flex-wrap">
-            {item.effects.map((e) => (
+            {item.effects.map((e, i) => (
               <EffectTooltip
-                key={e.ID}
+                key={`${e.ID}-${e.name}-${i}`}
                 effect={e}
                 className="cursor-default hover:underline capitalize"
               >

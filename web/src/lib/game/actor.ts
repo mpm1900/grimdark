@@ -11,6 +11,7 @@ export type Actor = {
   affinity_damage: Record<Affinity, number>
   affinity_resistance: Record<Affinity, number>
   affinity_immunities: Partial<Record<Affinity, number>>
+  class_ID: ID
   effects: Array<Effect>
   faction: string
   is_active: boolean

@@ -7,7 +7,7 @@ import (
 )
 
 var QuickStrike = game.Action{
-	ID:   uuid.MustParse("019f8b1e-d47f-7863-981f-bf17defd2135"),
+	ID:   uuid.MustParse("019fe214-39d0-7128-8a10-e0b117ff5dd2"),
 	Tags: []game.ActionTag{game.ATActor, game.ATWeapon, game.ATConditional},
 	Config: game.ActionConfig{
 		Name:         "Quick Strike",

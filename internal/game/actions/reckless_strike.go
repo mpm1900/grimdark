@@ -7,7 +7,7 @@ import (
 )
 
 var RecklessStrike = game.Action{
-	ID:   uuid.MustParse("019f8fe9-4e63-7343-8c21-94bca920fc18"),
+	ID:   uuid.MustParse("019fe214-650d-771e-8b66-cec10efd611a"),
 	Tags: []game.ActionTag{game.ATActor, game.ATWeapon},
 	Config: game.ActionConfig{
 		Name:         "Reckless Strike",

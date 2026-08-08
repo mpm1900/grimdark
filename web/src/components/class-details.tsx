@@ -32,9 +32,9 @@ function ClassDetails({
           Actions
         </span>
         <span className="space-x-2 flex flex-wrap">
-          {actor_class.actions.map((a) => (
+          {actor_class.actions.map((a, i) => (
             <ActionTooltip
-              key={a.ID}
+              key={`${a.ID}-${a.config.name}-${i}`}
               action={a}
               className={statVariants({
                 stat: a.config.stat,
@@ -58,9 +58,9 @@ function ClassDetails({
         </span>
         {actor_class.effects.length > 0 && (
           <span className="space-x-2 flex flex-wrap">
-            {actor_class.effects.map((e) => (
+            {actor_class.effects.map((e, i) => (
               <EffectTooltip
-                key={e.ID}
+                key={`${e.ID}-${e.name}-${i}`}
                 effect={e}
                 className="cursor-default hover:underline capitalize"
               >

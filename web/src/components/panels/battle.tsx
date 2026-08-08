@@ -128,9 +128,9 @@ function ActionsPanel({ active_actor }: { active_actor: Actor }) {
               {action_pages.map((actions, page_index) => (
                 <CarouselItem key={page_index} className="pl-0">
                   <div className="grid h-full grid-cols-2 grid-rows-3">
-                    {actions.map((action) => (
+                    {actions.map((action, i) => (
                       <ActionContextDialog
-                        key={action.ID}
+                        key={`${action.ID}-${action.config.name}-${i}`}
                         actor={active_actor}
                         action={action}
                         enabled={!action.is_disabled}
@@ -172,9 +172,9 @@ function ActionsPanel({ active_actor }: { active_actor: Actor }) {
           <div className="flex flex-col justify-between">
             {active_actor?.actions
               .filter((a) => a.tags.includes('system'))
-              .map((action) => (
+              .map((action, i) => (
                 <ActionContextDialog
-                  key={action.ID}
+                  key={`${action.ID}-${action.config.name}-${i}`}
                   actor={active_actor}
                   action={action}
                   enabled={!action.is_disabled}

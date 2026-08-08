@@ -87,10 +87,10 @@ function ActorState({
         <FieldContent className="min-w-0 flex-row flex-wrap gap-2">
           {actor.effects
             .filter((e) => !!e.name)
-            .map((effect) => (
+            .map((effect, i) => (
               <GothicBadge
                 variant="default"
-                key={effect.ID}
+                key={`${effect.ID}-${effect.name}-${i}`}
                 className="capitalize"
               >
                 {effect.name}
@@ -131,8 +131,12 @@ function ActorState({
           </Marker>
         </FieldLabel>
         <FieldContent className="min-w-0 flex-row flex-wrap gap-2">
-          {applied_effects.map((effect) => (
-            <GothicBadge variant="empty" key={effect.ID} className="capitalize">
+          {applied_effects.map((effect, i) => (
+            <GothicBadge
+              variant="empty"
+              key={`${effect.ID}-${effect.name}-${i}`}
+              className="capitalize"
+            >
               {effect.name}
               {effect.count > 1 && `(${effect.count})`}
             </GothicBadge>
@@ -161,8 +165,11 @@ function ActorWeaponsAndActions({ actor }: { actor: Actor }) {
     <div className="flex min-w-0 flex-col">
       {actor.weapons && (
         <div>
-          {Object.values(actor.weapons).map((weapon) => (
-            <WeaponDetails weapon={weapon} />
+          {Object.values(actor.weapons).map((weapon, i) => (
+            <WeaponDetails
+              key={`${weapon.ID}-${weapon.name}-${i}`}
+              weapon={weapon}
+            />
           ))}
         </div>
       )}
@@ -170,9 +177,9 @@ function ActorWeaponsAndActions({ actor }: { actor: Actor }) {
         <MarkerContent>Actions</MarkerContent>
       </Marker>
       <div className="flex flex-col gap-0">
-        {actor.actions.map((action) => (
+        {actor.actions.map((action, i) => (
           <ActionContextDialog
-            key={action.ID}
+            key={`${action.ID}-${action.config.name}-${i}`}
             actor={actor}
             action={action}
             enabled={!action.is_disabled}

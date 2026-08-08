@@ -6,14 +6,19 @@ import { gameStore } from '#/lib/stores/game'
 import { getAppliedEffects } from '#/lib/game/game'
 import { EffectTooltip } from './effect-tooltip'
 import { AffinityIcon } from './affinity-name'
+import { ClassTooltip } from './class-tooltip'
+import { useQuery } from '@tanstack/react-query'
+import { actorsQuery } from '#/lib/queries/get-actors'
 
 function ActorAvatar({ actor }: { actor: Actor }) {
+  const query = useQuery(actorsQuery)
   const game = useSelector(gameStore, (g) => g)
   const applied_effects = getAppliedEffects(game, actor).sort(
     (a, b) => b.name.length - a.name.length
   )
   const position = game.positions.find((p) => p.actor_ID === actor.ID)
   const ratio = 100 - Math.max(0, Math.min(getHealthRatio(actor), 100))
+  const actor_class = query.data?.find((c) => c.ID == actor.class_ID)
   actor.affinities = actor.affinities.sort((a, b) => a.localeCompare(b))
 
   return (
@@ -43,7 +48,12 @@ function ActorAvatar({ actor }: { actor: Actor }) {
             'bg-[url(/gothic/TitleFrameMainRaven_Gray.png)] bg-cover bg-left origin-center pl-22 pb-4 pt-6 -space-y-1.5'
           )}
         >
-          <div className="truncate text-foreground">{actor.name}</div>
+          <ClassTooltip
+            actor_class={actor_class}
+            className="hover:underline cursor-default"
+          >
+            <div className="truncate text-foreground">{actor.name}</div>
+          </ClassTooltip>
           <div className="text-xs text-foreground/40">{actor.level}</div>
           <div className="absolute -right-5 top-15 flex flex-col items-end gap-px pr-2 text-center capitalize font-cinzel">
             {actor.status !== 'none' && (
@@ -54,8 +64,12 @@ function ActorAvatar({ actor }: { actor: Actor }) {
                 {actor.status}
               </TinyBadge>
             )}
-            {applied_effects.map((effect) => (
-              <EffectTooltip key={effect.ID} effect={effect} asChild>
+            {applied_effects.map((effect, i) => (
+              <EffectTooltip
+                key={`${effect.ID}-${effect.name}-${i}`}
+                effect={effect}
+                asChild
+              >
                 <TinyBadge className="pr-3 text-center capitalize font-cinzel">
                   {effect.name}
                   {effect.count > 1 && `(${effect.count})`}

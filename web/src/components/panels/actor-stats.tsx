@@ -26,8 +26,11 @@ function ActorStatsPanel({
       <div className="font-serif text-foreground/80">
         <ActorFrame actor={actor} className="-ml-1 -mt-1.5 -mr-px z-0" />
         <div className="py-4 p-2 hidden">
-          {Object.values(actor.weapons).map((weapon) => (
-            <WeaponDetails key={weapon.ID} weapon={weapon} />
+          {Object.values(actor.weapons).map((weapon, i) => (
+            <WeaponDetails
+              key={`${weapon.ID}-${weapon.name}-${i}`}
+              weapon={weapon}
+            />
           ))}
         </div>
         <div className="px-1 py-2">
@@ -45,8 +48,12 @@ function ActorStatsPanel({
           </Marker>
 
           <div className="min-w-0 flex flex-row flex-wrap gap-2 p-2">
-            {applied_effects.map((effect) => (
-              <EffectTooltip key={effect.ID} effect={effect} asChild>
+            {applied_effects.map((effect, i) => (
+              <EffectTooltip
+                key={`${effect.ID}-${effect.name}-${i}`}
+                effect={effect}
+                asChild
+              >
                 <GothicBadge variant="empty" className="capitalize">
                   {effect.name}
                   {effect.count > 1 && `(${effect.count})`}

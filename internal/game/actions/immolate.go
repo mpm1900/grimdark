@@ -30,7 +30,7 @@ var Immolate = game.Action{
 		},
 	}),
 	ValidateContext:  game.ContextTargetLength(1),
-	TargetsPredicate: game.CombineFilters(game.ActiveActors, game.OtherActors, game.ActionRange(1)),
+	TargetsPredicate: game.CombineFilters(game.ActiveActors, game.OtherActors),
 	DisabledCheck: func(g *game.Game, source game.Actor) bool {
 		position, ok := g.GetPosition(source.PositionID)
 		if !ok {

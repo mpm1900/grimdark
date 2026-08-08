@@ -8,6 +8,7 @@ import (
 
 type actorJSON struct {
 	ID                 uuid.UUID                 `json:"ID"`
+	ClassID            uuid.UUID                 `json:"class_ID"`
 	Actions            []actionJSON              `json:"actions"`
 	ActiveModifiers    []uuid.UUID               `json:"active_modifiers"`
 	Affinities         []Affinity                `json:"affinities"`
@@ -94,6 +95,7 @@ func (a Actor) ToJSON(g *Game) actorJSON {
 
 	return actorJSON{
 		ID:                 a.ID,
+		ClassID:            a.Class.ID,
 		Name:               a.Name,
 		Faction:            a.Class.Faction,
 		Race:               a.Class.Race,

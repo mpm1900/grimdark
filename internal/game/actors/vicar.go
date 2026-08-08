@@ -2,6 +2,7 @@ package actors
 
 import (
 	"grimdark/internal/game"
+	"grimdark/internal/game/effects"
 	"grimdark/internal/game/weapons"
 
 	"github.com/google/uuid"
@@ -34,7 +35,9 @@ func newVicar() game.Class {
 		game.DamageReflect:  0,
 		game.EffectChance:   1,
 	}
-	class.Effects = []game.Effect{}
+	class.Effects = []game.Effect{
+		effects.Blithe(),
+	}
 	class.Options = game.ClassOptions{
 		Items: []game.Item{},
 		Weapons: []game.Weapon{
