@@ -48,15 +48,16 @@ const (
 )
 
 type Client struct {
-	ID       uuid.UUID          `json:"ID"`
-	User     *game.User         `json:"user,omitempty"`
-	Role     ClientRole         `json:"role"`
-	conn     *websocket.Conn    `json:"-"`
-	ctx      context.Context    `json:"-"`
-	cancel   context.CancelFunc `json:"-"`
-	instance *Instance          `json:"-"`
-	inbox    chan Response      `json:"-"`
-	once     sync.Once          `json:"-"`
+	ID        uuid.UUID          `json:"ID"`
+	User      *game.User         `json:"user,omitempty"`
+	Role      ClientRole         `json:"role"`
+	conn      *websocket.Conn    `json:"-"`
+	ctx       context.Context    `json:"-"`
+	cancel    context.CancelFunc `json:"-"`
+	instance  *Instance          `json:"-"`
+	inbox     chan Response      `json:"-"`
+	last_game *game.GameJSON     `json:"-"`
+	once      sync.Once          `json:"-"`
 }
 
 func (c *Client) AttachUser(user *game.User) {
@@ -122,6 +123,17 @@ func (c *Client) TryWriteResponse(response Response) bool {
 	default:
 		return false
 	}
+}
+
+func (c *Client) SetLastGame(g game.GameJSON) {
+	clone, err := game.CloneGameJSON(g)
+	if err != nil {
+		log.Printf("error cloning game baseline for client %s: %v", c.ID, err)
+		c.last_game = nil
+		return
+	}
+
+	c.last_game = &clone
 }
 
 func (c *Client) listenIn() {

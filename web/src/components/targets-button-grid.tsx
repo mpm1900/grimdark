@@ -87,12 +87,14 @@ function TargetsButtonGrid({
   actor,
   action,
   context,
+  validateDeps = [],
   disabled,
   ...props
 }: React.ComponentProps<'div'> & {
   actor: Actor | null
   action: Action
   context: ReturnType<typeof useContext>
+  validateDeps?: (boolean | number | string)[]
   disabled?: boolean
 }) {
   const client = useSelector(lobbyStore, (s) => s.client)
@@ -103,7 +105,8 @@ function TargetsButtonGrid({
   const targets = getTargetsFromContext(actors, targets_context)
   const selected = getTargetsFromContext(actors, context.value)
   const query_client = useQueryClient()
-  const validate_options = validateContextQuery(context.value)
+  const validate_options = validateContextQuery(context.value, validateDeps)
+  validate_options.enabled = !disabled
   const cached_validate = query_client.getQueryData<boolean>(
     validate_options.queryKey
   )

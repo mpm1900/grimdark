@@ -17,7 +17,7 @@ const ContextSchema = z.object({
 type Context = z.output<typeof ContextSchema>
 
 function contextToString(c: Context): string {
-  return `${c.action_ID ?? ''}.${c.parent_ID ?? ''}.${c.source_ID ?? ''}.${c.player_ID ?? ''}.${c.actor_IDs?.filter(Boolean).join('+')}.${c.position_IDs?.filter(Boolean).join('+')}`
+  return `${c.action_ID}.${c.modifier_ID}.${c.effect_ID}.${c.parent_ID}.${c.source_ID}.${c.player_ID}.${c.actor_IDs?.filter(Boolean).join('+')}.${c.position_IDs?.filter(Boolean).join('+')}`
 }
 
 function getTargetsFromContext(actors: Actor[], context: Context): Actor[] {

@@ -22,11 +22,12 @@ function PromptController() {
   const client = useSelector(lobbyStore, (s) => s.client!)
   const turn = useSelector(gameStore, (g) => g.turn)
   const prompt_context = prompt?.context ?? NULL_CONTEXT
+  const query_deps = [prompt?.ID ?? '', turn]
   const targets_options = getTargetsQuery(
     prompt_context.source_ID,
     prompt_context.player_ID,
     prompt?.payload.ID,
-    [prompt?.ID ?? '', turn],
+    query_deps,
     prompt_context
   )
   targets_options.enabled = !!prompt
@@ -41,7 +42,7 @@ function PromptController() {
     position_IDs:
       prompt?.context.position_IDs.slice(0, selected_actor_count) ?? [],
   }
-  const validate_options = validateContextQuery(resolved_context)
+  const validate_options = validateContextQuery(resolved_context, query_deps)
   validate_options.enabled = !!prompt
   const validate_query = useQuery(validate_options)
 
@@ -73,6 +74,7 @@ function PromptController() {
                   ...context,
                   value: resolved_context,
                 }}
+                validateDeps={query_deps}
               />
             </>
           )}

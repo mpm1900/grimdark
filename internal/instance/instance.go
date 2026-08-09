@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"grimdark/internal/game"
+	"log"
 	"time"
 
 	"github.com/google/uuid"
@@ -79,11 +80,30 @@ func (i *Instance) UnregisterClient(client *Client) bool {
 func (i *Instance) BroadcastGame() {
 	json := i.Game.ToJSON()
 	for _, client := range i.Lobby.Clients() {
-		if !client.TryWriteResponse(NewGameMessage(client, json)) {
+		visible := json
+		visible.ForPlayer(client.ID)
+
+		response := Response{
+			Type: ResponseTypeGame,
+			Game: &visible,
+		}
+		if client.last_game != nil {
+			patch, ok := game.DiffGameJSON(*client.last_game, visible)
+			if ok {
+				response = NewGamePatchMessage(patch)
+			} else {
+				log.Printf("falling back to full game response for client %s", client.ID)
+			}
+		}
+
+		if !client.TryWriteResponse(response) {
 			// If we can't send, it's usually better to just log it for now
 			// rather than immediately unregistering, unless the client is truly dead.
 			// i.UnregisterClient(client)
+			continue
 		}
+
+		client.SetLastGame(visible)
 	}
 }
 
@@ -96,7 +116,11 @@ func (i *Instance) PostConnectResponse(client_id uuid.UUID) {
 		return
 	}
 
-	client.TryWriteResponse(PostConnectMessage(client, i.Game.ToJSON()))
+	json := i.Game.ToJSON()
+	if client.TryWriteResponse(PostConnectMessage(client, json)) {
+		json.ForPlayer(client.ID)
+		client.SetLastGame(json)
+	}
 }
 
 func (i *Instance) TargetIDsResponse(client_id uuid.UUID, request_ID uuid.UUID, context game.Context) {

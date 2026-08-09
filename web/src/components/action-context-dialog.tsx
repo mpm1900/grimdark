@@ -1,5 +1,5 @@
 import type { Actor } from '#/lib/game/actor'
-import type { PropsWithChildren, ReactNode } from 'react'
+import { useState, type PropsWithChildren, type ReactNode } from 'react'
 import { Dialog, DialogClose, DialogFooter } from './ui/dialog'
 import type { Action } from '#/lib/game/action'
 import { getTargetsQuery } from '#/lib/queries/get-targets'
@@ -85,7 +85,7 @@ function ActionDetails({ action, source }: { action: Action; source: Actor }) {
     crit_chance,
     crit_modifier,
     crit_stage,
-    hits,
+    uses,
     lifesteal,
     power,
     priority,
@@ -98,7 +98,7 @@ function ActionDetails({ action, source }: { action: Action; source: Actor }) {
   const has_primary_details = has_power || accuracy !== null || range !== null
   const has_secondary_details =
     has_power &&
-    (hits > 0 ||
+    ((uses && uses > 0) ||
       cooldown > 0 ||
       priority !== 0 ||
       crit_chance > 0 ||
@@ -169,8 +169,8 @@ function ActionDetails({ action, source }: { action: Action; source: Actor }) {
 
       {has_secondary_details && (
         <div className="flex flex-wrap justify-center gap-1.5">
-          {hits > 1 && (
-            <GothicBadge variant="empty">{pluralize(hits, 'Hit')}</GothicBadge>
+          {uses && uses > 1 && (
+            <GothicBadge variant="empty">{pluralize(uses, 'Hit')}</GothicBadge>
           )}
           {crit_stage > 0 && (
             <GothicBadge variant="empty">
@@ -210,23 +210,25 @@ function ActionContextDialog({
 }>) {
   const client = useSelector(lobbyStore, (s) => s.client!)
   const turn = useSelector(gameStore, (g) => g.turn)
+  const [open, setOpen] = useState(false)
+  const query_deps = [turn]
   const targets_options = getTargetsQuery(
     actor.ID,
     actor.player_ID,
     action.ID,
-    [turn]
+    query_deps
   )
-  targets_options.enabled = !!enabled
+  targets_options.enabled = !!enabled && open
   const targets_query = useQuery(targets_options)
   const targets_context = targets_query.data ?? NULL_CONTEXT
   const context = useContext(targets_context)
-  const validate_options = validateContextQuery(context.value)
-  validate_options.enabled = !!enabled
+  const validate_options = validateContextQuery(context.value, query_deps)
+  validate_options.enabled = !!enabled && open
   const validate_query = useQuery(validate_options)
   const is_loading = targets_query.isFetching || validate_query.isFetching
 
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={setOpen}>
       {children}
       <GothicDialogContent className="pt-0">
         <div className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-28 overflow-hidden">
@@ -240,12 +242,15 @@ function ActionContextDialog({
         <div className="overflow-hidden min-h-32 pt-1">
           <ActionDetails action={action} source={actor} />
 
-          <TargetsButtonGrid
-            actor={actor}
-            action={action}
-            context={context}
-            className="px-4"
-          />
+          {open && (
+            <TargetsButtonGrid
+              actor={actor}
+              action={action}
+              context={context}
+              validateDeps={query_deps}
+              className="px-4"
+            />
+          )}
         </div>
         <DialogFooter className="p-0 -mr-1 -mb-1">
           <DialogClose asChild>

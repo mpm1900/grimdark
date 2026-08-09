@@ -32,6 +32,8 @@ function getTargetsQuery(
     queryFn: async () => {
       return getTargets(context)
     },
+    staleTime: Infinity,
+    gcTime: 5 * 60 * 1000,
   })
 }
 

@@ -15,8 +15,9 @@ const (
 	ResponseTypeGameStart   = "game-start"
 
 	// updates
-	ResponseTypeGame  = "game"
-	ResponseTypeLobby = "lobby"
+	ResponseTypeGame      = "game"
+	ResponseTypeGamePatch = "game-patch"
+	ResponseTypeLobby     = "lobby"
 
 	// request responses
 	ResponseTypeValidateContext = "validate-context"
@@ -37,6 +38,13 @@ func NewGameMessage(client *Client, g game.GameJSON) Response {
 	g.ForPlayer(client.ID)
 	return Response{
 		Type: ResponseTypeGame,
+		Game: &g,
+	}
+}
+
+func NewGamePatchMessage(g game.GameJSON) Response {
+	return Response{
+		Type: ResponseTypeGamePatch,
 		Game: &g,
 	}
 }

@@ -27,6 +27,7 @@ type SocketResponse = {
     | 'post-connect'
     | 'game-start'
     | 'game'
+    | 'game-patch'
     | 'lobby'
     | 'validate-context'
     | 'target-IDs'
