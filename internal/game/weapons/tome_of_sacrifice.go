@@ -3,10 +3,13 @@ package weapons
 import (
 	"grimdark/internal/game"
 	"grimdark/internal/game/actions"
+
+	"github.com/google/uuid"
 )
 
 var TomeOfSacrifice = game.Weapon{
 	Item: game.Item{
+		ID:      uuid.MustParse("019fe756-d14d-749e-8625-7231f53e168d"),
 		Name:    "Tome of Sacrifice",
 		Effects: []game.Effect{},
 	},

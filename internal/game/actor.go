@@ -99,15 +99,23 @@ func NewActor(class Class, config ActorConfig) *Actor {
 	}
 	var weapons = map[uuid.UUID]Weapon{}
 	var item *Item
+	var equippedWeight int
 
 	for _, w := range class.Options.Weapons {
 		for slot, wid := range config.Weapons {
+			if wid == uuid.Nil {
+				continue
+			}
 			if w.ID == wid {
+				if len(weapons) >= class.Arms || equippedWeight+w.Weight > class.Strength {
+					continue
+				}
 				clone := w.Clone()
 				clone.Slot = slot
 				clone.BindActions()
 				stacks[slot.String()] = float64(clone.Uses)
 				weapons[slot] = clone
+				equippedWeight += clone.Weight
 			}
 		}
 	}
