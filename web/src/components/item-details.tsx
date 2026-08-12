@@ -5,9 +5,9 @@ import { ItemDescription } from './ui/item'
 function ItemDetails({ item }: { item: Item }) {
   return (
     <div className="p-1 font-serif">
-      <div>{item.name}</div>
+      <div>{item.entity.name}</div>
       <div className="text-foreground/80 italic text-xs px-6 py-2">
-        {item.description}
+        {item.entity.description}
       </div>
       <ItemDescription className="text-foreground/80">
         <span className="text-foreground/40 block font-cinzel font-semibold">
@@ -17,11 +17,11 @@ function ItemDetails({ item }: { item: Item }) {
           <span className="space-x-2 flex flex-wrap">
             {item.effects.map((e, i) => (
               <EffectTooltip
-                key={`${e.ID}-${e.name}-${i}`}
+                key={`${e.ID}-${e.entity.name}-${i}`}
                 effect={e}
                 className="cursor-default hover:underline capitalize"
               >
-                {e.name}
+                {e.entity.name}
               </EffectTooltip>
             ))}
           </span>

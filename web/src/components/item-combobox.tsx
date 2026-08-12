@@ -49,7 +49,7 @@ function ItemCombobox({
               <ComboboxValue>
                 {item ? (
                   <div className="flex items-center gap-2 truncate">
-                    <div className="truncate">{item.name}</div>
+                    <div className="truncate">{item.entity.name}</div>
                   </div>
                 ) : (
                   <span className="text-foreground/60">Select Item</span>
@@ -65,7 +65,7 @@ function ItemCombobox({
         <ComboboxList>
           {(item: Item) => (
             <ItemTooltip key={item.ID} item={item}>
-              <ComboboxItem value={item.ID}>{item.name}</ComboboxItem>
+              <ComboboxItem value={item.ID}>{item.entity.name}</ComboboxItem>
             </ItemTooltip>
           )}
         </ComboboxList>
