@@ -32,7 +32,7 @@ function ClassSprite({
         <img
           src={actor_class?.sprite_url ?? '/gothic/CharSHRef.png'}
           className={cn(
-            'pointer-events-none relative z-10 h-full w-full max-w-72 select-none object-contain object-bottom',
+            'pointer-events-none relative z-10 h-full w-full max-w-72 select-none object-contain object-bottom [image-rendering:pixelated]',
             {
               'opacity-50': active_index !== index,
             }

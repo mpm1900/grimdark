@@ -13,7 +13,7 @@ func newCultist() game.Class {
 	class := game.NewClass()
 	class.ID = uuid.MustParse("019f5f12-29e1-7cc9-bfeb-468df5c53990")
 	class.Name = "Cultist"
-	class.SpriteURL = "/actors/373_crop.png"
+	class.SpriteURL = "/actors/373_64128.png"
 	class.Affinities = game.Set[game.Affinity]{
 		game.Arcane: {},
 		game.Blood:  {},

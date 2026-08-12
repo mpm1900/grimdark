@@ -14,7 +14,7 @@ func bloodknight() game.Class {
 	class := game.NewClass()
 	class.ID = uuid.MustParse("019fd8d3-7807-73c5-9311-c69db259a283")
 	class.Name = "Bloodknight"
-	class.SpriteURL = "/actors/39_crop.png"
+	class.SpriteURL = "/actors/39_64128.png"
 	class.Affinities = game.Set[game.Affinity]{
 		game.Physical: {},
 		game.Blood:    {},

@@ -8,13 +8,13 @@ import (
 	"github.com/google/uuid"
 )
 
-var Sensor = newSensor()
+var Seeker = newSeeker()
 
-func newSensor() game.Class {
+func newSeeker() game.Class {
 	class := game.NewClass()
 	class.ID = uuid.MustParse("019fc0cc-6c4f-74ec-99d1-94d976fc96c0")
-	class.Name = "Sensor"
-	class.SpriteURL = "/actors/220_crop.png"
+	class.Name = "Seeker"
+	class.SpriteURL = "/actors/418_64128.png"
 	class.Affinities = game.Set[game.Affinity]{
 		game.Arcane: {},
 	}

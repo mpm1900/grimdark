@@ -13,7 +13,7 @@ func newRogue() game.Class {
 	class := game.NewClass()
 	class.ID = uuid.MustParse("019f9fc5-5d62-7c24-9f2e-56f651b15020")
 	class.Name = "Rogue"
-	class.SpriteURL = "/actors/348_crop.png"
+	class.SpriteURL = "/actors/348_64128.png"
 	class.Affinities = game.Set[game.Affinity]{
 		game.Poison:   {},
 		game.Physical: {},

@@ -20,8 +20,9 @@ var All = map[uuid.UUID]game.Class{
 	Champion.ID:          Champion,
 	Rogue.ID:             Rogue,
 	Vicar.ID:             Vicar,
-	Sensor.ID:            Sensor,
+	Seeker.ID:            Seeker,
 	Bloodknight.ID:       Bloodknight,
+	Inquisitor.ID:        Inquisitor,
 }
 
 func HydrateActorClass(id uuid.UUID) (game.Class, bool) {

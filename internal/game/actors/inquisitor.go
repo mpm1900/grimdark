@@ -7,24 +7,25 @@ import (
 	"github.com/google/uuid"
 )
 
-var SisterOfFire = newSisterOfFire()
+var Inquisitor = newInquisitor()
 
-func newSisterOfFire() game.Class {
+func newInquisitor() game.Class {
 	class := game.NewClass()
-	class.ID = uuid.MustParse("019f5f11-933a-7cd3-bac9-5133bba94c7b")
-	class.Name = "Sister of Fire"
-	class.SpriteURL = "/actors/230_64128.png"
+	class.ID = uuid.MustParse("019ff406-1e84-7618-a62e-91df5634c5f6")
+	class.Name = "Inquisitor"
+	class.SpriteURL = "/actors/389_64128.png"
 	class.Affinities = game.Set[game.Affinity]{
-		game.Fire: {},
+		game.Holy:  {},
+		game.Blood: {},
 	}
 	class.Stats = map[game.Stat]float64{
-		game.Health:         65,
-		game.Speed:          110,
-		game.Melee:          55,
-		game.Ranged:         65,
-		game.Special:        130,
-		game.MartialDefense: 60,
-		game.SpecialDefense: 105,
+		game.Health:         70,
+		game.Speed:          125,
+		game.Melee:          90,
+		game.Ranged:         90,
+		game.Special:        135,
+		game.MartialDefense: 90,
+		game.SpecialDefense: 90,
 		game.Accuracy:       1,
 		game.Evasion:        1,
 
@@ -38,10 +39,13 @@ func newSisterOfFire() game.Class {
 	class.Options = game.ClassOptions{
 		Items: []game.Item{},
 		Weapons: []game.Weapon{
-			weapons.FireTome,
+			weapons.Dagger,
 			weapons.HandCrossbow,
-			weapons.PrayerStaff,
 			weapons.RoundShield,
+			weapons.Spear,
+			weapons.TomeOfSacrifice,
+			weapons.FireTome,
+			weapons.PrayerStaff,
 		},
 	}
 

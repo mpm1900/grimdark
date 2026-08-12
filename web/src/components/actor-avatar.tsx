@@ -26,7 +26,7 @@ function ActorAvatar({ actor }: { actor: Actor }) {
       <div className="absolute size-42 left-6 mt-13 rounded-full overflow-hidden bg-linear-to-b from-emerald-950/0 to-emerald-950">
         <div
           className={cn(
-            'absolute w-56 h-56 -left-6 top-0 bg-no-repeat bg-cover bg-top'
+            'absolute w-56 h-56 -left-6 top-0 bg-no-repeat bg-cover bg-top [image-rendering:pixelated]'
           )}
           style={{ backgroundImage: `url(${actor.sprite_url})` }}
         />

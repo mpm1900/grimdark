@@ -55,7 +55,7 @@ function PlayerSprite({
       <img
         src={actor.sprite_url}
         className={cn(
-          'h-full w-full object-contain object-bottom max-w-60 relative z-10 pointer-events-none select-none',
+          'h-full w-full object-contain object-bottom max-w-60 relative z-10 pointer-events-none select-none [image-rendering:pixelated]',
           !actor && 'opacity-0'
         )}
       />
