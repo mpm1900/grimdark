@@ -21,8 +21,8 @@ func newInquisitor() game.Class {
 	class.Stats = map[game.Stat]float64{
 		game.Health:         70,
 		game.Speed:          125,
-		game.Melee:          90,
-		game.Ranged:         90,
+		game.Melee:          70,
+		game.Ranged:         100,
 		game.Special:        135,
 		game.MartialDefense: 90,
 		game.SpecialDefense: 90,

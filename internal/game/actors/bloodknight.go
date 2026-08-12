@@ -22,9 +22,9 @@ func bloodknight() game.Class {
 	class.Stats = map[game.Stat]float64{
 		game.Health:         99,
 		game.Speed:          83,
-		game.Melee:          109,
+		game.Melee:          125,
 		game.Ranged:         45,
-		game.Special:        125,
+		game.Special:        109,
 		game.MartialDefense: 81,
 		game.SpecialDefense: 83,
 		game.Accuracy:       1,

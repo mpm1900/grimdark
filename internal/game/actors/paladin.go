@@ -13,7 +13,7 @@ func newPaladin() game.Class {
 	class := game.NewClass()
 	class.ID = uuid.MustParse("019f9f6e-520e-74cb-a474-48bdd6ee60cc")
 	class.Name = "Paladin"
-	class.SpriteURL = "/actors/55_crop.png"
+	class.SpriteURL = "/actors/55_64128.png"
 	class.Affinities = game.Set[game.Affinity]{
 		game.Holy:     {},
 		game.Physical: {},
