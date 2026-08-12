@@ -14,7 +14,7 @@ func newVicar() game.Class {
 	class := game.NewClass()
 	class.ID = uuid.MustParse("019fb617-3034-7348-8747-74279a8cd80d")
 	class.Name = "Vicar"
-	class.SpriteURL = "/actors/298_crop.png"
+	class.SpriteURL = "/actors/344_64128.png"
 	class.Affinities = game.Set[game.Affinity]{
 		game.Holy: {},
 	}
