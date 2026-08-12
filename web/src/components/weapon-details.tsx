@@ -112,7 +112,7 @@ function WeaponDetails({ weapon }: { weapon: Weapon }) {
           </div>
           <div className="pr-6">
             <span className={weaponTitle({ rarity: rarity })}>
-              {weapon.name}
+              {weapon.entity.name}
             </span>
             <span className="text-foreground/60 block text-xs leading-none">
               Common {weapon.weapon_type} ({weapon.weight})
@@ -120,7 +120,7 @@ function WeaponDetails({ weapon }: { weapon: Weapon }) {
           </div>
         </div>
         <div className="text-foreground/80 italic text-xs px-6 py-2">
-          {weapon.description}
+          {weapon.entity.description}
         </div>
         <GothicShadowFrame className="z-10 mt-6 m-1 space-y-1">
           <ItemDescription className="text-foreground/80">
@@ -130,7 +130,7 @@ function WeaponDetails({ weapon }: { weapon: Weapon }) {
             <span className="space-x-2 flex flex-wrap">
               {weapon.actions.map((a, i) => (
                 <ActionTooltip
-                  key={`${a.ID}-${a.config.name}-${i}`}
+                  key={`${a.ID}-${a.entity.name}-${i}`}
                   action={a}
                   className={statVariants({
                     stat: a.config.stat,
@@ -144,7 +144,7 @@ function WeaponDetails({ weapon }: { weapon: Weapon }) {
                   <AffinityIcon affinity={a.config.affinity}>
                     <FaCircle className="size-2" />
                   </AffinityIcon>
-                  {a.config.name}
+                  {a.entity.name}
                   {a.tags.includes('conditional') && '*'}
                 </ActionTooltip>
               ))}
@@ -158,11 +158,11 @@ function WeaponDetails({ weapon }: { weapon: Weapon }) {
               <span className="space-x-2 flex flex-wrap">
                 {weapon.effects.map((e, i) => (
                   <EffectTooltip
-                    key={`${e.ID}-${e.name}-${i}`}
+                    key={`${e.ID}-${e.entity.name}-${i}`}
                     effect={e}
                     className="cursor-default hover:underline capitalize"
                   >
-                    {e.name}
+                    {e.entity.name}
                   </EffectTooltip>
                 ))}
               </span>

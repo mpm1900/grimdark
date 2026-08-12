@@ -21,15 +21,16 @@ func Burned() game.Effect {
 			return a
 		},
 	)
-	effect.Name = "Burned"
-	effect.Description = "On turn end, this actor takes 8% damage."
+	effect.Entity = game.MakeEntity(
+		effect.ID,
+		"Burned",
+		"On turn end, this actor takes 8% damage.",
+	)
 	effect.CheckSuccess = game.EffectGainTargetsOnSuccess
 	effect.Triggers = append(effect.Triggers, game.Trigger{
 		On: game.OnTurnEnd,
 		Action: game.Action{
-			Config: game.ActionConfig{
-				Name: "Burned",
-			},
+			Entity: effect.Entity,
 			Resolve: func(g *game.Game, ctx game.Context, this game.ActionContext) []game.Transaction {
 				dmg_context := game.MakeContextFor(this.Source, this.Source)
 				health := this.Source.Stats[game.Health]
@@ -53,8 +54,11 @@ func Sleeping(duration int) game.Effect {
 			return a
 		},
 	)
-	effect.Name = "Sleeping"
-	effect.Description = "Cannot act."
+	effect.Entity = game.MakeEntity(
+		effect.ID,
+		"Sleeping",
+		"Cannot act.",
+	)
 	effect.CheckSuccess = game.EffectGainTargetsOnSuccess
 	effect.Check = statusCheck
 	effect.Duration = &duration

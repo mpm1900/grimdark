@@ -27,6 +27,7 @@ const (
 
 type Action struct {
 	ID               uuid.UUID
+	Entity           Entity
 	ActiveCheck      func(source Actor) bool
 	Config           ActionConfig
 	DisabledCheck    func(g *Game, source Actor) bool

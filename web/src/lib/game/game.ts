@@ -33,7 +33,7 @@ export function getAppliedEffects(
 
   actor.active_modifiers.map((modifier_id) => {
     const modifier = game.modifiers.find((m) => m.ID === modifier_id)
-    if (modifier && modifier.payload.name) {
+    if (modifier && modifier.payload.entity.name) {
       const count = effect_ids[modifier.payload.ID]
       if (!count) {
         effect_ids[modifier.payload.ID] = 1
@@ -49,5 +49,5 @@ export function getAppliedEffects(
       ...e,
       count: effect_ids[e.ID] ?? 0,
     }))
-    .sort((a, b) => a.name.localeCompare(b.name))
+    .sort((a, b) => a.entity.name.localeCompare(b.entity.name))
 }

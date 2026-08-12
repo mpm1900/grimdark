@@ -39,10 +39,10 @@ func newPaladin() game.Class {
 	class.Options = game.ClassOptions{
 		Items: []game.Item{},
 		Weapons: []game.Weapon{
-			weapons.FireTome,
-			weapons.Greatsword,
-			weapons.PrayerStaff,
-			weapons.RoundShield,
+			weapons.FireTome(),
+			weapons.Greatsword(),
+			weapons.PrayerStaff(),
+			weapons.RoundShield(),
 		},
 	}
 

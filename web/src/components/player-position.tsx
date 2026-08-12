@@ -77,7 +77,7 @@ function PlayerSprite({
               }}
             >
               {!actor_command.payload.uncancelable && 'Cancel'}{' '}
-              {actor_command.payload.config.name}
+              {actor_command.payload.entity.name}
             </GothicBigButton>
           ))}
         </div>

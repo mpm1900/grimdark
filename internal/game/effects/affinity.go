@@ -10,8 +10,11 @@ func AffinityImmunity(affinity game.Affinity) game.Effect {
 		a.AffinityImmunities[affinity] = 0
 		return a
 	})
-	effect.Name = fmt.Sprintf("%s Immunity", affinity)
-	effect.Description = fmt.Sprintf("Immunity to all %s actions and damage.", affinity)
+	effect.Entity = game.MakeEntity(
+		effect.ID,
+		fmt.Sprintf("%s Immunity", affinity),
+		fmt.Sprintf("Immunity to all %s actions and damage.", affinity),
+	)
 
 	return effect
 }

@@ -142,12 +142,16 @@ func AddTargetsEffects(config StatusConfig, modifier_context Context, effects ..
 }
 
 func Struggle() Action {
+	id := uuid.MustParse("019f5dab-239d-717a-9cc8-8a06f6461596")
 	return Action{
-		ID:   uuid.MustParse("019f5dab-239d-717a-9cc8-8a06f6461596"),
+		ID:   id,
 		Tags: []ActionTag{ATActor},
+		Entity: MakeEntity(
+			id,
+			"Struggle",
+			"User takes 1/4th of their max HP as recoil damage.",
+		),
 		Config: ActionConfig{
-			Name:        "Struggle",
-			Description: "User takes 1/4th of their max HP as recoil damage.",
 			Stat:        Melee,
 			Accuracy:    P(1.0),
 			Power:       50,

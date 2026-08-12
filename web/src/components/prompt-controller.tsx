@@ -57,12 +57,12 @@ function PromptController() {
             <>
               <GothicDialogHeader>
                 <GothicAlertDialogTitle>
-                  {prompt.payload.config.name}
+                  {prompt.payload.entity.name}
                 </GothicAlertDialogTitle>
               </GothicDialogHeader>
-              {prompt.payload.config.description && (
+              {prompt.payload.entity.description && (
                 <div className="text-center text-white/60">
-                  {prompt.payload.config.description}
+                  {prompt.payload.entity.description}
                 </div>
               )}
 

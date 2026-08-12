@@ -344,11 +344,15 @@ func CtxTargetPostCollateral() func(g *Game, ctx Context, this ActionContext) Co
 // movement
 // switches
 func Retreat() Action {
+	id := uuid.MustParse("019f0f7c-50e5-7153-bede-2e8a3ef3dd60")
 	return Action{
-		ID: uuid.MustParse("019f0f7c-50e5-7153-bede-2e8a3ef3dd60"),
+		ID: id,
+		Entity: MakeEntity(
+			id,
+			"Retreat",
+			"User switches out for an ally.",
+		),
 		Config: ActionConfig{
-			Name:        "Retreat",
-			Description: "User switches out for an ally.",
 			Priority:    ActionPriorityMovement,
 			TargetCount: 1,
 		},
@@ -384,9 +388,12 @@ func SwitchIn(n int) Action {
 	}
 	return Action{
 		ID: si_ids[n],
+		Entity: MakeEntity(
+			si_ids[n],
+			"Switch In",
+			fmt.Sprintf("Switch %s into battle.", noun),
+		),
 		Config: ActionConfig{
-			Name:        "Switch In",
-			Description: fmt.Sprintf("Switch %s into battle.", noun),
 			Priority:    ActionPriorityMovement,
 			TargetCount: n,
 		},
@@ -414,12 +421,16 @@ func SwitchIn(n int) Action {
 }
 
 func Swap() Action {
+	id := uuid.MustParse("019f20f2-0860-7149-a11e-fbc3df357824")
 	return Action{
-		ID:   uuid.MustParse("019f20f2-0860-7149-a11e-fbc3df357824"),
+		ID:   id,
 		Tags: []ActionTag{ATSystem, ATMovement, ATSwap},
+		Entity: MakeEntity(
+			id,
+			"Swap",
+			"User switches places with target ally.",
+		),
 		Config: ActionConfig{
-			Name:        "Swap",
-			Description: "User switches places with target ally.",
 			Priority:    ActionPriorityMovement,
 			TargetCount: 1,
 		},
@@ -436,12 +447,16 @@ func Swap() Action {
 	}
 }
 func MoveForwards() Action {
+	id := uuid.MustParse("019f3ab7-eca5-7a8f-a5a9-214159374007")
 	return Action{
-		ID:   uuid.MustParse("019f3ab7-eca5-7a8f-a5a9-214159374007"),
+		ID:   id,
 		Tags: []ActionTag{ATSystem, ATMovement, ATForward},
+		Entity: MakeEntity(
+			id,
+			"Move Forwards",
+			"User moves forwards, displacing other actors back.",
+		),
 		Config: ActionConfig{
-			Name:        "Move Forwards",
-			Description: "User moves forwards, displacing other actors back.",
 			Priority:    ActionPriorityMovement,
 			TargetCount: 0,
 		},
@@ -488,12 +503,16 @@ func MoveForwards() Action {
 	}
 }
 func MoveFront() Action {
+	id := uuid.MustParse("019f3ab7-eca5-70fc-9483-f147b1dbdebb")
 	return Action{
-		ID:   uuid.MustParse("019f3ab7-eca5-70fc-9483-f147b1dbdebb"),
+		ID:   id,
 		Tags: []ActionTag{ATSystem, ATMovement, ATFront},
+		Entity: MakeEntity(
+			id,
+			"Move to Front",
+			"User moves to the front (1st position), displacing other actors back.",
+		),
 		Config: ActionConfig{
-			Name:        "Move to Front",
-			Description: "User moves to the front (1st position), displacing other actors back.",
 			Priority:    ActionPriorityMovement,
 			TargetCount: 0,
 		},
@@ -532,12 +551,16 @@ func MoveFront() Action {
 	}
 }
 func MoveBackwards() Action {
+	id := uuid.MustParse("019f3ab7-eca5-7ad4-a884-4ad97433a1e1")
 	return Action{
-		ID:   uuid.MustParse("019f3ab7-eca5-7ad4-a884-4ad97433a1e1"),
+		ID:   id,
 		Tags: []ActionTag{ATSystem, ATMovement, ATBack},
+		Entity: MakeEntity(
+			id,
+			"Move Backwards",
+			"User moves backwards, displacing other actors forward.",
+		),
 		Config: ActionConfig{
-			Name:        "Move Backwards",
-			Description: "User moves backwards, displacing other actors forward.",
 			Priority:    ActionPriorityMovement,
 			TargetCount: 0,
 		},

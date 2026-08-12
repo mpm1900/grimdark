@@ -28,7 +28,7 @@ function ActorStatsPanel({
         <div className="py-4 p-2 hidden">
           {Object.values(actor.weapons).map((weapon, i) => (
             <WeaponDetails
-              key={`${weapon.ID}-${weapon.name}-${i}`}
+              key={`${weapon.ID}-${weapon.entity.name}-${i}`}
               weapon={weapon}
             />
           ))}
@@ -50,12 +50,12 @@ function ActorStatsPanel({
           <div className="min-w-0 flex flex-row flex-wrap gap-2 p-2">
             {applied_effects.map((effect, i) => (
               <EffectTooltip
-                key={`${effect.ID}-${effect.name}-${i}`}
+                key={`${effect.ID}-${effect.entity.name}-${i}`}
                 effect={effect}
                 asChild
               >
                 <GothicBadge variant="empty" className="capitalize">
-                  {effect.name}
+                  {effect.entity.name}
                   {effect.count > 1 && `(${effect.count})`}
                 </GothicBadge>
               </EffectTooltip>

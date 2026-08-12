@@ -158,7 +158,7 @@ function ActionDetails({ action, source }: { action: Action; source: Actor }) {
       )}
 
       <div className=" text-foreground/50 p-4 pb-6 text-center">
-        <span className="italic">{action.config.description}</span>
+        <span className="italic">{action.entity.description}</span>
         {cooldown > 0 && (
           <>
             <br />
@@ -236,7 +236,7 @@ function ActionContextDialog({
         </div>
 
         <GothicDialogHeader>
-          <GothicDialogTitle>{action.config.name}</GothicDialogTitle>
+          <GothicDialogTitle>{action.entity.name}</GothicDialogTitle>
         </GothicDialogHeader>
 
         <div className="overflow-hidden min-h-32 pt-1">

@@ -1,11 +1,10 @@
 import type { Action } from './action'
-import type { ID, Stat, WeaponType } from './core'
+import type { Entity, ID, Stat, WeaponType } from './core'
 import type { Effect } from './effect'
 
 export type Item = {
   ID: ID
-  name: string
-  description: string
+  entity: Entity
   effects: Effect[]
 }
 

@@ -104,7 +104,7 @@ function TeamActor({
             )
             .map((w, i) => (
               <WeaponTooltip key={i} weapon={w} content_props={{ side: 'top' }}>
-                {w?.name}
+                {w?.entity.name}
               </WeaponTooltip>
             ))}
         </div>

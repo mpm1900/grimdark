@@ -39,13 +39,13 @@ func newInquisitor() game.Class {
 	class.Options = game.ClassOptions{
 		Items: []game.Item{},
 		Weapons: []game.Weapon{
-			weapons.Dagger,
-			weapons.HandCrossbow,
-			weapons.RoundShield,
-			weapons.Spear,
-			weapons.TomeOfSacrifice,
-			weapons.FireTome,
-			weapons.PrayerStaff,
+			weapons.Dagger(),
+			weapons.HandCrossbow(),
+			weapons.RoundShield(),
+			weapons.Spear(),
+			weapons.TomeOfSacrifice(),
+			weapons.FireTome(),
+			weapons.PrayerStaff(),
 		},
 	}
 

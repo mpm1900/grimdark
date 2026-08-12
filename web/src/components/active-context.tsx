@@ -33,12 +33,12 @@ function ActiveContext({
       >
         {!!action && !waiting && (
           <div>
-            {source?.name} used {action.config.name}
+            {source?.name} used {action.entity.name}
           </div>
         )}
         {!!modifier && !waiting && (
           <div>
-            {parent?.name}'s {modifier.payload.name} trigger
+            {parent?.name}'s {modifier.payload.entity.name} trigger
           </div>
         )}
         {waiting && (

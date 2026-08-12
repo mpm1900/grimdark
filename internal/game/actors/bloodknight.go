@@ -42,11 +42,11 @@ func bloodknight() game.Class {
 	class.Options = game.ClassOptions{
 		Items: []game.Item{},
 		Weapons: []game.Weapon{
-			weapons.Greatsword,
-			weapons.HandCrossbow,
-			weapons.RoundShield,
-			weapons.Spear,
-			weapons.TomeOfSacrifice,
+			weapons.Greatsword(),
+			weapons.HandCrossbow(),
+			weapons.RoundShield(),
+			weapons.Spear(),
+			weapons.TomeOfSacrifice(),
 		},
 	}
 

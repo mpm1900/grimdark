@@ -9,22 +9,27 @@ import (
 )
 
 func LongBow() game.Weapon {
-	weapon := game.Weapon{
+	id := uuid.MustParse("019f859c-d25e-724c-aceb-bf82cf5c7389")
+
+	return game.Weapon{
 		Item: game.Item{
-			ID:          uuid.MustParse("019f859c-d25e-724c-aceb-bf82cf5c7389"),
-			Name:        "Long Bow",
-			Description: "A high-precision, long-range bow, widely used to pick off high value targets. Expensive and rare, they are given to the best marksmen and sharpshooters.",
+			ID: id,
+			Entity: game.MakeEntity(
+				id,
+				"Long Bow",
+				"A high-precision, long-range bow, widely used to pick off high value targets. Expensive and rare, they are given to the best marksmen and sharpshooters.",
+			),
 			Effects: []game.Effect{
 				effects.OtherEye,
 			},
 		},
 		Actions: []game.Action{
-			actions.CalledShot,
-			actions.CollateralShot,
-			actions.Headshot,
-			actions.LockOn,
-			actions.PiercingShot,
-			actions.RetreatingShot,
+			actions.CalledShot(),
+			actions.CollateralShot(),
+			actions.Headshot(),
+			actions.LockOn(),
+			actions.PiercingShot(),
+			actions.RetreatingShot(),
 		},
 		OffsetStats: map[game.Stat]float64{
 			game.Ranged:         32,
@@ -35,5 +40,4 @@ func LongBow() game.Weapon {
 		WeaponType: game.WeaponTypeLongBow,
 	}
 
-	return weapon
 }

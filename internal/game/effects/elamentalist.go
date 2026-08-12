@@ -43,8 +43,11 @@ func Elamentalist() game.Effect {
 			return a
 		},
 	)
+	effect.Entity = game.MakeEntity(
+		effect.ID,
+		"Elementalist",
+		"During an action, the user's affinity became that of the chosen action.",
+	)
 
-	effect.Name = "Elementalist"
-	effect.Description = "During an action, the user's affinity became that of the chosen action."
 	return effect
 }

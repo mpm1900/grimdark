@@ -21,9 +21,11 @@ func otherEye() game.Effect {
 
 		return active_context.HasTarget(a)
 	})
-
-	effect.Name = "Other Eye"
-	effect.Description = "While attacking, this actor ignores all stat stage changes to targeted actors."
+	effect.Entity = game.MakeEntity(
+		effect.ID,
+		"Other Eye",
+		"While attacking, this actor ignores all stat stage changes to targeted actors.",
+	)
 
 	return effect
 }

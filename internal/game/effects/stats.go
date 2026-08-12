@@ -42,14 +42,19 @@ var StatDownTag game.EffectTag = "stat-down"
 // consider refactoring these to xyzParent
 func StatUpSource(stat game.Stat, amount int) game.Effect {
 	effect := game.EffectSource(game.EffectPriorityStages, StatChangeActor(stat, amount))
-	effect.Name = fmt.Sprintf("%s up", stat)
-	if amount == 1 {
-		effect.Description = fmt.Sprintf("Raises %s stat.", stat)
-	} else {
-		effect.Description = fmt.Sprintf("Raises %s by %d stages.", stat, amount)
-	}
-	effect.CheckSuccess = game.EffectGainSourceOnSuccess
 	effect.ID = StatUpIDs[stat]
+
+	description := fmt.Sprintf("Raises %s by %d stages.", stat, amount)
+	if amount == 1 {
+		description = fmt.Sprintf("Raises %s stat.", stat)
+	}
+	effect.Entity = game.MakeEntity(
+		effect.ID,
+		fmt.Sprintf("%s up", stat),
+		description,
+	)
+
+	effect.CheckSuccess = game.EffectGainSourceOnSuccess
 	effect.SetTag(StatChangeTag)
 	effect.SetTag(StatUpTag)
 
@@ -57,14 +62,19 @@ func StatUpSource(stat game.Stat, amount int) game.Effect {
 }
 func StatDownSource(stat game.Stat, amount int) game.Effect {
 	effect := game.EffectSource(game.EffectPriorityStages, StatChangeActor(stat, -amount))
-	effect.Name = fmt.Sprintf("%s down", stat)
-	if amount == 1 {
-		effect.Description = fmt.Sprintf("Lowers %s stat.", stat)
-	} else {
-		effect.Description = fmt.Sprintf("Lowers %s by %d stages.", stat, amount)
-	}
-	effect.CheckSuccess = game.EffectGainSourceOnSuccess
 	effect.ID = StatDownIDs[stat]
+
+	description := fmt.Sprintf("Lowers %s by %d stages.", stat, amount)
+	if amount == 1 {
+		description = fmt.Sprintf("Lowers %s stat.", stat)
+	}
+	effect.Entity = game.MakeEntity(
+		effect.ID,
+		fmt.Sprintf("%s down", stat),
+		description,
+	)
+
+	effect.CheckSuccess = game.EffectGainSourceOnSuccess
 	effect.SetTag(StatChangeTag)
 	effect.SetTag(StatDownTag)
 
@@ -72,14 +82,19 @@ func StatDownSource(stat game.Stat, amount int) game.Effect {
 }
 func StatUpTargets(stat game.Stat, amount int) game.Effect {
 	effect := game.EffectTargets(game.EffectPriorityStages, StatChangeActor(stat, amount))
-	effect.Name = fmt.Sprintf("%s up", stat)
-	if amount == 1 {
-		effect.Description = fmt.Sprintf("This actor's %s stat is raised.", stat)
-	} else {
-		effect.Description = fmt.Sprintf("This actor's %s stat is raised by %d stages.", stat, amount)
-	}
-	effect.CheckSuccess = game.EffectGainTargetsOnSuccess
 	effect.ID = StatUpIDs[stat]
+
+	description := fmt.Sprintf("Raises %s by %d stages.", stat, amount)
+	if amount == 1 {
+		description = fmt.Sprintf("Raises %s stat.", stat)
+	}
+	effect.Entity = game.MakeEntity(
+		effect.ID,
+		fmt.Sprintf("%s up", stat),
+		description,
+	)
+
+	effect.CheckSuccess = game.EffectGainTargetsOnSuccess
 	effect.SetTag(StatChangeTag)
 	effect.SetTag(StatUpTag)
 
@@ -87,14 +102,19 @@ func StatUpTargets(stat game.Stat, amount int) game.Effect {
 }
 func StatDownTargets(stat game.Stat, amount int) game.Effect {
 	effect := game.EffectTargets(game.EffectPriorityStages, StatChangeActor(stat, -amount))
-	effect.Name = fmt.Sprintf("%s down", stat)
-	if amount == 1 {
-		effect.Description = fmt.Sprintf("This actor's %s stat is lowered.", stat)
-	} else {
-		effect.Description = fmt.Sprintf("This actor's %s stat is lowered by %d stages.", stat, amount)
-	}
-	effect.CheckSuccess = game.EffectGainTargetsOnSuccess
 	effect.ID = StatDownIDs[stat]
+
+	description := fmt.Sprintf("Lowers %s by %d stages.", stat, amount)
+	if amount == 1 {
+		description = fmt.Sprintf("Lowers %s stat.", stat)
+	}
+	effect.Entity = game.MakeEntity(
+		effect.ID,
+		fmt.Sprintf("%s down", stat),
+		description,
+	)
+
+	effect.CheckSuccess = game.EffectGainTargetsOnSuccess
 	effect.SetTag(StatChangeTag)
 	effect.SetTag(StatDownTag)
 

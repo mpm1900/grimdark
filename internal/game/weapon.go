@@ -35,11 +35,10 @@ type Weapon struct {
 
 type weaponJSON struct {
 	ID          uuid.UUID        `json:"ID"`
+	Entity      Entity           `json:"entity"`
 	Actions     []actionJSON     `json:"actions"`
-	Description string           `json:"description"`
 	Effects     []Effect         `json:"effects"`
 	Weight      int              `json:"weight"`
-	Name        string           `json:"name"`
 	OffsetStats map[Stat]float64 `json:"offset_stats"`
 	WeaponType  WeaponType       `json:"weapon_type"`
 }
@@ -78,12 +77,11 @@ func (w Weapon) ToJSON(g *Game, source Actor) weaponJSON {
 
 	return weaponJSON{
 		ID:          w.ID,
+		Entity:      w.Entity,
 		Actions:     actions,
 		OffsetStats: w.OffsetStats,
-		Description: w.Description,
 		Effects:     w.Effects,
 		Weight:      w.Weight,
-		Name:        w.Name,
 		WeaponType:  w.WeaponType,
 	}
 }
@@ -96,12 +94,11 @@ func (w Weapon) ToJSONStatic() weaponJSON {
 
 	return weaponJSON{
 		ID:          w.ID,
+		Entity:      w.Entity,
 		Actions:     actions,
 		OffsetStats: w.OffsetStats,
-		Description: w.Description,
 		Effects:     w.Effects,
 		Weight:      w.Weight,
-		Name:        w.Name,
 		WeaponType:  w.WeaponType,
 	}
 }

@@ -48,7 +48,7 @@ function WeaponCombobox({
               <ComboboxValue>
                 {weapon ? (
                   <div className="flex items-center gap-2 truncate">
-                    <div className="truncate">{weapon.name}</div>
+                    <div className="truncate">{weapon.entity.name}</div>
                   </div>
                 ) : (
                   <span className="text-foreground/60">Select Weapon</span>
@@ -68,7 +68,7 @@ function WeaponCombobox({
                 value={w.ID}
                 disabled={w.weight > available_weight && w.ID !== weapon?.ID}
               >
-                {w.name}
+                {w.entity.name}
               </ComboboxItem>
             </WeaponTooltip>
           )}

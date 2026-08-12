@@ -6,6 +6,7 @@ type actionJSON struct {
 	ID           uuid.UUID    `json:"ID"`
 	Config       ActionConfig `json:"config"`
 	Cooldown     int          `json:"cooldown"`
+	Entity       Entity       `json:"entity"`
 	IsDisabled   bool         `json:"is_disabled"`
 	Tags         []ActionTag  `json:"tags"`
 	Uncancelable bool         `json:"uncancelable"`
@@ -24,6 +25,7 @@ func (a Action) ToJSON(g *Game, source Actor) actionJSON {
 		ID:           a.ID,
 		Config:       config,
 		Cooldown:     state.Cooldown,
+		Entity:       a.Entity,
 		IsDisabled:   a.Disabled(g, source),
 		Tags:         a.Tags,
 		Uncancelable: a.Uncancelable,
@@ -45,6 +47,7 @@ func (a Action) ToJSONStatic() actionJSON {
 		ID:           a.ID,
 		Config:       a.Config,
 		Cooldown:     0,
+		Entity:       a.Entity,
 		IsDisabled:   false,
 		Tags:         a.Tags,
 		Uncancelable: a.Uncancelable,

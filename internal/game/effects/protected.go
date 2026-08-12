@@ -1,6 +1,18 @@
 package effects
 
-import "grimdark/internal/game"
+import (
+	"grimdark/internal/game"
+
+	"github.com/google/uuid"
+)
+
+func protectedEntity(id uuid.UUID) game.Entity {
+	return game.MakeEntity(
+		id,
+		"Protected",
+		"Protected from attacks and actions.",
+	)
+}
 
 func ProtectedSource() game.Effect {
 	effect := game.EffectSource(game.EffectPriorityFlags, func(g *game.Game, a game.Actor, ctx game.Context) game.Actor {
@@ -8,8 +20,7 @@ func ProtectedSource() game.Effect {
 
 		return a
 	})
-	effect.Name = "Protected"
-	effect.Description = "Protected from attacks and actions."
+	effect.Entity = protectedEntity(effect.ID)
 	effect.Duration = game.P(1)
 	effect.CheckSuccess = game.EffectGainSourceOnSuccess
 
@@ -22,9 +33,9 @@ func ProtectedWhere(where game.Filter[game.Actor]) game.Effect {
 
 		return a
 	})
-	effect.Name = "Protected"
-	effect.Description = "Protected from attacks and actions."
+	effect.Entity = protectedEntity(effect.ID)
 	effect.Duration = game.P(1)
+	effect.CheckSuccess = game.EffectGainSourceOnSuccess
 
 	return effect
 }

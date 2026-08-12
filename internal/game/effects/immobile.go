@@ -20,8 +20,11 @@ func immobile() game.Effect {
 
 		return a
 	})
-	effect.Name = "Immobile"
-	effect.Description = "This actor cannot use movement actions."
+	effect.Entity = game.MakeEntity(
+		effect.ID,
+		"Immobile",
+		"This actor cannot use movement actions.",
+	)
 	effect.CheckSuccess = game.EffectGainTargetsOnSuccess
 
 	return effect

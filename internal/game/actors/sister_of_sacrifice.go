@@ -38,10 +38,10 @@ func newSisterOfSacrifice() game.Class {
 	class.Options = game.ClassOptions{
 		Items: []game.Item{},
 		Weapons: []game.Weapon{
-			weapons.FireTome,
-			weapons.PrayerStaff,
-			weapons.RoundShield,
-			weapons.TomeOfSacrifice,
+			weapons.FireTome(),
+			weapons.PrayerStaff(),
+			weapons.RoundShield(),
+			weapons.TomeOfSacrifice(),
 		},
 	}
 

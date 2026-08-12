@@ -15,8 +15,11 @@ func newChampion() game.Class {
 		a.EffectImmunities.Push(effects.Weakened().ID)
 		return a
 	})
-	weakness_immune.Name = "Weakness Immune"
-	weakness_immune.Description = "Immunity from 'Weakness'"
+	weakness_immune.Entity = game.MakeEntity(
+		weakness_immune.ID,
+		"Weakness Immune",
+		"Immunity from 'Weakness'",
+	)
 
 	class := game.NewClass()
 	class.ID = uuid.MustParse("019f5f12-6e78-7eda-b638-980453e3eaba")
@@ -46,11 +49,11 @@ func newChampion() game.Class {
 	class.Options = game.ClassOptions{
 		Items: []game.Item{},
 		Weapons: []game.Weapon{
-			weapons.Greatsword,
-			weapons.HandCrossbow,
-			weapons.RoundShield,
-			weapons.ShortBow,
-			weapons.Spear,
+			weapons.Greatsword(),
+			weapons.HandCrossbow(),
+			weapons.RoundShield(),
+			weapons.ShortBow(),
+			weapons.Spear(),
 		},
 	}
 

@@ -79,25 +79,25 @@ func SourceTerms(target Actor) map[string]string {
 }
 func ActionTerms(action Action) map[string]string {
 	return map[string]string{
-		"$action$": action.Config.Name,
+		"$action$": action.Entity.Name,
 		"$aff$":    string(action.Config.Affinity),
 	}
 }
 func CommandTerms(source Actor, cmd Command) map[string]string {
 	return map[string]string{
 		"$source$": source.Name,
-		"$action$": cmd.Payload.Config.Name,
+		"$action$": cmd.Payload.Entity.Name,
 	}
 }
 func EffectTermsSource(source Actor, effect Effect) map[string]string {
 	return map[string]string{
 		"$source$": source.Name,
-		"$effect$": effect.Name,
+		"$effect$": effect.Entity.Name,
 	}
 }
 func EffectTermsTarget(target Actor, effect Effect) map[string]string {
 	return map[string]string{
 		"$target$": target.Name,
-		"$effect$": effect.Name,
+		"$effect$": effect.Entity.Name,
 	}
 }

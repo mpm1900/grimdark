@@ -21,8 +21,11 @@ func Devout() game.Effect {
 			return a
 		},
 	)
-	effect.Name = "Devout"
-	effect.Description = "Non-damaging actions have +1 priority."
+	effect.Entity = game.MakeEntity(
+		effect.ID,
+		"Devout",
+		"Non-damaging actions have +1 priority.",
+	)
 	effect.CheckSuccess = game.EffectGainTargetsOnSuccess
 
 	return effect

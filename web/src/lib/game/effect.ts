@@ -1,9 +1,8 @@
-import type { Bindable, ID } from './core'
+import type { Bindable, Entity, ID } from './core'
 
 export type Effect = {
   ID: ID
-  name: string
-  description: string
+  entity: Entity
   delay: number | null
   duration: number | null
   priority: number

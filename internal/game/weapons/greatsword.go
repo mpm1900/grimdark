@@ -8,27 +8,34 @@ import (
 	"github.com/google/uuid"
 )
 
-var Greatsword = game.Weapon{
-	Item: game.Item{
-		ID:          uuid.MustParse("019f4a69-3324-70f6-80e7-aded9c2c1f13"),
-		Name:        "Greatsword",
-		Description: "A large sword, used when arrows fail to stop quick or well-armoured targets. The strikes from these weapons can easily lop off limbs and heads.",
-		Effects: []game.Effect{
-			effects.Unstoppable(),
+func Greatsword() game.Weapon {
+	id := uuid.MustParse("019f4a69-3324-70f6-80e7-aded9c2c1f13")
+
+	return game.Weapon{
+		Item: game.Item{
+			ID: id,
+			Entity: game.MakeEntity(
+				id,
+				"Greatsword",
+				"A large sword, used when arrows fail to stop quick or well-armoured targets. The strikes from these weapons can easily lop off limbs and heads.",
+			),
+			Effects: []game.Effect{
+				effects.Unstoppable(),
+			},
 		},
-	},
-	Actions: []game.Action{
-		actions.Charge,
-		actions.Cleave,
-		actions.Execute,
-		actions.HeavySwing,
-		actions.Protect,
-		actions.RecklessStrike,
-	},
-	OffsetStats: map[game.Stat]float64{
-		game.Melee:          32,
-		game.MartialDefense: 32,
-	},
-	Weight:     2,
-	WeaponType: game.WeaponTypeBigSword,
+		Actions: []game.Action{
+			actions.Charge(),
+			actions.Cleave(),
+			actions.Execute(),
+			actions.HeavySwing(),
+			actions.Protect(),
+			actions.RecklessStrike(),
+		},
+		OffsetStats: map[game.Stat]float64{
+			game.Melee:          32,
+			game.MartialDefense: 32,
+		},
+		Weight:     2,
+		WeaponType: game.WeaponTypeBigSword,
+	}
 }

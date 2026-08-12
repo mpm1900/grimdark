@@ -6,14 +6,19 @@ import (
 	"github.com/google/uuid"
 )
 
-var Global = map[uuid.UUID]game.Item{
-	CorruptedNecklace.ID: CorruptedNecklace,
-	CursedBoots.ID:       CursedBoots,
-	CursedRing.ID:        CursedRing,
-	Rations.ID:           Rations,
+var Global = []game.Item{
+	CorruptedNecklace(),
+	CursedBoots(),
+	CursedRing(),
+	Rations(),
 }
 
 func HydrateGlobalItem(id uuid.UUID) (game.Item, bool) {
-	item, ok := Global[id]
-	return item, ok
+	for _, item := range Global {
+		if item.ID == id {
+			return item, true
+		}
+	}
+
+	return game.Item{}, false
 }

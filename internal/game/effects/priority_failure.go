@@ -23,8 +23,11 @@ func PriorityFailure() game.Effect {
 
 		return a
 	})
-	effect.Name = "Priority Failure"
-	effect.Description = "All actions with greater than priority 0 are disabled."
+	effect.Entity = game.MakeEntity(
+		effect.ID,
+		"Priority Failure",
+		"All actions with greater than priority 0 are disabled.",
+	)
 
 	return effect
 }

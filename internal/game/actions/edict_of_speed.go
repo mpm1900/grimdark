@@ -6,36 +6,12 @@ import (
 	"github.com/google/uuid"
 )
 
-var EdictOfSpeed = game.Action{
-	ID:   uuid.MustParse("019f80f4-fa77-74ea-888c-2cc10b0d2051"),
-	Tags: []game.ActionTag{game.ATActor, game.ATWeapon},
-	Config: game.ActionConfig{
-		Name:        "Edict Of Speed",
-		Description: "Doubles team's Speed for 5 turns.",
-		Affinity:    game.Lightning,
-		TargetCount: 0,
-	},
-	Resolve: game.AddGlobalEffects(
-		game.StatusConfig{},
-		1,
-		edictOfSpeedEffect(),
-	),
-	ValidateContext:  game.TrueGameFilter,
-	TargetsPredicate: game.NoneActors,
-	ActiveCheck: func(source game.Actor) bool {
-		found := uuid.Nil
-		for _, w := range source.Weapons {
-			if found == uuid.Nil {
-				found = w.Item.ID
-				continue
-			}
-
-			if w.Item.ID != found {
-				return false
-			}
-		}
-		return true
-	},
+func edictOfSpeedEntity(id uuid.UUID) game.Entity {
+	return game.MakeEntity(
+		id,
+		"Edict Of Speed",
+		"Doubles team's Speed for 5 turns.",
+	)
 }
 
 func speedUp(g *game.Game, a game.Actor, ctx game.Context) game.Actor {
@@ -45,11 +21,45 @@ func speedUp(g *game.Game, a game.Actor, ctx game.Context) game.Actor {
 func edictOfSpeedEffect() game.Effect {
 	effect := game.EffectAllies(game.EffectPriorityPostStagesStats, speedUp)
 	effect.ID = uuid.MustParse("019f80fe-f95c-7214-93f9-3415769f408b")
-	effect.Name = "Edict Of Speed"
-	effect.Description = "Doubles speed."
+	effect.Entity = edictOfSpeedEntity(effect.ID)
 	effect.Duration = game.P(6)
 	effect.CheckSuccess = game.EffectGainWhereOnSuccess(
 		game.CombineFilters(game.Allies, game.ActiveActors),
 	)
 	return effect
+}
+
+func EdictOfSpeed() game.Action {
+	id := uuid.MustParse("019f80f4-fa77-74ea-888c-2cc10b0d2051")
+
+	return game.Action{
+		ID:     id,
+		Tags:   []game.ActionTag{game.ATActor, game.ATWeapon},
+		Entity: edictOfSpeedEntity(id),
+		Config: game.ActionConfig{
+			Affinity:    game.Lightning,
+			TargetCount: 0,
+		},
+		Resolve: game.AddGlobalEffects(
+			game.StatusConfig{},
+			1,
+			edictOfSpeedEffect(),
+		),
+		ValidateContext:  game.TrueGameFilter,
+		TargetsPredicate: game.NoneActors,
+		ActiveCheck: func(source game.Actor) bool {
+			found := uuid.Nil
+			for _, w := range source.Weapons {
+				if found == uuid.Nil {
+					found = w.Item.ID
+					continue
+				}
+
+				if w.Item.ID != found {
+					return false
+				}
+			}
+			return true
+		},
+	}
 }

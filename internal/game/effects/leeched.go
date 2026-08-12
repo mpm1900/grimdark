@@ -12,15 +12,19 @@ func leeched() game.Effect {
 	effect := game.EffectParent(game.EffectPriorityTriggers, func(g *game.Game, a game.Actor, ctx game.Context) game.Actor {
 		return a
 	})
+	effect.ID = uuid.MustParse("019f8182-e430-7fd3-92d6-6b46385d03a8")
+	effect.Entity = game.MakeEntity(
+		effect.ID,
+		"Leeched",
+		"On turn end, this actor loses 12% of their max Health to heal another actor.",
+	)
 	effect.Triggers = append(effect.Triggers, game.Trigger{
 		On: game.OnTurnEnd,
 		Validate: func(g *game.Game, t_context, m_context game.Context) bool {
 			return true
 		},
 		Action: game.Action{
-			Config: game.ActionConfig{
-				Name: "Leeched",
-			},
+			Entity: effect.Entity,
 			Resolve: func(g *game.Game, ctx game.Context, this game.ActionContext) []game.Transaction {
 				parent, ok := g.GetParent(ctx)
 				if !ok {
@@ -46,10 +50,6 @@ func leeched() game.Effect {
 			},
 		},
 	})
-
-	effect.ID = uuid.MustParse("019f8182-e430-7fd3-92d6-6b46385d03a8")
-	effect.Name = "Leeched"
-	effect.Description = "On turn end, this actor loses 12% of their max Health to heal another actor."
 
 	return effect
 }

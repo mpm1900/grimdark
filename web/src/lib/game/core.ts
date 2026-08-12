@@ -3,6 +3,12 @@ import type { Context } from './context'
 
 export type ID = string
 
+export type Entity = {
+  ID: ID
+  name: string
+  description: string
+}
+
 function isIdNull(id: ID | null | undefined): boolean {
   if (!id) return true
   return id === '00000000-0000-0000-0000-000000000000'

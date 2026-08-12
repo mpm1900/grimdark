@@ -86,14 +86,14 @@ function ActorState({
         </FieldLabel>
         <FieldContent className="min-w-0 flex-row flex-wrap gap-2">
           {actor.effects
-            .filter((e) => !!e.name)
+            .filter((e) => !!e.entity.name)
             .map((effect, i) => (
               <GothicBadge
                 variant="default"
-                key={`${effect.ID}-${effect.name}-${i}`}
+                key={`${effect.ID}-${effect.entity.name}-${i}`}
                 className="capitalize"
               >
-                {effect.name}
+                {effect.entity.name}
               </GothicBadge>
             ))}
         </FieldContent>
@@ -118,7 +118,7 @@ function ActorState({
             <ActorFlag actor={actor} flag="is_protected">
               Protected
             </ActorFlag>
-            <ActorFlag actor={actor} flag="is_stunned">
+            <ActorFlag actor={actor} flag="is_disabled">
               Stunned
             </ActorFlag>
           </div>
@@ -134,10 +134,10 @@ function ActorState({
           {applied_effects.map((effect, i) => (
             <GothicBadge
               variant="empty"
-              key={`${effect.ID}-${effect.name}-${i}`}
+              key={`${effect.ID}-${effect.entity.name}-${i}`}
               className="capitalize"
             >
-              {effect.name}
+              {effect.entity.name}
               {effect.count > 1 && `(${effect.count})`}
             </GothicBadge>
           ))}
@@ -167,7 +167,7 @@ function ActorWeaponsAndActions({ actor }: { actor: Actor }) {
         <div>
           {Object.values(actor.weapons).map((weapon, i) => (
             <WeaponDetails
-              key={`${weapon.ID}-${weapon.name}-${i}`}
+              key={`${weapon.ID}-${weapon.entity.name}-${i}`}
               weapon={weapon}
             />
           ))}
@@ -179,7 +179,7 @@ function ActorWeaponsAndActions({ actor }: { actor: Actor }) {
       <div className="flex flex-col gap-0">
         {actor.actions.map((action, i) => (
           <ActionContextDialog
-            key={`${action.ID}-${action.config.name}-${i}`}
+            key={`${action.ID}-${action.entity.name}-${i}`}
             actor={actor}
             action={action}
             enabled={!action.is_disabled}

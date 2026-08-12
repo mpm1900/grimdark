@@ -14,7 +14,7 @@ function ActorAvatar({ actor }: { actor: Actor }) {
   const query = useQuery(actorsQuery)
   const game = useSelector(gameStore, (g) => g)
   const applied_effects = getAppliedEffects(game, actor).sort(
-    (a, b) => b.name.length - a.name.length
+    (a, b) => b.entity.name.length - a.entity.name.length
   )
   const position = game.positions.find((p) => p.actor_ID === actor.ID)
   const ratio = 100 - Math.max(0, Math.min(getHealthRatio(actor), 100))
@@ -66,12 +66,12 @@ function ActorAvatar({ actor }: { actor: Actor }) {
             )}
             {applied_effects.map((effect, i) => (
               <EffectTooltip
-                key={`${effect.ID}-${effect.name}-${i}`}
+                key={`${effect.ID}-${effect.entity.name}-${i}`}
                 effect={effect}
                 asChild
               >
                 <TinyBadge className="pr-3 text-center capitalize font-cinzel">
-                  {effect.name}
+                  {effect.entity.name}
                   {effect.count > 1 && `(${effect.count})`}
                 </TinyBadge>
               </EffectTooltip>

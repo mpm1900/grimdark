@@ -31,14 +31,13 @@ type EffectTag = string
 
 type Effect struct {
 	Mutation
-	ID          uuid.UUID      `json:"ID"`
-	Name        string         `json:"name"`
-	Description string         `json:"description"`
-	Delay       *int           `json:"delay"`
-	Duration    *int           `json:"duration"`
-	Priority    int            `json:"priority"`
-	Tags        Set[EffectTag] `json:"-"`
-	Triggers    []Trigger      `json:"-"`
+	ID       uuid.UUID      `json:"ID"`
+	Entity   Entity         `json:"entity"`
+	Delay    *int           `json:"delay"`
+	Duration *int           `json:"duration"`
+	Priority int            `json:"priority"`
+	Tags     Set[EffectTag] `json:"-"`
+	Triggers []Trigger      `json:"-"`
 	// check is ran on add
 	Check GameFilter `json:"-"`
 	// success logs
@@ -57,13 +56,12 @@ func NewEffect() Effect {
 	tags.Push(id.String())
 
 	return Effect{
-		ID:          id,
-		Name:        "",
-		Description: "",
-		Delay:       nil,
-		Duration:    nil,
-		Priority:    0,
-		Tags:        tags,
+		ID:       id,
+		Entity:   MakeEntity(id, "", ""),
+		Delay:    nil,
+		Duration: nil,
+		Priority: 0,
+		Tags:     tags,
 	}
 }
 

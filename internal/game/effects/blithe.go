@@ -33,8 +33,11 @@ func Blithe() game.Effect {
 		return false
 	})
 	effect.ID = uuid.MustParse("019fe205-d2fb-751c-a057-f638c9578d0c")
-	effect.Name = "Blithe"
-	effect.Description = "When this actor attacks, reset the stat stages of targets. When this actor is attacked, reset the stat changes of the source actor."
+	effect.Entity = game.MakeEntity(
+		effect.ID,
+		"Blithe",
+		"When this actor attacks, reset the stat stages of targets. When this actor is attacked, reset the stat changes of the source actor.",
+	)
 
 	return effect
 }

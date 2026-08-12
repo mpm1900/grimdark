@@ -12,8 +12,11 @@ func DivineBlessing() game.Effect {
 		a.Stats[game.SpecialDefense] *= 2
 		return a
 	})
-	effect.Name = "Divine Blessing"
-	effect.Description = "Doubles defenses, but only at full health."
+	effect.Entity = game.MakeEntity(
+		effect.ID,
+		"Divine Blessing",
+		"Doubles defenses, but only at full health.",
+	)
 
 	return effect
 }

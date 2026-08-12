@@ -6,9 +6,13 @@ import (
 	"github.com/google/uuid"
 )
 
-var Rations = rations()
-
-func rations() game.Item {
+func Rations() game.Item {
+	id := uuid.MustParse("019fcab0-c659-779d-a8e3-a440d272561a")
+	entity := game.MakeEntity(
+		id,
+		"Rations",
+		"On turn end, this actor heals 10% HP.",
+	)
 	effect := game.EffectParent(game.EffectPriorityTriggers, func(g *game.Game, a game.Actor, ctx game.Context) game.Actor {
 		return a
 	})
@@ -23,9 +27,7 @@ func rations() game.Item {
 			return parent.Stacks[game.Wounds] != 0
 		},
 		Action: game.Action{
-			Config: game.ActionConfig{
-				Name: "Rations",
-			},
+			Entity: entity,
 			Resolve: func(g *game.Game, ctx game.Context, this game.ActionContext) []game.Transaction {
 				heal_context := game.MakeContextFor(this.Source, this.Source)
 				this.Push(game.HealRatioTargets(0.10).Bind(heal_context))
@@ -33,14 +35,11 @@ func rations() game.Item {
 			},
 		},
 	})
-
-	effect.Name = "Rations"
-	effect.Description = "On turn end, this actor heals 10% HP."
+	effect.Entity = entity
 
 	return game.Item{
-		ID:          uuid.MustParse("019fcab0-c659-779d-a8e3-a440d272561a"),
-		Name:        "Rations",
-		Description: "On turn end, this actor heals 10% HP.",
+		ID:     id,
+		Entity: entity,
 		Effects: []game.Effect{
 			effect,
 		},

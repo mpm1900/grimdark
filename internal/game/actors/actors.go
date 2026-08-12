@@ -3,8 +3,6 @@ package actors
 import (
 	"grimdark/internal/game"
 	"grimdark/internal/game/items"
-	"maps"
-	"slices"
 
 	"github.com/google/uuid"
 )
@@ -40,7 +38,7 @@ func HydrateActorConfig(config game.ActorConfig) (*game.Actor, bool) {
 		return nil, false
 	}
 
-	class.Options.Items = append(class.Options.Items, slices.Collect(maps.Values(items.Global))...)
+	class.Options.Items = append(class.Options.Items, items.Global...)
 	return game.NewActor(class, config), true
 }
 

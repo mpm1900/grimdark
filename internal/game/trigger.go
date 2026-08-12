@@ -105,10 +105,10 @@ func (c TriggerCommand) getName(g *Game) string {
 		same_effect := modifier.Context.EffectID == c.ParentContext.EffectID
 		same_parent := modifier.Context.ParentID == c.ParentContext.ParentID
 		same_source := modifier.Context.SourceID == c.ParentContext.SourceID
-		if same_effect && same_parent && same_source && modifier.Payload.Name != "" {
-			return modifier.Payload.Name
+		if same_effect && same_parent && same_source && modifier.Payload.Entity.Name != "" {
+			return modifier.Payload.Entity.Name
 		}
 	}
 
-	return c.Payload.Config.Name
+	return c.Payload.Entity.Name
 }

@@ -19,10 +19,10 @@ function EffectTooltip({
         className={cn('font-serif', card_content?.className)}
       >
         <div className="font-semibold text-foreground/80 capitalize px-1">
-          {effect.name}
+          {effect.entity.name}
         </div>
         <div className="text-xs p-1">
-          {effect.description}
+          {effect.entity.description}
           {!!effect.duration && (
             <span className="text-xs p-1">
               {' '}

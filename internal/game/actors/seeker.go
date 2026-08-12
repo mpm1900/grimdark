@@ -41,8 +41,8 @@ func newSeeker() game.Class {
 	class.Options = game.ClassOptions{
 		Items: []game.Item{},
 		Weapons: []game.Weapon{
-			weapons.FireTome,
-			weapons.TomeOfSacrifice,
+			weapons.FireTome(),
+			weapons.TomeOfSacrifice(),
 		},
 	}
 

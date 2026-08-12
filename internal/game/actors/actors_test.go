@@ -9,7 +9,7 @@ import (
 )
 
 func TestHydrateActorConfigIgnoresEmptyWeaponSlots(t *testing.T) {
-	if weapons.TomeOfSacrifice.ID == uuid.Nil {
+	if weapons.TomeOfSacrifice().ID == uuid.Nil {
 		t.Fatal("Tome of Sacrifice must have a stable non-nil ID")
 	}
 
@@ -20,7 +20,7 @@ func TestHydrateActorConfigIgnoresEmptyWeaponSlots(t *testing.T) {
 	actor, ok := HydrateActorConfig(game.ActorConfig{
 		Class: &classID,
 		Weapons: map[uuid.UUID]uuid.UUID{
-			greatswordSlot: weapons.Greatsword.ID,
+			greatswordSlot: weapons.Greatsword().ID,
 			emptySlot:      uuid.Nil,
 		},
 	})
@@ -36,7 +36,7 @@ func TestHydrateActorConfigIgnoresEmptyWeaponSlots(t *testing.T) {
 	if !ok {
 		t.Fatal("expected Greatsword slot to be hydrated")
 	}
-	if weapon.ID != weapons.Greatsword.ID {
+	if weapon.ID != weapons.Greatsword().ID {
 		t.Fatalf("expected Greatsword, got %s", weapon.ID)
 	}
 	if _, ok := actor.Weapons[emptySlot]; ok {
@@ -52,8 +52,8 @@ func TestHydrateActorConfigFiltersWeaponsByStrength(t *testing.T) {
 	actor, ok := HydrateActorConfig(game.ActorConfig{
 		Class: &classID,
 		Weapons: map[uuid.UUID]uuid.UUID{
-			tomeSlot:       weapons.TomeOfSacrifice.ID,
-			greatswordSlot: weapons.Greatsword.ID,
+			tomeSlot:       weapons.TomeOfSacrifice().ID,
+			greatswordSlot: weapons.Greatsword().ID,
 		},
 	})
 	if !ok {
@@ -68,7 +68,7 @@ func TestHydrateActorConfigFiltersWeaponsByStrength(t *testing.T) {
 	if !ok {
 		t.Fatal("expected Greatsword slot to be kept")
 	}
-	if weapon.ID != weapons.Greatsword.ID {
+	if weapon.ID != weapons.Greatsword().ID {
 		t.Fatalf("expected Greatsword, got %s", weapon.ID)
 	}
 	if _, ok := actor.Weapons[tomeSlot]; ok {

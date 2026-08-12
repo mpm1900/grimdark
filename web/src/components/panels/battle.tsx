@@ -130,7 +130,7 @@ function ActionsPanel({ active_actor }: { active_actor: Actor }) {
                   <div className="grid h-full grid-cols-2 grid-rows-3">
                     {actions.map((action, i) => (
                       <ActionContextDialog
-                        key={`${action.ID}-${action.config.name}-${i}`}
+                        key={`${action.ID}-${action.entity.name}-${i}`}
                         actor={active_actor}
                         action={action}
                         enabled={!action.is_disabled}
@@ -174,7 +174,7 @@ function ActionsPanel({ active_actor }: { active_actor: Actor }) {
               .filter((a) => a.tags.includes('system'))
               .map((action, i) => (
                 <ActionContextDialog
-                  key={`${action.ID}-${action.config.name}-${i}`}
+                  key={`${action.ID}-${action.entity.name}-${i}`}
                   actor={active_actor}
                   action={action}
                   enabled={!action.is_disabled}

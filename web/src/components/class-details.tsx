@@ -34,7 +34,7 @@ function ClassDetails({
         <span className="space-x-2 flex flex-wrap">
           {actor_class.actions.map((a, i) => (
             <ActionTooltip
-              key={`${a.ID}-${a.config.name}-${i}`}
+              key={`${a.ID}-${a.entity.name}-${i}`}
               action={a}
               className={statVariants({
                 stat: a.config.stat,
@@ -45,7 +45,7 @@ function ClassDetails({
               <AffinityIcon affinity={a.config.affinity}>
                 <FaCircle className="size-2" />
               </AffinityIcon>
-              {a.config.name}
+              {a.entity.name}
               {a.tags.includes('conditional') && '*'}
             </ActionTooltip>
           ))}
@@ -60,11 +60,11 @@ function ClassDetails({
           <span className="space-x-2 flex flex-wrap">
             {actor_class.effects.map((e, i) => (
               <EffectTooltip
-                key={`${e.ID}-${e.name}-${i}`}
+                key={`${e.ID}-${e.entity.name}-${i}`}
                 effect={e}
                 className="cursor-default hover:underline capitalize"
               >
-                {e.name}
+                {e.entity.name}
               </EffectTooltip>
             ))}
           </span>

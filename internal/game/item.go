@@ -7,17 +7,14 @@ import (
 )
 
 type Item struct {
-	ID          uuid.UUID `json:"ID"`
-	Name        string    `json:"name"`
-	Description string    `json:"description"`
-	Effects     []Effect  `json:"effects"`
+	ID      uuid.UUID `json:"ID"`
+	Entity  Entity    `json:"entity"`
+	Effects []Effect  `json:"effects"`
 }
 
 func (i Item) Clone() Item {
 	return Item{
-		ID:          i.ID,
-		Name:        i.Name,
-		Description: i.Description,
-		Effects:     slices.Clone(i.Effects),
+		ID:      i.ID,
+		Effects: slices.Clone(i.Effects),
 	}
 }

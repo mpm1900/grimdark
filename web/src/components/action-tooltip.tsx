@@ -32,7 +32,7 @@ function ActionTooltip({
             className: 'font-semibold text-lg text-foreground/80 px-1',
           })}
         >
-          {action.config.name}
+          {action.entity.name}
         </div>
         <div className="flex flex-col px-1 gap-0 pr-14 text-sm leading-4">
           {!!action.config.power && (
@@ -51,7 +51,7 @@ function ActionTooltip({
           )}
         </div>
         <div className="text-xs p-1">
-          {action.config.description}
+          {action.entity.description}
           {action.config.range && (
             <span>
               {' '}

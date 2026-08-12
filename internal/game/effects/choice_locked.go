@@ -25,14 +25,17 @@ func ChoiceLocked() game.Effect {
 		}
 		return a
 	})
-	effect.Name = "Choice Locked"
-	effect.Description = "This actor must repeat their last used action."
+	effect.Entity = game.MakeEntity(
+		effect.ID,
+		"Choice Locked",
+		"This actor must repeat their last used action.",
+	)
 	effect.CheckSuccess = game.EffectGainTargetsOnSuccess
 	effect.CheckFailure = func(g *game.Game, e game.Effect, ctx game.Context) {
 		g.PushLogMeta(game.NewLog(
 			"$effect$ failed.",
 			map[string]string{
-				"$effect$": e.Name,
+				"$effect$": e.Entity.Name,
 			},
 		).Bind(game.NewContext()))
 	}

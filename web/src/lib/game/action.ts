@@ -1,4 +1,4 @@
-import type { Affinity, ID, Stat } from './core'
+import type { Affinity, Entity, ID, Stat } from './core'
 
 export type ActionConfig = {
   accuracy: number | null
@@ -7,10 +7,8 @@ export type ActionConfig = {
   crit_stage: number
   crit_chance: number
   crit_modifier: number
-  description: string
   repeats: number
   lifesteal: number
-  name: string
   power: number
   priority: number
   range: number | null
@@ -24,6 +22,7 @@ export type Action = {
   ID: ID
   config: ActionConfig
   cooldown: number
+  entity: Entity
   is_disabled: boolean
   tags: Array<string>
   uncancelable: boolean

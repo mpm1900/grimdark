@@ -105,7 +105,7 @@ function ActionButton({
             )}
           >
             <span className="block min-w-0 flex-1 truncate text-left">
-              {action.config.name}
+              {action.entity.name}
             </span>
           </ItemTitle>
         </ActionTooltip>
@@ -136,7 +136,7 @@ function ActionButton({
                   ]{' '}
                 </span>
               )}
-              {action.config.description}
+              {action.entity.description}
             </span>
           )}
           {!!action.config.power && (
@@ -152,7 +152,7 @@ function ActionButton({
               )}
               <span className="mr-2 font-semibold">
                 <span className="font-serif font-normal text-foreground/70">
-                  {action.config.description}
+                  {action.entity.description}
                 </span>
                 {action.config.crit_chance && (
                   <span className="inline-flex items-baseline align-baseline">
