@@ -15,6 +15,7 @@ type Item struct {
 func (i Item) Clone() Item {
 	return Item{
 		ID:      i.ID,
+		Entity:  i.Entity,
 		Effects: slices.Clone(i.Effects),
 	}
 }

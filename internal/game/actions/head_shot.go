@@ -36,7 +36,7 @@ func Headshot() game.Action {
 				return true
 			}
 
-			return position.Rank == 1
+			return position.Rank == 0
 		},
 	}
 }
