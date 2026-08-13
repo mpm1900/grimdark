@@ -7,9 +7,7 @@ import (
 	"github.com/google/uuid"
 )
 
-var Prophet = newProphet()
-
-func newProphet() game.Class {
+func Prophet() game.Class {
 	class := game.NewClass()
 	class.ID = uuid.MustParse("019f5f11-626c-7b69-a0f9-8115db2e2c8c")
 	class.Name = "Prophet"

@@ -8,12 +8,14 @@ import (
 	"github.com/google/uuid"
 )
 
+var bn = Bloodknight()
+
 func TestHydrateActorConfigIgnoresEmptyWeaponSlots(t *testing.T) {
 	if weapons.TomeOfSacrifice().ID == uuid.Nil {
 		t.Fatal("Tome of Sacrifice must have a stable non-nil ID")
 	}
 
-	classID := Bloodknight.ID
+	classID := bn.ID
 	greatswordSlot := uuid.New()
 	emptySlot := uuid.New()
 
@@ -45,7 +47,7 @@ func TestHydrateActorConfigIgnoresEmptyWeaponSlots(t *testing.T) {
 }
 
 func TestHydrateActorConfigFiltersWeaponsByStrength(t *testing.T) {
-	classID := Bloodknight.ID
+	classID := bn.ID
 	tomeSlot := uuid.New()
 	greatswordSlot := uuid.New()
 

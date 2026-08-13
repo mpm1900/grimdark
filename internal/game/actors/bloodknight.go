@@ -8,9 +8,7 @@ import (
 	"github.com/google/uuid"
 )
 
-var Bloodknight = bloodknight()
-
-func bloodknight() game.Class {
+func Bloodknight() game.Class {
 	class := game.NewClass()
 	class.ID = uuid.MustParse("019fd8d3-7807-73c5-9311-c69db259a283")
 	class.Name = "Bloodknight"

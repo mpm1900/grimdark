@@ -7,9 +7,7 @@ import (
 	"github.com/google/uuid"
 )
 
-var SisterOfFire = newSisterOfFire()
-
-func newSisterOfFire() game.Class {
+func SisterOfFire() game.Class {
 	class := game.NewClass()
 	class.ID = uuid.MustParse("019f5f11-933a-7cd3-bac9-5133bba94c7b")
 	class.Name = "Sister of Fire"

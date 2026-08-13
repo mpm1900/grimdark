@@ -5,9 +5,7 @@ import (
 	"encoding/json"
 	"grimdark/internal/game/actors"
 	"grimdark/internal/game/items"
-	"maps"
 	"net/http"
-	"slices"
 )
 
 type GamedataHandler struct {
@@ -27,9 +25,8 @@ func (dh *GamedataHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 }
 
 func (dh *GamedataHandler) HandleGetActors(w http.ResponseWriter, r *http.Request) {
-	actors := slices.Collect(maps.Values(actors.All))
 	w.Header().Set("Content-Type", "application/json")
-	if err := json.NewEncoder(w).Encode(actors); err != nil {
+	if err := json.NewEncoder(w).Encode(actors.All); err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}

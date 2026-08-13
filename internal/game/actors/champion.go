@@ -8,9 +8,7 @@ import (
 	"github.com/google/uuid"
 )
 
-var Champion = newChampion()
-
-func newChampion() game.Class {
+func Champion() game.Class {
 	weakness_immune := game.EffectSource(game.EffectPriorityImmunities, func(g *game.Game, a game.Actor, ctx game.Context) game.Actor {
 		a.EffectImmunities.Push(effects.Weakened().ID)
 		return a

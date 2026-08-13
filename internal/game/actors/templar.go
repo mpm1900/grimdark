@@ -7,9 +7,7 @@ import (
 	"github.com/google/uuid"
 )
 
-var Templar = newTemplar()
-
-func newTemplar() game.Class {
+func Templar() game.Class {
 	class := game.NewClass()
 	class.ID = uuid.MustParse("019f5f10-f5c1-7fd6-a1df-98644956735e")
 	class.Name = "Templar"

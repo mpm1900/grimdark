@@ -7,25 +7,30 @@ import (
 	"github.com/google/uuid"
 )
 
-var All = map[uuid.UUID]game.Class{
-	Templar.ID:           Templar,
-	Prophet.ID:           Prophet,
-	Paladin.ID:           Paladin,
-	SisterOfFire.ID:      SisterOfFire,
-	SisterOfLight.ID:     SisterOfLight,
-	SisterOfSacrifice.ID: SisterOfSacrifice,
-	Cultist.ID:           Cultist,
-	Champion.ID:          Champion,
-	Rogue.ID:             Rogue,
-	Vicar.ID:             Vicar,
-	Seeker.ID:            Seeker,
-	Bloodknight.ID:       Bloodknight,
-	Inquisitor.ID:        Inquisitor,
+var All = []game.Class{
+	Templar(),
+	Prophet(),
+	Paladin(),
+	SisterOfFire(),
+	SisterOfLight(),
+	SisterOfSacrifice(),
+	Cultist(),
+	Champion(),
+	Rogue(),
+	Vicar(),
+	Seeker(),
+	Bloodknight(),
+	Inquisitor(),
 }
 
 func HydrateActorClass(id uuid.UUID) (game.Class, bool) {
-	class, ok := All[id]
-	return class, ok
+	for _, c := range All {
+		if c.ID == id {
+			return c, true
+		}
+	}
+
+	return game.Class{}, false
 }
 
 func HydrateActorConfig(config game.ActorConfig) (*game.Actor, bool) {

@@ -7,9 +7,7 @@ import (
 	"github.com/google/uuid"
 )
 
-var Cultist = newCultist()
-
-func newCultist() game.Class {
+func Cultist() game.Class {
 	class := game.NewClass()
 	class.ID = uuid.MustParse("019f5f12-29e1-7cc9-bfeb-468df5c53990")
 	class.Name = "Cultist"
