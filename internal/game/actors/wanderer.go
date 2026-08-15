@@ -7,22 +7,22 @@ import (
 	"github.com/google/uuid"
 )
 
-func SisterOfFire() game.Class {
+func Wanderer() game.Class {
 	class := game.NewClass()
-	class.ID = uuid.MustParse("019f5f11-933a-7cd3-bac9-5133bba94c7b")
-	class.Name = "Sister of Fire"
-	class.SpriteURL = "/actors/230_64128_2.png"
+	class.ID = uuid.MustParse("01a00690-8b87-7633-a3c0-4337811c4eea")
+	class.Name = "Wanderer"
+	class.SpriteURL = "/actors/394_64128.png"
 	class.Affinities = game.Set[game.Affinity]{
-		game.Fire: {},
+		game.Physical: {},
 	}
 	class.Stats = map[game.Stat]float64{
-		game.Health:         65,
-		game.Speed:          110,
-		game.Melee:          55,
-		game.Ranged:         65,
-		game.Special:        130,
-		game.MartialDefense: 60,
-		game.SpecialDefense: 105,
+		game.Health:         80,
+		game.Speed:          100,
+		game.Melee:          100,
+		game.Ranged:         100,
+		game.Special:        80,
+		game.MartialDefense: 100,
+		game.SpecialDefense: 100,
 		game.Accuracy:       1,
 		game.Evasion:        1,
 
@@ -36,10 +36,12 @@ func SisterOfFire() game.Class {
 	class.Options = game.ClassOptions{
 		Items: []game.Item{},
 		Weapons: []game.Weapon{
+			weapons.Dagger(),
 			weapons.FireTome(),
+			weapons.Greatsword(),
 			weapons.HandCrossbow(),
-			weapons.PrayerStaff(),
 			weapons.RoundShield(),
+			weapons.ShortBow(),
 		},
 	}
 
