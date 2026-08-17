@@ -22,7 +22,7 @@ func Champion() game.Class {
 	class := game.NewClass()
 	class.ID = uuid.MustParse("019f5f12-6e78-7eda-b638-980453e3eaba")
 	class.Name = "Champion"
-	class.SpriteURL = "/actors/202_crop.png"
+	class.SpriteURL = "/actors/242_64128.png"
 	class.Affinities = game.Set[game.Affinity]{
 		game.Physical: {},
 	}

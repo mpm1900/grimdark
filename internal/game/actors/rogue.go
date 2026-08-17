@@ -17,7 +17,7 @@ func Rogue() game.Class {
 		game.Physical: {},
 	}
 	class.Stats = map[game.Stat]float64{
-		game.Health:         80,
+		game.Health:         70,
 		game.Speed:          120,
 		game.Melee:          100,
 		game.Ranged:         120,
