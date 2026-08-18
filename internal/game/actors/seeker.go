@@ -12,7 +12,7 @@ func Seeker() game.Class {
 	class := game.NewClass()
 	class.ID = uuid.MustParse("019fc0cc-6c4f-74ec-99d1-94d976fc96c0")
 	class.Name = "Seeker"
-	class.SpriteURL = "/actors/418_64128.png"
+	class.SpriteURL = "/actors/77_64128.png"
 	class.Affinities = game.Set[game.Affinity]{
 		game.Arcane: {},
 	}

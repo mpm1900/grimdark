@@ -13,7 +13,7 @@ var All = []game.Class{
 	Paladin(),
 	SisterOfFire(),
 	SisterOfLight(),
-	SisterOfSacrifice(),
+	// SisterOfSacrifice(),
 	Cultist(),
 	Champion(),
 	Rogue(),
