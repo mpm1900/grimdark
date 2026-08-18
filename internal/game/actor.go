@@ -82,6 +82,7 @@ type Actor struct {
 	Status ActorStatus
 
 	IsAlive           bool
+	IsBlind           bool // forces failure on accuracy checks
 	IsCollateralBlock bool // stops collateral penetration
 	IsHidden          bool // cannot be targeted by single-target actions (unimplemented)
 	IsInsulated       bool // is immune from the secondary effects of attacking attacks (ie through AddResultEffects())
@@ -148,6 +149,7 @@ func NewActor(class Class, config ActorConfig) *Actor {
 		Status: StatusNone,
 
 		IsAlive:           true,
+		IsBlind:           false,
 		IsCollateralBlock: false,
 		IsHidden:          false,
 		IsInsulated:       false,
@@ -204,6 +206,7 @@ func (a *Actor) Clone() *Actor {
 		Status: a.Status,
 
 		IsAlive:           a.IsAlive,
+		IsBlind:           a.IsBlind,
 		IsCollateralBlock: a.IsCollateralBlock,
 		IsHidden:          a.IsHidden,
 		IsInsulated:       a.IsInsulated,

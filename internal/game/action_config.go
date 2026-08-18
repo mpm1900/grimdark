@@ -92,8 +92,13 @@ func (ac *ActionConfig) GetBaseDamage(source, target Actor, use_base_stats bool)
 }
 
 func (ac *ActionConfig) GetAccuracy(source, target Actor, use_base_stats bool) float64 {
+	// nil accuracy overrides blindness
 	if ac.Accuracy == nil {
 		return 1.0
+	}
+
+	if source.IsBlind {
+		return 0.0
 	}
 
 	ratio := Accuracy.GetRatio(source, target, use_base_stats, nil)

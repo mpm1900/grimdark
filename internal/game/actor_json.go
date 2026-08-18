@@ -19,6 +19,7 @@ type actorJSON struct {
 	Faction            ActorFaction              `json:"faction"`
 	IsActive           bool                      `json:"is_active"`
 	IsAlive            bool                      `json:"is_alive"`
+	IsBlind            bool                      `json:"is_blind"`
 	IsCollateralBlock  bool                      `json:"is_collateral_block"`
 	IsHidden           bool                      `json:"is_hidden"`
 	IsInsulated        bool                      `json:"is_insulated"`
@@ -121,6 +122,7 @@ func (a Actor) ToJSON(g *Game) actorJSON {
 		State:              a.State,
 		Status:             a.Status,
 		IsActive:           a.Active(),
+		IsBlind:            a.IsBlind,
 		IsCollateralBlock:  a.IsCollateralBlock,
 		IsAlive:            a.IsAlive,
 		IsHidden:           a.IsHidden,
