@@ -110,6 +110,13 @@ func (c Command) Resolve(g *Game) []Transaction {
 		pending_damage: map[uuid.UUID]float64{},
 	}
 
+	state, ok := action_context.Source.ActionStates[c.Payload.ID]
+	if ok {
+		if state.BypassAccuracy {
+			action_context.Action.Config.Accuracy = nil
+		}
+	}
+
 	context := c.Context
 	if c.Payload.MapContext != nil {
 		context = c.Payload.MapContext(g, context, action_context)

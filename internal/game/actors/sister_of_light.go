@@ -2,6 +2,7 @@ package actors
 
 import (
 	"grimdark/internal/game"
+	"grimdark/internal/game/effects"
 	"grimdark/internal/game/weapons"
 
 	"github.com/google/uuid"
@@ -33,7 +34,10 @@ func SisterOfLight() game.Class {
 		game.EffectChance:   1,
 	}
 	class.Items = 2
-	class.Effects = []game.Effect{}
+	class.Effects = []game.Effect{
+		effects.BlindParent(),
+		effects.GuidingFire(),
+	}
 	class.Options = game.ClassOptions{
 		Items: []game.Item{},
 		Weapons: []game.Weapon{

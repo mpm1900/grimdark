@@ -4,7 +4,7 @@ import "grimdark/internal/game"
 
 func Devout() game.Effect {
 	effect := game.EffectSource(
-		game.EffectPriorityActions,
+		game.EffectPriorityActionState,
 		func(g *game.Game, a game.Actor, ctx game.Context) game.Actor {
 			actions := a.GetActions()
 			for _, action := range actions {

@@ -31,12 +31,13 @@ const (
 )
 
 type ActionState struct {
-	Cooldown      int
-	CooldownBonus int
-	IsDisabled    bool
-	PriorityBonus int
-	RangeBonus    int
-	Uses          int
+	BypassAccuracy bool
+	Cooldown       int
+	CooldownBonus  int
+	IsDisabled     bool
+	PriorityBonus  int
+	RangeBonus     int
+	Uses           int
 }
 
 type ActorMeta struct {

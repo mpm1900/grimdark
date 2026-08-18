@@ -8,7 +8,7 @@ import (
 )
 
 func ChoiceLocked() game.Effect {
-	effect := game.EffectTargets(game.EffectPriorityActions, func(g *game.Game, a game.Actor, ctx game.Context) game.Actor {
+	effect := game.EffectTargets(game.EffectPriorityActionState, func(g *game.Game, a game.Actor, ctx game.Context) game.Actor {
 		struggle_ID := game.Struggle().ID
 		for _, action := range a.GetActions() {
 			if a.Meta.LastUsedActionID == uuid.Nil {

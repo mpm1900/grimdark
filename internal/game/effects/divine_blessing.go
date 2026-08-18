@@ -17,6 +17,5 @@ func DivineBlessing() game.Effect {
 		"Divine Blessing",
 		"Doubles defenses, but only at full health.",
 	)
-
 	return effect
 }

@@ -14,8 +14,8 @@ func blindEntity(id uuid.UUID) game.Entity {
 	)
 }
 
-func BlindSource() game.Effect {
-	effect := game.EffectSource(game.EffectPriorityFlags, func(g *game.Game, a game.Actor, ctx game.Context) game.Actor {
+func BlindParent() game.Effect {
+	effect := game.EffectParent(game.EffectPriorityFlags, func(g *game.Game, a game.Actor, ctx game.Context) game.Actor {
 		a.IsBlind = true
 
 		return a
