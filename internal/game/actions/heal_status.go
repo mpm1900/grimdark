@@ -14,7 +14,7 @@ func HealStatus() game.Action {
 		Tags: []game.ActionTag{game.ATActor, game.ATWeapon},
 		Entity: game.MakeEntity(
 			id,
-			"Healing Status",
+			"Heal Status",
 			"Removes the user's status condition.",
 		),
 		Config: game.ActionConfig{
