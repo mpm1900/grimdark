@@ -14,6 +14,7 @@ import {
 import type { ActorClass } from '#/lib/game/actor-class'
 import { GothicBigButton } from './gothic-ui/button'
 import { ClassTooltip } from './class-tooltip'
+import { useEffect, useRef, useState } from 'react'
 
 function ActorCombobox({
   value,
@@ -24,6 +25,31 @@ function ActorCombobox({
 }) {
   const query = useQuery(actorsQuery)
   const actor_class = query.data?.find((a) => a.ID === value)
+  const [selectedTooltipOpen, setSelectedTooltipOpen] = useState(false)
+  const selectedTooltipCloseTimer = useRef<ReturnType<typeof setTimeout> | null>(
+    null
+  )
+  const openSelectedTooltip = () => {
+    if (selectedTooltipCloseTimer.current) {
+      clearTimeout(selectedTooltipCloseTimer.current)
+      selectedTooltipCloseTimer.current = null
+    }
+    setSelectedTooltipOpen(true)
+  }
+  const closeSelectedTooltip = () => {
+    selectedTooltipCloseTimer.current = setTimeout(() => {
+      setSelectedTooltipOpen(false)
+      selectedTooltipCloseTimer.current = null
+    }, 100)
+  }
+
+  useEffect(() => {
+    return () => {
+      if (selectedTooltipCloseTimer.current) {
+        clearTimeout(selectedTooltipCloseTimer.current)
+      }
+    }
+  }, [])
 
   return (
     <Combobox
@@ -41,7 +67,13 @@ function ActorCombobox({
         render={
           <ClassTooltip
             actor_class={actor_class}
-            hover_card={{ open: !actor_class ? false : undefined }}
+            hover_card={{ open: Boolean(actor_class) && selectedTooltipOpen }}
+            content_props={{
+              onPointerEnter: openSelectedTooltip,
+              onPointerLeave: closeSelectedTooltip,
+            }}
+            onPointerEnter={openSelectedTooltip}
+            onPointerLeave={closeSelectedTooltip}
             asChild
           >
             <GothicBigButton>
