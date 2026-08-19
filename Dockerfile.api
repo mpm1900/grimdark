@@ -1,6 +1,6 @@
 # Build stage
 # Using Debian-based image as it's often more stable under Mac-to-Linux emulation
-FROM golang:1.25 AS builder
+FROM golang:1.27 AS builder
 
 WORKDIR /app
 
