@@ -150,6 +150,27 @@ func DamageRatioTargets(ratio float64, attack bool) Mutation {
 func HealRatioTargets(ratio float64) Mutation {
 	return DamageRatioTargets(-ratio, false)
 }
+func RemoveStatusTargets() Mutation {
+	return Mutation{
+		delta: func(g *Game, ctx Context) []uuid.UUID {
+			targets := []uuid.UUID{}
+
+			for _, target := range g.GetTargets(ctx) {
+				g.RemoveModifiers(func(g *Game, m Modifier, ctx Context) bool {
+					is_status := m.Payload.Tags.Has(EffectTagStatus)
+					return m.Context.ParentID == target.ID && is_status
+				}, NewContext())
+				g.MutateActor(target.ID, func(a Actor) Actor {
+					a.Status = StatusNone
+					return a
+				})
+				targets = append(targets, target.ID)
+			}
+
+			return targets
+		},
+	}
+}
 func SetPositionSource(position_id uuid.UUID) Mutation {
 	return Mutation{
 		delta: func(g *Game, ctx Context) []uuid.UUID {

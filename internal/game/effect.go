@@ -28,6 +28,10 @@ type EffectState struct {
 
 type EffectTag = string
 
+const (
+	EffectTagStatus EffectTag = "status"
+)
+
 type Effect struct {
 	Mutation
 	ID       uuid.UUID      `json:"ID"`

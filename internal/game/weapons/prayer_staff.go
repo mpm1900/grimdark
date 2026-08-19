@@ -28,6 +28,7 @@ func PrayerStaff() game.Weapon {
 			actions.CommandRepeat(),
 			actions.HealingBlessing(),
 			actions.HealingPrayer(),
+			actions.HealStatus(),
 		},
 		OffsetStats: map[game.Stat]float64{
 			game.SpecialDefense: 32,

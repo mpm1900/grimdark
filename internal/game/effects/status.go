@@ -26,6 +26,7 @@ func Burned() game.Effect {
 		"Burned",
 		"On turn end, this actor takes 8% damage.",
 	)
+	effect.Tags.Push(game.EffectTagStatus)
 	effect.CheckSuccess = game.EffectGainTargetsOnSuccess
 	effect.Triggers = append(effect.Triggers, game.Trigger{
 		On: game.OnTurnEnd,
@@ -59,6 +60,7 @@ func Sleeping(duration int) game.Effect {
 		"Sleeping",
 		"Cannot act.",
 	)
+	effect.Tags.Push(game.EffectTagStatus)
 	effect.CheckSuccess = game.EffectGainTargetsOnSuccess
 	effect.Check = statusCheck
 	effect.Duration = &duration
