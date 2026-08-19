@@ -35,10 +35,6 @@ var StatDownIDs = map[game.Stat]uuid.UUID{
 	game.Evasion:        uuid.New(),
 }
 
-var StatChangeTag game.EffectTag = "stat-change"
-var StatUpTag game.EffectTag = "stat-up"
-var StatDownTag game.EffectTag = "stat-down"
-
 // consider refactoring these to xyzParent
 func StatUpSource(stat game.Stat, amount int) game.Effect {
 	effect := game.EffectSource(game.EffectPriorityStages, StatChangeActor(stat, amount))
@@ -55,8 +51,8 @@ func StatUpSource(stat game.Stat, amount int) game.Effect {
 	)
 
 	effect.CheckSuccess = game.EffectGainSourceOnSuccess
-	effect.SetTag(StatChangeTag)
-	effect.SetTag(StatUpTag)
+	effect.SetTag(game.EffectTagStatChange)
+	effect.SetTag(game.EffectTagStatUp)
 
 	return effect
 }
@@ -75,8 +71,8 @@ func StatDownSource(stat game.Stat, amount int) game.Effect {
 	)
 
 	effect.CheckSuccess = game.EffectGainSourceOnSuccess
-	effect.SetTag(StatChangeTag)
-	effect.SetTag(StatDownTag)
+	effect.SetTag(game.EffectTagStatChange)
+	effect.SetTag(game.EffectTagStatDown)
 
 	return effect
 }
@@ -95,8 +91,8 @@ func StatUpTargets(stat game.Stat, amount int) game.Effect {
 	)
 
 	effect.CheckSuccess = game.EffectGainTargetsOnSuccess
-	effect.SetTag(StatChangeTag)
-	effect.SetTag(StatUpTag)
+	effect.SetTag(game.EffectTagStatChange)
+	effect.SetTag(game.EffectTagStatUp)
 
 	return effect
 }
@@ -115,8 +111,8 @@ func StatDownTargets(stat game.Stat, amount int) game.Effect {
 	)
 
 	effect.CheckSuccess = game.EffectGainTargetsOnSuccess
-	effect.SetTag(StatChangeTag)
-	effect.SetTag(StatDownTag)
+	effect.SetTag(game.EffectTagStatChange)
+	effect.SetTag(game.EffectTagStatDown)
 
 	return effect
 }
@@ -135,7 +131,7 @@ func StagesResetWhere(where game.Filter[game.Actor]) game.Effect {
 
 		return a
 	})
-	effect.SetTag(StatChangeTag)
+	effect.SetTag(game.EffectTagStatChange)
 
 	return effect
 }

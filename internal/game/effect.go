@@ -29,7 +29,10 @@ type EffectState struct {
 type EffectTag = string
 
 const (
-	EffectTagStatus EffectTag = "status"
+	EffectTagStatus     EffectTag = "status"
+	EffectTagStatChange EffectTag = "stat-change"
+	EffectTagStatUp     EffectTag = "stat-up"
+	EffectTagStatDown   EffectTag = "stat-down"
 )
 
 type Effect struct {
