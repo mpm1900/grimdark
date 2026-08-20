@@ -22,8 +22,8 @@ func Inquisitor() game.Class {
 		game.Melee:          70,
 		game.Ranged:         100,
 		game.Special:        135,
-		game.MartialDefense: 90,
-		game.SpecialDefense: 90,
+		game.MartialDefense: 80,
+		game.SpecialDefense: 80,
 		game.Accuracy:       1,
 		game.Evasion:        1,
 

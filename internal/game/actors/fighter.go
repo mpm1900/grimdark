@@ -8,7 +8,7 @@ import (
 	"github.com/google/uuid"
 )
 
-func Champion() game.Class {
+func Fighter() game.Class {
 	weakness_immune := game.EffectSource(game.EffectPriorityImmunities, func(g *game.Game, a game.Actor, ctx game.Context) game.Actor {
 		a.EffectImmunities.Push(effects.Weakened().ID)
 		return a
@@ -21,19 +21,19 @@ func Champion() game.Class {
 
 	class := game.NewClass()
 	class.ID = uuid.MustParse("019f5f12-6e78-7eda-b638-980453e3eaba")
-	class.Name = "Champion"
+	class.Name = "Fighter"
 	class.SpriteURL = "/actors/242_64128.png"
 	class.Affinities = game.Set[game.Affinity]{
 		game.Physical: {},
 	}
 	class.Stats = map[game.Stat]float64{
 		game.Health:         110,
-		game.Speed:          90,
-		game.Melee:          115,
-		game.Ranged:         100,
-		game.Special:        50,
-		game.MartialDefense: 90,
-		game.SpecialDefense: 80,
+		game.Speed:          85,
+		game.Melee:          125,
+		game.Ranged:         90,
+		game.Special:        45,
+		game.MartialDefense: 100,
+		game.SpecialDefense: 85,
 		game.Accuracy:       1,
 		game.Evasion:        1,
 

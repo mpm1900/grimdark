@@ -16,6 +16,7 @@ const (
 	ATItem        ActionTag = "item"
 	ATWeapon      ActionTag = "weapon"
 	ATConditional ActionTag = "conditional"
+	ATTemporary   ActionTag = "temporary"
 
 	ATRetreat  ActionTag = "retreat"
 	ATMovement ActionTag = "movement"

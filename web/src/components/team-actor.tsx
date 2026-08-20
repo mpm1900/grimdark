@@ -10,6 +10,24 @@ import { useSelector } from '@tanstack/react-store'
 import { motion } from 'motion/react'
 import { AffinityIcon } from './affinity-name'
 import { WeaponTooltip } from './weapon-tooltip'
+import type { ActorClass } from '#/lib/game/actor-class'
+
+function getTotal(stats: ActorClass['stats'] | undefined) {
+  if (!stats) return 0
+  return (
+    stats.health +
+    stats.speed +
+    stats.melee +
+    stats.ranged +
+    stats.special +
+    stats['martial-defense'] +
+    stats['special-defense']
+  )
+}
+
+function getAverage(stats: ActorClass['stats'] | undefined) {
+  return (getTotal(stats) / 7).toFixed(0)
+}
 
 function ClassSprite({
   index,
@@ -128,6 +146,11 @@ function TeamActor({
             </Gauge>
           </div>
         ))}
+        <div className="font-serif flex items-center gap-2">
+          {'Total: '}
+          {getTotal(actor_class?.stats)},{' Average: '}
+          {getAverage(actor_class?.stats)}
+        </div>
       </div>
     </motion.div>
   )

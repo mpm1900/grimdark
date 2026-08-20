@@ -7,23 +7,22 @@ import (
 	"github.com/google/uuid"
 )
 
-func Paladin() game.Class {
+func Knight() game.Class {
 	class := game.NewClass()
-	class.ID = uuid.MustParse("019f9f6e-520e-74cb-a474-48bdd6ee60cc")
-	class.Name = "Paladin"
-	class.SpriteURL = "/actors/55_64128.png"
+	class.ID = uuid.MustParse("01a01d8b-a4ea-711e-a671-e65a62925cdf")
+	class.Name = "Knight"
+	class.SpriteURL = "/actors/352_64128.png"
 	class.Affinities = game.Set[game.Affinity]{
-		game.Holy:     {},
 		game.Physical: {},
 	}
 	class.Stats = map[game.Stat]float64{
-		game.Health:         90,
-		game.Speed:          75,
-		game.Melee:          115,
-		game.Ranged:         70,
-		game.Special:        110,
-		game.MartialDefense: 95,
-		game.SpecialDefense: 100,
+		game.Health:         100,
+		game.Speed:          70,
+		game.Melee:          120,
+		game.Ranged:         80,
+		game.Special:        60,
+		game.MartialDefense: 110,
+		game.SpecialDefense: 110,
 		game.Accuracy:       1,
 		game.Evasion:        1,
 
@@ -37,10 +36,11 @@ func Paladin() game.Class {
 	class.Options = game.ClassOptions{
 		Items: []game.Item{},
 		Weapons: []game.Weapon{
-			weapons.FireTome(),
 			weapons.Greatsword(),
-			weapons.PrayerStaff(),
+			weapons.HandCrossbow(),
 			weapons.RoundShield(),
+			weapons.ShortBow(),
+			weapons.Spear(),
 		},
 	}
 
