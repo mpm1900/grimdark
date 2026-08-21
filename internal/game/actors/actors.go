@@ -23,6 +23,7 @@ var All = []game.Class{
 	Bloodknight(),
 	Inquisitor(),
 	Wanderer(),
+	Warrior(),
 }
 
 func HydrateActorClass(id uuid.UUID) (game.Class, bool) {

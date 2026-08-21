@@ -7,22 +7,22 @@ import (
 	"github.com/google/uuid"
 )
 
-func Wanderer() game.Class {
+func Warrior() game.Class {
 	class := game.NewClass()
-	class.ID = uuid.MustParse("01a00690-8b87-7633-a3c0-4337811c4eea")
-	class.Name = "Wanderer"
-	class.SpriteURL = "/actors/394_64128.png"
+	class.ID = uuid.MustParse("01a02548-3fa0-70c8-8006-60225fb8addc")
+	class.Name = "Warrior"
+	class.SpriteURL = "/actors/134_64128.png"
 	class.Affinities = game.Set[game.Affinity]{
 		game.Physical: {},
 	}
 	class.Stats = map[game.Stat]float64{
-		game.Health:         80,
-		game.Speed:          100,
-		game.Melee:          100,
-		game.Ranged:         100,
-		game.Special:        100,
-		game.MartialDefense: 70,
-		game.SpecialDefense: 90,
+		game.Health:         85,
+		game.Speed:          115,
+		game.Melee:          130,
+		game.Ranged:         70,
+		game.Special:        50,
+		game.MartialDefense: 80,
+		game.SpecialDefense: 70,
 		game.Accuracy:       1,
 		game.Evasion:        1,
 
@@ -36,12 +36,11 @@ func Wanderer() game.Class {
 	class.Options = game.ClassOptions{
 		Items: []game.Item{},
 		Weapons: []game.Weapon{
-			weapons.Dagger(),
-			weapons.FireTome(),
 			weapons.Greatsword(),
 			weapons.HandCrossbow(),
 			weapons.RoundShield(),
 			weapons.ShortBow(),
+			weapons.Spear(),
 		},
 	}
 
