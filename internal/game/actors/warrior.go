@@ -16,13 +16,13 @@ func Warrior() game.Class {
 		game.Physical: {},
 	}
 	class.Stats = map[game.Stat]float64{
-		game.Health:         85,
+		game.Health:         90,
 		game.Speed:          115,
-		game.Melee:          130,
-		game.Ranged:         70,
+		game.Melee:          134,
+		game.Ranged:         71,
 		game.Special:        50,
 		game.MartialDefense: 80,
-		game.SpecialDefense: 70,
+		game.SpecialDefense: 80,
 		game.Accuracy:       1,
 		game.Evasion:        1,
 
